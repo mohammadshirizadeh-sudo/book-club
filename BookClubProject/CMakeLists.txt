@@ -12,6 +12,18 @@ qt_add_executable(BookClubProject
     mainwindow.h
     mainwindow.ui
     Shared/User.h Shared/User.cpp
+    Shared/PasswordHelper.h
+    Shared/PasswordValidator.h
+    Shared/EmailValidator.h
+    Shared/Genre.h
+    Shared/Book.h Shared/Book.cpp
+    Shared/admin.h Shared/admin.cpp
+    Shared/Review.h Shared/Review.cpp
+    Shared/Purchase.h Shared/Purchase.cpp
+    Shared/Notification.h Shared/Notification.cpp
+    Shared/Cart.h Shared/Cart.cpp
+    Shared/CartItem.h Shared/CartItem.cpp
+
 )
 
 target_link_libraries(BookClubProject
