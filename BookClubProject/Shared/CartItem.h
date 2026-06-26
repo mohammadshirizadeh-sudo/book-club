@@ -8,8 +8,8 @@ class CartItem {
 private:
     int bookId;
     int quantity;
-    double unitPrice;
-    double discountedPrice;
+    double unitPrice;        // Original price per unit
+    double discountedPrice;  // Price per unit after discount
 
 public:
     // ===== Constructors =====

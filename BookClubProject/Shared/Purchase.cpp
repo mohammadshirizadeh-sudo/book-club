@@ -2,8 +2,7 @@
 #include "Purchase.h"
 #include <QDebug>
 
-
-
+// ===== Constructors =====
 Purchase::Purchase()
     : purchaseId(0)
     , userId(0)
@@ -26,7 +25,7 @@ Purchase::Purchase(int purchaseId, int userId, const QVector<CartItem>& items,
     , status(PurchaseStatus::Pending) {
 }
 
-//Helper Methods
+// ===== Helper Methods =====
 
 QString Purchase::getStatusString() const {
     switch(status) {

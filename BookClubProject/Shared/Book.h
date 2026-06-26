@@ -13,23 +13,23 @@ private:
     QString genre;
     QString description;
     double price;
-    double discountPercent;
+    double discountPercent;  // 0.0 to 100.0
     QString coverPath;
     QString pdfPath;
     bool isActive;
-    double averageRating;
+    double averageRating;    // 0.0 to 5.0
     int salesCount;
     int publisherId;
     QDateTime createdAt;
     QDateTime updatedAt;
 
 public:
-
+    // ===== Constructors =====
     Book();
     Book(int bookId, const QString& title, const QString& author,
          const QString& genre, double price, int publisherId);
 
-
+    // ===== Getters =====
     int getBookId() const { return bookId; }
     QString getTitle() const { return title; }
     QString getAuthor() const { return author; }
@@ -46,7 +46,7 @@ public:
     QDateTime getCreatedAt() const { return createdAt; }
     QDateTime getUpdatedAt() const { return updatedAt; }
 
-
+    // ===== Setters =====
     void setBookId(int id) { bookId = id; }
     void setTitle(const QString& title) { this->title = title; }
     void setAuthor(const QString& author) { this->author = author; }
@@ -60,8 +60,9 @@ public:
     void setPublisherId(int id) { publisherId = id; }
     void setCreatedAt(const QDateTime& time) { createdAt = time; }
     void setUpdatedAt(const QDateTime& time) { updatedAt = time; }
+    void setDiscountPercent(double d){discountPercent = d;}
 
-
+    // ===== Core Methods =====
 
     void applyDiscount(double percent);
 

@@ -14,12 +14,12 @@ private:
     int userId;
     int bookId;
     QString text;
-    int rating;
+    int rating;          // 1 to 5 stars
     QDateTime createdAt;
     QDateTime updatedAt;
 
 public:
-
+    // ===== Constructors =====
     Review();
     Review(int reviewId, int userId, int bookId, const QString& text, int rating);
 
@@ -32,7 +32,7 @@ public:
     QDateTime getCreatedAt() const { return createdAt; }
     QDateTime getUpdatedAt() const { return updatedAt; }
 
-
+    // ===== Setters =====
     void setReviewId(int id) { reviewId = id; }
     void setUserId(int id) { userId = id; }
     void setBookId(int id) { bookId = id; }
@@ -44,7 +44,7 @@ public:
     void setCreatedAt(const QDateTime& time) { createdAt = time; }
     void setUpdatedAt(const QDateTime& time) { updatedAt = time; }
 
-
+    // ===== Helper Methods =====
     bool isValidRating() const { return rating >= 1 && rating <= 5; }
     QString getRatingStars() const;
 };

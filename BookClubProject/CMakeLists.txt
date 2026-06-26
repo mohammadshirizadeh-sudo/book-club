@@ -23,6 +23,7 @@ qt_add_executable(BookClubProject
     Shared/Notification.h Shared/Notification.cpp
     Shared/Cart.h Shared/Cart.cpp
     Shared/CartItem.h Shared/CartItem.cpp
+    Shared/Publisher.h Shared/Publisher.cpp
 
 )
 

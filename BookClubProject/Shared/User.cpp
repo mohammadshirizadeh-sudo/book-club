@@ -1,9 +1,20 @@
 #include "User.h"
+#include "admin.h"
+#include "Publisher.h"
+
 
 
 
 
 //These constructors are for sign up
+
+
+
+
+
+
+
+
 
 
 
@@ -52,7 +63,7 @@ User::User(int id, const QString& username, const QString& email, const QString&
     }
 
     // use hash
-    QString salt = PasswordHelper::generateSalt();
+    salt = PasswordHelper::generateSalt();
     passwordHash = PasswordHelper::hashPassword(plainPassword, salt);
 }
 
@@ -68,7 +79,7 @@ User :: User(int id, const QString &fullName, const QString& username, const QSt
     }
 
     // تولید Salt و هش کردن
-    QString salt = PasswordHelper::generateSalt();
+    salt = PasswordHelper::generateSalt();
     passwordHash = PasswordHelper::hashPassword(plainPassword, salt);
 
 }
@@ -76,10 +87,10 @@ User :: User(int id, const QString &fullName, const QString& username, const QSt
 
 // this constructor is for database
 User :: User(int id,const QString &fullName, const QString& username, const QString& _email,UserRole role, AccountStatus status,
-            const QDateTime& createdAt,const QDateTime &lastLogin ,const QString& passwordHash , QVector<QString> favouriteGenre , const QDateTime& updatedAt)
+            const QDateTime& createdAt,const QDateTime &lastLogin ,const QString& passwordHash , QVector<QString> favouriteGenre , const QDateTime& updatedAt , QString salt)
     : id(id)
     ,Fullname(fullName) , username(username) , passwordHash(passwordHash), email(_email)
-    , role(role), status(status), createdAt(createdAt),favouriteGenre(favouriteGenre) ,lastLogin(lastLogin),  updatedAt(updatedAt)
+    , role(role), status(status), createdAt(createdAt),favouriteGenre(favouriteGenre) ,lastLogin(lastLogin),  updatedAt(updatedAt) , salt(salt)
 
 {
 
@@ -211,7 +222,7 @@ bool User::setPassword(const QString& password) {
     }
 
     // 2. Generate new salt
-    QString salt = PasswordHelper::generateSalt();
+
 
     // 3. Hash password with salt
     passwordHash = PasswordHelper::hashPassword(password, salt);
@@ -228,6 +239,12 @@ bool User::isAdmin() const
     return false;
 }
 
+bool User::isPublisher() const
+{
+    if (role == UserRole::Publisher)return true;
+    return false;
+}
+
 
 
 
@@ -239,11 +256,29 @@ bool User::isBlocked() const
     return false;
 }
 
-bool User::checkPassword(QString _password) const
+
+bool User::checkPassword(const QString& password) const
 {
-    QString hashPass = PasswordHelper::hashPassword(_password);
-    if(hashPass == passwordHash)return true;
-    return false;
+    // رمز ورودی رو با salt ذخیره‌شده هش کن
+    QString hashPass = PasswordHelper::hashPassword(password, salt);
+
+    // هش جدید رو با هش ذخیره‌شده مقایسه کن
+    return hashPass == passwordHash;
+}
+
+
+
+
+User* User::createUser(int id, const QString& username, const QString& email,
+                       const QString& password, UserRole role) {
+    switch(role) {
+    case UserRole::Admin:
+        return new Admin(id, username, email, password);
+    case UserRole::Publisher:
+        return new Publisher(id, username, email, password , "");
+    default:
+        return new User(id, username, email, password);
+    }
 }
 
 

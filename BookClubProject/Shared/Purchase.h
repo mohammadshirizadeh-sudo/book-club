@@ -7,6 +7,9 @@
 #include <QVector>
 #include "CartItem.h"
 
+/**
+ * @brief Purchase status enumeration
+ */
 enum class PurchaseStatus {
     Pending,
     Completed,
@@ -15,7 +18,9 @@ enum class PurchaseStatus {
     Refunded
 };
 
-
+/**
+ * @brief Purchase class representing a completed purchase order
+ */
 class Purchase {
 private:
     int purchaseId;
@@ -28,12 +33,12 @@ private:
     PurchaseStatus status;
 
 public:
-
+    // ===== Constructors =====
     Purchase();
     Purchase(int purchaseId, int userId, const QVector<CartItem>& items,
              double totalPrice, double discountAmount, double finalPrice);
 
-
+    // ===== Getters =====
     int getPurchaseId() const { return purchaseId; }
     int getUserId() const { return userId; }
     QVector<CartItem> getItems() const { return items; }
@@ -43,7 +48,7 @@ public:
     QDateTime getPurchasedAt() const { return purchasedAt; }
     PurchaseStatus getStatus() const { return status; }
 
-
+    // ===== Setters =====
     void setPurchaseId(int id) { purchaseId = id; }
     void setUserId(int id) { userId = id; }
     void setItems(const QVector<CartItem>& items) { this->items = items; }
@@ -53,6 +58,7 @@ public:
     void setPurchasedAt(const QDateTime& time) { purchasedAt = time; }
     void setStatus(PurchaseStatus status) { this->status = status; }
 
+    // ===== Helper Methods =====
 
     QString getStatusString() const;
 

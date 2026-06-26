@@ -2,7 +2,7 @@
 #include "Notification.h"
 #include <QDebug>
 
-
+// ===== Constructors =====
 Notification::Notification()
     : notificationId(0)
     , targetUserId(0)
@@ -38,7 +38,7 @@ Notification::Notification(int notificationId, const QString& targetRole,
     , createdAt(QDateTime::currentDateTime()) {
 }
 
-
+// ===== Helper Methods =====
 
 bool Notification::isForUser(int userId) const {
     if (targetUserId == 0) {

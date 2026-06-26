@@ -1,7 +1,6 @@
 // review.cpp
 #include "Review.h"
 #include <QDebug>
-#include <qdatetime.h>
 
 // ===== Constructors =====
 Review::Review()
@@ -23,7 +22,7 @@ Review::Review(int reviewId, int userId, int bookId, const QString& text, int ra
     , createdAt(QDateTime::currentDateTime())
     , updatedAt(QDateTime::currentDateTime()) {
 
-
+    // Validate rating
     if (!isValidRating()) {
         qWarning() << "Invalid rating:" << rating << "Setting to 0";
         this->rating = 0;

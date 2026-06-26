@@ -17,11 +17,26 @@ Admin::Admin(int id, const QString& username, const QString& email, const QStrin
     , adminLevel(AdminLevel::Moderator) {
     setRole(UserRole::Admin);
 }
+/*
 
 Admin::Admin(int id, const QString& username, const QString& email,
              const QString& passwordHash, const QString& salt)
     : User(id, username, email, passwordHash)
     , adminLevel(AdminLevel::Moderator) {
+    setRole(UserRole::Admin);
+}
+*/
+Admin::Admin(int id, const QString& fullName, const QString& username, const QString& email,
+             UserRole role, AccountStatus status,
+             const QDateTime& createdAt, const QDateTime& lastLogin,
+             const QString& passwordHash, const QVector<QString>& favouriteGenre,
+             const QDateTime& updatedAt, AdminLevel adminLevel , QString  salt)
+    : User(id, fullName, username, email, role, status,
+           createdAt, lastLogin, passwordHash, favouriteGenre, updatedAt ,salt)  // ← فراخوانی Constructor پایه
+    , adminLevel(adminLevel)
+    , lastAction(QDateTime::currentDateTime()) {
+
+    // Admin-specific initialization
     setRole(UserRole::Admin);
 }
 

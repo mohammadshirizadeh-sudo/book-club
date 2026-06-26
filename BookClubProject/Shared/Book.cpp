@@ -1,13 +1,8 @@
 // book.cpp
-
 #include "Book.h"
 #include <QDebug>
 
 // ===== Constructors =====
-
-
-
-
 Book::Book()
     : bookId(0)
     , title("")

@@ -1,5 +1,5 @@
 // cart.cpp
-#include "Cart.h"
+#include "cart.h"
 #include <QDebug>
 
 // ===== Constructors =====
@@ -8,7 +8,6 @@ Cart::Cart()
     , totalPrice(0.0)
     , totalDiscount(0.0)
     , finalPrice(0.0) {
-
 }
 
 Cart::Cart(int userId)
