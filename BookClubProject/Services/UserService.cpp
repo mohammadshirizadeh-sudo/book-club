@@ -1,0 +1,43 @@
+// userservice.h
+#ifndef USERSERVICE_H
+#define USERSERVICE_H
+
+#include <QString>
+#include <QVector>
+#include "../Shared/User.h"
+#include "UserRepository.h"
+
+class UserService {
+private:
+    UserRepository* userRepo;
+
+public:
+    // ===== Constructor =====
+    explicit UserService(UserRepository* repo);
+
+    // ===== Profile Management =====
+    User* getProfile(int userId) const;
+
+    bool updateProfile(int userId, const QString& newEmail,
+                       const QString& newFullName,
+                       const QVector<QString>& newGenres);
+
+    bool updateFavoriteGenres(int userId, const QVector<QString>& newGenres);
+
+    bool changePassword(int userId, const QString& oldPassword, const QString& newPassword);
+
+
+    bool blockUser(int userId, const QString& reason = "");
+
+    bool unblockUser(int userId);
+    bool deleteUser(int userId);
+
+    // ===== Helper Methods =====
+    QVector<User*> getAllUsers() const;
+    QVector<User*> getBlockedUsers() const;
+    QVector<User*> searchUsers(const QString& keyword) const;
+    bool isUsernameAvailable(const QString& username) const;
+    bool isEmailAvailable(const QString& email) const;
+};
+
+#endif // USERSERVICE_H
