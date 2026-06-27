@@ -3,6 +3,7 @@
 #define PUBLISHER_H
 
 #include "User.h"
+#include "Book.h"
 #include <QString>
 #include <QVector>
 #include <QDateTime>
@@ -11,7 +12,7 @@
 class Publisher : public User {
 private:
     QString publisherName;
-    QVector<int> booksPublished;  // IDs of books published by this publisher
+
     double totalRevenue;
     QDateTime joinedAt;
 
@@ -23,7 +24,7 @@ public:
               const QDateTime& createdAt, const QDateTime& lastLogin,
               const QString& passwordHash, const QVector<QString>& favouriteGenre,
               const QDateTime& updatedAt, const QString& publisherName,
-              const QVector<int>& booksPublished, double totalRevenue , QString salt);
+               double totalRevenue , QString salt);
 
     Publisher(int id, const QString& username, const QString& email,
               const QString& password, const QString& publisherName);
@@ -37,10 +38,9 @@ public:
 
     // ===== Getters =====
     QString getPublisherName() const { return publisherName; }
-    QVector<int> getBooksPublished() const { return booksPublished; }
+
     double getTotalRevenue() const { return totalRevenue; }
     QDateTime getJoinedAt() const { return joinedAt; }
-    int getBooksPublishedCount() const { return booksPublished.size(); }
 
     // ===== Setters =====
     void setPublisherName(const QString& name) { publisherName = name; }
@@ -59,7 +59,7 @@ public:
     void resetRevenue() { totalRevenue = 0.0; }
 
     // ===== Statistics =====
-    int getTotalPublishedBooks() const { return booksPublished.size(); }
+
     QString getFormattedRevenue() const;
 };
 

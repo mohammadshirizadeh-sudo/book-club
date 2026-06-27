@@ -9,6 +9,7 @@ class Cart {
 private:
     int userId;
     QVector<CartItem> items;
+
     double totalPrice;
     double totalDiscount;
     double finalPrice;

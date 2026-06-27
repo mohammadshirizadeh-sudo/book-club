@@ -1,6 +1,4 @@
 #include "User.h"
-#include "admin.h"
-#include "Publisher.h"
 
 
 
@@ -42,6 +40,7 @@ User::User()
     , favouriteGenre(QVector<QString>())
     , lastLogin(QDateTime())
     , updatedAt(QDateTime::currentDateTime())
+    ,salt(PasswordHelper::generateSalt())
 {
 
 }
@@ -68,7 +67,7 @@ User::User(int id, const QString& username, const QString& email, const QString&
 }
 
 User :: User(int id, const QString &fullName, const QString& username, const QString& email,UserRole role, AccountStatus status,
-            const QDateTime& createdAt, const QDateTime & lastLogin ,const QString& plainPassword): id(id), Fullname(fullName), username(username), email(email)
+     const QDateTime& createdAt, const QDateTime & lastLogin ,const QString& plainPassword): id(id), Fullname(fullName), username(username), email(email)
     , role(role), status(status), createdAt(createdAt) , lastLogin(lastLogin), updatedAt(QDateTime::currentDateTime())
 {
     if (!PasswordValidator::isValid(plainPassword)) {
@@ -86,6 +85,13 @@ User :: User(int id, const QString &fullName, const QString& username, const QSt
 
 
 // this constructor is for database
+QDateTime User::getCreatedAt() const
+{
+    return createdAt;
+}
+
+User::~User() = default;
+
 User :: User(int id,const QString &fullName, const QString& username, const QString& _email,UserRole role, AccountStatus status,
             const QDateTime& createdAt,const QDateTime &lastLogin ,const QString& passwordHash , QVector<QString> favouriteGenre , const QDateTime& updatedAt , QString salt)
     : id(id)
@@ -224,6 +230,7 @@ bool User::setPassword(const QString& password) {
     // 2. Generate new salt
 
 
+    salt = PasswordHelper::generateSalt();//we need new salt here because of more privacy
     // 3. Hash password with salt
     passwordHash = PasswordHelper::hashPassword(password, salt);
 
@@ -257,9 +264,9 @@ bool User::isBlocked() const
 }
 
 
-bool User::checkPassword(const QString& password) const
+bool User::checkPassword(const QString& password)const
 {
-    // رمز ورودی رو با salt ذخیره‌شده هش کن
+
     QString hashPass = PasswordHelper::hashPassword(password, salt);
 
     // هش جدید رو با هش ذخیره‌شده مقایسه کن
@@ -269,17 +276,7 @@ bool User::checkPassword(const QString& password) const
 
 
 
-User* User::createUser(int id, const QString& username, const QString& email,
-                       const QString& password, UserRole role) {
-    switch(role) {
-    case UserRole::Admin:
-        return new Admin(id, username, email, password);
-    case UserRole::Publisher:
-        return new Publisher(id, username, email, password , "");
-    default:
-        return new User(id, username, email, password);
-    }
-}
+
 
 
 

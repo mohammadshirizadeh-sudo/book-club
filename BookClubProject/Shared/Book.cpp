@@ -85,7 +85,7 @@ double Book::getFinalPrice() const {
 }
 
 bool Book::isFree() const {
-    return price == 0.0;
+    return price < std::numeric_limits<double>::epsilon();//the reason i don't wirte price==0.0 is that floating-point equality is unsafe
 }
 
 bool Book::isDiscounted() const {

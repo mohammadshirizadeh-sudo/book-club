@@ -99,6 +99,17 @@ bool UserRepository::isEmailTaken(const QString& email) const {
     return usersByEmail.contains(email);
 }
 
+void UserRepository::resetNextId() {
+    int maxId = 1000;
+    for (int id : usersById.keys()) {
+        if (id > maxId) {
+            maxId = id;
+        }
+    }
+    nextId = maxId + 1;
+    qDebug() << "nextId reset to:" << nextId;
+}
+
 
 
 //these are for files don't forget

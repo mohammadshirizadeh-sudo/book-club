@@ -3,6 +3,7 @@
 #include "../Shared/PasswordValidator.h"
 #include "../Shared/PasswordHelper.h"
 #include <QDebug>
+#include "../Shared/UserFactory.h"
 
 AuthService::AuthService(UserRepository* repo)
     : userRepo(repo) {
@@ -24,9 +25,11 @@ User* AuthService::registerUser(const QString& username, const QString& email, c
         return nullptr;
     }
 
+
     // 2. Validate email
-    if (!EmailValidator::isValid(email)) {
-        qDebug() << "Invalid email:" << EmailValidator::getLastError();
+    ValidationResult emailResult = EmailValidator::isValid(email);
+    if (!emailResult.isValid) {
+        qDebug() << "Invalid email:" << emailResult.errorMessage;
         return nullptr;
     }
 
@@ -36,16 +39,17 @@ User* AuthService::registerUser(const QString& username, const QString& email, c
     }
 
     // 3. Validate password
-    if (!PasswordValidator::isValid(password)) {
-        qDebug() << "Invalid password:" << PasswordValidator::getLastError();
+    ValidationResult PassResult = EmailValidator::isValid(email);
+    if (!PassResult.isValid) {
+        qDebug() << "Invalid password:" << PassResult.errorMessage;
         return nullptr;
     }
 
     // 4. Create user
 
     int newId = userRepo->getNextId();
+    User * newUser = UserFactory::createUser(newId , username , email,  password , role);
 
-    User* newUser = User::createUser(newId , username , email, password , role);
 
     // 5. Set password (hash it)
 
@@ -114,3 +118,4 @@ User* AuthService::getCurrentUser() const {
 bool AuthService::isUsernameAvailable(const QString& username) const {
     return !userRepo->isUsernameTaken(username);
 }
+

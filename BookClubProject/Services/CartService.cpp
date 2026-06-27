@@ -4,29 +4,27 @@
 
 // ===== Constructor =====
 CartService::CartService(BookRepository* repo)
-    : cart(nullptr)
-    , bookRepo(repo) {
+    : bookRepo(repo) {
 }
 
 CartService::~CartService() {
-    if (cart) {
-        delete cart;
-        cart = nullptr;
-    }
+    qDeleteAll(carts);
 }
 
 // ===== Cart Management =====
 
-void CartService::createCart(int userId) {
-    if (cart) {
-        delete cart;
-        cart = nullptr;
+Cart* CartService::getOrcreateCart(int userId) {
+    if (carts.contains(userId)) {
+        return carts[userId];
     }
-    cart = new Cart(userId);
+    Cart* newCart = new Cart(userId);
+    carts[userId] = newCart;
     qDebug() << "Cart created for user:" << userId;
+    return newCart;
 }
 
-bool CartService::addToCart(int bookId, int quantity) {
+bool CartService::addToCart(int userId, int bookId, int quantity) {
+    Cart* cart = getOrcreateCart(userId);
     if (!cart) {
         qWarning() << "Cart not initialized! Call createCart() first.";
         return false;
@@ -60,42 +58,48 @@ bool CartService::addToCart(int bookId, int quantity) {
     // Add to cart
     bool success = cart->addItem(item);
     if (success) {
-        calculateTotal();
+        calculateTotal(userId);
         qDebug() << "Added to cart:" << book->getTitle() << "x" << quantity;
     }
 
     return success;
 }
 
-bool CartService::removeFromCart(int bookId) {
-    if (!cart) {
-        qWarning() << "Cart not initialized!";
+
+bool CartService::removeFromCart(int userId, int bookId) {//بررسی کن منظور از این چیه
+
+
+
+    if (!carts.contains(userId)) {
+        qWarning() << "No cart found for user:" << userId;
         return false;
     }
 
+    Cart* cart = carts[userId];
     bool success = cart->removeItem(bookId);
     if (success) {
-        calculateTotal();
-        qDebug() << "Removed from cart. Book ID:" << bookId;
+        cart->calculateTotals();
     }
-
     return success;
 }
 
-bool CartService::updateQuantity(int bookId, int quantity) {
-    if (!cart) {
-        qWarning() << "Cart not initialized!";
+bool CartService::updateQuantity(int userId, int bookId, int quantity) {
+    if (!carts.contains(userId)) {
+        qWarning() << "No cart found for user:" << userId;
         return false;
     }
+    Cart* cart = carts[userId];
+
 
     if (quantity < 0) {
         qWarning() << "Quantity cannot be negative!";
         return false;
     }
 
+
     // If quantity is 0, remove the item
     if (quantity == 0) {
-        return removeFromCart(bookId);
+        return removeFromCart(userId , bookId);
     }
 
     // Get book to update prices (in case discount changed)
@@ -117,22 +121,26 @@ bool CartService::updateQuantity(int bookId, int quantity) {
     item->setUnitPrice(book->getPrice());
     item->setDiscountedPrice(book->getFinalPrice());
 
-    calculateTotal();
+    calculateTotal(userId);
+
     qDebug() << "Updated quantity for book:" << bookId << "->" << quantity;
     return true;
 }
 
-void CartService::clearCart() {
-    if (cart) {
-        cart->clear();
-        calculateTotal();
-        qDebug() << "Cart cleared";
+
+
+void CartService::clearCart(int userId) {
+    if (carts.contains(userId)) {
+        carts[userId]->clear();
+        carts[userId]->calculateTotals();
+        qDebug() << "Cart cleared for user:" << userId;
     }
 }
 
 // ===== Calculations =====
 
-void CartService::calculateTotal() {
+void CartService::calculateTotal(int userId) {
+    Cart* cart = carts[userId];
     if (!cart) {
         qWarning() << "Cart not initialized!";
         return;
@@ -140,59 +148,76 @@ void CartService::calculateTotal() {
     cart->calculateTotals();
 }
 
-double CartService::getTotalPrice() const {
+double CartService::getTotalPrice(int userId) const {
+    Cart* cart = carts[userId];
     if (!cart) return 0.0;
     return cart->getTotalPrice();
 }
 
-double CartService::getTotalDiscount() const {
+double CartService::getTotalDiscount(int userId) const {
+    Cart* cart = carts[userId];
     if (!cart) return 0.0;
     return cart->getTotalDiscount();
 }
 
-double CartService::getFinalPrice() const {
+double CartService::getFinalPrice(int userId) const {
+    Cart* cart = carts[userId];
     if (!cart) return 0.0;
     return cart->getFinalPrice();
 }
 
-int CartService::getTotalItemCount() const {
+int CartService::getTotalItemCount(int userId) const {
+    Cart* cart = carts[userId];
     if (!cart) return 0;
     return cart->getTotalItems();
 }
 
-int CartService::getUniqueBookCount() const {
+int CartService::getUniqueBookCount(int userId) const {
+    Cart* cart = carts[userId];
     if (!cart) return 0;
     return cart->getItemCount();
 }
 
 // ===== Getters =====
 
-QVector<CartItem> CartService::getCartItems() const {
+QVector<CartItem> CartService::getCartItems(int userId) const {
+    Cart* cart = carts[userId];
     if (!cart) return QVector<CartItem>();
     return cart->getItems();
 }
 
-bool CartService::isEmpty() const {
+bool CartService::isEmpty(int userId) const {
+    Cart* cart = carts[userId];
     if (!cart) return true;
     return cart->isEmpty();
 }
 
-bool CartService::contains(int bookId) const {
+bool CartService::contains(int userId ,int bookId) const {
+    Cart* cart = carts[userId];
     if (!cart) return false;
     return cart->contains(bookId);
 }
 
-CartItem* CartService::getCartItem(int bookId) {
+CartItem* CartService::getCartItem(int userId ,int bookId) {
+    Cart* cart = carts[userId];
     if (!cart) return nullptr;
     return cart->getItem(bookId);
 }
 
-const CartItem* CartService::getCartItem(int bookId) const {
+const CartItem* CartService::getCartItem(int userId , int bookId) const {
+    Cart* cart = carts[userId];
     if (!cart) return nullptr;
     return cart->getItem(bookId);
 }
 
-int CartService::getUserId() const {
+Cart *CartService::getCart(int userId) const
+{
+
+    return carts.value(userId , nullptr);
+}
+
+int CartService::getUserId(int userId) const {
+    Cart* cart = carts[userId];
     if (!cart) return -1;
     return cart->getUserId();
 }

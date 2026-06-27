@@ -1,5 +1,5 @@
 // purchaseservice.cpp
-#include "PurchaseService.h"
+#include "Purchaseservice.h"
 #include <QDebug>
 
 // ===== Constructor =====
@@ -19,7 +19,7 @@ PurchaseService::PurchaseService(PurchaseRepository* purchaseRepo,
 
 Purchase* PurchaseService::checkout(int userId) {
     // 1. Get current cart
-    Cart* cart = cartService->getCart();
+    Cart* cart = cartService->getCart(userId);
     if (!cart || cart->isEmpty()) {
         qWarning() << "Cart is empty or not initialized!";
         return nullptr;
@@ -63,7 +63,7 @@ Purchase* PurchaseService::checkout(int userId) {
     sendPurchaseConfirmation(userId, purchase);
 
     // 9. Clear the cart
-    cartService->clearCart();
+    cartService->clearCart(userId);
 
     qDebug() << "Checkout completed for user:" << userId
              << "Purchase ID:" << purchase->getPurchaseId()

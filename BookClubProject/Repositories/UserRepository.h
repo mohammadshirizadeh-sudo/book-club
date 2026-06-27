@@ -45,6 +45,7 @@ public:
     bool loadFromFile(const QString& filename);
 
     bool saveToFile(const QString& filename) const;
+    void resetNextId();
 };
 
 #endif

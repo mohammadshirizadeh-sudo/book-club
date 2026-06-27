@@ -1,12 +1,14 @@
 // bookservice.cpp
-
 #include "BookService.h"
+
 #include <QDebug>
 #include <algorithm>
 
 // ===== Constructor =====
-BookService::BookService(BookRepository* repo)
-    : bookRepo(repo) {
+BookService::BookService(BookRepository* repo, ReviewRepository* reviewRepo)
+
+    : bookRepo(repo), reviewRepo(reviewRepo) {
+
 }
 
 // ===== Book Management =====
@@ -362,12 +364,20 @@ bool BookService::updateAverageRating(int bookId, double newRating) {
     // Get all reviews for this book and calculate average
     // For now, just update with new rating (placeholder)
     // In real implementation, you would fetch all reviews and calculate
-    double currentAvg = book->getAverageRating();
-    int salesCount = book->getSalesCount();
 
-    // Simple weighted average (placeholder logic)
-    double newAvg = (currentAvg * salesCount + newRating) / (salesCount + 1);
-    book->setAverageRating(newAvg);
+    int reviewCount = reviewRepo->getReviewsByBookId(bookId).size();
+
+    if (reviewCount == 0) {
+        // اگر اولین نظر است
+        book->setAverageRating(newRating);
+    } else {
+        // محاسبه میانگین واقعی
+        double currentAvg = book->getAverageRating();
+        double newAvg = (currentAvg * reviewCount + newRating) / (reviewCount + 1);
+        book->setAverageRating(newAvg);
+    }
+
+
     bookRepo->updateBook(book);
 
     return true;

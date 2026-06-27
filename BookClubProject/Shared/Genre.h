@@ -88,13 +88,14 @@ public:
 
     //
     static QVector<QString> getAllGenres() {
-        return {
+        static const QVector<QString> all = {
             "Fiction", "NonFiction", "Science", "History",
             "Biography", "Fantasy", "Mystery", "Romance",
             "Horror", "Comedy", "Poetry", "Philosophy",
             "Psychology", "Technology", "Art", "Travel",
             "Cooking", "Health", "Business", "Education", "Other"
         };
+        return all;
     }
 
 

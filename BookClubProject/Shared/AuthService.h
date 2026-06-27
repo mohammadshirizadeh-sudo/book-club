@@ -2,8 +2,8 @@
 #ifndef AUTHSERVICE_H
 #define AUTHSERVICE_H
 
-#include "../Shared/User.h"
-#include "../Repositories/UserRepository.h"
+#include "User.h"
+#include "UserRepository.h"
 
 class AuthService {
 private:

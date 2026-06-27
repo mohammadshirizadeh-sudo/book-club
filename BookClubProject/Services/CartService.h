@@ -3,14 +3,20 @@
 #define CARTSERVICE_H
 
 #include <QVector>
+#include <QMap>
 #include "../Shared/Cart.h"
 #include "../Shared/CartItem.h"
 #include "../Repositories/BookRepository.h"
 
+
+
 class CartService {
 private:
-    Cart* cart;                 // Current user's cart
+
+    QMap<int , Cart*> carts;
+
     BookRepository* bookRepo;   // To get book prices and discounts
+    int currentUserId;
 
 public:
     // ===== Constructor =====
@@ -19,38 +25,39 @@ public:
 
     // ===== Cart Management =====
 
-    void createCart(int userId);
+    Cart* getOrcreateCart(int userId);
 
-    bool addToCart(int bookId, int quantity = 1);
+    bool addToCart(int userId ,int bookId, int quantity = 1);
 
-    bool removeFromCart(int bookId);
+    bool removeFromCart(int userId, int bookId);
 
 
-    bool updateQuantity(int bookId, int quantity);
 
-    void clearCart();
+    bool updateQuantity(int userId,int bookId, int quantity);
+
+    void clearCart(int userId);
 
     // ===== Calculations =====
-    void calculateTotal();
-    double getTotalPrice() const;
-    double getTotalDiscount() const;
+    void calculateTotal(int userId);
+    double getTotalPrice(int userId) const;
+    double getTotalDiscount(int userId) const;
 
-    double getFinalPrice() const;
+    double getFinalPrice(int userId) const;
 
-    int getTotalItemCount() const;
+    int getTotalItemCount(int userId) const;
 
-    int getUniqueBookCount() const;
+    int getUniqueBookCount(int userId) const;
 
     // ===== Getters =====
 
 
-    QVector<CartItem> getCartItems() const;
-    bool isEmpty() const;
-    bool contains(int bookId) const;
-    CartItem* getCartItem(int bookId);
-    const CartItem* getCartItem(int bookId) const;
-    Cart* getCart() const { return cart; }
-    int getUserId() const;
+    QVector<CartItem> getCartItems(int userId) const;
+    bool isEmpty(int userId) const;
+    bool contains(int userId,int bookId) const;
+    CartItem* getCartItem(int userId,int bookId);
+    const CartItem* getCartItem(int userId,int bookId) const;
+    Cart* getCart(int userId) const ;
+    int getUserId(int userId) const;
 
 private:
     double getBookDiscountedPrice(int bookId) const;

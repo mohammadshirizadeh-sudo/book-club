@@ -21,7 +21,6 @@ class Notification {
 private:
     int notificationId;
     int targetUserId;          // 0 = all users, -1 = specific role
-    QString targetRole;        // "User", "Publisher", "Admin", "All"
     NotificationType type;
     QString title;
     QString message;
@@ -33,13 +32,12 @@ public:
     Notification();
     Notification(int notificationId, int targetUserId,
                  NotificationType type, const QString& title, const QString& message);
-    Notification(int notificationId, const QString& targetRole,
+    Notification(int notificationId,
                  NotificationType type, const QString& title, const QString& message);
 
     // ===== Getters =====
     int getNotificationId() const { return notificationId; }
     int getTargetUserId() const { return targetUserId; }
-    QString getTargetRole() const { return targetRole; }
     NotificationType getType() const { return type; }
     QString getTitle() const { return title; }
     QString getMessage() const { return message; }
@@ -49,7 +47,6 @@ public:
     // ===== Setters =====
     void setNotificationId(int id) { notificationId = id; }
     void setTargetUserId(int id) { targetUserId = id; }
-    void setTargetRole(const QString& role) { targetRole = role; }
     void setType(NotificationType type) { this->type = type; }
     void setTitle(const QString& title) { this->title = title; }
     void setMessage(const QString& message) { this->message = message; }

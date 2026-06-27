@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QMap>
 #include "../Shared/Notification.h"
+#include "../Repositories/UserRepository.h"
 
 /**
  * @brief Notification Service for managing user notifications
@@ -13,12 +14,14 @@ class NotificationService {
 private:
     QMap<int, QVector<Notification>> userNotifications;  // userId -> notifications
     int nextId = 1000;
+    UserRepository* userRepo;
 
 public:
-    NotificationService();
+    explicit NotificationService(UserRepository* repo);
 
     // ===== Create Notifications =====
 
+    void setUserRepository(UserRepository* repo) { userRepo = repo; }
 
     void sendToUser(int userId, NotificationType type, const QString& title, const QString& message);
 

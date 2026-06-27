@@ -1,15 +1,15 @@
 // emailvalidator.cpp
 #include "EmailValidator.h"
+#include "ValidationResult.h"
 #include <QDebug>
 
-// ===== Static member definition =====
-QString EmailValidator::lastError = "";
 
 // ===== Private Methods =====
 
 bool EmailValidator::isTypo(const QString& domain, const QString& correct) {
     if (domain == correct) return false;
 
+    if (qAbs(domain.length() - correct.length()) > 1) return false;
     int diffCount = 0;
     for (int i = 0; i < qMin(domain.length(), correct.length()); ++i) {
         if (domain[i] != correct[i]) {
@@ -25,8 +25,7 @@ bool EmailValidator::isTypo(const QString& domain, const QString& correct) {
         }
     }
 
-    if (qAbs(domain.length() - correct.length()) > 1) return false;
-    if (diffCount > 1) return false;
+        if (diffCount > 1) return false;
 
     return true;
 }
@@ -50,10 +49,9 @@ bool EmailValidator::isCommonTypo(const QString& domain) {
 
 // ===== Public Methods =====
 
-bool EmailValidator::isValid(const QString& email) {
+ValidationResult EmailValidator::isValid(const QString& email) {
     if (email.isEmpty()) {
-        lastError = "Email address cannot be empty";
-        return false;
+        return ValidationResult::failure("Email address cannot be empty");
     }
 
     QRegularExpression emailRegex(
@@ -61,44 +59,38 @@ bool EmailValidator::isValid(const QString& email) {
         );
 
     if (!emailRegex.match(email).hasMatch()) {
-        lastError = "Invalid email format";
-        return false;
+        return ValidationResult::failure("Invalid email format");
+
     }
 
     if (email.contains("..")) {
-        lastError = "Email cannot contain consecutive dots";
-        return false;
+        return ValidationResult::failure("Email cannot contain consecutive dots");
+
     }
 
     if (email.startsWith('.')) {
-        lastError = "Email cannot start with a dot";
-        return false;
+        return ValidationResult::failure("Email cannot start with a dot");
+
     }
 
     if (email.contains(" ")) {
-        lastError = "Email cannot contain spaces";
-        return false;
+        return ValidationResult::failure("Email cannot contain spaces");
     }
 
     QStringList parts = email.split('@');
     if (parts.size() != 2) {
-        lastError = "Invalid email structure";
-        return false;
+        return ValidationResult::failure("Invalid email structure");
     }
 
     QString domain = parts[1];
     if (domain.isEmpty() || !domain.contains('.')) {
-        lastError = "Invalid domain name";
-        return false;
+        return ValidationResult::failure("Invalid domain name");
     }
 
     if (isCommonTypo(domain)) {
-        lastError = "Possible typo in email domain";
-        return false;
+        return ValidationResult::failure("Possible typo in email domain");
     }
-
-    lastError = "";
-    return true;
+    return ValidationResult::success();
 }
 
 bool EmailValidator::isDisposableEmail(const QString& email) {
@@ -125,9 +117,6 @@ QString EmailValidator::getUsername(const QString& email) {
     return email.split('@').first();
 }
 
-QString EmailValidator::getLastError() {
-    return lastError;
-}
 
 QString EmailValidator::suggestCorrection(const QString& email) {
     if (!email.contains('@')) {
@@ -148,7 +137,18 @@ QString EmailValidator::suggestCorrection(const QString& email) {
 
     return "";
 }
+ValidationResult EmailValidator::isValidForLogin(const QString& email) {
+    // 1. اول اعتبارسنجی فرمت
+    ValidationResult basicResult = isValid(email);
+    if (!basicResult.isValid) {
+        return basicResult;  // ← خطای فرمت را برمی‌گرداند
+    }
 
-bool EmailValidator::isValidForLogin(const QString& email) {
-    return isValid(email) && !isDisposableEmail(email);
+    // 2. سپس بررسی ایمیل یکبارمصرف
+    if (isDisposableEmail(email)) {
+        return ValidationResult::failure("Disposable/temporary email addresses are not allowed");
+    }
+
+    return ValidationResult::success();
 }
+

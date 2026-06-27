@@ -2,7 +2,7 @@
 #include "NotificationService.h"
 #include <QDebug>
 
-NotificationService::NotificationService() {
+NotificationService::NotificationService(UserRepository* repo) :userRepo(repo) {
 }
 
 void NotificationService::sendToUser(int userId, NotificationType type,
@@ -16,17 +16,53 @@ void NotificationService::sendToAll(NotificationType type,
                                     const QString& title, const QString& message) {
     // Would need list of all users here
     // For now, just demo: send to user 0 as "All"
-    Notification notification(nextId++, 0, type, title, message);
+    if (!userRepo) {
+        qWarning() << "UserRepository not set! Cannot send to all users.";
+        return;
+    }
+    QVector<User*> allUsers = userRepo->getAllUsers();
+    for (User* user: allUsers){
+        Notification notification(nextId++, user->getId(), type, title, message);
+        addNotificationForUser(user->getId(),  notification);
+    }
+
+
     // In real implementation, loop through all users
     qDebug() << "Notification sent to all:" << title;
 }
 
 void NotificationService::sendToRole(const QString& role, NotificationType type,
                                      const QString& title, const QString& message) {
-    Notification notification(nextId++, role, type, title, message);
+    if (!userRepo) {
+        qWarning() << "UserRepository not set! Cannot send to role.";
+        return;
+    }
+    QVector<User*> allUsers = userRepo->getAllUsers();
+    int count =0;
+    for (User* user : allUsers){
+        if (role == "Admin" && user->isAdmin()) {
+            Notification notification(nextId++, user->getId(), type, title, message);
+            addNotificationForUser(user->getId(), notification);
+            count++;
+        } else if (role == "Publisher" && user->isPublisher()) {
+            Notification notification(nextId++, user->getId(), type, title, message);
+            addNotificationForUser(user->getId(), notification);
+            count++;
+        } else if (role == "User" && !user->isAdmin() && !user->isPublisher()) {
+            Notification notification(nextId++, user->getId(), type, title, message);
+            addNotificationForUser(user->getId(), notification);
+            count++;
+        } else if (role == "All") {
+            // همه کاربران (همان sendToAll)
+            Notification notification(nextId++, user->getId(), type, title, message);
+            addNotificationForUser(user->getId(), notification);
+            count++;
+        }
+    }
+
     // Would need list of users with this role here
     // For now, just demo
-    qDebug() << "Notification sent to role" << role << ":" << title;
+    qDebug() << "Notification sent to" << count << "users with role" << role << ":" << title;
 }
 
 void NotificationService::addNotificationForUser(int userId, const Notification& notification) {

@@ -6,7 +6,7 @@
 Notification::Notification()
     : notificationId(0)
     , targetUserId(0)
-    , targetRole("All")
+
     , type(NotificationType::Info)
     , title("")
     , message("")
@@ -18,7 +18,6 @@ Notification::Notification(int notificationId, int targetUserId,
                            NotificationType type, const QString& title, const QString& message)
     : notificationId(notificationId)
     , targetUserId(targetUserId)
-    , targetRole("")
     , type(type)
     , title(title)
     , message(message)
@@ -26,11 +25,10 @@ Notification::Notification(int notificationId, int targetUserId,
     , createdAt(QDateTime::currentDateTime()) {
 }
 
-Notification::Notification(int notificationId, const QString& targetRole,
+Notification::Notification(int notificationId,
                            NotificationType type, const QString& title, const QString& message)
     : notificationId(notificationId)
     , targetUserId(0)
-    , targetRole(targetRole)
     , type(type)
     , title(title)
     , message(message)
@@ -50,12 +48,7 @@ bool Notification::isForUser(int userId) const {
     return targetUserId == userId;
 }
 
-bool Notification::isForRole(const QString& role) const {
-    if (targetRole.isEmpty() || targetRole == "All") {
-        return true;  // All roles
-    }
-    return targetRole == role;
-}
+
 
 QString Notification::getTypeString() const {
     switch(type) {

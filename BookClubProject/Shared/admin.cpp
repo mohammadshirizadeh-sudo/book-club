@@ -37,7 +37,6 @@ Admin::Admin(int id, const QString& fullName, const QString& username, const QSt
     , lastAction(QDateTime::currentDateTime()) {
 
     // Admin-specific initialization
-    setRole(UserRole::Admin);
 }
 
 

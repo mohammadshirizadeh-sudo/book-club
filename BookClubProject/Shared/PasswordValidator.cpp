@@ -1,14 +1,10 @@
 // passwordvalidator.cpp
-#include "PasswordValidator.h"
+#include "PasswordValidater.h"
+#include"ValidationResult.h"
 #include <QDebug>
 
 
 
-
-
-// ===== Static member definition =====
-
-QString PasswordValidator::lastError = "";
 
 // ===== Private Methods =====
 
@@ -22,24 +18,22 @@ bool PasswordValidator::isCommonPassword(const QString& password) {
 
 // ===== Public Methods =====
 
-bool PasswordValidator::isValid(const QString& password) {
+ValidationResult PasswordValidator::isValid(const QString& password) {
+
     if (password.length() < 8) {
-        lastError = "Password must be at least 8 characters long";
-        return false;
+        return ValidationResult::failure("Password must be at least 8 characters long");
     }
 
     if (password.contains(" ")) {
-        lastError = "Password must not contain spaces";
-        return false;
+        return ValidationResult::failure("Password must not contain spaces");
     }
 
+    // بررسی رمزهای ضعیف
     if (isCommonPassword(password)) {
-        lastError = "This password is too common and easily guessable";
-        return false;
+        return ValidationResult::failure("This password is too common and easily guessable");
     }
 
-    lastError = "";
-    return true;
+    return ValidationResult::success();
 }
 
 PasswordStrength PasswordValidator::checkStrength(const QString& password) {
@@ -76,8 +70,4 @@ QString PasswordValidator::getStrengthString(PasswordStrength strength) {
     case PasswordStrength::VeryStrong: return "Very Strong";
     default: return "Unknown";
     }
-}
-
-QString PasswordValidator::getLastError() {
-    return lastError;
 }

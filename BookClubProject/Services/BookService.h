@@ -4,11 +4,9 @@
 
 #include <QString>
 #include <QVector>
-#include
 #include "../Shared/Book.h"
-
-
 #include "../Repositories/BookRepository.h"
+#include "../Repositories/ReviewRepository.h"
 
 /**
  * @brief Book Service - Handles book management operations
@@ -16,10 +14,11 @@
 class BookService {
 private:
     BookRepository* bookRepo;
+    ReviewRepository* reviewRepo;
 
 public:
     // ===== Constructor =====
-    explicit BookService(BookRepository* repo);
+    explicit BookService(BookRepository* repo, ReviewRepository* reviewRepo = nullptr);
 
     // ===== Book Management =====
 

@@ -55,9 +55,6 @@ public:
          const QDateTime& createdAt,const QDateTime& lastLogin ,const QString& plainPassword);
 
 
-    static User* createUser(int id, const QString& username, const QString& email,
-                            const QString& password, UserRole role);
-
     int getId() const;
     void setId(int newId);
     QString getUsername() const;
@@ -84,6 +81,8 @@ public:
     void setRole(UserRole newRole);
 
 
+    QDateTime getCreatedAt() const;
+    virtual ~User();
 };
 
 #endif // USER_H

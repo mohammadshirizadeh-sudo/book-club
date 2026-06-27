@@ -21,6 +21,8 @@ Publisher::Publisher(int id, const QString& username, const QString& email,
     setRole(UserRole::Publisher);
 }
 
+
+
 /*
 
 Publisher::Publisher(int id, const QString& username, const QString& email,
@@ -39,52 +41,19 @@ Publisher::Publisher(int id, const QString& fullName, const QString& username, c
                      const QDateTime& createdAt, const QDateTime& lastLogin,
                      const QString& passwordHash, const QVector<QString>& favouriteGenre,
                      const QDateTime& updatedAt, const QString& publisherName,
-                     const QVector<int>& booksPublished, double totalRevenue , QString salt)
+                      double totalRevenue , QString salt)
     : User(id, fullName, username, email, role, status,
            createdAt, lastLogin, passwordHash, favouriteGenre, updatedAt ,salt)  // ← فراخوانی Constructor پایه
     , publisherName(publisherName)
-    , booksPublished(booksPublished)
     , totalRevenue(totalRevenue)
     , joinedAt(createdAt)  {
 
     // Publisher-specific initialization
-    setRole(UserRole::Publisher);
 }
 
 // ===== Book Management =====
 
-bool Publisher::addPublishedBook(int bookId) {
-    if (bookId <= 0) {
-        qWarning() << "Invalid book ID:" << bookId;
-        return false;
-    }
 
-    if (hasPublishedBook(bookId)) {
-        qWarning() << "Book" << bookId << "already published by this publisher";
-        return false;
-    }
-
-    booksPublished.append(bookId);
-    qDebug() << "Book" << bookId << "added to publisher's list";
-    return true;
-}
-
-bool Publisher::removePublishedBook(int bookId) {
-    if (!hasPublishedBook(bookId)) {
-        qWarning() << "Book" << bookId << "not found in publisher's list";
-        return false;
-    }
-
-    bool removed = booksPublished.removeOne(bookId);
-    if (removed) {
-        qDebug() << "Book" << bookId << "removed from publisher's list";
-    }
-    return removed;
-}
-
-bool Publisher::hasPublishedBook(int bookId) const {
-    return booksPublished.contains(bookId);
-}
 
 // ===== Revenue Management =====
 
