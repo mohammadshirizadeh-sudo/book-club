@@ -24,7 +24,10 @@ qt_add_executable(BookClubProject
     Shared/Cart.h Shared/Cart.cpp
     Shared/CartItem.h Shared/CartItem.cpp
     Shared/Publisher.h Shared/Publisher.cpp
+    Shared/UserFactory.h
     Services/AuthService.h Services/AuthService.cpp
+    Services/PublisherService.h Services/PublisherService.cpp
+    Shared/ValidationResult.h
     Shared/PasswordValidator.cpp
     Shared/EmailValidator.cpp
     Services/BookService.h Services/BookService.cpp
