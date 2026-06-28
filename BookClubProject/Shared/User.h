@@ -5,6 +5,7 @@
 #include <QVector>
 #include "PasswordValidator.h"
 #include"EmailValidator.h"
+#include"ValidationResult.h"
 #include "PasswordHelper.h"
 
 

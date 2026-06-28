@@ -3,8 +3,8 @@
 #define PUBLISHERSERVICE_H
 
 #include <QVector>
-#include "Publisher.h"
-#include "BookReposity.h"
+#include "../Shared/Publisher.h"
+#include "../Repositories/BookRepository.h"
 
 class PublisherService {
 private:

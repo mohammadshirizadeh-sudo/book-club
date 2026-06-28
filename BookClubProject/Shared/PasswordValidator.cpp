@@ -1,5 +1,5 @@
 // passwordvalidator.cpp
-#include "PasswordValidater.h"
+#include "PasswordValidator.h"
 #include"ValidationResult.h"
 #include <QDebug>
 

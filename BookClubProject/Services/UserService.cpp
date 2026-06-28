@@ -38,8 +38,9 @@ bool UserService::updateProfile(int userId, const QString& newEmail,
     }
 
     // 2. Validate email
-    if (!EmailValidator::isValid(newEmail)) {
-        qWarning() << "Invalid email:" << EmailValidator::getLastError();
+    ValidationResult email = EmailValidator::isValid(newEmail);
+    if (!email.isValid) {
+        qWarning() << "Invalid email:" << email.errorMessage;
         return false;
     }
 
@@ -115,8 +116,10 @@ bool UserService::changePassword(int userId, const QString& oldPassword, const Q
     }
 
     // 4. Validate new password
-    if (!PasswordValidator::isValid(newPassword)) {
-        qWarning() << "Invalid new password:" << PasswordValidator::getLastError();
+
+    ValidationResult pass = EmailValidator::isValid(newPassword);
+    if (!pass.isValid) {
+        qWarning() << "Invalid new password:" << pass.errorMessage;
         return false;
     }
 

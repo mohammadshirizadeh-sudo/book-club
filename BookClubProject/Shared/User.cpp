@@ -54,11 +54,10 @@ User::User(int id, const QString& username, const QString& email, const QString&
 
 {
     // اعتبارسنجی پسورد
-    if (!PasswordValidator::isValid(plainPassword)) {
-        throw std::invalid_argument(
-            "Invalid password: " +
-            PasswordValidator::getLastError().toStdString()
-            );
+
+    ValidationResult pass = PasswordValidator::isValid(plainPassword);
+    if (!pass.isValid) {
+        throw std::invalid_argument("Invalid password: " + pass.errorMessage.toStdString());
     }
 
     // use hash
@@ -70,10 +69,12 @@ User :: User(int id, const QString &fullName, const QString& username, const QSt
      const QDateTime& createdAt, const QDateTime & lastLogin ,const QString& plainPassword): id(id), Fullname(fullName), username(username), email(email)
     , role(role), status(status), createdAt(createdAt) , lastLogin(lastLogin), updatedAt(QDateTime::currentDateTime())
 {
-    if (!PasswordValidator::isValid(plainPassword)) {
+
+    ValidationResult pass = PasswordValidator::isValid(plainPassword);
+    if (!pass.isValid) {
         throw std::invalid_argument(
             "Invalid password: " +
-            PasswordValidator::getLastError().toStdString()
+            pass.errorMessage.toStdString()
             );
     }
 
@@ -222,8 +223,9 @@ void User::setUpdatedAt(const QDateTime &newUpdatedAt)
 
 bool User::setPassword(const QString& password) {
     // 1. Validate password strength
-    if (!PasswordValidator::isValid(password)) {
-        qWarning() << "Invalid password:" << PasswordValidator::getLastError();
+    ValidationResult pass = PasswordValidator::isValid(password);
+    if (!pass.isValid) {
+        qWarning() << "Invalid password:" << pass.errorMessage;
         return false;
     }
 

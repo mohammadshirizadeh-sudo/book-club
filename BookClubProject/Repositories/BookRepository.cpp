@@ -1,5 +1,5 @@
 // bookrepository.cpp
-#include "BookReposity.h"
+#include "BookRepository.h"
 #include <QDebug>
 
 BookRepository::BookRepository() {
