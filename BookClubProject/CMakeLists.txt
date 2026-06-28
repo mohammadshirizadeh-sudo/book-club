@@ -43,6 +43,10 @@ qt_add_executable(BookClubProject
     Shared/Library.h Shared/Library.cpp
     Repositories/ReviewRepository.h Repositories/ReviewRepository.cpp
     Repositories/UserRepository.h Repositories/UserRepository.cpp
+    Server/Server.h Server/Server.cpp
+    Server/ClientHandler.h Server/ClientHandler.cpp
+    Server/RequestParser.h Server/RequestParser.cpp
+    Shared/ValidationResult.cpp
 
 )
 
