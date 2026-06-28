@@ -43,6 +43,11 @@ qt_add_executable(BookClubProject
     Shared/Library.h Shared/Library.cpp
     Repositories/ReviewRepository.h Repositories/ReviewRepository.cpp
     Repositories/UserRepository.h Repositories/UserRepository.cpp
+    signWindow/loginwindow.h signWindow/loginwindow.cpp signWindow/loginwindow.ui
+    signWindow/registerwindow.h signWindow/registerwindow.cpp signWindow/registerwindow.ui
+    signWindow/forgotpasswordwindow.h signWindow/forgotpasswordwindow.cpp signWindow/forgotpasswordwindow.ui
+    resources.qrc
+     
 
 )
 
