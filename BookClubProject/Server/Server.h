@@ -1,10 +1,28 @@
+
 #ifndef SERVER_H
 #define SERVER_H
 
-class Server
+#include <QTcpServer>
+#include <QMap>
+
+class ClientHandler;
+
+class Server : public QTcpServer
 {
+    Q_OBJECT
+
 public:
-    Server();
+    explicit Server(QObject *parent = nullptr);
+    ~Server();
+
+    bool start(quint16 port);
+    void stop();
+
+protected:
+    void incomingConnection(qintptr socketDescriptor) override;
+
+private:
+    QMap<qintptr, ClientHandler*> m_clients;
 };
 
 #endif // SERVER_H

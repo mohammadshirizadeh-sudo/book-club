@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(BookClubProject LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network)
 
 qt_standard_project_setup()
 
@@ -47,6 +47,9 @@ qt_add_executable(BookClubProject
     Server/ClientHandler.h Server/ClientHandler.cpp
     Server/RequestParser.h Server/RequestParser.cpp
     Shared/ValidationResult.cpp
+    Server/Request.h Server/Request.cpp
+    Server/Response.h Server/Response.cpp
+    Server/Commands.h
 
 )
 
@@ -54,6 +57,7 @@ target_link_libraries(BookClubProject
     PRIVATE
         Qt::Core
         Qt::Widgets
+        Qt::Network
 )
 
 install(TARGETS BookClubProject
