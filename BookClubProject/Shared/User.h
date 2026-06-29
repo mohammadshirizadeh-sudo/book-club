@@ -38,6 +38,8 @@ private:
     QDateTime lastLogin;
     QDateTime updatedAt;
     QString salt;
+    QString passwordResetToken;
+    QDateTime resetTokenExpiry;
 
 
 
@@ -83,7 +85,31 @@ public:
 
 
     QDateTime getCreatedAt() const;
+    QString generateResetToken();
+
+
+
+    //remember you can send real email for password
+    bool verifyResetToken(const QString& token) const;
+
+
+    bool resetPasswordWithToken(const QString& token, const QString& newPassword);
+
+    void clearResetToken();
+
+    bool isResetTokenExpired() const;
+
+    // ===== Getters =====
+    QString getPasswordResetToken() const { return passwordResetToken; }
+    QDateTime getResetTokenExpiry() const { return resetTokenExpiry; }
+    QString getRoleString() const;
+
+
+
+
+
     virtual ~User();
+
 };
 
 #endif // USER_H

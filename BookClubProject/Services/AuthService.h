@@ -25,6 +25,13 @@ public:
     User* getCurrentUser() const;
     bool isUsernameAvailable(const QString& username) const;
 
+
+
+
+    bool requestPasswordReset(const QString& email);
+
+    bool resetPasswordWithToken(const QString& token, const QString& newPassword);
+
 };
 
 #endif // AUTHSERVICE_H

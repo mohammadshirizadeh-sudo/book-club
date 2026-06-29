@@ -43,6 +43,7 @@ qt_add_executable(BookClubProject
     Shared/Library.h Shared/Library.cpp
     Repositories/ReviewRepository.h Repositories/ReviewRepository.cpp
     Repositories/UserRepository.h Repositories/UserRepository.cpp
+    # ===== Server Files =====
     Server/Server.h Server/Server.cpp
     Server/ClientHandler.h Server/ClientHandler.cpp
     Server/RequestParser.h Server/RequestParser.cpp
@@ -50,9 +51,14 @@ qt_add_executable(BookClubProject
     Server/Request.h Server/Request.cpp
     Server/Response.h Server/Response.cpp
     Server/Commands.h
-
+    Server/Commands.cpp
+    Server/CommandFactory.h Server/CommandFactory.cpp
+    # ===== UI Files =====
+    signWindow/loginwindow.h signWindow/loginwindow.cpp signWindow/loginwindow.ui
+    signWindow/registerwindow.h signWindow/registerwindow.cpp signWindow/registerwindow.ui
+    signWindow/forgotpasswordwindow.h signWindow/forgotpasswordwindow.cpp signWindow/forgotpasswordwindow.ui
+    resources.qrc
 )
-
 target_link_libraries(BookClubProject
     PRIVATE
         Qt::Core
