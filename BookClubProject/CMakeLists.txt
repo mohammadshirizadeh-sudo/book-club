@@ -46,9 +46,18 @@ qt_add_executable(BookClubProject
     signWindow/loginwindow.h signWindow/loginwindow.cpp signWindow/loginwindow.ui
     signWindow/registerwindow.h signWindow/registerwindow.cpp signWindow/registerwindow.ui
     signWindow/forgotpasswordwindow.h signWindow/forgotpasswordwindow.cpp signWindow/forgotpasswordwindow.ui
-    resources.qrc
+
+
      
 
+
+)
+
+qt_add_resources(BookClubProject "app_resources"
+    FILES
+        resources/ap_icon.png
+        resources/sign_background.jpg
+        resources/wood.jpg
 )
 
 target_link_libraries(BookClubProject

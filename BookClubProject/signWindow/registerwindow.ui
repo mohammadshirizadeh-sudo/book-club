@@ -15,11 +15,11 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources.qrc">
-    <normaloff>:/resources/ap_icon.jpg</normaloff>:/resources/ap_icon.jpg</iconset>
+    <normaloff>:/resources/ap_icon.png</normaloff>:/resources/ap_icon.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/sign_background.jpg);
+        background-image: url(:/resources/sign_background.jpg);
 }</string>
   </property>
   <widget class="QFrame" name="frame">
@@ -48,7 +48,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 34px;
 	color: rgb(255, 255, 255);
@@ -69,7 +69,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
 	color: rgb(255, 255, 255);
@@ -90,7 +90,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
 	color: rgb(255, 255, 255);
@@ -111,7 +111,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
 	color: rgb(255, 255, 255);
@@ -132,7 +132,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font-size: 20px;
 	color: rgb(255, 255, 255);
 }</string>
@@ -149,7 +149,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font-size: 20px;
 	color: rgb(255, 255, 255);
 }</string>
@@ -169,7 +169,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font-size: 20px;
 	color: rgb(255, 255, 255);
 }</string>
@@ -189,7 +189,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
 	color: rgb(255, 255, 255);
@@ -210,7 +210,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
 	color: rgb(255, 255, 255);
@@ -231,7 +231,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font-size: 20px;
 	color: rgb(255, 255, 255);
 }</string>
@@ -248,7 +248,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font-size: 20px;
 	color: rgb(255, 255, 255);
 }</string>
@@ -265,7 +265,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(255, 255, 255);
@@ -287,7 +287,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(:/resources/wood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(255, 255, 255);

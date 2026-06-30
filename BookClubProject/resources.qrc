@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
+        <file>resources/ap_icon.png</file>
         <file>resources/sign_background.jpg</file>
         <file>resources/wood.jpg</file>
-        <file>resources/ap_icon.png</file>
     </qresource>
 </RCC>
