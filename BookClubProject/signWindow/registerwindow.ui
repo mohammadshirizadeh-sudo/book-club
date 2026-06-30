@@ -14,12 +14,15 @@
    <string>Book Club - Sign up</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources.qrc">
+   <iconset resource="../build/Desktop_Qt_6_11_1_MinGW_64_bit-Debug/.qt/rcc/app_resources.qrc">
     <normaloff>:/resources/ap_icon.png</normaloff>:/resources/ap_icon.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
         background-image: url(:/resources/sign_background.jpg);
+}
+QFrame {
+	background-color: rgba(255,255,255,10);
 }</string>
   </property>
   <widget class="QFrame" name="frame">
@@ -301,7 +304,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="../resources.qrc"/>
+  <include location="../build/Desktop_Qt_6_11_1_MinGW_64_bit-Debug/.qt/rcc/app_resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -10,17 +10,12 @@
 
 
 
+
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-
-
-    qDebug() << QFile::exists(":/resources/wood.jpg");
-    qDebug() << QFile::exists(":/resources/sign_background.jpg");
-    qDebug() << QDir(":/").entryList(QDir::AllEntries);
 
 
 
@@ -32,6 +27,7 @@ int main(int argc, char *argv[])
 
     ForgotPasswordWindow w3;
     w3.show();
+
 
 
     //MainWindow w;

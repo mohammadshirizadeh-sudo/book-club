@@ -17,7 +17,7 @@
    <string>Book Club - Sign in</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../build/Desktop_Qt_6_11_1_MinGW_64_bit-Debug/.qt/rcc/app_resources.qrc">
+   <iconset>
     <normaloff>:/resources/ap_icon.png</normaloff>:/resources/ap_icon.png</iconset>
   </property>
   <property name="styleSheet">
@@ -62,11 +62,10 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(:/resources/wood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
-	color: rgb(255, 255, 255);
-}</string>
+     background-image: url(:/resources/wood.jpg);
+     color: white;
+     font: 700 40px "Script MT Bold";
+ }</string>
     </property>
     <property name="text">
      <string>BOOK CLUB LIBRARY</string>
