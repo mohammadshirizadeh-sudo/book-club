@@ -14,12 +14,12 @@
    <string>Book Club - Sign up</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources.qrc">
+   <iconset>
     <normaloff>:/resources/ap_icon.jpg</normaloff>:/resources/ap_icon.jpg</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/sign_background.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/sign_background.jpg);
 }</string>
   </property>
   <widget class="QFrame" name="frame">
@@ -41,17 +41,17 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>90</y>
+      <y>20</y>
       <width>1161</width>
       <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 34px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
@@ -62,17 +62,17 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>200</y>
+      <y>130</y>
       <width>121</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
@@ -83,17 +83,17 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>280</y>
+      <y>200</y>
       <width>111</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
@@ -104,17 +104,17 @@
     <property name="geometry">
      <rect>
       <x>180</x>
-      <y>360</y>
+      <y>280</y>
       <width>111</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
@@ -125,16 +125,16 @@
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>200</y>
+      <y>130</y>
       <width>441</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font-size: 20px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
    </widget>
@@ -142,16 +142,16 @@
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>280</y>
+      <y>200</y>
       <width>441</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font-size: 20px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="echoMode">
@@ -162,16 +162,16 @@
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>360</y>
+      <y>280</y>
       <width>441</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font-size: 20px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="echoMode">
@@ -189,10 +189,10 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
@@ -210,10 +210,10 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size: 24px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
@@ -231,9 +231,9 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font-size: 20px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
    </widget>
@@ -248,9 +248,9 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font-size: 20px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
    </widget>
@@ -265,10 +265,10 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }
 </string>
     </property>
@@ -287,10 +287,10 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }
 </string>
     </property>
@@ -298,10 +298,49 @@
      <string>Already have an account? Sign in!</string>
     </property>
    </widget>
+   <widget class="QLabel" name="passwordLabel_2">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>360</y>
+      <width>191</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 24px;
+	color: rgb(28, 20, 18);
+}</string>
+    </property>
+    <property name="text">
+     <string>Repeat Password:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="passwordNewLineEdit_2">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>360</y>
+      <width>441</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit{
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
+	font-size: 20px;
+	color: rgb(28, 20, 18);
+}</string>
+    </property>
+    <property name="echoMode">
+     <enum>QLineEdit::EchoMode::PasswordEchoOnEdit</enum>
+    </property>
+   </widget>
   </widget>
  </widget>
- <resources>
-  <include location="../resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

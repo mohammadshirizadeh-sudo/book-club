@@ -22,7 +22,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/sign_background.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/sign_background.jpg);
 }</string>
   </property>
   <widget class="QFrame" name="frame">
@@ -59,10 +59,10 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
+	font-size:40px;
 }</string>
     </property>
     <property name="text">
@@ -80,10 +80,10 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	color: rgb(255, 255, 255);
-font-size:30px;
+	color: rgb(28, 20, 18);
+	font-size:30px;
 }</string>
     </property>
     <property name="text">
@@ -101,9 +101,9 @@ font-size:30px;
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 	font-size:30px;
 }</string>
     </property>
@@ -112,6 +112,9 @@ font-size:30px;
     </property>
    </widget>
    <widget class="QLineEdit" name="usernameLineEdit">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -121,11 +124,14 @@ font-size:30px;
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLineEdit{
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
-	font-size: 25px;
-	color: rgb(255, 255, 255);
+     <string notr="true">QLineEdit {
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
+	font-size:25px;
+	color: rgb(28, 20, 18);
 }</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
    <widget class="QLineEdit" name="PasswprdLineEdit">
@@ -139,10 +145,13 @@ font-size:30px;
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font-size:25px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
     <property name="echoMode">
      <enum>QLineEdit::EchoMode::Password</enum>
@@ -159,10 +168,10 @@ font-size:30px;
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:20px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
@@ -180,11 +189,10 @@ font-size:30px;
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
-	border-color: rgb(0, 0, 0);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
@@ -202,10 +210,10 @@ font-size:30px;
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
-	background-image: url(C:/123456789/book-club/BookClubProject/resources/wood.jpg);
+	background-image: url(C:/1library/book-club/BookClubProject/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
-	color: rgb(255, 255, 255);
+	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">

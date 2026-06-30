@@ -14,7 +14,10 @@ class LoginWindow : public QWidget
 public:
     explicit LoginWindow(QWidget *parent = nullptr);
     ~LoginWindow();
-
+/*
+signals:    //اینو واسه وصل کردن صفحه ها نوشتم ولی جواب نمیده، مثل 2 روش دیگه ای که امتحان کردم
+    void openRegisterWindow();
+*/
 private:
     Ui::LoginWindow *ui;
 };

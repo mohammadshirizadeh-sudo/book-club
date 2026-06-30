@@ -8,9 +8,9 @@ qt_standard_project_setup()
 qt_add_executable(BookClubProject
     WIN32 MACOSX_BUNDLE
     main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
+    appWindow/mainwindow.cpp
+    appWindow/mainwindow.h
+    appWindow/mainwindow.ui
     Shared/User.h Shared/User.cpp
     Shared/PasswordHelper.h
     Shared/PasswordValidator.h
