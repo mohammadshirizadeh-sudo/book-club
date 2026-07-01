@@ -5,6 +5,16 @@
 #include <algorithm>
 
 // ===== Constructor =====
+BookRepository *BookService::getBookRepo() const
+{
+    return bookRepo;
+}
+
+bool BookService::deleteBook(int bookId, const QString &reason)
+{
+
+}
+
 BookService::BookService(BookRepository* repo, ReviewRepository* reviewRepo)
 
     : bookRepo(repo), reviewRepo(reviewRepo) {

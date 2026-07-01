@@ -68,6 +68,7 @@ public:
     bool updateAverageRating(int bookId, double newRating);
 
     bool updateSalesCount(int bookId, int quantity);
+    BookRepository *getBookRepo() const;
 };
 
 #endif // BOOKSERVICE_H

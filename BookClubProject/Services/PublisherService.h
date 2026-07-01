@@ -15,6 +15,7 @@ public:
 
     int getBooksPublishedCount(int publisherId) const;
     QVector<Book*> getBooksByPublisher(int publisherId) const;
+    BookRepository *getBookRepo() const;
 };
 
 #endif // PUBLISHERSERVICE_H

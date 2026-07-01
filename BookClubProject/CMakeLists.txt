@@ -58,6 +58,7 @@ qt_add_executable(BookClubProject
     signWindow/registerwindow.h signWindow/registerwindow.cpp signWindow/registerwindow.ui
     signWindow/forgotpasswordwindow.h signWindow/forgotpasswordwindow.cpp signWindow/forgotpasswordwindow.ui
     resources.qrc
+    Services/AdminService.h Services/AdminService.cpp
 )
 target_link_libraries(BookClubProject
     PRIVATE

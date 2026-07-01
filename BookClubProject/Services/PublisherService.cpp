@@ -1,6 +1,11 @@
 // publisherservice.cpp
 #include "PublisherService.h"
 
+BookRepository *PublisherService::getBookRepo() const
+{
+    return bookRepo;
+}
+
 PublisherService::PublisherService(BookRepository* repo)
     : bookRepo(repo) {
 }
