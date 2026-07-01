@@ -24,7 +24,9 @@ void LoginWindow::on_registerPushButton_clicked()
     emit openRegisterWindow();
 }
 
+/*
 void LoginWindow::on_signinPushButton_clicked()
 {
     emit openMainWindow();
 }
+*/
