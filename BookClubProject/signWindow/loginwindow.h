@@ -18,7 +18,7 @@ public:
 signals:
     void openForgotPasswordWindow();
     void openRegisterWindow();
-    void openMainWindow();
+    //void openMainWindow();
 
 private slots:
     void on_forgotpassPushButton_clicked();

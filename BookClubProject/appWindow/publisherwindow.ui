@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PublisherWindow</class>
+ <widget class="QWidget" name="PublisherWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+	background-image: url(:/resources/blueBack.png);
+}</string>
+  </property>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
