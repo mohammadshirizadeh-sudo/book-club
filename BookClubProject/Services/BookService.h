@@ -69,6 +69,9 @@ public:
 
     bool updateSalesCount(int bookId, int quantity);
     BookRepository *getBookRepo() const;
+
+
+     bool deleteBook(int bookId);
 };
 
 #endif // BOOKSERVICE_H

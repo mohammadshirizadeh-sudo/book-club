@@ -221,7 +221,7 @@ Response ClientHandler::handleLogout(const Request& request)
 Response ClientHandler::handleResetPassword(const Request& request)
 {
     QString email = request.getParamString("email");
-    if (m_authService->resetPassword(email)) {
+    if (m_authService->requestPasswordReset(email)) {
         return Response::success("Password reset email sent");
     }
     return Response::error("Failed to reset password");
@@ -621,8 +621,9 @@ Response ClientHandler::handleEditBook(const Request& request)
     QString genre = request.getParamString("genre");
     QString description = request.getParamString("description");
     double price = request.getParamDouble("price");
+    double discount = request.getParamDouble("discount");
 
-    if (m_publisherService->editBook(publisherId, bookId, title, author, genre, description, price)) {
+    if (m_publisherService->editBook(bookId, title, author, genre, description, price ,discount)) {
         return Response::success("Book updated successfully");
     }
     return Response::error("Failed to update book");
@@ -630,10 +631,10 @@ Response ClientHandler::handleEditBook(const Request& request)
 
 Response ClientHandler::handleDeactivateBook(const Request& request)
 {
-    int publisherId = request.getParamInt("publisherId");
+
     int bookId = request.getParamInt("bookId");
 
-    if (m_publisherService->deactivateBook(publisherId, bookId)) {
+    if (m_bookService->deactivateBook(bookId)) {
         return Response::success("Book deactivated");
     }
     return Response::error("Failed to deactivate book");
@@ -644,7 +645,7 @@ Response ClientHandler::handleReactivateBook(const Request& request)
     int publisherId = request.getParamInt("publisherId");
     int bookId = request.getParamInt("bookId");
 
-    if (m_publisherService->reactivateBook(publisherId, bookId)) {
+    if (m_bookService->reactivateBook(bookId)) {
         return Response::success("Book reactivated");
     }
     return Response::error("Failed to reactivate book");
@@ -687,11 +688,13 @@ Response ClientHandler::handleBlockUser(const Request& request)
     int userId = request.getParamInt("userId");
     QString reason = request.getParamString("reason");
 
-    if (m_adminService->blockUser(userId, reason)) {
+    if (m_adminService->blockUser(userId, reason))  {
+
         return Response::success("User blocked");
     }
     return Response::error("Failed to block user");
 }
+
 
 Response ClientHandler::handleUnblockUser(const Request& request)
 {
@@ -746,9 +749,8 @@ Response ClientHandler::handleGetBlockedUsers(const Request& request)
 Response ClientHandler::handleAdminDeleteBook(const Request& request)
 {
     int bookId = request.getParamInt("bookId");
-    QString reason = request.getParamString("reason");
 
-    if (m_adminService->deleteBook(bookId, reason)) {
+    if (m_bookService->deleteBook(bookId)) {
         return Response::success("Book deleted by admin");
     }
     return Response::error("Failed to delete book");
@@ -757,9 +759,10 @@ Response ClientHandler::handleAdminDeleteBook(const Request& request)
 Response ClientHandler::handleAdminDeleteReview(const Request& request)
 {
     int reviewId = request.getParamInt("reviewId");
+    int userId =request.getParamInt("userId");
     QString reason = request.getParamString("reason");
 
-    if (m_adminService->deleteReview(reviewId, reason)) {
+    if (m_reviewService->deleteReview(reviewId , userId)) {
         return Response::success("Review deleted by admin");
     }
     return Response::error("Failed to delete review");

@@ -6,6 +6,8 @@
 #include <QVariantMap>
 #include "Request.h"
 #include "Response.h"
+#include "../Repositories/ReviewRepository.h"
+#include "../Services/AdminService.h"
 
 // Forward declarations
 class AuthService;
@@ -522,92 +524,95 @@ private:
 class BlockUserCommand : public Command
 {
 public:
-    explicit BlockUserCommand(AdminService* adminService);
+    explicit BlockUserCommand(UserService* adminService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::BlockUser; }
     QString getName() const override { return "BlockUser"; }
     bool requiresAdmin() const override { return true; }
 
 private:
-    AdminService* m_adminService;
+    UserService* m_adminService;
+
 };
 
 class UnblockUserCommand : public Command
 {
 public:
-    explicit UnblockUserCommand(AdminService* adminService);
+    explicit UnblockUserCommand(UserService* adminService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::UnblockUser; }
     QString getName() const override { return "UnblockUser"; }
     bool requiresAdmin() const override { return true; }
 
 private:
-    AdminService* m_adminService;
+    UserService* m_adminService;
 };
 
 class DeleteUserCommand : public Command
 {
 public:
-    explicit DeleteUserCommand(AdminService* adminService);
+    explicit DeleteUserCommand(UserService* adminService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::DeleteUser; }
     QString getName() const override { return "DeleteUser"; }
     bool requiresAdmin() const override { return true; }
 
 private:
-    AdminService* m_adminService;
+    UserService* m_adminService;
 };
 
 class GetAllUsersCommand : public Command
 {
 public:
-    explicit GetAllUsersCommand(AdminService* adminService);
+    explicit GetAllUsersCommand(UserService* adminService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetAllUsers; }
     QString getName() const override { return "GetAllUsers"; }
     bool requiresAdmin() const override { return true; }
 
 private:
-    AdminService* m_adminService;
+    UserService* m_adminService;
 };
 
 class GetBlockedUsersCommand : public Command
 {
 public:
-    explicit GetBlockedUsersCommand(AdminService* adminService);
+    explicit GetBlockedUsersCommand(UserService* adminService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetBlockedUsers; }
     QString getName() const override { return "GetBlockedUsers"; }
     bool requiresAdmin() const override { return true; }
 
 private:
-    AdminService* m_adminService;
+    UserService* m_adminService;
 };
 
 class AdminDeleteBookCommand : public Command
 {
 public:
-    explicit AdminDeleteBookCommand(AdminService* adminService);
+    explicit AdminDeleteBookCommand(UserService* adminService ,BookService* m_bookService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::DeleteBook; }
     QString getName() const override { return "AdminDeleteBook"; }
     bool requiresAdmin() const override { return true; }
 
 private:
-    AdminService* m_adminService;
+    UserService* m_adminService;
+    BookService* m_bookService;
 };
 
 class AdminDeleteReviewCommand : public Command
 {
 public:
-    explicit AdminDeleteReviewCommand(AdminService* adminService);
+    explicit AdminDeleteReviewCommand(UserService* adminService,ReviewService* reviewService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::DeleteReview; }
     QString getName() const override { return "AdminDeleteReview"; }
     bool requiresAdmin() const override { return true; }
 
 private:
-    AdminService* m_adminService;
+    UserService* m_adminService;
+    ReviewService* m_reviewService;
 };
 
 class GetSystemStatsCommand : public Command

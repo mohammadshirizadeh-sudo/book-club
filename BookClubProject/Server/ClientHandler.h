@@ -17,6 +17,7 @@
 #include "../Services/ReviewService.h"
 #include "../Services/CartService.h"
 #include "../Services/PublisherService.h"
+#include "../Services/AdminService.h"
 
 #include "../Shared/Book.h"
 #include "../Shared/User.h"

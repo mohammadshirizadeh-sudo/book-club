@@ -72,3 +72,7 @@ void Publisher::addRevenue(double amount) {
 QString Publisher::getFormattedRevenue() const {
     return QString("$%1").arg(totalRevenue, 0, 'f', 2);
 }
+
+
+
+

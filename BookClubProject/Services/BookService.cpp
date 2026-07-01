@@ -10,11 +10,27 @@ BookRepository *BookService::getBookRepo() const
     return bookRepo;
 }
 
-bool BookService::deleteBook(int bookId, const QString &reason)
+bool BookService::deleteBook(int bookId)
 {
+    // 1. Check if book exists
+    Book* book = bookRepo->findById(bookId);
+    if (!book) {
+        qWarning() << "Book not found with ID:" << bookId;
+        return false;
+    }
 
+    // 2. Log the deletion
+    qDebug() << "Deleting book:" << book->getTitle() << "(ID:" << bookId << ")";
+
+    // 3. Delete from repository
+    if (!bookRepo->deleteBook(bookId)) {
+        qWarning() << "Failed to delete book:" << bookId;
+        return false;
+    }
+
+    qDebug() << "Book deleted successfully:" << book->getTitle();
+    return true;
 }
-
 BookService::BookService(BookRepository* repo, ReviewRepository* reviewRepo)
 
     : bookRepo(repo), reviewRepo(reviewRepo) {

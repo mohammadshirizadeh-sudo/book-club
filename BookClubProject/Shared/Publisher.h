@@ -16,6 +16,9 @@ private:
     double totalRevenue;
     QDateTime joinedAt;
 
+
+
+
 public:
     // ===== Constructors =====
     Publisher();

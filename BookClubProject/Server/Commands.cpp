@@ -726,6 +726,7 @@ Response AddBookCommand::execute(const QVariantMap& params)
     double discountPercent = params.value("discountPercent", 0.0).toDouble();
 
 
+
     if (m_publisherService->addBook(publisherId, title, author, genre, description, price)) {
         QVariantMap data;
         data["title"] = title;
@@ -743,15 +744,16 @@ EditBookCommand::EditBookCommand(PublisherService* publisherService)
 
 Response EditBookCommand::execute(const QVariantMap& params)
 {
-    int publisherId = params["publisherId"].toInt();
     int bookId = params["bookId"].toInt();
     QString title = params["title"].toString();
     QString author = params["author"].toString();
     QString genre = params["genre"].toString();
     QString description = params["description"].toString();
     double price = params["price"].toDouble();
+    double discount = params["discount"].toDouble();
 
-    if (m_publisherService->editBook(publisherId, bookId, title, author, genre, description, price)) {
+    if (m_publisherService->getBookService()->editBook( bookId, title, author, genre, description, price, discount)) {
+
         return Response::success("Book updated successfully");
     }
     return Response::error("Failed to update book");
@@ -765,10 +767,10 @@ DeactivateBookCommand::DeactivateBookCommand(PublisherService* publisherService)
 
 Response DeactivateBookCommand::execute(const QVariantMap& params)
 {
-    int publisherId = params["publisherId"].toInt();
+
     int bookId = params["bookId"].toInt();
 
-    if (m_publisherService->deactivateBook(publisherId, bookId)) {
+    if (m_publisherService->getBookService()->deactivateBook(bookId)) {
         return Response::success("Book deactivated");
     }
     return Response::error("Failed to deactivate book");
@@ -782,10 +784,10 @@ ReactivateBookCommand::ReactivateBookCommand(PublisherService* publisherService)
 
 Response ReactivateBookCommand::execute(const QVariantMap& params)
 {
-    int publisherId = params["publisherId"].toInt();
+
     int bookId = params["bookId"].toInt();
 
-    if (m_publisherService->reactivateBook(publisherId, bookId)) {
+    if (m_publisherService->getBookService()->reactivateBook(bookId)) {
         return Response::success("Book reactivated");
     }
     return Response::error("Failed to reactivate book");
@@ -832,6 +834,7 @@ Response GetPublisherStatsCommand::execute(const QVariantMap& params)
     int publisherId = params["publisherId"].toInt();
     QMap<QString, QVariant> stats = m_publisherService->getSalesStatistics(publisherId);
 
+
     QVariantMap data;
     for (auto it = stats.begin(); it != stats.end(); ++it) {
         data[it.key()] = it.value();
@@ -844,7 +847,7 @@ Response GetPublisherStatsCommand::execute(const QVariantMap& params)
 // =============================================
 
 // ----- BlockUserCommand -----
-BlockUserCommand::BlockUserCommand(AdminService* adminService)
+BlockUserCommand::BlockUserCommand(UserService* adminService)
     : m_adminService(adminService)
 {
 }
@@ -861,7 +864,7 @@ Response BlockUserCommand::execute(const QVariantMap& params)
 }
 
 // ----- UnblockUserCommand -----
-UnblockUserCommand::UnblockUserCommand(AdminService* adminService)
+UnblockUserCommand::UnblockUserCommand(UserService* adminService)
     : m_adminService(adminService)
 {
 }
@@ -877,10 +880,11 @@ Response UnblockUserCommand::execute(const QVariantMap& params)
 }
 
 // ----- DeleteUserCommand -----
-DeleteUserCommand::DeleteUserCommand(AdminService* adminService)
+DeleteUserCommand::DeleteUserCommand(UserService* adminService)
     : m_adminService(adminService)
 {
 }
+
 
 Response DeleteUserCommand::execute(const QVariantMap& params)
 {
@@ -893,7 +897,7 @@ Response DeleteUserCommand::execute(const QVariantMap& params)
 }
 
 // ----- GetAllUsersCommand -----
-GetAllUsersCommand::GetAllUsersCommand(AdminService* adminService)
+GetAllUsersCommand::GetAllUsersCommand(UserService* adminService)
     : m_adminService(adminService)
 {
 }
@@ -921,7 +925,7 @@ Response GetAllUsersCommand::execute(const QVariantMap& params)
 }
 
 // ----- GetBlockedUsersCommand -----
-GetBlockedUsersCommand::GetBlockedUsersCommand(AdminService* adminService)
+GetBlockedUsersCommand::GetBlockedUsersCommand(UserService* adminService)
     : m_adminService(adminService)
 {
 }
@@ -948,8 +952,8 @@ Response GetBlockedUsersCommand::execute(const QVariantMap& params)
 }
 
 // ----- AdminDeleteBookCommand -----
-AdminDeleteBookCommand::AdminDeleteBookCommand(AdminService* adminService)
-    : m_adminService(adminService)
+AdminDeleteBookCommand::AdminDeleteBookCommand(UserService* adminService , BookService* bookService)
+    : m_adminService(adminService) , m_bookService(bookService)
 {
 }
 
@@ -958,24 +962,26 @@ Response AdminDeleteBookCommand::execute(const QVariantMap& params)
     int bookId = params["bookId"].toInt();
     QString reason = params["reason"].toString();
 
-    if (m_adminService->deleteBook(bookId, reason)) {
+    if (m_bookService->deleteBook(bookId)) {
+
         return Response::success("Book deleted by admin");
     }
     return Response::error("Failed to delete book");
 }
 
 // ----- AdminDeleteReviewCommand -----
-AdminDeleteReviewCommand::AdminDeleteReviewCommand(AdminService* adminService)
-    : m_adminService(adminService)
+AdminDeleteReviewCommand::AdminDeleteReviewCommand(UserService* adminService , ReviewService* reviewService)
+    : m_adminService(adminService) , m_reviewService(reviewService)
 {
 }
 
 Response AdminDeleteReviewCommand::execute(const QVariantMap& params)
 {
     int reviewId = params["reviewId"].toInt();
+    int userId = params["userId"].toInt();
     QString reason = params["reason"].toString();
 
-    if (m_adminService->deleteReview(reviewId, reason)) {
+    if (m_reviewService->deleteReview(reviewId ,userId)) {
         return Response::success("Review deleted by admin");
     }
     return Response::error("Failed to delete review");
@@ -990,6 +996,7 @@ GetSystemStatsCommand::GetSystemStatsCommand(AdminService* adminService)
 Response GetSystemStatsCommand::execute(const QVariantMap& params)
 {
     QMap<QString, QVariant> stats = m_adminService->getSystemStats();
+
 
     QVariantMap data;
     for (auto it = stats.begin(); it != stats.end(); ++it) {
