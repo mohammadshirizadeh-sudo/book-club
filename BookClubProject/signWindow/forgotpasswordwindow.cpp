@@ -12,3 +12,8 @@ ForgotPasswordWindow::~ForgotPasswordWindow()
 {
     delete ui;
 }
+
+void ForgotPasswordWindow::on_remmemberPushButton_clicked()
+{
+    emit openMainWindow();
+}

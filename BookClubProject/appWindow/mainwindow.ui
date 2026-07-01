@@ -15,7 +15,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
-	background-image: url(C:/1library/book-club/BookClubProject/resources/sign_background.jpg);
+	background-image: url(:/resources/sign_background.jpg);
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget"/>

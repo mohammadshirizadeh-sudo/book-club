@@ -5,6 +5,8 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 
 qt_standard_project_setup()
 
+qt_add_resources(RESOURCES "resources.qrc")
+
 qt_add_executable(BookClubProject
     WIN32 MACOSX_BUNDLE
     main.cpp
@@ -46,7 +48,7 @@ qt_add_executable(BookClubProject
     signWindow/loginwindow.h signWindow/loginwindow.cpp signWindow/loginwindow.ui
     signWindow/registerwindow.h signWindow/registerwindow.cpp signWindow/registerwindow.ui
     signWindow/forgotpasswordwindow.h signWindow/forgotpasswordwindow.cpp signWindow/forgotpasswordwindow.ui
-    resources.qrc
+    ${RESOURCES}
      
 
 )

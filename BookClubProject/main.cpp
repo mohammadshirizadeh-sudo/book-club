@@ -10,28 +10,67 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-/*
-    LoginWindow login;
-    RegisterWindow registerWin;
-    login.show();
-    QObject::connect(&login, &LoginWindow::openRegisterWindow,
-                     [&]() {
-                         login.close();        // بستن صفحه اول
-                         registerWin.show();   // باز کردن صفحه دوم
+
+    LoginWindow loginWindow;
+    ForgotPasswordWindow forgotWindow;
+    RegisterWindow registerWindow;
+    MainWindow mainWindow;
+
+    loginWindow.show();
+
+    // Login -> Forgot Password
+    QObject::connect(&loginWindow,
+                     &LoginWindow::openForgotPasswordWindow,
+                     [&]()
+                     {
+                         loginWindow.close();
+                         forgotWindow.show();
                      });
-*/  //اینو واسه وصل کردن صفحه ها نوشتم ولی جواب نمیده، مثل 2 روش دیگه ای که امتحان کردم
 
-    //LoginWindow w1;
-    //w1.show();
+    // Forgot Password -> Main
+    QObject::connect(&forgotWindow,
+                     &ForgotPasswordWindow::openMainWindow,
+                     [&]()
+                     {
+                         forgotWindow.close();
+                         mainWindow.show();
+                     });
 
-    //RegisterWindow w2;
-    //w2.show();
+    // Login -> Register
+    QObject::connect(&loginWindow,
+                     &LoginWindow::openRegisterWindow,
+                     [&]()
+                     {
+                         loginWindow.close();
+                         registerWindow.show();
+                     });
 
-    //ForgotPasswordWindow w3;
-    //w3.show();
+    // Register -> Main
+    QObject::connect(&registerWindow,
+                     &RegisterWindow::openMainWindow,
+                     [&]()
+                     {
+                         registerWindow.close();
+                         mainWindow.show();
+                     });
 
-    //MainWindow w;
-    //w.show();
+    // Register -> Login
+    QObject::connect(&registerWindow,
+                     &RegisterWindow::openLoginWindow,
+                     [&]()
+                     {
+                         registerWindow.close();
+                         loginWindow.show();
+                     });
 
-    return QApplication::exec();
+    // Login -> Main
+    QObject::connect(&loginWindow,
+                     &LoginWindow::openMainWindow,
+                     [&]()
+                     {
+                         loginWindow.close();
+                         mainWindow.show();
+                     });
+
+    return a.exec();
 }
