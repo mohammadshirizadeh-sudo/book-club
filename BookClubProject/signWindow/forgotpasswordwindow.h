@@ -15,6 +15,12 @@ public:
     explicit ForgotPasswordWindow(QWidget *parent = nullptr);
     ~ForgotPasswordWindow();
 
+signals:
+    void openMainWindow();
+
+private slots:
+    void on_remmemberPushButton_clicked();
+
 private:
     Ui::ForgotPasswordWindow *ui;
 };
