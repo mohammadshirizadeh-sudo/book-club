@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
                         loginWindow.close();
                         forgotWindow.show();
                     });
-
+/*
     // Forgot Password -> Main
     QObject::connect(&forgotWindow,
                     &ForgotPasswordWindow::openMainWindow,
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
                         forgotWindow.close();
                         mainWindow.show();
                     });
-
+*/
     // Login -> Register
     QObject::connect(&loginWindow,
                     &LoginWindow::openRegisterWindow,
@@ -87,5 +87,7 @@ int main(int argc, char *argv[])
                          mainWindow.show();
                     });
 */
+    a.setStyleSheet("QMessageBox QLabel { color: white; }");
+
     return a.exec();
 }

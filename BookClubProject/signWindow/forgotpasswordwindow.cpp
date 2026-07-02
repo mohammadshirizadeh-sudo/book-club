@@ -13,7 +13,7 @@ ForgotPasswordWindow::~ForgotPasswordWindow()
     delete ui;
 }
 
-void ForgotPasswordWindow::on_remmemberPushButton_clicked()
+void ForgotPasswordWindow::on_tokenPushButton_clicked()
 {
-    emit openMainWindow();
+
 }
