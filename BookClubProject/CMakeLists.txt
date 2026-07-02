@@ -49,6 +49,9 @@ qt_add_executable(BookClubProject
     signWindow/registerwindow.h signWindow/registerwindow.cpp signWindow/registerwindow.ui
     signWindow/forgotpasswordwindow.h signWindow/forgotpasswordwindow.cpp signWindow/forgotpasswordwindow.ui
     ${RESOURCES}
+    appWindow/genrewindow.h appWindow/genrewindow.cpp appWindow/genrewindow.ui
+    appWindow/userwindow.h appWindow/userwindow.cpp appWindow/userwindow.ui
+    appWindow/publisherwindow.h appWindow/publisherwindow.cpp appWindow/publisherwindow.ui
      
 
 )

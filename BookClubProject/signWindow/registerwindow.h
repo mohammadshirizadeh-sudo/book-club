@@ -16,11 +16,14 @@ public:
     ~RegisterWindow();
 
 signals:
-    void openMainWindow();
+    void openGenreWindow();
+    void openUserWindow();
+    void openPublisherWindow();
     void openLoginWindow();
 
 private slots:
-    void on_signupPushButton_clicked();
+    void on_userSignupPushButton_clicked();
+    void on_publisherSignupPushButton_clicked();
     void on_backToSigninPushButton_clicked();
 
 

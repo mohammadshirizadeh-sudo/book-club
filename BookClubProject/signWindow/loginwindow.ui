@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
+    <width>1500</width>
     <height>800</height>
    </rect>
   </property>
@@ -18,11 +18,11 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources.qrc">
-    <normaloff>:/resources/ap_icon.png</normaloff>:/resources/ap_icon.png</iconset>
+    <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget {
-	background-image: url(:/resources/sign_background.jpg);
+	background-image: url(:/resources/blueBack.png);
 }</string>
   </property>
   <widget class="QFrame" name="frame">
@@ -30,7 +30,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1201</width>
+     <width>1501</width>
      <height>801</height>
     </rect>
    </property>
@@ -48,9 +48,9 @@
    <widget class="QLabel" name="bookclubLabel">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>40</y>
-      <width>441</width>
+      <x>590</x>
+      <y>70</y>
+      <width>321</width>
       <height>51</height>
      </rect>
     </property>
@@ -66,16 +66,16 @@
 }</string>
     </property>
     <property name="text">
-     <string>BOOK CLUB LIBRARY</string>
+     <string> Book Club Library</string>
     </property>
    </widget>
    <widget class="QLabel" name="UsernameLabel">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>210</y>
+      <x>510</x>
+      <y>190</y>
       <width>141</width>
-      <height>41</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -93,10 +93,10 @@
    <widget class="QLabel" name="passwordLabel">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>300</y>
+      <x>510</x>
+      <y>270</y>
       <width>141</width>
-      <height>41</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -117,9 +117,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>200</y>
-      <width>321</width>
+      <x>750</x>
+      <y>190</y>
+      <width>401</width>
       <height>51</height>
      </rect>
     </property>
@@ -137,9 +137,9 @@
    <widget class="QLineEdit" name="PasswprdLineEdit">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>300</y>
-      <width>321</width>
+      <x>750</x>
+      <y>270</y>
+      <width>401</width>
       <height>51</height>
      </rect>
     </property>
@@ -160,17 +160,17 @@
    <widget class="QPushButton" name="forgotpassPushButton">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>370</y>
-      <width>161</width>
-      <height>29</height>
+      <x>870</x>
+      <y>330</y>
+      <width>191</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	background-image: url(:/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:20px;
+	font-size:25px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
@@ -181,7 +181,7 @@
    <widget class="QPushButton" name="registerPushButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>510</x>
       <y>590</y>
       <width>531</width>
       <height>71</height>
@@ -202,17 +202,17 @@
    <widget class="QPushButton" name="signinPushButton">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>470</y>
-      <width>121</width>
-      <height>51</height>
+      <x>690</x>
+      <y>490</y>
+      <width>141</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	background-image: url(:/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:45px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>

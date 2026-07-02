@@ -2,6 +2,9 @@
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
+#include "appWindow/genrewindow.h"
+#include "appWindow/userwindow.h"
+#include "appWindow/publisherwindow.h"
 #include <QResource>
 
 
@@ -14,63 +17,77 @@ int main(int argc, char *argv[])
     LoginWindow loginWindow;
     ForgotPasswordWindow forgotWindow;
     RegisterWindow registerWindow;
+    GenreWindow genreWindow;
+    UserWindow userWindow;
+    PublisherWindow publisherWindow;
     MainWindow mainWindow;
 
     loginWindow.show();
 
     // Login -> Forgot Password
     QObject::connect(&loginWindow,
-                     &LoginWindow::openForgotPasswordWindow,
-                     [&]()
-                     {
-                         loginWindow.close();
-                         forgotWindow.show();
-                     });
-
+                    &LoginWindow::openForgotPasswordWindow,
+                    [&]()
+                    {
+                        loginWindow.close();
+                        forgotWindow.show();
+                    });
+/*
     // Forgot Password -> Main
     QObject::connect(&forgotWindow,
-                     &ForgotPasswordWindow::openMainWindow,
-                     [&]()
-                     {
-                         forgotWindow.close();
-                         mainWindow.show();
-                     });
-
+                    &ForgotPasswordWindow::openMainWindow,
+                    [&]()
+                    {
+                        forgotWindow.close();
+                        mainWindow.show();
+                    });
+*/
     // Login -> Register
     QObject::connect(&loginWindow,
-                     &LoginWindow::openRegisterWindow,
-                     [&]()
-                     {
-                         loginWindow.close();
-                         registerWindow.show();
-                     });
+                    &LoginWindow::openRegisterWindow,
+                    [&]()
+                    {
+                        loginWindow.close();
+                        registerWindow.show();
+                    });
 
-    // Register -> Main
+    // Register -> Genre
     QObject::connect(&registerWindow,
-                     &RegisterWindow::openMainWindow,
-                     [&]()
-                     {
-                         registerWindow.close();
-                         mainWindow.show();
-                     });
+                    &RegisterWindow::openGenreWindow,
+                    [&]()
+                    {
+                        registerWindow.close();
+                        genreWindow.show();
+                    });
+
+    // Register -> Publisher
+    QObject::connect(&registerWindow,
+                    &RegisterWindow::openPublisherWindow,
+                    [&]()
+                    {
+                        registerWindow.close();
+                        publisherWindow.show();
+                    });
 
     // Register -> Login
     QObject::connect(&registerWindow,
-                     &RegisterWindow::openLoginWindow,
-                     [&]()
-                     {
-                         registerWindow.close();
-                         loginWindow.show();
-                     });
-
+                    &RegisterWindow::openLoginWindow,
+                    [&]()
+                    {
+                        registerWindow.close();
+                        loginWindow.show();
+                    });
+/*
     // Login -> Main
     QObject::connect(&loginWindow,
-                     &LoginWindow::openMainWindow,
-                     [&]()
-                     {
+                    &LoginWindow::openMainWindow,
+                    [&]()
+                    {
                          loginWindow.close();
                          mainWindow.show();
-                     });
+                    });
+*/
+    a.setStyleSheet("QMessageBox QLabel { color: white; }");
 
     return a.exec();
 }
