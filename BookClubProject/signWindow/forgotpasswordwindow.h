@@ -16,10 +16,10 @@ public:
     ~ForgotPasswordWindow();
 
 signals:
-    void openMainWindow();
+    //void openMainWindow();
 
-private slots:
-    void on_remmemberPushButton_clicked();
+private slots:    
+    void on_tokenPushButton_clicked();
 
 private:
     Ui::ForgotPasswordWindow *ui;

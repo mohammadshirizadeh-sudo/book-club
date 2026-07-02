@@ -61,96 +61,96 @@
    <widget class="QLabel" name="fullnameNewLabel">
     <property name="geometry">
      <rect>
-      <x>180</x>
+      <x>340</x>
       <y>130</y>
-      <width>121</width>
-      <height>41</height>
+      <width>171</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
 	background-image: url(:/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 24px;
+	font-size: 30px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
-     <string>Full Name:</string>
+     <string> Full Name:</string>
     </property>
    </widget>
    <widget class="QLabel" name="usernameNewLabel">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>200</y>
-      <width>111</width>
-      <height>41</height>
+      <x>340</x>
+      <y>220</y>
+      <width>151</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
 	background-image: url(:/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 24px;
+	font-size: 30px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
-     <string>Username:</string>
+     <string> Username:</string>
     </property>
    </widget>
    <widget class="QLabel" name="passwordLabel">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>280</y>
-      <width>111</width>
-      <height>41</height>
+      <x>340</x>
+      <y>310</y>
+      <width>151</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
 	background-image: url(:/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 24px;
+	font-size: 30px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
-     <string>Password:</string>
+     <string> Password:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="fullnameNewLineEdit">
     <property name="geometry">
      <rect>
-      <x>880</x>
+      <x>710</x>
       <y>130</y>
-      <width>441</width>
-      <height>41</height>
+      <width>431</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
 	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 20px;
+	font-size: 28px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="usernameLineEdit">
+   <widget class="QLineEdit" name="userNewLineEdit">
     <property name="geometry">
      <rect>
-      <x>880</x>
-      <y>200</y>
-      <width>441</width>
-      <height>41</height>
+      <x>710</x>
+      <y>220</y>
+      <width>431</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
 	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 20px;
+	font-size: 28px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
@@ -161,16 +161,16 @@
    <widget class="QLineEdit" name="passwordNewLineEdit">
     <property name="geometry">
      <rect>
-      <x>880</x>
-      <y>280</y>
-      <width>441</width>
-      <height>41</height>
+      <x>710</x>
+      <y>310</y>
+      <width>431</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
 	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 20px;
+	font-size: 28px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
@@ -178,78 +178,40 @@
      <enum>QLineEdit::EchoMode::PasswordEchoOnEdit</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="favoriteBookLable">
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>440</y>
-      <width>381</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 24px;
-	color: rgb(28, 20, 18);
-}</string>
-    </property>
-    <property name="text">
-     <string>Favorite Book (to recover password):</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="emailNewLabel">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>520</y>
-      <width>81</width>
-      <height>41</height>
+      <x>340</x>
+      <y>490</y>
+      <width>111</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
 	background-image: url(:/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 24px;
+	font-size: 30px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
-     <string>E-mail:</string>
+     <string> E-mail:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="emailNewLineEdit">
     <property name="geometry">
      <rect>
-      <x>880</x>
-      <y>520</y>
-      <width>441</width>
-      <height>41</height>
+      <x>710</x>
+      <y>490</y>
+      <width>431</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
 	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 20px;
-	color: rgb(28, 20, 18);
-}</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="favoriteBookLineEdit">
-    <property name="geometry">
-     <rect>
-      <x>880</x>
-      <y>440</y>
-      <width>441</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QLineEdit{
-	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 20px;
+	font-size: 28px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
@@ -257,9 +219,9 @@
    <widget class="QPushButton" name="userSignupPushButton">
     <property name="geometry">
      <rect>
-      <x>330</x>
-      <y>610</y>
-      <width>391</width>
+      <x>340</x>
+      <y>590</y>
+      <width>371</width>
       <height>61</height>
      </rect>
     </property>
@@ -279,9 +241,9 @@
    <widget class="QPushButton" name="backToSigninPushButton">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>700</y>
-      <width>561</width>
+      <x>460</x>
+      <y>690</y>
+      <width>571</width>
       <height>81</height>
      </rect>
     </property>
@@ -301,37 +263,37 @@
    <widget class="QLabel" name="passwordLabel_2">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>360</y>
-      <width>191</width>
-      <height>41</height>
+      <x>340</x>
+      <y>400</y>
+      <width>241</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel {
 	background-image: url(:/resources/whiteWood.jpg);
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 24px;
+	font-size: 30px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
     <property name="text">
-     <string>Repeat Password:</string>
+     <string> Repeat Password:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="passwordNewLineEdit_2">
     <property name="geometry">
      <rect>
-      <x>880</x>
-      <y>360</y>
-      <width>441</width>
-      <height>41</height>
+      <x>710</x>
+      <y>400</y>
+      <width>431</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLineEdit{
 	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 20px;
+	font-size: 28px;
 	color: rgb(28, 20, 18);
 }</string>
     </property>
@@ -343,8 +305,8 @@
     <property name="geometry">
      <rect>
       <x>770</x>
-      <y>610</y>
-      <width>391</width>
+      <y>590</y>
+      <width>371</width>
       <height>61</height>
      </rect>
     </property>
