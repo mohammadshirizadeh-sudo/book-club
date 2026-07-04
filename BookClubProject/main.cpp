@@ -1,4 +1,3 @@
-#include "appWindow/mainwindow.h"
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
@@ -20,7 +19,6 @@ int main(int argc, char *argv[])
     GenreWindow genreWindow;
     UserWindow userWindow;
     PublisherWindow publisherWindow;
-    MainWindow mainWindow;
 
     loginWindow.show();
 
@@ -83,11 +81,24 @@ int main(int argc, char *argv[])
                     &LoginWindow::openMainWindow,
                     [&]()
                     {
-                         loginWindow.close();
-                         mainWindow.show();
+                        loginWindow.close();
+                        mainWindow.show();
                     });
 */
-    a.setStyleSheet("QMessageBox QLabel { color: white; }");
+
+    // Genre -> User
+    QObject::connect(&genreWindow,
+                    &GenreWindow::openUserWindow,
+                    [&]()
+                    {
+                        genreWindow.close();
+                        userWindow.show();
+                    });
+
+    a.setStyleSheet(
+        "QMessageBox QLabel { color: white; }"
+        "QPushButton { color: white; }"
+        );
 
     return a.exec();
 }

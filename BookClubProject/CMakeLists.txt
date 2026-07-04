@@ -10,9 +10,9 @@ qt_add_resources(RESOURCES "resources.qrc")
 qt_add_executable(BookClubProject
     WIN32 MACOSX_BUNDLE
     main.cpp
-    appWindow/mainwindow.cpp
-    appWindow/mainwindow.h
-    appWindow/mainwindow.ui
+
+
+
     Shared/User.h Shared/User.cpp
     Shared/PasswordHelper.h
     Shared/PasswordValidator.h
@@ -52,6 +52,12 @@ qt_add_executable(BookClubProject
     appWindow/genrewindow.h appWindow/genrewindow.cpp appWindow/genrewindow.ui
     appWindow/userwindow.h appWindow/userwindow.cpp appWindow/userwindow.ui
     appWindow/publisherwindow.h appWindow/publisherwindow.cpp appWindow/publisherwindow.ui
+    Users/UserProfileWindow.h Users/UserProfileWindow.cpp Users/UserProfileWindow.ui
+    Users/searchwindow.h Users/searchwindow.cpp Users/searchwindow.ui
+
+
+
+
      
 
 )

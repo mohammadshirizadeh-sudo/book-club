@@ -751,7 +751,7 @@
      <string>Technology</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="userEnterPushButton">
     <property name="geometry">
      <rect>
       <x>1190</x>
