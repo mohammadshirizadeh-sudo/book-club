@@ -1,6 +1,8 @@
 #include "genrewindow.h"
 #include "ui_genrewindow.h"
 
+#include "userwindow.h"
+
 GenreWindow::GenreWindow(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::GenreWindow)

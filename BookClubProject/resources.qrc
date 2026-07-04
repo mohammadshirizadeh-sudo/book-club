@@ -1,8 +1,16 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/sign_background.jpg</file>
         <file>resources/whiteWood.jpg</file>
         <file>resources/blueBack.png</file>
         <file>resources/icon.jpg</file>
+        <file>resources/skyblueBack.jpg</file>
+        <file>resources/moochi.gif</file>
+        <file>resources/favBooks.png</file>
+        <file>resources/shopping.png</file>
+        <file>resources/password.png</file>
+        <file>resources/genres.png</file>
+        <file>resources/name.png</file>
+        <file>resources/userInfo.png</file>
+        <file>resources/changeInfo.png</file>
     </qresource>
 </RCC>
