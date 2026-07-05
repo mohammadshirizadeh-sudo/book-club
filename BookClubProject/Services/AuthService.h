@@ -5,13 +5,14 @@
 #include "../Shared/User.h"
 #include "../Repositories/UserRepository.h"
 
-class AuthService {
+class AuthService : public QObject {
+    Q_OBJECT
 private:
     UserRepository* userRepo;
     int currentUserId = -1;
 
 public:
-    AuthService(UserRepository* repo);
+    AuthService(UserRepository* repo , QObject* parent = nullptr);
     ~AuthService();
 
 
@@ -24,6 +25,13 @@ public:
     bool logout();
     User* getCurrentUser() const;
     bool isUsernameAvailable(const QString& username) const;
+
+
+
+
+    bool requestPasswordReset(const QString& email);
+
+    bool resetPasswordWithToken(const QString& token, const QString& newPassword);
 
 };
 

@@ -54,6 +54,18 @@ qt_add_executable(BookClubProject
     appWindow/publisherwindow.h appWindow/publisherwindow.cpp appWindow/publisherwindow.ui
     Users/UserProfileWindow.h Users/UserProfileWindow.cpp Users/UserProfileWindow.ui
     Users/searchwindow.h Users/searchwindow.cpp Users/searchwindow.ui
+    Shared/ValidationResault.cpp
+    Services/AdminService.h Services/AdminService.cpp
+    Network-Manger/NetworkManager.h Network-Manger/NetworkManager.cpp
+    Database/DatabaseInitializer.h Database/DatabaseInitializer.cpp
+    Database/DatabaseManager.h Database/DatabaseManager.cpp
+    Server/Server.h Server/Server.cpp
+    Server/ClientHandler.h Server/ClientHandler.cpp
+    Server/CommandFactory.h Server/CommandFactory.cpp
+    Server/Commands.h Server/Commands.cpp
+    Server/Request.h Server/Request.cpp
+    Server/RequestParser.h Server/RequestParser.cpp
+    Server/Response.h Server/Response.cpp
 
 
 

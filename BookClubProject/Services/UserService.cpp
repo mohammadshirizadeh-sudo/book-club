@@ -6,8 +6,8 @@
 #include <QDebug>
 
 // ===== Constructor =====
-UserService::UserService(UserRepository* repo)
-    : userRepo(repo) {
+UserService::UserService(UserRepository* repo ,QObject* parent)
+    : userRepo(repo) , QObject(parent) {
 }
 
 // ===== Profile Management =====
@@ -25,13 +25,16 @@ User* UserService::getProfile(int userId) const {
     }
 
     return user;
+
 }
 
 bool UserService::updateProfile(int userId, const QString& newEmail,
                                 const QString& newFullName,
-                                const QVector<QString>& newGenres) {
+                                const QVector<Genre>& newGenres) {
     // 1. Find user
     User* user = userRepo->findById(userId);
+    QString oldUserName =  user->getUsername();
+    QString oldEmail = user->getEmail();
     if (!user) {
         qWarning() << "User not found with ID:" << userId;
         return false;
@@ -64,7 +67,7 @@ bool UserService::updateProfile(int userId, const QString& newEmail,
     user->setUpdatedAt(QDateTime::currentDateTime());
 
     // 6. Save to repository
-    if (!userRepo->updateUser(user)) {
+    if (!userRepo->updateUser(user , oldUserName , oldEmail)) {
         qWarning() << "Failed to update user in repository";
         return false;
     }
@@ -73,7 +76,7 @@ bool UserService::updateProfile(int userId, const QString& newEmail,
     return true;
 }
 
-bool UserService::updateFavoriteGenres(int userId, const QVector<QString>& newGenres) {
+bool UserService::updateFavoriteGenres(int userId, const QVector<Genre>& newGenres) {
     // 1. Find user
     User* user = userRepo->findById(userId);
     if (!user) {
@@ -92,7 +95,7 @@ bool UserService::updateFavoriteGenres(int userId, const QVector<QString>& newGe
     user->setUpdatedAt(QDateTime::currentDateTime());
 
     // 4. Save to repository
-    return userRepo->updateUser(user);
+    return userRepo->updateUser(user , user->getUsername(), user->getEmail());
 }
 
 bool UserService::changePassword(int userId, const QString& oldPassword, const QString& newPassword) {
@@ -132,7 +135,7 @@ bool UserService::changePassword(int userId, const QString& oldPassword, const Q
     user->setUpdatedAt(QDateTime::currentDateTime());
 
     // 6. Save to repository
-    if (!userRepo->updateUser(user)) {
+    if (!userRepo->updateUser(user , user->getUsername(), user->getEmail())) {
         qWarning() << "Failed to update user in repository";
         return false;
     }
@@ -168,7 +171,7 @@ bool UserService::blockUser(int userId, const QString& reason) {
     user->setUpdatedAt(QDateTime::currentDateTime());
 
     // 5. Save to repository
-    if (!userRepo->updateUser(user)) {
+    if (!userRepo->updateUser(user , user->getUsername(), user->getEmail())) {
         qWarning() << "Failed to update user in repository";
         return false;
     }
@@ -196,7 +199,7 @@ bool UserService::unblockUser(int userId) {
     user->setUpdatedAt(QDateTime::currentDateTime());
 
     // 4. Save to repository
-    if (!userRepo->updateUser(user)) {
+    if (!userRepo->updateUser(user , user->getUsername(), user->getEmail())) {
         qWarning() << "Failed to update user in repository";
         return false;
     }

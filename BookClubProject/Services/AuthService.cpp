@@ -5,8 +5,8 @@
 #include <QDebug>
 #include "../Shared/UserFactory.h"
 
-AuthService::AuthService(UserRepository* repo)
-    : userRepo(repo) {
+AuthService::AuthService(UserRepository* repo , QObject* parent)
+    : userRepo(repo) ,QObject(parent) {
 }
 
 AuthService::~AuthService() {
@@ -91,7 +91,7 @@ User* AuthService::login(const QString& usernameOrEmail, const QString& password
     // 4. Login successful
     currentUserId = user->getId();
     user->setLastLogin(QDateTime::currentDateTime());
-    userRepo->updateUser(user);
+    userRepo->updateUser(user , user->getUsername(), user->getEmail());
 
     qDebug() << "User logged in:" << user->getUsername();
     return user;
@@ -117,5 +117,65 @@ User* AuthService::getCurrentUser() const {
 
 bool AuthService::isUsernameAvailable(const QString& username) const {
     return !userRepo->isUsernameTaken(username);
+}
+
+
+
+
+
+bool AuthService::requestPasswordReset(const QString& email)
+{
+
+    ValidationResult result = EmailValidator::isValid(email);
+    if (!result.isValid) {
+        qDebug() << "❌ Invalid email:" << result.errorMessage;
+        return false;
+    }
+
+    // 2. Find user by email
+    User* user = userRepo->findByEmail(email);
+    if (!user) {
+        qDebug() << "❌ No user found with email:" << email;
+        return false;
+    }
+
+    // 3. Generate reset token
+    QString token = user->generateResetToken();
+    userRepo->updateUser(user , user->getUsername(), user->getEmail());
+
+    qDebug() << "🔑 Password reset token for" << user->getUsername() << ":" << token;
+    qDebug() << "   (expires in 1 hour)";
+
+
+    return true;
+}
+
+bool AuthService::resetPasswordWithToken(const QString& token, const QString& newPassword)
+{
+    // 1. Find user by token (search through all users)
+    User* user = nullptr;
+    for (User* u : userRepo->getAllUsers()) {
+        if (u->getPasswordResetToken() == token) {
+            user = u;
+            break;
+        }
+    }
+
+    if (!user) {
+        qDebug() << "❌ Invalid reset token";
+        return false;
+    }
+
+    // 2. Reset password with token
+    if (!user->resetPasswordWithToken(token, newPassword)) {
+        qDebug() << "❌ Failed to reset password";
+        return false;
+    }
+
+    // 3. Save changes
+    userRepo->updateUser(user , user->getUsername(), user->getEmail());
+
+    qDebug() << "✅ Password reset successfully for user:" << user->getUsername();
+    return true;
 }
 

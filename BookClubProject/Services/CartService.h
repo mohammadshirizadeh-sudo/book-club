@@ -7,10 +7,13 @@
 #include "../Shared/Cart.h"
 #include "../Shared/CartItem.h"
 #include "../Repositories/BookRepository.h"
+#include "../Database/DatabaseInitializer.h"
+#include "../Database/DatabaseManager.h"
 
 
 
-class CartService {
+class CartService: public QObject {
+    Q_OBJECT
 private:
 
     QMap<int , Cart*> carts;
@@ -20,7 +23,7 @@ private:
 
 public:
     // ===== Constructor =====
-    explicit CartService(BookRepository* repo);
+    explicit CartService(BookRepository* repo , QObject* parent = nullptr);
     ~CartService();
 
     // ===== Cart Management =====
@@ -59,8 +62,25 @@ public:
     Cart* getCart(int userId) const ;
     int getUserId(int userId) const;
 
+
+
+    bool loadAllFromDatabase();
+    bool saveCartToDatabase(Cart* cart);
+    bool saveCartItemsToDatabase(int userId, const QVector<CartItem>& items);
+    bool deleteCartFromDatabase(int userId);
+    bool loadCartItems(Cart* cart);
+
 private:
     double getBookDiscountedPrice(int bookId) const;
+
+
+    void addToCache(Cart* cart);
+    void removeFromCache(int userId);
+    void clearCache();
+
+
+
+
 };
 
 #endif // CARTSERVICE_H

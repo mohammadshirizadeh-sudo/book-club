@@ -25,7 +25,7 @@ bool EmailValidator::isTypo(const QString& domain, const QString& correct) {
         }
     }
 
-        if (diffCount > 1) return false;
+    if (diffCount > 1) return false;
 
     return true;
 }

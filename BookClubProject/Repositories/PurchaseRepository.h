@@ -5,17 +5,21 @@
 #include <QMap>
 #include <QVector>
 #include "../Shared/Purchase.h"
+#include "../Database/DatabaseInitializer.h"
+#include "../Database/DatabaseManager.h"
 
-/**
- * @brief Repository for managing Purchase objects in memory
- * Handles CRUD operations for purchases
- */
-class PurchaseRepository {
+class PurchaseRepository : public QObject {
+    Q_OBJECT
 private:
     QMap<int, Purchase*> purchasesById;  // Fast lookup by purchase ID
 
+
+    void addToCache(Purchase* purchase);
+    void removeFromCache(int purchaseId);
+    void clearCache();
+
 public:
-    PurchaseRepository();
+    PurchaseRepository(QObject* parent= nullptr);
     ~PurchaseRepository();
 
     // ===== CRUD Operations =====
@@ -35,6 +39,15 @@ public:
     bool updatePurchase(Purchase* purchase);
 
     bool deletePurchase(int purchaseId);
+
+    bool loadAllFromDatabase();
+    bool saveToDatabase(Purchase* purchase);
+    bool deleteFromDatabase(int purchaseId);
+    bool savePurchaseItems(int purchaseId, const QVector<CartItem>& items);
+    bool loadPurchaseItems(Purchase* purchase);
+    static PurchaseStatus stringToStatus(const QString& statusStr);
+
+    static QString statusToString(PurchaseStatus status);
 };
 
 #endif // PURCHASEREPOSITORY_H

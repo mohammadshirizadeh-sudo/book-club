@@ -5,9 +5,6 @@
 #include <QString>
 #include <QVector>
 
-/**
- * @brief Shelf class representing a custom shelf in user's library
- */
 class Shelf {
 private:
     int shelfId;
