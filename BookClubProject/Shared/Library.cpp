@@ -11,6 +11,16 @@ Library::Library(int userId)
     : userId(userId) {
 }
 
+Library::Library(int userId, const QVector<int>& ownedBooks, const QVector<int>& savedBooks,
+                 const QVector<Shelf>& shelves)
+    : userId(userId)
+    , ownedBooks(ownedBooks)
+    , savedBooks(savedBooks)
+    , shelves(shelves)
+
+{
+}
+
 // ===== Owned Books Management =====
 
 bool Library::addOwnedBook(int bookId) {

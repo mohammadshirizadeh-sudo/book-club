@@ -7,22 +7,23 @@
 #include "../Shared/User.h"
 #include "../Repositories/UserRepository.h"
 
-class UserService {
+class UserService : public QObject {
+    Q_OBJECT
 private:
     UserRepository* userRepo;
 
 public:
     // ===== Constructor =====
-    explicit UserService(UserRepository* repo);
+    explicit UserService(UserRepository* repo , QObject* parent = nullptr);
 
     // ===== Profile Management =====
     User* getProfile(int userId) const;
 
     bool updateProfile(int userId, const QString& newEmail,
                        const QString& newFullName,
-                       const QVector<QString>& newGenres);
+                       const QVector<Genre>& newGenres);
 
-    bool updateFavoriteGenres(int userId, const QVector<QString>& newGenres);
+    bool updateFavoriteGenres(int userId, const QVector<Genre>& newGenres);
 
     bool changePassword(int userId, const QString& oldPassword, const QString& newPassword);
 

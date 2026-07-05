@@ -22,6 +22,7 @@ public:
     // ===== Constructors =====
     Review();
     Review(int reviewId, int userId, int bookId, const QString& text, int rating);
+    Review(int reviewId, int userId, int bookId, const QString& text, int rating ,QDateTime createdAt ,QDateTime updatedAt);
 
     // ===== Getters =====
     int getReviewId() const { return reviewId; }

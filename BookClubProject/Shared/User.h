@@ -7,6 +7,7 @@
 #include"EmailValidator.h"
 #include"ValidationResult.h"
 #include "PasswordHelper.h"
+#include "Genre.h"
 
 
 enum class UserRole {
@@ -28,22 +29,26 @@ private:
     int id;
     QString Fullname;
     QString username;
-    QString passwordHash;//we have a header file("PasswordValidator") for management password
+    QString passwordHash;
     QString email;
 
     UserRole role;
     AccountStatus status;
     QDateTime createdAt;
-    QVector<QString> favouriteGenre;//for this we have a header file "Genre.h"
+    QVector<Genre> favouriteGenre;
     QDateTime lastLogin;
     QDateTime updatedAt;
     QString salt;
+    QString passwordResetToken;
+    QDateTime resetTokenExpiry;
 
 
 
-protected:
+public:
     User(int id, const QString &fullName ,const QString& username, const QString& _email,UserRole role, AccountStatus status,
-         const QDateTime& createdAt,const QDateTime& lastLogin , const QString& passwordHash , QVector<QString> favouriteGenre,const QDateTime & updatedAt , QString salt);
+         const QDateTime& createdAt,const QDateTime& lastLogin , const QString& passwordHash , QVector<Genre> favouriteGenre,const QDateTime & updatedAt , QString salt);
+
+
 
 public:
     //don't forgot default constructor
@@ -54,8 +59,6 @@ public:
     User(int id,const QString &fullName ,  const QString& username, const QString& email,
          UserRole role, AccountStatus status,
          const QDateTime& createdAt,const QDateTime& lastLogin ,const QString& plainPassword);
-
-
     int getId() const;
     void setId(int newId);
     QString getUsername() const;
@@ -68,8 +71,8 @@ public:
     void setLastLogin(const QDateTime &newLastLogin);
     QString getFullname() const;
     void setFullname(const QString &newFullname);
-    QVector<QString> getFavouriteGenre() const;
-    void setFavouriteGenre(const QVector<QString> &newFavouriteGenre);
+    QVector<Genre> getFavouriteGenre() const;
+    void setFavouriteGenre(const QVector<Genre> &newFavouriteGenre);
     QDateTime getUpdatedAt() const;
     void setUpdatedAt(const QDateTime &newUpdatedAt);
     bool setPassword(const QString& password);
@@ -83,7 +86,35 @@ public:
 
 
     QDateTime getCreatedAt() const;
+    QString generateResetToken();
+
+
+
+    //remember you can send real email for password
+    bool verifyResetToken(const QString& token) const;
+
+
+    bool resetPasswordWithToken(const QString& token, const QString& newPassword);
+
+    void clearResetToken();
+
+    bool isResetTokenExpired() const;
+
+    // ===== Getters =====
+    QString getPasswordResetToken() const { return passwordResetToken; }
+    QDateTime getResetTokenExpiry() const { return resetTokenExpiry; }
+    QString getRoleString() const;
+
+
+
+
+
     virtual ~User();
+
+    void setPasswordResetToken(const QString &newPasswordResetToken);
+    void setResetTokenExpiry(const QDateTime &newResetTokenExpiry);
+    QString getPasswordHash() const;
+    QString getSalt() const;
 };
 
 #endif // USER_H

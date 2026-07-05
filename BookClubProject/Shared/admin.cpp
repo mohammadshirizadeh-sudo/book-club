@@ -29,11 +29,22 @@ Admin::Admin(int id, const QString& username, const QString& email,
 Admin::Admin(int id, const QString& fullName, const QString& username, const QString& email,
              UserRole role, AccountStatus status,
              const QDateTime& createdAt, const QDateTime& lastLogin,
-             const QString& passwordHash, const QVector<QString>& favouriteGenre,
+             const QString& passwordHash, const QVector<Genre>& favouriteGenre,
              const QDateTime& updatedAt, AdminLevel adminLevel , QString  salt)
     : User(id, fullName, username, email, role, status,
            createdAt, lastLogin, passwordHash, favouriteGenre, updatedAt ,salt)  // ← فراخوانی Constructor پایه
     , adminLevel(adminLevel)
+    , lastAction(QDateTime::currentDateTime()) {
+
+    // Admin-specific initialization
+}
+Admin::Admin(int id, const QString& fullName, const QString& username, const QString& email,
+             UserRole role, AccountStatus status,
+             const QDateTime& createdAt, const QDateTime& lastLogin,
+             const QString& passwordHash, const QVector<Genre>& favouriteGenre,
+             const QDateTime& updatedAt , QString  salt)
+    : User(id, fullName, username, email, role, status,
+           createdAt, lastLogin, passwordHash, favouriteGenre, updatedAt ,salt)  // ← فراخوانی Constructor پایه
     , lastAction(QDateTime::currentDateTime()) {
 
     // Admin-specific initialization

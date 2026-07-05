@@ -1,3 +1,4 @@
+
 // notification.h
 #ifndef NOTIFICATION_H
 #define NOTIFICATION_H
@@ -28,12 +29,15 @@ private:
     QDateTime createdAt;
 
 public:
-    // ===== Constructors =====
+
     Notification();
     Notification(int notificationId, int targetUserId,
                  NotificationType type, const QString& title, const QString& message);
     Notification(int notificationId,
                  NotificationType type, const QString& title, const QString& message);
+
+    Notification(int notificationId, int targetUserId ,
+                 NotificationType type, const QString& title, const QString& message ,   bool isRead , QDateTime createdAt);
 
     // ===== Getters =====
     int getNotificationId() const { return notificationId; }

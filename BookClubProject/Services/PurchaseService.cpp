@@ -7,13 +7,16 @@ PurchaseService::PurchaseService(PurchaseRepository* purchaseRepo,
                                  BookRepository* bookRepo,
                                  LibraryRepository* libraryRepo,
                                  CartService* cartService,
-                                 NotificationService* notifService)
+                                 NotificationService* notifService , QObject* parent)
+
     : purchaseRepo(purchaseRepo)
     , bookRepo(bookRepo)
     , libraryRepo(libraryRepo)
     , cartService(cartService)
-    , notifService(notifService) {
+    , notifService(notifService) , QObject(parent) {
 }
+
+
 
 // ===== Purchase Operations =====
 

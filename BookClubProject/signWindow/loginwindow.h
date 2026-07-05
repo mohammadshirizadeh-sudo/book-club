@@ -23,7 +23,7 @@ signals:
 private slots:
     void on_forgotpassPushButton_clicked();
     void on_registerPushButton_clicked();
-    void on_signinPushButton_clicked();
+    // void on_signinPushButton_clicked();
 
 private:
     Ui::LoginWindow *ui;

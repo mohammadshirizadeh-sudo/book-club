@@ -7,7 +7,7 @@ Book::Book()
     : bookId(0)
     , title("")
     , author("")
-    , genre("")
+    , genre()
     , description("")
     , price(0.0)
     , discountPercent(0.0)
@@ -21,8 +21,9 @@ Book::Book()
     , updatedAt(QDateTime::currentDateTime()) {
 }
 
+
 Book::Book(int bookId, const QString& title, const QString& author,
-           const QString& genre, double price, int publisherId)
+           const Genre& genre, double price, int publisherId)
     : bookId(bookId)
     , title(title)
     , author(author)
@@ -38,6 +39,31 @@ Book::Book(int bookId, const QString& title, const QString& author,
     , publisherId(publisherId)
     , createdAt(QDateTime::currentDateTime())
     , updatedAt(QDateTime::currentDateTime()) {
+}
+
+
+
+Book::Book(int bookId, const QString& title, const QString& author,
+           const Genre& genre, const QString& description, double price,
+           double discountPercent, const QString& coverPath, const QString& pdfPath,
+           bool isActive, double averageRating, int salesCount, int publisherId,
+           const QDateTime& createdAt, const QDateTime& updatedAt)
+    : bookId(bookId)
+    , title(title)
+    , author(author)
+    , genre(genre)
+    , description(description)
+    , price(price)
+    , discountPercent(discountPercent)
+    , coverPath(coverPath)
+    , pdfPath(pdfPath)
+    , isActive(isActive)
+    , averageRating(averageRating)
+    , salesCount(salesCount)
+    , publisherId(publisherId)
+    , createdAt(createdAt)
+    , updatedAt(updatedAt)
+{
 }
 
 // ===== Core Methods =====
