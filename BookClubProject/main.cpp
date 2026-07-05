@@ -12,8 +12,11 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    NetworkManager* networkManager = new NetworkManager();
+    networkManager->connectToServer("127.0.0.1", 8080);
 
-    LoginWindow loginWindow;
+
+    LoginWindow loginWindow(networkManager);
     ForgotPasswordWindow forgotWindow;
     RegisterWindow registerWindow;
     GenreWindow genreWindow;

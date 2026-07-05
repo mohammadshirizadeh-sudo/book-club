@@ -17,10 +17,10 @@ public:
 
 
 
-    User* registerUser(const QString& username, const QString& email, const QString& password , UserRole role);
+    ValidationResult registerUser(const QString& username, const QString& email, const QString& password , UserRole role);
 
 
-    User* login(const QString& usernameOrEmail, const QString& password);
+    ValidationResult login(const QString& usernameOrEmail, const QString& password);
 
     bool logout();
     User* getCurrentUser() const;
@@ -32,6 +32,8 @@ public:
     bool requestPasswordReset(const QString& email);
 
     bool resetPasswordWithToken(const QString& token, const QString& newPassword);
+
+    User* getUserByUsername(const QString& username) const;
 
 };
 

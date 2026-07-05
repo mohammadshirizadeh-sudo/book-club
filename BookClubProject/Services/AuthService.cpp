@@ -12,37 +12,33 @@ AuthService::AuthService(UserRepository* repo , QObject* parent)
 AuthService::~AuthService() {
     // Repository will be deleted elsewhere
 }
-
-User* AuthService::registerUser(const QString& username, const QString& email, const QString& password , UserRole role) {
+/*
+ValidationResult AuthService::registerUser(const QString& username, const QString& email, const QString& password , UserRole role) {
     // 1. Validate username
     if (username.isEmpty() || username.length() < 3) {
-        qDebug() << "Username must be at least 3 characters";
-        return nullptr;
+        return ValidationResult::failure("Username must be at least 3 characters");
     }
 
     if (userRepo->isUsernameTaken(username)) {
-        qDebug() << "Username" << username << "is already taken!";
-        return nullptr;
+         return ValidationResult::failure("is already taken!");
+
     }
 
 
     // 2. Validate email
     ValidationResult emailResult = EmailValidator::isValid(email);
     if (!emailResult.isValid) {
-        qDebug() << "Invalid email:" << emailResult.errorMessage;
-        return nullptr;
+         return ValidationResult::failure(emailResult.errorMessage);
     }
 
     if (userRepo->isEmailTaken(email)) {
-        qDebug() << "Email" << email << "is already registered!";
-        return nullptr;
+         return ValidationResult::failure("This Email is already registered!");
     }
 
     // 3. Validate password
     ValidationResult PassResult = EmailValidator::isValid(email);
     if (!PassResult.isValid) {
-        qDebug() << "Invalid password:" << PassResult.errorMessage;
-        return nullptr;
+        return ValidationResult::failure(PassResult.errorMessage);
     }
 
     // 4. Create user
@@ -57,13 +53,59 @@ User* AuthService::registerUser(const QString& username, const QString& email, c
     // 6. Save to repository
     if (!userRepo->addUser(newUser)) {
         delete newUser;
-        return nullptr;
+        return ValidationResult::failure("");
     }
 
     qDebug() << "User registered successfully:" << username;
-    return newUser;
 }
 
+*/
+
+ValidationResult AuthService::registerUser(const QString& username, const QString& email,
+                                           const QString& password, UserRole role)
+{
+    // 1. Validate username
+    if (username.isEmpty() || username.length() < 3) {
+        return ValidationResult::failure("Username must be at least 3 characters");
+    }
+
+    if (userRepo->isUsernameTaken(username)) {
+        return ValidationResult::failure("Username is already taken!");
+    }
+
+    // 2. Validate email
+    ValidationResult emailResult = EmailValidator::isValid(email);
+    if (!emailResult.isValid) {
+        return emailResult;
+    }
+
+    if (userRepo->isEmailTaken(email)) {
+        return ValidationResult::failure("This email is already registered!");
+    }
+
+    ValidationResult passResult = PasswordValidator::isValid(password);
+    if (!passResult.isValid) {
+        return passResult;
+    }
+
+    // 4. Create user
+    int newId = userRepo->getNextId();
+    User* newUser = UserFactory::createUser(newId, username, email, password, role);
+    if (!newUser) {
+        return ValidationResult::failure("Failed to create user");
+    }
+
+    // 5. Save to repository
+    if (!userRepo->addUser(newUser)) {
+        delete newUser;
+        return ValidationResult::failure("Failed to save user to database");
+    }
+
+    qDebug() << "✅ User registered successfully:" << username;
+
+    return ValidationResult::success();
+}
+/*
 User* AuthService::login(const QString& usernameOrEmail, const QString& password) {
     // 1. Try to find user by username or email
     User* user = userRepo->findByUsername(usernameOrEmail);
@@ -95,6 +137,38 @@ User* AuthService::login(const QString& usernameOrEmail, const QString& password
 
     qDebug() << "User logged in:" << user->getUsername();
     return user;
+}*/
+// AuthService.cpp
+ValidationResult AuthService::login(const QString& usernameOrEmail, const QString& password)
+{
+    // 1. Try to find user by username or email
+    User* user = userRepo->findByUsername(usernameOrEmail);
+    if (!user) {
+        user = userRepo->findByEmail(usernameOrEmail);
+    }
+
+    if (!user) {
+        return ValidationResult::failure("User not found");
+    }
+
+    // 2. Check if user is blocked
+    if (user->isBlocked()) {
+        return ValidationResult::failure("Your account has been blocked. Please contact support.");
+    }
+
+    // 3. Verify password
+    if (!user->checkPassword(password)) {
+        return ValidationResult::failure("Invalid password");
+    }
+
+    // 4. Login successful
+    currentUserId = user->getId();
+    user->setLastLogin(QDateTime::currentDateTime());
+    userRepo->updateUser(user, user->getUsername(), user->getEmail());
+
+    qDebug() << "✅ User logged in:" << user->getUsername();
+
+    return ValidationResult::success();
 }
 
 bool AuthService::logout() {
@@ -177,5 +251,15 @@ bool AuthService::resetPasswordWithToken(const QString& token, const QString& ne
 
     qDebug() << "✅ Password reset successfully for user:" << user->getUsername();
     return true;
+}
+
+User* AuthService::getUserByUsername(const QString& username) const
+{
+    if (username.isEmpty()) {
+        qWarning() << "❌ Username is empty!";
+        return nullptr;
+    }
+
+    return userRepo->findByUsername(username);
 }
 

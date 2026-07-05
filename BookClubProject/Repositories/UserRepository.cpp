@@ -336,8 +336,6 @@ bool UserRepository::loadAllFromDatabase() {
         QString salt = sqlQuery.value("salt").toString();
 
         User* user = nullptr;
-
-        // ✅ بررسی نقش و ساخت شیء مناسب
         switch (role) {
         case UserRole::Publisher: {
             // ساخت Publisher واقعی
@@ -349,8 +347,6 @@ bool UserRepository::loadAllFromDatabase() {
                 salt
                 );
 
-
-            // ✅ بارگذاری اطلاعات اختصاصی Publisher
             loadPublisherInfo(publisher);
 
             user = publisher;
@@ -366,7 +362,7 @@ bool UserRepository::loadAllFromDatabase() {
                 passwordHash, genres, updatedAt,
                 salt
                 );
-            // ✅ بارگذاری اطلاعات اختصاصی Admin
+
             loadAdminInfo(admin);
 
             user = admin;
@@ -386,7 +382,6 @@ bool UserRepository::loadAllFromDatabase() {
         }
         }
 
-        // تنظیم reset token (برای همه)
         QString resetToken = sqlQuery.value("reset_token").toString();
         if (!resetToken.isEmpty()) {
             user->setPasswordResetToken(resetToken);

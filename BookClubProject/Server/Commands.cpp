@@ -24,16 +24,26 @@ Response LoginCommand::execute(const QVariantMap& params)
     QString username = params["username"].toString();
     QString password = params["password"].toString();
 
-    User* user = m_authService->login(username, password);
-    if (user) {
+
+    ValidationResult result = m_authService->login(username, password);
+
+    if(!result.isValid){
+        return Response::error(result.errorMessage);
+
+    }
+
+    User* user = m_authService->getUserByUsername(username);
+    if (!user) {
+        return Response::error("User created but could not be retrieved");
+    }
+
         QVariantMap data;
         data["userId"] = user->getId();
         data["username"] = user->getUsername();
         data["role"] = user->getRoleString();
 
         return Response::success("Login successful", data);
-    }
-    return Response::error("Invalid username or password");
+
 }
 
 // ----- RegisterCommand -----
@@ -54,14 +64,24 @@ Response RegisterCommand::execute(const QVariantMap& params)
     if (roleStr == "Publisher") role = UserRole::Publisher;
     else if (roleStr == "Admin") role = UserRole::Admin;
 
-    User* user = m_authService->registerUser(username, email, password, role);
-    if (user) {
-        QVariantMap data;
-        data["userId"] = user->getId();
-        data["username"] = user->getUsername();
-        return Response::success("Registration successful", data);
+
+
+    ValidationResult result = m_authService->registerUser(username, email, password, role);
+
+    if (!result.isValid) {
+        return Response::error(result.errorMessage);
     }
-    return Response::error("Registration failed");
+    User* user = m_authService->getUserByUsername(username);
+
+
+    if (!user) {
+        return Response::error("User created but could not be retrieved");
+    }
+
+    QVariantMap data;
+    data["userId"] = user->getId();
+    data["username"] = user->getUsername();
+    return Response::success("Registration successful", data);
 }
 
 // ----- LogoutCommand -----
@@ -372,6 +392,7 @@ Response GetFreeBooksCommand::execute(const QVariantMap& params)
         bookData["price"] = book->getPrice();
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
+        bookData["coverPath"] = book->getCoverPath();
         bookList.append(bookData);
     }
 

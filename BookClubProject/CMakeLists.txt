@@ -66,6 +66,7 @@ qt_add_executable(BookClubProject
     Server/Request.h Server/Request.cpp
     Server/RequestParser.h Server/RequestParser.cpp
     Server/Response.h Server/Response.cpp
+    appWindow/SessionManager.h appWindow/SessionManager.cpp
 
 
 
