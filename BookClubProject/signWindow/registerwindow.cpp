@@ -1,5 +1,5 @@
 #include "registerwindow.h"
-#include "ui_registerwindow.h"
+#include "signWindow/ui_registerwindow.h"
 
 #include "../Shared/EmailValidator.h"
 #include "../Shared/PasswordValidator.h"

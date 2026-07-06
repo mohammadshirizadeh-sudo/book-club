@@ -1,5 +1,5 @@
 #include "genrewindow.h"
-#include "ui_genrewindow.h"
+#include "appWindow/ui_genrewindow.h"
 
 #include "userwindow.h"
 

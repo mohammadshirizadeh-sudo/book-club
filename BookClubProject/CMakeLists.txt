@@ -67,6 +67,10 @@ qt_add_executable(BookClubProject
     Server/RequestParser.h Server/RequestParser.cpp
     Server/Response.h Server/Response.cpp
     appWindow/SessionManager.h appWindow/SessionManager.cpp
+    Publishers/publisherprofilewindow.h Publishers/publisherprofilewindow.cpp Publishers/publisherprofilewindow.ui
+    Publishers/mybooks.h Publishers/mybooks.cpp Publishers/mybooks.ui
+    Publishers/bookstatics.h Publishers/bookstatics.cpp Publishers/bookstatics.ui
+    appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
 
 
 
