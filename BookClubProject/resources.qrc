@@ -4,7 +4,6 @@
         <file>resources/blueBack.png</file>
         <file>resources/icon.jpg</file>
         <file>resources/skyblueBack.jpg</file>
-        <file>resources/moochi.gif</file>
         <file>resources/favBooks.png</file>
         <file>resources/shopping.png</file>
         <file>resources/password.png</file>
@@ -12,5 +11,9 @@
         <file>resources/name.png</file>
         <file>resources/userInfo.png</file>
         <file>resources/changeInfo.png</file>
+        <file>resources/welcome.png</file>
+        <file>resources/search.png</file>
+        <file>resources/ignore.png</file>
+        <file>resources/hot.png</file>
     </qresource>
 </RCC>

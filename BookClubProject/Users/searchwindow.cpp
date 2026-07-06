@@ -1,5 +1,5 @@
 #include "searchwindow.h"
-#include "ui_searchwindow.h"
+#include "Users/ui_searchwindow.h"
 
 SearchWindow::SearchWindow(QWidget *parent)
     : QWidget(parent)

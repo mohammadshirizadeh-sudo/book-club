@@ -1,5 +1,5 @@
 #include "loginwindow.h"
-#include "ui_loginwindow.h"
+#include "signWindow/ui_loginwindow.h"
 #include <QIcon>
 
 LoginWindow::LoginWindow(NetworkManager* networkManager,QWidget *parent)
