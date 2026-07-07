@@ -16,7 +16,7 @@ public:
     ~ForgotPasswordWindow();
 
 signals:
-    //void openMainWindow();
+    void openLoginWindow(); // برای بازگشت به صفحه لاگین
 
 private slots:    
     void on_tokenPushButton_clicked();

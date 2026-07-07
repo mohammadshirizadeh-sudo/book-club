@@ -1,11 +1,11 @@
 #ifndef LOGINWINDOW_H
 #define LOGINWINDOW_H
 
-
-#include <QWidget>
 #include "../Server/Request.h"
 #include "../Server/Commands.h"
 #include "../Network-Manger/NetworkManager.h"
+
+#include <QWidget>
 
 namespace Ui {
 class LoginWindow;
@@ -22,14 +22,20 @@ public:
 signals:
     void openForgotPasswordWindow();
     void openRegisterWindow();
-    //void openMainWindow();
+
+    void openUserWindow();
+    void openPublisherWindow();
+    void openAdminWindow();
+
+public slots:
+    // اسلات‌های جدید برای دریافت پاسخ سرور
+    void handleLoginResponse(const QVariantMap& data);
+    void handleError(const QString& message);
 
 private slots:
     void on_forgotpassPushButton_clicked();
     void on_registerPushButton_clicked();
-    // void on_signinPushButton_clicked();
-
-    // void on_signinPushButton_clicked();
+    void on_signinPushButton_clicked();
 
 private:
     Ui::LoginWindow *ui;
