@@ -56,6 +56,7 @@ bool UserRepository::addUser(User* user) {
 
 bool UserRepository::addUser(User* user) {
     if (!user) return false;
+    QMutexLocker locker(&m_mutex);
 
     DatabaseManager* db = DatabaseManager::instance();
     db->transaction();
@@ -92,18 +93,22 @@ bool UserRepository::addUser(User* user) {
 }
 
 User* UserRepository::findById(int id) const {
+    QMutexLocker locker(&m_mutex);
     return usersById.value(id, nullptr);
 }
 
 User* UserRepository::findByUsername(const QString& username) const {
+    QMutexLocker locker(&m_mutex);
     return usersByUsername.value(username, nullptr);
 }
 
 User* UserRepository::findByEmail(const QString& email) const {
+    QMutexLocker locker(&m_mutex);
     return usersByEmail.value(email, nullptr);
 }
 
 QVector<User*> UserRepository::getAllUsers() const {
+    QMutexLocker locker(&m_mutex);
     return usersById.values().toVector();
 }
 
@@ -112,7 +117,6 @@ QVector<User*> UserRepository::getAllUsers() const {
 bool UserRepository::updateUser(User* user, const QString& oldUsername, const QString& oldEmail) {
     if (!user) return false;
 
-    // 1. ذخیره در دیتابیس
     if (!saveToDatabase(user)) {
         return false;
     }
@@ -184,6 +188,7 @@ bool UserRepository::updateUser(User* user, const QString& oldUsername, const QS
 
 
 bool UserRepository::deleteUser(int userId) {
+    QMutexLocker locker(&m_mutex);
     User* user = usersById.value(userId, nullptr);
     if (!user) {
         qWarning() << "User with ID" << userId << "not found!";
@@ -196,7 +201,6 @@ bool UserRepository::deleteUser(int userId) {
         return false;
     }
 
-    // حذف از کش و آزادسازی حافظه
     removeFromCache(userId);
     delete user;
 
@@ -204,14 +208,17 @@ bool UserRepository::deleteUser(int userId) {
 }
 
 bool UserRepository::isUsernameTaken(const QString& username) const {
+    QMutexLocker locker(&m_mutex);
     return usersByUsername.contains(username);
 }
 
 bool UserRepository::isEmailTaken(const QString& email) const {
+    QMutexLocker locker(&m_mutex);
     return usersByEmail.contains(email);
 }
 
 void UserRepository::resetNextId() {
+    QMutexLocker locker(&m_mutex);
     int maxId = 1000;
     for (int id : usersById.keys()) {
         if (id > maxId) {
@@ -289,6 +296,7 @@ bool UserRepository::loadAllFromDatabase()
 
 
 bool UserRepository::loadAllFromDatabase() {
+    QMutexLocker locker(&m_mutex);
     clearCache();
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -313,7 +321,6 @@ bool UserRepository::loadAllFromDatabase() {
 
     int count = 0;
     while (sqlQuery.next()) {
-        // خواندن اطلاعات مشترک از دیتابیس
         int id = sqlQuery.value("id").toInt();
         QString fullName = sqlQuery.value("full_name").toString();
         QString username = sqlQuery.value("username").toString();
@@ -562,6 +569,7 @@ bool UserRepository::deleteFromDatabase(int userId) {
 
 void UserRepository::addToCache(User* user)
 {
+    QMutexLocker locker(&m_mutex);
     if (!user) return;
 
     usersById[user->getId()] = user;
@@ -574,6 +582,7 @@ void UserRepository::addToCache(User* user)
 
 void UserRepository::removeFromCache(int userId)
 {
+    QMutexLocker locker(&m_mutex);
     User* user = usersById.value(userId, nullptr);
     if (!user) return;
 
@@ -586,6 +595,7 @@ void UserRepository::removeFromCache(int userId)
 
 void UserRepository::clearCache()
 {
+    QMutexLocker locker(&m_mutex);
     qDeleteAll(usersById);
     usersById.clear();
     usersByUsername.clear();

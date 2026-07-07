@@ -77,6 +77,7 @@ bool DatabaseManager::isOpen() const
 
 bool DatabaseManager::executeQuery(const QString& query)
 {
+    QMutexLocker locker(&m_mutex);
     if (!isOpen()) {
         qWarning() << "⚠️ Database is not open!";
         return false;
@@ -94,10 +95,12 @@ bool DatabaseManager::executeQuery(const QString& query)
 
 bool DatabaseManager::executeQuery(const QString& query, const QVariantMap& params)
 {
+    QMutexLocker locker(&m_mutex);
     if (!isOpen()) {
         qWarning() << "⚠️ Database is not open!";
         return false;
     }
+
 
     QSqlQuery sqlQuery(m_database);
     sqlQuery.prepare(query);

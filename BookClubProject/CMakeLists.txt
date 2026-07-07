@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(BookClubProject LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network Sql)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network Sql Concurrent)
 
 qt_standard_project_setup()
 
@@ -85,6 +85,7 @@ target_link_libraries(BookClubProject
         Qt::Widgets
         Qt::Network
         Qt6::Sql
+        Qt::Concurrent
 )
 
 install(TARGETS BookClubProject

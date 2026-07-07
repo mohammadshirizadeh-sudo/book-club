@@ -14,6 +14,7 @@ ReviewRepository::~ReviewRepository() {
 }
 
 bool ReviewRepository::addReview(Review* review) {
+    QMutexLocker locker(&m_mutex);
     if (!review) {
         qWarning() << "Review is null!";
         return false;
@@ -43,14 +44,18 @@ bool ReviewRepository::addReview(Review* review) {
 }
 
 Review* ReviewRepository::findById(int id) const {
+    QMutexLocker locker(&m_mutex);
     return reviewsById.value(id, nullptr);
 }
 
 QVector<Review*> ReviewRepository::getAllReviews() const {
+    QMutexLocker locker(&m_mutex);
     return reviewsById.values().toVector();
 }
 
 QVector<Review*> ReviewRepository::getReviewsByBookId(int bookId) const {
+
+    QMutexLocker locker(&m_mutex);
     QVector<Review*> result;
 
     for (Review* review : reviewsById) {
@@ -63,6 +68,7 @@ QVector<Review*> ReviewRepository::getReviewsByBookId(int bookId) const {
 }
 
 QVector<Review*> ReviewRepository::getReviewsByUserId(int userId) const {
+    QMutexLocker locker(&m_mutex);
     QVector<Review*> result;
 
     for (Review* review : reviewsById) {
@@ -79,6 +85,7 @@ bool ReviewRepository::updateReview(Review* review) {
         qWarning() << "Review is null!";
         return false;
     }
+    QMutexLocker locker(&m_mutex);
 
     int id = review->getReviewId();
     if (!reviewsById.contains(id)) {
@@ -100,6 +107,7 @@ bool ReviewRepository::updateReview(Review* review) {
 }
 
 bool ReviewRepository::deleteReview(int reviewId) {
+    QMutexLocker locker(&m_mutex);
     Review* review = reviewsById.value(reviewId, nullptr);
     if (!review) {
         qWarning() << "Review with ID" << reviewId << "not found!";
@@ -126,6 +134,7 @@ bool ReviewRepository::deleteReview(int reviewId) {
 
 
 bool ReviewRepository::hasUserReviewed(int userId, int bookId) const {
+    QMutexLocker locker(&m_mutex);
     for (Review* review : reviewsById) {
         if (review->getUserId() == userId && review->getBookId() == bookId) {
             return true;
@@ -135,6 +144,7 @@ bool ReviewRepository::hasUserReviewed(int userId, int bookId) const {
 }
 
 Review* ReviewRepository::getUserReview(int userId, int bookId) const {
+    QMutexLocker locker(&m_mutex);
     for (Review* review : reviewsById) {
         if (review->getUserId() == userId && review->getBookId() == bookId) {
             return review;
@@ -149,6 +159,7 @@ Review* ReviewRepository::getUserReview(int userId, int bookId) const {
 
 
 bool ReviewRepository::loadAllFromDatabase() {
+    QMutexLocker locker(&m_mutex);
     clearCache();
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -241,15 +252,18 @@ bool ReviewRepository::deleteFromDatabase(int reviewId) {
 
 
 void ReviewRepository::addToCache(Review* review) {
+    QMutexLocker locker(&m_mutex);
     if (!review) return;
     reviewsById[review->getReviewId()] = review;
 }
 
 void ReviewRepository::removeFromCache(int reviewId) {
+    QMutexLocker locker(&m_mutex);
     reviewsById.remove(reviewId);
 }
 
 void ReviewRepository::clearCache() {
+    QMutexLocker locker(&m_mutex);
     qDeleteAll(reviewsById);
     reviewsById.clear();
 }

@@ -22,6 +22,8 @@ private:
     int nextId = 1000;  // Auto-increment ID
 
 
+    mutable QMutex m_mutex;
+
     void addToCache(User* user);
     void removeFromCache(int userId);
     void clearCache();
@@ -59,7 +61,7 @@ public:
     bool deleteFromDatabase(int userId);
     void resetNextId();
 
-    UserRole stringToRole(const QString& roleStr);
+    static UserRole stringToRole(const QString& roleStr);
 
     AccountStatus stringToStatus(const QString& statusStr);
     QString roleToString(UserRole role);

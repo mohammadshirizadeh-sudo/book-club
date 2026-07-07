@@ -11,7 +11,8 @@
 class PurchaseRepository : public QObject {
     Q_OBJECT
 private:
-    QMap<int, Purchase*> purchasesById;  // Fast lookup by purchase ID
+    QMap<int, Purchase*> purchasesById;
+     mutable QMutex m_mutex;
 
 
     void addToCache(Purchase* purchase);

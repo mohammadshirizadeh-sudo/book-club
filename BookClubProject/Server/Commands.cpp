@@ -7,15 +7,19 @@
 #include "../Services/PurchaseService.h"
 #include "../Services/ReviewService.h"
 #include "../Services/PublisherService.h"
+#include "../Repositories/UserRepository.h"
+#include "ClientHandler.h"
 #include <QDebug>
+
 
 // =============================================
 // ===== Auth Commands =====
 // =============================================
 
-// ----- LoginCommand -----
-LoginCommand::LoginCommand(AuthService* authService)
+
+LoginCommand::LoginCommand(AuthService* authService, ClientHandler* clientHandler)
     : m_authService(authService)
+    , m_clientHandler(clientHandler)
 {
 }
 
@@ -37,10 +41,15 @@ Response LoginCommand::execute(const QVariantMap& params)
         return Response::error("User created but could not be retrieved");
     }
 
-        QVariantMap data;
-        data["userId"] = user->getId();
+        QVariantMap data ;
+
+        int userId = user->getId();
+        data["userId"] = userId;
+
         data["username"] = user->getUsername();
-        data["role"] = user->getRoleString();
+        QString role = user->getRoleString();
+        data["role"] = role;
+        m_clientHandler->setSession(userId, UserRepository::stringToRole(role));
 
         return Response::success("Login successful", data);
 
@@ -155,7 +164,12 @@ Response GetProfileCommand::execute(const QVariantMap& params)
         data["fullName"] = user->getFullname();
         data["role"] = user->getRoleString();
         data["status"] = static_cast<int>(user->getStatus());
-        data["favoriteGenres"] = QVariant::fromValue(user->getFavouriteGenre());
+        QStringList genreStrings;
+        for (const Genre& genre : user->getFavouriteGenre()) {
+            genreStrings.append(GenreHelper::toString(genre));
+        }
+        data["favoriteGenres"] = genreStrings;
+
         return Response::success(data);
     }
     return Response::error("User not found");

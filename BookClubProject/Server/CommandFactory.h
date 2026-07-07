@@ -33,7 +33,7 @@ public:
         ReviewService* reviewService,
         CartService* cartService,
         PublisherService* publisherService,
-        AdminService* adminService
+        AdminService* adminService,ClientHandler* clientHandler
         );
 
 private:
