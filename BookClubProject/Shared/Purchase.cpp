@@ -25,6 +25,18 @@ Purchase::Purchase(int purchaseId, int userId, const QVector<CartItem>& items,
     , status(PurchaseStatus::Pending) {
 }
 
+Purchase::Purchase(int purchaseId, int userId, const QVector<CartItem>& items,
+                   double totalPrice, double discountAmount, double finalPrice, QDateTime purchasedAt, PurchaseStatus status)
+    : purchaseId(purchaseId)
+    , userId(userId)
+    , items(items)
+    , totalPrice(totalPrice)
+    , discountAmount(discountAmount)
+    , finalPrice(finalPrice)
+    , purchasedAt(purchasedAt)
+    , status(status) {
+}
+
 // ===== Helper Methods =====
 
 QString Purchase::getStatusString() const {

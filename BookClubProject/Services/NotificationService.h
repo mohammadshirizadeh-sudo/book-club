@@ -6,18 +6,19 @@
 #include <QMap>
 #include "../Shared/Notification.h"
 #include "../Repositories/UserRepository.h"
+#include "../Database/DatabaseInitializer.h"
+#include "../Database/DatabaseManager.h"
 
-/**
- * @brief Notification Service for managing user notifications
- */
-class NotificationService {
+
+class NotificationService  : public QObject{
+    Q_OBJECT
 private:
     QMap<int, QVector<Notification>> userNotifications;  // userId -> notifications
     int nextId = 1000;
     UserRepository* userRepo;
 
 public:
-    explicit NotificationService(UserRepository* repo);
+    explicit NotificationService(UserRepository* repo , QObject* parent = nullptr);
 
     // ===== Create Notifications =====
 
@@ -51,8 +52,23 @@ public:
 
     int getUnreadCount(int userId) const;
 
+
+
+    bool loadAllFromDatabase();
+    bool saveToDatabase(const Notification& notification);
+    bool deleteFromDatabase(int notificationId);
+    bool markAsReadInDatabase(int notificationId);
+
+    static NotificationType stringToNotificationType(const QString& str);
+
+    static QString notificationTypeToString(NotificationType type);
+
+
 private:
     void addNotificationForUser(int userId, const Notification& notification);
+
+    void addToCache(int userId, const Notification& notification);
+    void clearCache();
 };
 
 #endif // NOTIFICATIONSERVICE_H

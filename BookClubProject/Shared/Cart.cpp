@@ -3,6 +3,32 @@
 #include <QDebug>
 
 // ===== Constructors =====
+QDateTime Cart::getCreatedAt() const
+{
+    return createdAt;
+}
+
+
+QDateTime Cart::getUpdatedAt() const
+{
+    return updatedAt;
+}
+
+void Cart::setCreatedAt(const QDateTime &newCreatedAt)
+{
+    createdAt = newCreatedAt;
+}
+
+void Cart::setUpdatedAt(const QDateTime &newUpdatedAt)
+{
+    updatedAt = newUpdatedAt;
+}
+
+void Cart::setItems(const QVector<CartItem> &newItems)
+{
+    items = newItems;
+}
+
 Cart::Cart()
     : userId(0)
     , totalPrice(0.0)

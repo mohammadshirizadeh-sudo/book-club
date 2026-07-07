@@ -1,5 +1,5 @@
 #include "forgotpasswordwindow.h"
-#include "ui_forgotpasswordwindow.h"
+#include "signWindow/ui_forgotpasswordwindow.h"
 
 ForgotPasswordWindow::ForgotPasswordWindow(QWidget *parent)
     : QWidget(parent)

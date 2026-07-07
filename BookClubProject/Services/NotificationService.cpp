@@ -2,20 +2,23 @@
 #include "NotificationService.h"
 #include <QDebug>
 
-NotificationService::NotificationService(UserRepository* repo) :userRepo(repo) {
+NotificationService::NotificationService(UserRepository* repo , QObject* parent) :userRepo(repo), QObject(parent) {
+    loadAllFromDatabase();
 }
 
 void NotificationService::sendToUser(int userId, NotificationType type,
                                      const QString& title, const QString& message) {
     Notification notification(nextId++, userId, type, title, message);
-    addNotificationForUser(userId, notification);
-    qDebug() << "Notification sent to user" << userId << ":" << title;
+
+    addToCache(userId, notification);
+
+    // 2. Save to SQLite
+    saveToDatabase(notification);
+
 }
 
 void NotificationService::sendToAll(NotificationType type,
                                     const QString& title, const QString& message) {
-    // Would need list of all users here
-    // For now, just demo: send to user 0 as "All"
     if (!userRepo) {
         qWarning() << "UserRepository not set! Cannot send to all users.";
         return;
@@ -32,36 +35,37 @@ void NotificationService::sendToAll(NotificationType type,
 }
 
 void NotificationService::sendToRole(const QString& role, NotificationType type,
-                                     const QString& title, const QString& message) {
+                                     const QString& title, const QString& message)
+{
     if (!userRepo) {
         qWarning() << "UserRepository not set! Cannot send to role.";
         return;
     }
+
     QVector<User*> allUsers = userRepo->getAllUsers();
-    int count =0;
-    for (User* user : allUsers){
+    int count = 0;
+
+    for (User* user : allUsers) {
+        bool shouldSend = false;
+
         if (role == "Admin" && user->isAdmin()) {
-            Notification notification(nextId++, user->getId(), type, title, message);
-            addNotificationForUser(user->getId(), notification);
-            count++;
+            shouldSend = true;
         } else if (role == "Publisher" && user->isPublisher()) {
-            Notification notification(nextId++, user->getId(), type, title, message);
-            addNotificationForUser(user->getId(), notification);
-            count++;
+            shouldSend = true;
         } else if (role == "User" && !user->isAdmin() && !user->isPublisher()) {
-            Notification notification(nextId++, user->getId(), type, title, message);
-            addNotificationForUser(user->getId(), notification);
-            count++;
+            shouldSend = true;
         } else if (role == "All") {
-            // همه کاربران (همان sendToAll)
+            shouldSend = true;
+        }
+
+        if (shouldSend) {
             Notification notification(nextId++, user->getId(), type, title, message);
-            addNotificationForUser(user->getId(), notification);
+            addToCache(user->getId(), notification);
+            saveToDatabase(notification);
             count++;
         }
     }
 
-    // Would need list of users with this role here
-    // For now, just demo
     qDebug() << "Notification sent to" << count << "users with role" << role << ":" << title;
 }
 
@@ -69,6 +73,7 @@ void NotificationService::addNotificationForUser(int userId, const Notification&
     if (!userNotifications.contains(userId)) {
         userNotifications[userId] = QVector<Notification>();
     }
+
     userNotifications[userId].append(notification);
 }
 
@@ -110,6 +115,8 @@ bool NotificationService::markAsRead(int notificationId, int userId) {
     for (Notification& notif : userNotifications[userId]) {
         if (notif.getNotificationId() == notificationId) {
             notif.markAsRead();
+
+            markAsReadInDatabase(notificationId);
             return true;
         }
     }
@@ -123,6 +130,7 @@ void NotificationService::markAllAsRead(int userId) {
 
     for (Notification& notif : userNotifications[userId]) {
         notif.markAsRead();
+        markAsReadInDatabase(notif.getNotificationId());
     }
 }
 
@@ -135,18 +143,178 @@ bool NotificationService::deleteNotification(int notificationId, int userId) {
     for (int i = 0; i < notifications.size(); ++i) {
         if (notifications[i].getNotificationId() == notificationId) {
             notifications.remove(i);
+            deleteFromDatabase(notificationId);
             return true;
         }
     }
     return false;
 }
 
-void NotificationService::clearAllNotifications(int userId) {
+void NotificationService::clearAllNotifications(int userId)
+{
     if (userNotifications.contains(userId)) {
+        // ✅ Delete all from SQLite
+        for (const Notification& notif : userNotifications[userId]) {
+            deleteFromDatabase(notif.getNotificationId());
+        }
         userNotifications[userId].clear();
     }
 }
 
 int NotificationService::getUnreadCount(int userId) const {
     return getUnreadNotifications(userId).size();
+}
+
+
+
+
+bool NotificationService::loadAllFromDatabase()
+{
+    clearCache();
+
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    QString query = R"(
+        SELECT id, user_id, type, title, message, is_read, created_at
+        FROM notification
+        ORDER BY created_at DESC
+    )";
+
+    QSqlQuery sqlQuery = db->executeSelect(query);
+
+    if (sqlQuery.lastError().isValid()) {
+        qCritical() << "Failed to load notifications:" << sqlQuery.lastError().text();
+        return false;
+    }
+
+    int count = 0;
+    while (sqlQuery.next()) {
+        Notification notification(
+            sqlQuery.value("id").toInt(),
+            sqlQuery.value("user_id").toInt(),
+            stringToNotificationType(sqlQuery.value("type").toString()),
+            sqlQuery.value("title").toString(),
+            sqlQuery.value("message").toString(),
+            sqlQuery.value("is_read").toBool(),
+            QDateTime::fromString(sqlQuery.value("created_at").toString(), Qt::ISODate)
+            );
+
+        addToCache(notification.getTargetUserId(), notification);
+        count++;
+    }
+    qDebug() << "✅ Loaded" << count << "notifications from SQLite";
+    return true;
+}
+
+bool NotificationService::saveToDatabase(const Notification& notification)
+{
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    QString query = R"(
+        INSERT OR REPLACE INTO notification (
+            id, user_id, type, title, message, is_read, created_at
+        ) VALUES (
+            :id, :user_id, :type, :title, :message, :is_read, :created_at
+        )
+    )";
+
+    QVariantMap params;
+    params["id"] = notification.getNotificationId();
+    params["user_id"] = notification.getTargetUserId();
+    params["type"] = notificationTypeToString(notification.getType());
+    params["title"] = notification.getTitle();
+    params["message"] = notification.getMessage();
+    params["is_read"] = notification.getIsRead() ? 1 : 0;
+    params["created_at"] = notification.getCreatedAt().toString(Qt::ISODate);
+
+    return db->executeQuery(query, params);
+}
+
+bool NotificationService::deleteFromDatabase(int notificationId)
+{
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    QString query = "DELETE FROM notification WHERE id = :id";
+    QVariantMap params;
+    params["id"] = notificationId;
+
+    return db->executeQuery(query, params);
+}
+
+bool NotificationService::markAsReadInDatabase(int notificationId)
+{
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    QString query = "UPDATE notification SET is_read = 1 WHERE id = :id";
+    QVariantMap params;
+    params["id"] = notificationId;
+
+    return db->executeQuery(query, params);
+}
+
+// =============================================
+// ===== Helper Methods =====
+// =============================================
+
+void NotificationService::addToCache(int userId, const Notification& notification)
+{
+    if (!userNotifications.contains(userId)) {
+        userNotifications[userId] = QVector<Notification>();
+    }
+    userNotifications[userId].append(notification);
+}
+
+void NotificationService::clearCache()
+{
+    userNotifications.clear();
+}
+
+
+
+// =============================================
+// ===== Converters =====
+// =============================================
+
+NotificationType NotificationService :: stringToNotificationType(const QString& str)
+{
+    if (str == "NewBook") return NotificationType::NewBook;
+    if (str == "Discount") return NotificationType::Discount;
+    if (str == "NewSale") return NotificationType::NewSale;
+    if (str == "NewReview") return NotificationType::NewReview;
+    if (str == "System") return NotificationType::System;
+    if (str == "Purchase") return NotificationType::Purchase;
+    if (str == "Promotional") return NotificationType::Promotional;
+    if (str == "Warning") return NotificationType::Warning;
+    return NotificationType::Info;
+}
+
+QString NotificationService::notificationTypeToString(NotificationType type)
+{
+    switch(type) {
+    case NotificationType::NewBook: return "NewBook";
+    case NotificationType::Discount: return "Discount";
+    case NotificationType::NewSale: return "NewSale";
+    case NotificationType::NewReview: return "NewReview";
+    case NotificationType::System: return "System";
+    case NotificationType::Purchase: return "Purchase";
+    case NotificationType::Promotional: return "Promotional";
+    case NotificationType::Warning: return "Warning";
+    default: return "Info";
+    }
 }

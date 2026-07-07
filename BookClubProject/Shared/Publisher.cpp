@@ -39,14 +39,26 @@ Publisher::Publisher(int id, const QString& username, const QString& email,
 Publisher::Publisher(int id, const QString& fullName, const QString& username, const QString& email,
                      UserRole role, AccountStatus status,
                      const QDateTime& createdAt, const QDateTime& lastLogin,
-                     const QString& passwordHash, const QVector<QString>& favouriteGenre,
+                     const QString& passwordHash, const QVector<Genre>& favouriteGenre,
                      const QDateTime& updatedAt, const QString& publisherName,
-                      double totalRevenue , QString salt)
+                     double totalRevenue , QString salt)
     : User(id, fullName, username, email, role, status,
            createdAt, lastLogin, passwordHash, favouriteGenre, updatedAt ,salt)  // ← فراخوانی Constructor پایه
     , publisherName(publisherName)
     , totalRevenue(totalRevenue)
     , joinedAt(createdAt)  {
+
+    // Publisher-specific initialization
+}
+Publisher::Publisher(int id, const QString& fullName, const QString& username, const QString& email,
+                     UserRole role, AccountStatus status,
+                     const QDateTime& createdAt, const QDateTime& lastLogin,
+                     const QString& passwordHash, const QVector<Genre>& favouriteGenre,
+                     const QDateTime& updatedAt,
+                     QString salt)
+    : User(id, fullName, username, email, role, status,
+           createdAt, lastLogin, passwordHash, favouriteGenre, updatedAt ,salt)  // ← فراخوانی Constructor پایه
+{
 
     // Publisher-specific initialization
 }
@@ -72,3 +84,7 @@ void Publisher::addRevenue(double amount) {
 QString Publisher::getFormattedRevenue() const {
     return QString("$%1").arg(totalRevenue, 0, 'f', 2);
 }
+
+
+
+

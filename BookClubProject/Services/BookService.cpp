@@ -5,9 +5,37 @@
 #include <algorithm>
 
 // ===== Constructor =====
-BookService::BookService(BookRepository* repo, ReviewRepository* reviewRepo)
+BookRepository *BookService::getBookRepo() const
+{
+    return bookRepo;
+}
 
-    : bookRepo(repo), reviewRepo(reviewRepo) {
+bool BookService::deleteBook(int bookId)
+{
+    // 1. Check if book exists
+    Book* book = bookRepo->findById(bookId);
+    if (!book) {
+        qWarning() << "Book not found with ID:" << bookId;
+        return false;
+    }
+
+    // 2. Log the deletion
+    qDebug() << "Deleting book:" << book->getTitle() << "(ID:" << bookId << ")";
+
+    // 3. Delete from repository
+    if (!bookRepo->deleteBook(bookId)) {
+        qWarning() << "Failed to delete book:" << bookId;
+        return false;
+    }
+
+    qDebug() << "Book deleted successfully:" << book->getTitle();
+    return true;
+}
+
+
+BookService::BookService(BookRepository* repo, ReviewRepository* reviewRepo , QObject* parent)
+
+    : bookRepo(repo), reviewRepo(reviewRepo) ,QObject(parent) {
 
 }
 
@@ -46,7 +74,7 @@ bool BookService::addBook(Book* book) {
 }
 
 bool BookService::editBook(int bookId, const QString& newTitle,
-                           const QString& newAuthor, const QString& newGenre,
+                           const QString& newAuthor, const Genre& newGenre,
                            const QString& newDescription, double newPrice,
                            double newDiscountPercent) {
     // 1. Find book
@@ -148,10 +176,13 @@ QVector<Book*> BookService::searchBooks(const QString& keyword) const {
         // Only search active books
         if (!book->getIsActive()) continue;
 
+
+        QString genreOf = GenreHelper::toString(book->getGenre());
+
         // Search by title, author, genre, or description
         if (book->getTitle().toLower().contains(lowerKeyword) ||
             book->getAuthor().toLower().contains(lowerKeyword) ||
-            book->getGenre().toLower().contains(lowerKeyword) ||
+            genreOf.toLower().contains(lowerKeyword) ||
             book->getDescription().toLower().contains(lowerKeyword)) {
             results.append(book);
         }
@@ -166,7 +197,10 @@ QVector<Book*> BookService::filterByGenre(const QString& genre) const {
     for (Book* book : bookRepo->getAllBooks()) {
         if (!book->getIsActive()) continue;
 
-        if (book->getGenre().toLower() == genre.toLower()) {
+
+        QString genreOf = GenreHelper::toString(book->getGenre());
+
+        if (genreOf.toLower() == genre.toLower()) {
             results.append(book);
         }
     }
@@ -219,7 +253,7 @@ QVector<Book*> BookService::filterByPublisher(int publisherId) const {
 
 // ===== Recommendations =====
 
-QVector<Book*> BookService::getRecommendedBooks(const QVector<QString>& favoriteGenres, int limit) const {
+/*QVector<Book*> BookService::getRecommendedBooks(const QVector<QString>& favoriteGenres, int limit) const {
     if (favoriteGenres.isEmpty()) {
         qWarning() << "No favorite genres provided!";
         return QVector<Book*>();
@@ -276,7 +310,81 @@ QVector<Book*> BookService::getRecommendedBooks(const QVector<QString>& favorite
     }
 
     return recommendations;
+}*/
+
+QVector<Book*> BookService::getRecommendedBooks(const QVector<Genre>& favoriteGenres, int limit) const {
+    if (favoriteGenres.isEmpty()) {
+        qWarning() << "No favorite genres provided!";
+        return QVector<Book*>();
+    }
+
+    QVector<Book*> recommendations;
+
+    // Get all active books
+    QVector<Book*> allBooks = bookRepo->getAllBooks();
+
+    // Score each book based on genre match
+    QVector<QPair<Book*, int>> scoredBooks;
+
+    for (Book* book : allBooks) {
+        if (!book->getIsActive()) continue;
+
+        int score = calculateGenreMatchScore(book, favoriteGenres);
+
+        // Bonus for high rating
+        if (book->getAverageRating() >= 4.5) score += 3;
+        else if (book->getAverageRating() >= 4.0) score += 2;
+
+        // Bonus for popularity
+        if (book->getSalesCount() > 100) score += 2;
+
+        // Bonus for discounts
+        if (book->getDiscountPercent() > 0) score += 1;
+
+        if (score > 0) {
+            scoredBooks.append(qMakePair(book, score));
+        }
+    }
+
+    // Sort by score (descending)
+    std::sort(scoredBooks.begin(), scoredBooks.end(),
+              [](const QPair<Book*, int>& a, const QPair<Book*, int>& b) {
+                  return a.second > b.second;
+              });
+
+    // Take top 'limit' books
+    int count = qMin(limit, scoredBooks.size());
+    for (int i = 0; i < count; ++i) {
+        recommendations.append(scoredBooks[i].first);
+    }
+
+    return recommendations;
 }
+
+
+int BookService::calculateGenreMatchScore(const Book* book, const QVector<Genre>& favoriteGenres) const {
+    int score = 0;
+    Genre bookGenre = book->getGenre();
+
+    for (Genre favoriteGenre : favoriteGenres) {
+        if (bookGenre == favoriteGenre) {
+            score += 10;  // Exact genre match
+            break;
+        }
+    }
+
+    if (score == 0) {
+        for (Genre favoriteGenre : favoriteGenres) {
+            if (areGenresRelated(bookGenre, favoriteGenre)) {
+                score += 5;  // Partial/Related match
+                break;
+            }
+        }
+    }
+
+    return score;
+}
+
 
 QVector<Book*> BookService::getPopularBooks(int limit) const {
     QVector<Book*> popular;
@@ -395,4 +503,176 @@ bool BookService::updateSalesCount(int bookId, int quantity) {
     bookRepo->updateBook(book);
 
     return true;
+}
+
+
+
+bool BookService::areGenresRelated(Genre genre1, Genre genre2) const
+{
+    if (genre1 == genre2)
+        return true;
+
+    switch (genre1)
+    {
+    // ===== داستانی =====
+    case Genre::Fiction:
+        return genre2 == Genre::Fantasy ||
+               genre2 == Genre::Science_Fiction ||
+               genre2 == Genre::Mystery_and_Crime ||
+               genre2 == Genre::Romance ||
+               genre2 == Genre::Thriller ||
+               genre2 == Genre::Adventure ||
+               genre2 == Genre::Drama ||
+               genre2 == Genre::Horror;
+
+    case Genre::Fantasy:
+        return genre2 == Genre::Fiction ||
+               genre2 == Genre::Adventure ||
+               genre2 == Genre::Science_Fiction;
+
+    case Genre::Science_Fiction:
+        return genre2 == Genre::Science ||
+               genre2 == Genre::Technology ||
+               genre2 == Genre::Fantasy ||
+               genre2 == Genre::Fiction;
+
+    case Genre::Adventure:
+        return genre2 == Genre::Fantasy ||
+               genre2 == Genre::Fiction ||
+               genre2 == Genre::Thriller;
+
+    case Genre::Mystery_and_Crime:
+        return genre2 == Genre::Thriller ||
+               genre2 == Genre::Horror ||
+               genre2 == Genre::Fiction;
+
+    case Genre::Thriller:
+        return genre2 == Genre::Mystery_and_Crime ||
+               genre2 == Genre::Horror ||
+               genre2 == Genre::Adventure;
+
+    case Genre::Horror:
+        return genre2 == Genre::Thriller ||
+               genre2 == Genre::Mystery_and_Crime ||
+               genre2 == Genre::Fantasy;
+
+    case Genre::Romance:
+        return genre2 == Genre::Drama ||
+               genre2 == Genre::Comedy ||
+               genre2 == Genre::Fiction;
+
+    case Genre::Drama:
+        return genre2 == Genre::Romance ||
+               genre2 == Genre::Poetry ||
+               genre2 == Genre::Fiction;
+
+    case Genre::Comedy:
+        return genre2 == Genre::Romance ||
+               genre2 == Genre::Drama;
+
+    case Genre::Comics:
+        return genre2 == Genre::Manga ||
+               genre2 == Genre::Fantasy ||
+               genre2 == Genre::Adventure;
+
+    case Genre::Manga:
+        return genre2 == Genre::Comics ||
+               genre2 == Genre::Fantasy ||
+               genre2 == Genre::Science_Fiction;
+
+    // ===== علمی =====
+    case Genre::Science:
+        return genre2 == Genre::Technology ||
+               genre2 == Genre::Psychology ||
+               genre2 == Genre::Education;
+
+    case Genre::Technology:
+        return genre2 == Genre::Science ||
+               genre2 == Genre::Education;
+
+    case Genre::Psychology:
+        return genre2 == Genre::Personal_Development ||
+               genre2 == Genre::Health ||
+               genre2 == Genre::Philosophy ||
+               genre2 == Genre::Science;
+
+    case Genre::Philosophy:
+        return genre2 == Genre::Psychology ||
+               genre2 == Genre::Politics_and_Society ||
+               genre2 == Genre::History;
+
+    // ===== تاریخی و اجتماعی =====
+    case Genre::History:
+        return genre2 == Genre::Biography ||
+               genre2 == Genre::Politics_and_Society ||
+               genre2 == Genre::Philosophy;
+
+    case Genre::Biography:
+        return genre2 == Genre::History ||
+               genre2 == Genre::Documentation;
+
+    case Genre::Politics_and_Society:
+        return genre2 == Genre::History ||
+               genre2 == Genre::Philosophy ||
+               genre2 == Genre::Psychology;
+
+    case Genre::Documentation:
+        return genre2 == Genre::Biography ||
+               genre2 == Genre::Education ||
+               genre2 == Genre::Reference;
+
+    // ===== آموزش =====
+    case Genre::Education:
+        return genre2 == Genre::Reference ||
+               genre2 == Genre::Language_Learning ||
+               genre2 == Genre::Science ||
+               genre2 == Genre::Technology;
+
+    case Genre::Language_Learning:
+        return genre2 == Genre::Education ||
+               genre2 == Genre::Reference;
+
+    case Genre::Reference:
+        return genre2 == Genre::Education ||
+               genre2 == Genre::Documentation;
+
+    // ===== سبک زندگی =====
+    case Genre::Health:
+        return genre2 == Genre::Psychology ||
+               genre2 == Genre::Cooking ||
+               genre2 == Genre::Personal_Development;
+
+    case Genre::Cooking:
+        return genre2 == Genre::Health;
+
+    case Genre::Personal_Development:
+        return genre2 == Genre::Psychology ||
+               genre2 == Genre::Health ||
+               genre2 == Genre::Education;
+
+    // ===== هنر =====
+    case Genre::Art:
+        return genre2 == Genre::Music ||
+               genre2 == Genre::Comics;
+
+    case Genre::Music:
+        return genre2 == Genre::Art ||
+               genre2 == Genre::Biography;
+
+    // ===== سایر =====
+    case Genre::LGBTQ:
+        return genre2 == Genre::Romance ||
+               genre2 == Genre::Drama ||
+               genre2 == Genre::Biography;
+
+    case Genre::Poetry:
+        return genre2 == Genre::Drama ||
+               genre2 == Genre::Philosophy;
+
+    case Genre::other:
+        return false;
+
+    default:
+        return false;
+    }
 }

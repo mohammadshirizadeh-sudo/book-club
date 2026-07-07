@@ -28,6 +28,17 @@ Review::Review(int reviewId, int userId, int bookId, const QString& text, int ra
         this->rating = 0;
     }
 }
+//constructor for DataBase
+Review::Review(int reviewId, int userId, int bookId, const QString& text, int rating ,QDateTime createdAt ,QDateTime updatedAt)
+    : reviewId(reviewId)
+    , userId(userId)
+    , bookId(bookId)
+    , text(text)
+    , rating(rating)
+    , createdAt(createdAt)
+    , updatedAt(updatedAt){
+
+}
 // ===== Setters =====the science lab
 void Review::setRating(int rating) {
     if (rating >= 1 && rating <= 5) {

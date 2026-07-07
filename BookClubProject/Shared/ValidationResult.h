@@ -1,4 +1,4 @@
-// validationresult.h
+
 #ifndef VALIDATIONRESULT_H
 #define VALIDATIONRESULT_H
 
@@ -8,16 +8,11 @@ struct ValidationResult {
     bool isValid;
     QString errorMessage;
 
-    ValidationResult() : isValid(true), errorMessage("") {}
-    ValidationResult(bool valid, const QString& msg) : isValid(valid), errorMessage(msg) {}
+    ValidationResult();
+    ValidationResult(bool valid, const QString& msg);
 
-    static ValidationResult success() {
-        return ValidationResult(true, "");
-    }
-
-    static ValidationResult failure(const QString& msg) {
-        return ValidationResult(false, msg);
-    }
+    static ValidationResult success();
+    static ValidationResult failure(const QString& msg);
 };
 
-#endif // VALIDATIONRESULT_H
+#endif

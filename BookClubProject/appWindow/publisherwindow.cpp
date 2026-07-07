@@ -1,5 +1,5 @@
 #include "publisherwindow.h"
-#include "ui_publisherwindow.h"
+#include "appWindow/ui_publisherwindow.h"
 
 PublisherWindow::PublisherWindow(QWidget *parent)
     : QWidget(parent)

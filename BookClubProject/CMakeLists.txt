@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(BookClubProject LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network Sql)
 
 qt_standard_project_setup()
 
@@ -54,6 +54,23 @@ qt_add_executable(BookClubProject
     appWindow/publisherwindow.h appWindow/publisherwindow.cpp appWindow/publisherwindow.ui
     Users/UserProfileWindow.h Users/UserProfileWindow.cpp Users/UserProfileWindow.ui
     Users/searchwindow.h Users/searchwindow.cpp Users/searchwindow.ui
+    Shared/ValidationResault.cpp
+    Services/AdminService.h Services/AdminService.cpp
+    Network-Manger/NetworkManager.h Network-Manger/NetworkManager.cpp
+    Database/DatabaseInitializer.h Database/DatabaseInitializer.cpp
+    Database/DatabaseManager.h Database/DatabaseManager.cpp
+    Server/Server.h Server/Server.cpp
+    Server/ClientHandler.h Server/ClientHandler.cpp
+    Server/CommandFactory.h Server/CommandFactory.cpp
+    Server/Commands.h Server/Commands.cpp
+    Server/Request.h Server/Request.cpp
+    Server/RequestParser.h Server/RequestParser.cpp
+    Server/Response.h Server/Response.cpp
+    appWindow/SessionManager.h appWindow/SessionManager.cpp
+    Publishers/publisherprofilewindow.h Publishers/publisherprofilewindow.cpp Publishers/publisherprofilewindow.ui
+    Publishers/mybooks.h Publishers/mybooks.cpp Publishers/mybooks.ui
+    Publishers/bookstatics.h Publishers/bookstatics.cpp Publishers/bookstatics.ui
+    appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
 
 
 
@@ -66,6 +83,8 @@ target_link_libraries(BookClubProject
     PRIVATE
         Qt::Core
         Qt::Widgets
+        Qt::Network
+        Qt6::Sql
 )
 
 install(TARGETS BookClubProject

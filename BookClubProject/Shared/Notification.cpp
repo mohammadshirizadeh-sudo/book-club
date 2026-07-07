@@ -36,6 +36,20 @@ Notification::Notification(int notificationId,
     , createdAt(QDateTime::currentDateTime()) {
 }
 
+Notification::Notification(int notificationId,
+                           int targetUserId, NotificationType type, const QString &title,
+                           const QString &message, bool isRead, QDateTime createdAt)
+    : notificationId(notificationId)
+    , targetUserId(targetUserId)
+    , type(type)
+    , title(title)
+    , message(message)
+    , isRead(isRead)
+    , createdAt(createdAt)
+{
+
+}
+
 // ===== Helper Methods =====
 
 bool Notification::isForUser(int userId) const {

@@ -4,13 +4,14 @@
 
 #include <QString>
 #include <QDateTime>
+#include "Genre.h"
 
 class Book {
 private:
     int bookId;
     QString title;
     QString author;
-    QString genre;
+    Genre genre;
     QString description;
     double price;
     double discountPercent;  // 0.0 to 100.0
@@ -27,13 +28,24 @@ public:
     // ===== Constructors =====
     Book();
     Book(int bookId, const QString& title, const QString& author,
-         const QString& genre, double price, int publisherId);
+         const Genre& genre, double price, int publisherId);
+
+    Book(int bookId, const QString& title, const QString& author,
+         const Genre& genre, const QString& description, double price,
+         double discountPercent, const QString& coverPath, const QString& pdfPath,
+         bool isActive, double averageRating, int salesCount, int publisherId,
+         const QDateTime& createdAt, const QDateTime& updatedAt);
+
+
+
+
+
 
     // ===== Getters =====
     int getBookId() const { return bookId; }
     QString getTitle() const { return title; }
     QString getAuthor() const { return author; }
-    QString getGenre() const { return genre; }
+    Genre getGenre() const { return genre; }
     QString getDescription() const { return description; }
     double getPrice() const { return price; }
     double getDiscountPercent() const { return discountPercent; }
@@ -50,7 +62,7 @@ public:
     void setBookId(int id) { bookId = id; }
     void setTitle(const QString& title) { this->title = title; }
     void setAuthor(const QString& author) { this->author = author; }
-    void setGenre(const QString& genre) { this->genre = genre; }
+    void setGenre(const Genre& genre) { this->genre = genre; }
     void setDescription(const QString& desc) { description = desc; }
     void setPrice(double price) { this->price = price; }
     void setCoverPath(const QString& path) { coverPath = path; }

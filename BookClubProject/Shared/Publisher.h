@@ -16,26 +16,38 @@ private:
     double totalRevenue;
     QDateTime joinedAt;
 
+
+
+
 public:
     // ===== Constructors =====
     Publisher();
     Publisher(int id, const QString& fullName, const QString& username, const QString& email,
               UserRole role, AccountStatus status,
               const QDateTime& createdAt, const QDateTime& lastLogin,
-              const QString& passwordHash, const QVector<QString>& favouriteGenre,
+              const QString& passwordHash, const QVector<Genre>& favouriteGenre,
               const QDateTime& updatedAt, const QString& publisherName,
-               double totalRevenue , QString salt);
+              double totalRevenue , QString salt);
+    Publisher(int id, const QString& fullName, const QString& username, const QString& email,
+              UserRole role, AccountStatus status,
+              const QDateTime& createdAt, const QDateTime& lastLogin,
+              const QString& passwordHash, const QVector<Genre>& favouriteGenre,
+              const QDateTime& updatedAt,
+              QString salt);
+
+
+
 
     Publisher(int id, const QString& username, const QString& email,
               const QString& password, const QString& publisherName);
+
+
+
     /*
     Publisher(int id, const QString& username, const QString& email,
               const QString& passwordHash, const QString& salt,
               const QString& publisherName);
 */
-
-
-
     // ===== Getters =====
     QString getPublisherName() const { return publisherName; }
 

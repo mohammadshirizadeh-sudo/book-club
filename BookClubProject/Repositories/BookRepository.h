@@ -5,14 +5,22 @@
 #include <QMap>
 #include <QVector>
 #include "../Shared/Book.h"
+#include "../Database/DatabaseInitializer.h"
+#include "../Database/DatabaseManager.h"
 
-class BookRepository {
+class BookRepository :public QObject {
+    Q_OBJECT
 private:
-    QMap<int, Book*> booksById;     // Fast lookup by ID
-    int nextId = 1000;              // Auto-increment ID for new books
+    QMap<int, Book*> booksById;
+    int nextId = 1000;
+
+
+    void addToCache(Book* book);
+    void removeFromCache(int bookId);
+    void clearCache();
 
 public:
-    BookRepository();
+    BookRepository(QObject* parent = nullptr);
     ~BookRepository();
 
     bool addBook(Book* book);
@@ -25,8 +33,12 @@ public:
     int getNextId() { return nextId++; }
 
     // ===== Phase 3: Load/Save to file =====
-    bool loadFromFile(const QString& filename);
-    bool saveToFile(const QString& filename) const;
+
+    bool loadAllFromDatabase();
+    bool saveToDatabase(Book* book);
+    bool deleteFromDatabase(int bookId);
+
+
 };
 
 #endif // BOOKREPOSITORY_H

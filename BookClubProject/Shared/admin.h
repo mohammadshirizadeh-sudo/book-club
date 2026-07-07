@@ -28,8 +28,17 @@ public:
     Admin(int id, const QString& fullName, const QString& username, const QString& email,
           UserRole role, AccountStatus status,
           const QDateTime& createdAt, const QDateTime& lastLogin,
-          const QString& passwordHash, const QVector<QString>& favouriteGenre,
+          const QString& passwordHash, const QVector<Genre>& favouriteGenre,
           const QDateTime& updatedAt, AdminLevel adminLevel ,QString  salt);
+
+
+    Admin(int id, const QString& fullName, const QString& username, const QString& email,
+          UserRole role, AccountStatus status,
+          const QDateTime& createdAt, const QDateTime& lastLogin,
+          const QString& passwordHash, const QVector<Genre>& favouriteGenre,
+          const QDateTime& updatedAt ,QString  salt);
+
+
 
 
     AdminLevel getAdminLevel()const;

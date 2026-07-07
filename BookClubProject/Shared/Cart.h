@@ -4,6 +4,7 @@
 
 #include <QVector>
 #include "CartItem.h"
+#include <QDateTime>
 
 class Cart {
 private:
@@ -13,6 +14,8 @@ private:
     double totalPrice;
     double totalDiscount;
     double finalPrice;
+    QDateTime createdAt;
+    QDateTime updatedAt;
 
 public:
     // ===== Constructors =====
@@ -40,6 +43,11 @@ public:
     const CartItem* getItem(int bookId) const;
     void calculateTotals();
     bool isEmpty() const { return items.isEmpty(); }
+    QDateTime getCreatedAt() const;
+    QDateTime getUpdatedAt() const;
+    void setCreatedAt(const QDateTime &newCreatedAt);
+    void setUpdatedAt(const QDateTime &newUpdatedAt);
+    void setItems(const QVector<CartItem> &newItems);
 };
 
 #endif // CART_H

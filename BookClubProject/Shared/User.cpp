@@ -28,6 +28,26 @@ void User::setRole(UserRole newRole)
     updatedAt = QDateTime::currentDateTime();
 }
 
+void User::setPasswordResetToken(const QString &newPasswordResetToken)
+{
+    passwordResetToken = newPasswordResetToken;
+}
+
+void User::setResetTokenExpiry(const QDateTime &newResetTokenExpiry)
+{
+    resetTokenExpiry = newResetTokenExpiry;
+}
+
+QString User::getPasswordHash() const
+{
+    return passwordHash;
+}
+
+QString User::getSalt() const
+{
+    return salt;
+}
+
 User::User()
     : id(0)
     , Fullname("")
@@ -37,10 +57,12 @@ User::User()
     , role(UserRole::User)
     , status(AccountStatus::Active)
     , createdAt(QDateTime::currentDateTime())
-    , favouriteGenre(QVector<QString>())
+    , favouriteGenre(QVector<Genre>())
     , lastLogin(QDateTime())
     , updatedAt(QDateTime::currentDateTime())
     ,salt(PasswordHelper::generateSalt())
+    , passwordResetToken("")
+    , resetTokenExpiry(QDateTime())
 {
 
 }
@@ -51,6 +73,8 @@ User::User(int id, const QString& username, const QString& email, const QString&
     , role(UserRole::User)
     , status(AccountStatus::Active)
     , createdAt(QDateTime::currentDateTime())
+    , passwordResetToken("")
+    , resetTokenExpiry(QDateTime())
 
 {
     // اعتبارسنجی پسورد
@@ -66,8 +90,10 @@ User::User(int id, const QString& username, const QString& email, const QString&
 }
 
 User :: User(int id, const QString &fullName, const QString& username, const QString& email,UserRole role, AccountStatus status,
-     const QDateTime& createdAt, const QDateTime & lastLogin ,const QString& plainPassword): id(id), Fullname(fullName), username(username), email(email)
+            const QDateTime& createdAt, const QDateTime & lastLogin ,const QString& plainPassword): id(id), Fullname(fullName), username(username), email(email)
     , role(role), status(status), createdAt(createdAt) , lastLogin(lastLogin), updatedAt(QDateTime::currentDateTime())
+    , passwordResetToken("")
+    , resetTokenExpiry(QDateTime())
 {
 
     ValidationResult pass = PasswordValidator::isValid(plainPassword);
@@ -94,11 +120,10 @@ QDateTime User::getCreatedAt() const
 User::~User() = default;
 
 User :: User(int id,const QString &fullName, const QString& username, const QString& _email,UserRole role, AccountStatus status,
-            const QDateTime& createdAt,const QDateTime &lastLogin ,const QString& passwordHash , QVector<QString> favouriteGenre , const QDateTime& updatedAt , QString salt)
+            const QDateTime& createdAt,const QDateTime &lastLogin ,const QString& passwordHash , QVector<Genre> favouriteGenre , const QDateTime& updatedAt , QString salt)
     : id(id)
     ,Fullname(fullName) , username(username) , passwordHash(passwordHash), email(_email)
     , role(role), status(status), createdAt(createdAt),favouriteGenre(favouriteGenre) ,lastLogin(lastLogin),  updatedAt(updatedAt) , salt(salt)
-
 {
 
     if (passwordHash.isEmpty()) {
@@ -200,12 +225,12 @@ void User::setFullname(const QString &newFullname)
 }
 
 
-QVector<QString> User::getFavouriteGenre() const
+QVector<Genre> User::getFavouriteGenre() const
 {
     return favouriteGenre;
 }
 
-void User::setFavouriteGenre(const QVector<QString> &newFavouriteGenre)
+void User::setFavouriteGenre(const QVector<Genre> &newFavouriteGenre)
 {
     favouriteGenre = newFavouriteGenre;
 }
@@ -277,8 +302,79 @@ bool User::checkPassword(const QString& password)const
 
 
 
+QString User::generateResetToken()
+{
+
+    passwordResetToken = QUuid::createUuid().toString(QUuid::WithoutBraces);
+
+    resetTokenExpiry = QDateTime::currentDateTime().addSecs(3600);
+
+    return passwordResetToken;
+}
+
+bool User::verifyResetToken(const QString& token) const
+{
+    if (passwordResetToken.isEmpty() || passwordResetToken != token) {
+        return false;
+    }
+
+    if (isResetTokenExpired()) {
+        return false;
+    }
+
+    return true;
+}
+
+bool User::resetPasswordWithToken(const QString& token, const QString& newPassword)
+{
+    if (!verifyResetToken(token)) {
+        qWarning() << "Invalid or expired reset token";
+        return false;
+    }
 
 
+    ValidationResult pass = PasswordValidator::isValid(newPassword);
+
+    if (!pass.isValid) {
+        qWarning() << "Invalid new password:" << pass.errorMessage;
+        return false;
+    }
+
+    if (!setPassword(newPassword)) {
+        return false;
+    }
+
+    clearResetToken();
+
+    return true;
+}
+
+void User::clearResetToken()
+{
+    passwordResetToken.clear();
+    resetTokenExpiry = QDateTime();
+}
+
+bool User::isResetTokenExpired() const
+{
+    if (resetTokenExpiry.isNull()) {
+        return true;
+    }
+    return QDateTime::currentDateTime() > resetTokenExpiry;
+}
+
+
+
+
+QString User::getRoleString() const
+{
+    switch (role) {
+    case UserRole::User:      return "User";
+    case UserRole::Publisher: return "Publisher";
+    case UserRole::Admin:     return "Admin";
+    default:                  return "Unknown";
+    }
+}
 
 
 

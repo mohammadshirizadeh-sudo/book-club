@@ -5,10 +5,10 @@
 // ===== Constructor =====
 ReviewService::ReviewService(ReviewRepository* reviewRepo,
                              BookRepository* bookRepo,
-                             NotificationService* notifService)
+                             NotificationService* notifService ,   QObject* parent)
     : reviewRepo(reviewRepo)
     , bookRepo(bookRepo)
-    , notifService(notifService) {
+    , notifService(notifService) , QObject(parent) {
 }
 
 // ===== Review Management =====
@@ -61,6 +61,7 @@ bool ReviewService::addReview(int userId, int bookId, const QString& text, int r
 
     return true;
 }
+
 
 bool ReviewService::editReview(int reviewId, int userId, const QString& newText, int newRating) {
     // 1. Validate rating
@@ -245,4 +246,10 @@ void ReviewService::sendReviewNotification(int bookId, int rating) {
 
     // Also send to users who have saved this book (optional)
     // This would require a "getUsersWhoSavedBook" method
+}
+
+QVector<Review*> ReviewService::getAllReviews() const
+{
+
+    return reviewRepo->getAllReviews();
 }
