@@ -13,9 +13,8 @@
 class LibraryRepository : public QObject {
     Q_OBJECT
 private:
-    QMap<int, Library*> librariesByUserId;  // Fast lookup by user ID
-
-
+    QMap<int, Library*> librariesByUserId;
+    mutable QMutex m_mutex;
     void addToCache(Library* library);
     void removeFromCache(int userId);
     void clearCache();

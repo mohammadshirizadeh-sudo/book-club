@@ -11,6 +11,7 @@
 #include <QVariant>
 #include <QString>
 #include <QDebug>
+#include <QMutex>
 
 class DatabaseManager : public QObject
 {
@@ -42,6 +43,8 @@ public:
 private:
     explicit DatabaseManager(QObject *parent = nullptr);
     static DatabaseManager* m_instance;
+
+    QMutex m_mutex;
 
     QSqlDatabase m_database;
     QString m_databasePath;

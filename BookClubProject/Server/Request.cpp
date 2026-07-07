@@ -138,7 +138,16 @@ CommandType Request::stringToCommandType(const QString& str)
         {"GetBlockedUsers", CommandType::GetBlockedUsers},
         {"DeleteBook", CommandType::DeleteBook},
         {"DeleteReview", CommandType::DeleteReview},
-        {"GetSystemStats", CommandType::GetSystemStats}
+        {"GetSystemStats", CommandType::GetSystemStats},
+
+
+
+        {"RequestPasswordReset", CommandType::RequestPasswordReset},
+        {"ResetPasswordWithToken", CommandType::ResetPasswordWithToken},
+        {"ConfirmResetPassword", CommandType::ConfirmResetPassword},
+
+
+        {"DeleteOwnReview", CommandType::DeleteOwnReview},
     };
 
     return CommandTypeMap.value(str, CommandType::Unknown);
@@ -218,7 +227,7 @@ QString Request::CommandTypeToString(CommandType cmd)
 QJsonObject Request::toJson() const
 {
     QJsonObject obj;
-    obj["CommandType"] = getCommandTypeString();
+    obj["command"] = getCommandTypeString();
 
     if (!m_params.isEmpty()) {
         QJsonObject paramsObj;

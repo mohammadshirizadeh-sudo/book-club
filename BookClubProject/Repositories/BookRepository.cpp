@@ -11,6 +11,7 @@ BookRepository::~BookRepository() {
 }
 
 bool BookRepository::addBook(Book* book) {
+    QMutexLocker locker(&m_mutex);
     if (!book) return false;
 
     int id = book->getBookId();
@@ -33,14 +34,17 @@ bool BookRepository::addBook(Book* book) {
 }
 
 Book* BookRepository::findById(int id) const {
+    QMutexLocker locker(&m_mutex);
     return booksById.value(id, nullptr);
 }
 
 QVector<Book*> BookRepository::getAllBooks() const {
+     QMutexLocker locker(&m_mutex);
     return booksById.values().toVector();
 }
 
 bool BookRepository::updateBook(Book* book) {
+    QMutexLocker locker(&m_mutex);
     if (!book) return false;
 
     int id = book->getBookId();
@@ -61,6 +65,7 @@ bool BookRepository::updateBook(Book* book) {
 }
 
 bool BookRepository::deleteBook(int bookId) {
+    QMutexLocker locker(&m_mutex);
     Book* book = booksById.value(bookId, nullptr);
     if (!book) {
         qWarning() << "Book with ID" << bookId << "not found!";
@@ -82,6 +87,7 @@ bool BookRepository::deleteBook(int bookId) {
 
 
 bool BookRepository::loadAllFromDatabase() {
+    QMutexLocker locker(&m_mutex);
     clearCache();
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -195,15 +201,18 @@ bool BookRepository::deleteFromDatabase(int bookId) {
 // =============================================
 
 void BookRepository::addToCache(Book* book) {
+    QMutexLocker locker(&m_mutex);
     if (!book) return;
     booksById[book->getBookId()] = book;
 }
 
 void BookRepository::removeFromCache(int bookId) {
+    QMutexLocker locker(&m_mutex);
     booksById.remove(bookId);
 }
 
 void BookRepository::clearCache() {
+     QMutexLocker locker(&m_mutex);
     qDeleteAll(booksById);
     booksById.clear();
 }

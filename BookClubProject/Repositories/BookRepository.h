@@ -14,6 +14,8 @@ private:
     QMap<int, Book*> booksById;
     int nextId = 1000;
 
+     mutable QMutex m_mutex;
+
 
     void addToCache(Book* book);
     void removeFromCache(int bookId);

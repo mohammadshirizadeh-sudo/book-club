@@ -14,6 +14,8 @@ private:
     QMap<int, Review*> reviewsById;
     int nextId = 1000;
 
+    mutable QMutex m_mutex;
+
 
     void addToCache(Review* review);
     void removeFromCache(int reviewId);

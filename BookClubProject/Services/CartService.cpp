@@ -15,6 +15,7 @@ CartService::~CartService() {
 // ===== Cart Management =====
 
 Cart* CartService::getOrcreateCart(int userId) {
+    QMutexLocker locker(&m_mutex);
     if (carts.contains(userId)) {
         return carts[userId];
     }
@@ -27,6 +28,7 @@ Cart* CartService::getOrcreateCart(int userId) {
 }
 
 bool CartService::addToCart(int userId, int bookId, int quantity) {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = getOrcreateCart(userId);
     if (!cart) {
         qWarning() << "Cart not initialized! Call createCart() first.";
@@ -71,10 +73,9 @@ bool CartService::addToCart(int userId, int bookId, int quantity) {
 }
 
 
-bool CartService::removeFromCart(int userId, int bookId) {//بررسی کن منظور از این چیه
+bool CartService::removeFromCart(int userId, int bookId) {
 
-
-
+    QMutexLocker locker(&m_mutex);
     if (!carts.contains(userId)) {
         qWarning() << "No cart found for user:" << userId;
         return false;
@@ -90,6 +91,7 @@ bool CartService::removeFromCart(int userId, int bookId) {//بررسی کن من
 }
 
 bool CartService::updateQuantity(int userId, int bookId, int quantity) {
+    QMutexLocker locker(&m_mutex);
     if (!carts.contains(userId)) {
         qWarning() << "No cart found for user:" << userId;
         return false;
@@ -103,26 +105,23 @@ bool CartService::updateQuantity(int userId, int bookId, int quantity) {
     }
 
 
-    // If quantity is 0, remove the item
+
     if (quantity == 0) {
         return removeFromCart(userId , bookId);
     }
 
-    // Get book to update prices (in case discount changed)
     Book* book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
     }
 
-    // Update item in cart
     CartItem* item = cart->getItem(bookId);
     if (!item) {
         qWarning() << "Book not in cart:" << bookId;
         return false;
     }
 
-    // Update quantity and prices
     item->setQuantity(quantity);
     item->setUnitPrice(book->getPrice());
     item->setDiscountedPrice(book->getFinalPrice());
@@ -137,6 +136,7 @@ bool CartService::updateQuantity(int userId, int bookId, int quantity) {
 
 
 void CartService::clearCart(int userId) {
+    QMutexLocker locker(&m_mutex);
     if (carts.contains(userId)) {
         carts[userId]->clear();
         carts[userId]->calculateTotals();
@@ -145,9 +145,9 @@ void CartService::clearCart(int userId) {
     }
 }
 
-// ===== Calculations =====
 
 void CartService::calculateTotal(int userId) {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) {
         qWarning() << "Cart not initialized!";
@@ -157,30 +157,35 @@ void CartService::calculateTotal(int userId) {
 }
 
 double CartService::getTotalPrice(int userId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return 0.0;
     return cart->getTotalPrice();
 }
 
 double CartService::getTotalDiscount(int userId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return 0.0;
     return cart->getTotalDiscount();
 }
 
 double CartService::getFinalPrice(int userId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return 0.0;
     return cart->getFinalPrice();
 }
 
 int CartService::getTotalItemCount(int userId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return 0;
     return cart->getTotalItems();
 }
 
 int CartService::getUniqueBookCount(int userId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return 0;
     return cart->getItemCount();
@@ -189,18 +194,21 @@ int CartService::getUniqueBookCount(int userId) const {
 // ===== Getters =====
 
 QVector<CartItem> CartService::getCartItems(int userId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return QVector<CartItem>();
     return cart->getItems();
 }
 
 bool CartService::isEmpty(int userId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return true;
     return cart->isEmpty();
 }
 
 bool CartService::contains(int userId ,int bookId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return false;
     return cart->contains(bookId);
@@ -220,11 +228,12 @@ const CartItem* CartService::getCartItem(int userId , int bookId) const {
 
 Cart *CartService::getCart(int userId) const
 {
-
+    QMutexLocker locker(&m_mutex);
     return carts.value(userId , nullptr);
 }
 
 int CartService::getUserId(int userId) const {
+    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) return -1;
     return cart->getUserId();
@@ -242,6 +251,7 @@ double CartService::getBookDiscountedPrice(int bookId) const {
 
 
 bool CartService::loadAllFromDatabase() {
+    QMutexLocker locker(&m_mutex);
     clearCache();
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -449,15 +459,18 @@ bool CartService::loadCartItems(Cart* cart) {
 
 
 void CartService::addToCache(Cart* cart) {
+    QMutexLocker locker(&m_mutex);
     if (!cart) return;
     carts[cart->getUserId()] = cart;
 }
 
 void CartService::removeFromCache(int userId) {
+    QMutexLocker locker(&m_mutex);
     carts.remove(userId);
 }
 
 void CartService::clearCache() {
+    QMutexLocker locker(&m_mutex);
     qDeleteAll(carts);
     carts.clear();
 }

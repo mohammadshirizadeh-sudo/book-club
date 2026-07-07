@@ -12,6 +12,7 @@ LibraryRepository::~LibraryRepository() {
 }
 
 bool LibraryRepository::addLibrary(Library* library) {
+     QMutexLocker locker(&m_mutex);
     if (!library) {
         qWarning() << "Library is null!";
         return false;
@@ -44,14 +45,17 @@ bool LibraryRepository::addLibrary(Library* library) {
 }
 
 Library* LibraryRepository::findByUserId(int userId) const {
+     QMutexLocker locker(&m_mutex);
     return librariesByUserId.value(userId, nullptr);
 }
 
 QVector<Library*> LibraryRepository::getAllLibraries() const {
+     QMutexLocker locker(&m_mutex);
     return librariesByUserId.values().toVector();
 }
 
 bool LibraryRepository::updateLibrary(Library* library) {
+    QMutexLocker locker(&m_mutex);
     if (!library) {
         qWarning() << "Library is null!";
         return false;
@@ -83,6 +87,7 @@ bool LibraryRepository::updateLibrary(Library* library) {
 }
 
 bool LibraryRepository::deleteLibrary(int userId) {
+    QMutexLocker locker(&m_mutex);
     Library* library = librariesByUserId.value(userId, nullptr);
     if (!library) {
         qWarning() << "Library for user" << userId << "not found!";
@@ -103,11 +108,13 @@ bool LibraryRepository::deleteLibrary(int userId) {
 }
 
 bool LibraryRepository::exists(int userId) const {
+     QMutexLocker locker(&m_mutex);
     return librariesByUserId.contains(userId);
 }
 
 
 bool LibraryRepository::loadAllFromDatabase() {
+    QMutexLocker locker(&m_mutex);
     clearCache();
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -340,11 +347,13 @@ bool LibraryRepository::loadShelves(Library* library) {
 // =============================================
 
 void LibraryRepository::addToCache(Library* library) {
+    QMutexLocker locker(&m_mutex);
     if (!library) return;
     librariesByUserId[library->getUserId()] = library;
 }
 
 void LibraryRepository::removeFromCache(int userId) {
+    QMutexLocker locker(&m_mutex);
     librariesByUserId.remove(userId);
 }
 

@@ -12,6 +12,7 @@ PurchaseRepository::~PurchaseRepository() {
 
 bool PurchaseRepository::addPurchase(Purchase* purchase) {
     if (!purchase) return false;
+    QMutexLocker locker(&m_mutex);
 
     int id = purchase->getPurchaseId();
     if (purchasesById.contains(id)) {
@@ -39,14 +40,17 @@ bool PurchaseRepository::addPurchase(Purchase* purchase) {
 }
 
 Purchase* PurchaseRepository::findById(int id) const {
+    QMutexLocker locker(&m_mutex);
     return purchasesById.value(id, nullptr);
 }
 
 QVector<Purchase*> PurchaseRepository::getAllPurchases() const {
+    QMutexLocker locker(&m_mutex);
     return purchasesById.values().toVector();
 }
 
 QVector<Purchase*> PurchaseRepository::getPurchasesByUserId(int userId) const {
+    QMutexLocker locker(&m_mutex);
     QVector<Purchase*> result;
     for (Purchase* purchase : purchasesById) {
         if (purchase->getUserId() == userId) {
@@ -57,6 +61,7 @@ QVector<Purchase*> PurchaseRepository::getPurchasesByUserId(int userId) const {
 }
 
 QVector<Purchase*> PurchaseRepository::getPurchasesByBookId(int bookId) const {
+    QMutexLocker locker(&m_mutex);
     QVector<Purchase*> result;
     for (Purchase* purchase : purchasesById) {
         for (const CartItem& item : purchase->getItems()) {
@@ -70,7 +75,9 @@ QVector<Purchase*> PurchaseRepository::getPurchasesByBookId(int bookId) const {
 }
 
 bool PurchaseRepository::updatePurchase(Purchase* purchase) {
+
     if (!purchase) return false;
+    QMutexLocker locker(&m_mutex);
 
     int id = purchase->getPurchaseId();
     if (!purchasesById.contains(id)) {
@@ -89,6 +96,7 @@ bool PurchaseRepository::updatePurchase(Purchase* purchase) {
 }
 
 bool PurchaseRepository::deletePurchase(int purchaseId) {
+    QMutexLocker locker(&m_mutex);
     Purchase* purchase = purchasesById.value(purchaseId, nullptr);
     if (!purchase) return false;
 
@@ -111,6 +119,8 @@ bool PurchaseRepository::deletePurchase(int purchaseId) {
 
 
 bool PurchaseRepository::loadAllFromDatabase() {
+
+    QMutexLocker locker(&m_mutex);
     clearCache();
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -292,15 +302,18 @@ bool PurchaseRepository::loadPurchaseItems(Purchase* purchase) {
 // =============================================
 
 void PurchaseRepository::addToCache(Purchase* purchase) {
+    QMutexLocker locker(&m_mutex);
     if (!purchase) return;
     purchasesById[purchase->getPurchaseId()] = purchase;
 }
 
 void PurchaseRepository::removeFromCache(int purchaseId) {
+    QMutexLocker locker(&m_mutex);
     purchasesById.remove(purchaseId);
 }
 
 void PurchaseRepository::clearCache() {
+    QMutexLocker locker(&m_mutex);
     qDeleteAll(purchasesById);
     purchasesById.clear();
 }

@@ -115,9 +115,13 @@ void Server::incomingConnection(qintptr socketDescriptor)
         this
         );
 
-    connect(handler, &ClientHandler::disconnected, this, [this, socketDescriptor]() {
-        qDebug() << "📡 Client disconnected:" << socketDescriptor;
-        m_clients.remove(socketDescriptor);
+    connect(handler, &ClientHandler::disconnected, this, [this, socketDescriptor, handler]() {
+        if (m_clients.value(socketDescriptor) == handler) {
+            m_clients.remove(socketDescriptor);
+            qDebug() << "✅ Client removed:" << socketDescriptor;
+        } else {
+            qDebug() << "⚠️ Skipped removal for old descriptor:" << socketDescriptor;
+        }
     });
 
     m_clients[socketDescriptor] = handler;

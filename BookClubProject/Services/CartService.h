@@ -17,6 +17,7 @@ class CartService: public QObject {
 private:
 
     QMap<int , Cart*> carts;
+    mutable QMutex m_mutex;
 
     BookRepository* bookRepo;   // To get book prices and discounts
     int currentUserId;
