@@ -1,6 +1,8 @@
 #ifndef REGISTERWINDOW_H
 #define REGISTERWINDOW_H
 
+#include "../Network-Manger/NetworkManager.h"
+
 #include <QWidget>
 
 namespace Ui {
@@ -12,7 +14,7 @@ class RegisterWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit RegisterWindow(QWidget *parent = nullptr);
+    explicit RegisterWindow(NetworkManager* networkManager, QWidget *parent = nullptr);
     ~RegisterWindow();
 
 signals:
@@ -29,6 +31,7 @@ private slots:
 
 private:
     Ui::RegisterWindow *ui;
+    NetworkManager* m_networkManager;
 };
 
 #endif // REGISTERWINDOW_H
