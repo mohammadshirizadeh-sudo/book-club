@@ -213,7 +213,7 @@ void PurchaseService::updateBookSales(const QVector<CartItem>& purchaseItems) {
         int bookId = item.getBookId();
         int quantity = item.getQuantity();
 
-        Book* book = bookRepo->findById(bookId);
+        QSharedPointer<Book> book = bookRepo->findById(bookId);
         if (book) {
             int newSales = book->getSalesCount() + quantity;
             book->setSalesCount(newSales);
@@ -237,7 +237,7 @@ void PurchaseService::sendPurchaseConfirmation(int userId, Purchase* purchase) {
 
     // Notify publishers about their book sales
     for (const CartItem& item : purchase->getItems()) {
-        Book* book = bookRepo->findById(item.getBookId());
+        QSharedPointer<Book> book = bookRepo->findById(item.getBookId());
         if (book) {
             QString publisherMsg = QString("Your book '%1' was sold! (x%2)")
             .arg(book->getTitle())

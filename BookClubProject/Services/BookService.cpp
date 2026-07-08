@@ -174,7 +174,6 @@ QVector<QSharedPointer<Book>> BookService::searchBooks(const QString& keyword) c
     QString lowerKeyword = keyword.toLower();
 
     for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
-        // Only search active books
         if (!book->getIsActive()) continue;
 
 

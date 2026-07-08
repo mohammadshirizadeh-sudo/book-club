@@ -27,7 +27,7 @@ bool ReviewService::addReview(int userId, int bookId, const QString& text, int r
     }
 
     // 3. Check if book exists
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
@@ -216,7 +216,7 @@ Review* ReviewService::getUserReview(int userId, int bookId) const {
 // ===== Private Methods =====
 
 void ReviewService::updateBookAverageRating(int bookId) {
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found for rating update:" << bookId;
         return;
@@ -233,7 +233,7 @@ void ReviewService::updateBookAverageRating(int bookId) {
 void ReviewService::sendReviewNotification(int bookId, int rating) {
     if (!notifService) return;
 
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) return;
 
     // Send notification to publisher

@@ -218,7 +218,6 @@ void BookRepository::removeFromCache(int bookId) {
 }
 
 void BookRepository::clearCache() {
-    qDeleteAll(booksById);
     booksById.clear();
 }
 

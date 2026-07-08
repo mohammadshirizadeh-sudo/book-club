@@ -41,7 +41,7 @@ bool CartService::addToCart(int userId, int bookId, int quantity) {
     }
 
     // Get book from repository
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
@@ -110,7 +110,7 @@ bool CartService::updateQuantity(int userId, int bookId, int quantity) {
         return removeFromCart(userId , bookId);
     }
 
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
@@ -243,7 +243,7 @@ int CartService::getUserId(int userId) const {
 // ===== Private Methods =====
 
 double CartService::getBookDiscountedPrice(int bookId) const {
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) return 0.0;
     return book->getFinalPrice();
 }

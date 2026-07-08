@@ -35,7 +35,7 @@ QMap<QString, QVariant> AdminService::getSystemStats() const
     stats["blockedUsers"] = blockedUsers;
 
     // ===== Book Statistics =====
-    QVector<Book*> allBooks = m_bookService->getAllBooks();
+    QVector<QSharedPointer<Book>> allBooks = m_bookService->getAllBooks();
     stats["totalBooks"] = allBooks.size();
 
     int activeBooks = 0;
@@ -43,7 +43,7 @@ QMap<QString, QVariant> AdminService::getSystemStats() const
     double totalRevenue = 0.0;
     int totalSales = 0;
 
-    for (Book* book : allBooks) {
+    for (QSharedPointer<Book> book : allBooks) {
         if (book->getIsActive()) activeBooks++;
         else deactivatedBooks++;
 
