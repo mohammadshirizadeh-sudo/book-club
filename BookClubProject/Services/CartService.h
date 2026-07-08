@@ -16,7 +16,7 @@ class CartService: public QObject {
     Q_OBJECT
 private:
 
-    QMap<int , Cart*> carts;
+    QMap<int , QSharedPointer<Cart>> carts;
     mutable QMutex m_mutex;
 
     BookRepository* bookRepo;
@@ -29,7 +29,7 @@ public:
 
     // ===== Cart Management =====
 
-    Cart* getOrcreateCart(int userId);
+    QSharedPointer<Cart> getOrcreateCart(int userId);
 
     bool addToCart(int userId ,int bookId, int quantity = 1);
 
@@ -59,23 +59,26 @@ public:
     bool isEmpty(int userId) const;
     bool contains(int userId,int bookId) const;
     CartItem* getCartItem(int userId,int bookId);
-    const CartItem* getCartItem(int userId,int bookId) const;
-    Cart* getCart(int userId) const ;
+
+    QSharedPointer<Cart> getCart(int userId) const ;
     int getUserId(int userId) const;
 
 
 
     bool loadAllFromDatabase();
-    bool saveCartToDatabase(Cart* cart);
+    bool saveCartToDatabase(QSharedPointer<Cart> cart);
     bool saveCartItemsToDatabase(int userId, const QVector<CartItem>& items);
     bool deleteCartFromDatabase(int userId);
-    bool loadCartItems(Cart* cart);
+    bool loadCartItems(QSharedPointer<Cart> cart);
+
+
+    bool removeFromCartInternal(int userId, int bookId);
 
 private:
     double getBookDiscountedPrice(int bookId) const;
 
 
-    void addToCache(Cart* cart);
+    void addToCache(QSharedPointer<Cart> cart);
     void removeFromCache(int userId);
     void clearCache();
 

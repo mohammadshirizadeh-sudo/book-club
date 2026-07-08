@@ -57,11 +57,11 @@ QMap<QString, QVariant> AdminService::getSystemStats() const
     stats["totalSales"] = totalSales;
 
     // ===== Review Statistics =====
-    QVector<Review*> allReviews = m_reviewService->getAllReviews();
+    QVector<QSharedPointer<Review>> allReviews = m_reviewService->getAllReviews();
     stats["totalReviews"] = allReviews.size();
 
     // ===== Purchase Statistics =====
-    QVector<Purchase*> allPurchases = m_purchaseService->getAllPurchases();
+    QVector<QSharedPointer<Purchase>> allPurchases = m_purchaseService->getAllPurchases();
     stats["totalPurchases"] = allPurchases.size();
 
     // ===== System Health =====

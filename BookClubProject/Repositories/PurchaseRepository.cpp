@@ -10,7 +10,7 @@ PurchaseRepository::~PurchaseRepository() {
     clearCache();
 }
 
-bool PurchaseRepository::addPurchase(Purchase* purchase) {
+bool PurchaseRepository::addPurchase(QSharedPointer<Purchase> purchase) {
     if (!purchase) return false;
 
 
@@ -38,20 +38,20 @@ bool PurchaseRepository::addPurchase(Purchase* purchase) {
     return true;
 }
 
-Purchase* PurchaseRepository::findById(int id) const {
+QSharedPointer<Purchase> PurchaseRepository::findById(int id) const {
     QMutexLocker locker(&m_mutex);
     return purchasesById.value(id, nullptr);
 }
 
-QVector<Purchase*> PurchaseRepository::getAllPurchases() const {
+QVector<QSharedPointer<Purchase>> PurchaseRepository::getAllPurchases() const {
     QMutexLocker locker(&m_mutex);
     return purchasesById.values().toVector();
 }
 
-QVector<Purchase*> PurchaseRepository::getPurchasesByUserId(int userId) const {
+QVector<QSharedPointer<Purchase>> PurchaseRepository::getPurchasesByUserId(int userId) const {
     QMutexLocker locker(&m_mutex);
-    QVector<Purchase*> result;
-    for (Purchase* purchase : purchasesById) {
+    QVector<QSharedPointer<Purchase>> result;
+    for (QSharedPointer<Purchase> purchase : purchasesById) {
         if (purchase->getUserId() == userId) {
             result.append(purchase);
         }
@@ -59,10 +59,10 @@ QVector<Purchase*> PurchaseRepository::getPurchasesByUserId(int userId) const {
     return result;
 }
 
-QVector<Purchase*> PurchaseRepository::getPurchasesByBookId(int bookId) const {
+QVector<QSharedPointer<Purchase>> PurchaseRepository::getPurchasesByBookId(int bookId) const {
     QMutexLocker locker(&m_mutex);
-    QVector<Purchase*> result;
-    for (Purchase* purchase : purchasesById) {
+    QVector<QSharedPointer<Purchase>> result;
+    for (QSharedPointer<Purchase> purchase : purchasesById) {
         for (const CartItem& item : purchase->getItems()) {
             if (item.getBookId() == bookId) {
                 result.append(purchase);
@@ -73,18 +73,22 @@ QVector<Purchase*> PurchaseRepository::getPurchasesByBookId(int bookId) const {
     return result;
 }
 
-bool PurchaseRepository::updatePurchase(Purchase* purchase) {
+bool PurchaseRepository::updatePurchase(QSharedPointer<Purchase> purchase) {
 
     if (!purchase) return false;
 
 
     int id = purchase->getPurchaseId();
+    QSharedPointer<Purchase> oldPurchase = nullptr;
+
     {
         QMutexLocker locker(&m_mutex);
         if (!purchasesById.contains(id)) {
             qWarning() << "Purchase with ID" << id << "not found!";
             return false;
         }
+
+        oldPurchase = purchasesById[id];
 
         purchasesById[id] = purchase;
 
@@ -93,7 +97,8 @@ bool PurchaseRepository::updatePurchase(Purchase* purchase) {
 
 
     if (!saveToDatabase(purchase)) {
-        loadAllFromDatabase();
+        QMutexLocker locker(&m_mutex);
+        purchasesById[id] = oldPurchase;
         return false;
     }
     return true;
@@ -101,15 +106,13 @@ bool PurchaseRepository::updatePurchase(Purchase* purchase) {
 
 bool PurchaseRepository::deletePurchase(int purchaseId) {
     QMutexLocker locker(&m_mutex);
-    Purchase* purchase = purchasesById.value(purchaseId, nullptr);
+    QSharedPointer<Purchase> purchase = purchasesById.value(purchaseId, nullptr);
     if (!purchase) return false;
     if (!deleteFromDatabase(purchaseId)) {
         qWarning() << "Failed to delete purchase from database!";
         return false;
     }
     removeFromCache(purchaseId);
-    delete purchase;
-
 
     qDebug() << "Purchase deleted:" << purchaseId;
     return true;
@@ -143,7 +146,7 @@ bool PurchaseRepository::loadAllFromDatabase() {
 
     int count = 0;
     while (sqlQuery.next()) {
-        Purchase* purchase = new Purchase(
+        QSharedPointer<Purchase> purchase = QSharedPointer<Purchase>::create(
             sqlQuery.value("id").toInt(),
             sqlQuery.value("user_id").toInt(),
             QVector<CartItem>(),  // Items will be loaded separately
@@ -166,7 +169,7 @@ bool PurchaseRepository::loadAllFromDatabase() {
     return true;
 }
 
-bool PurchaseRepository::saveToDatabase(Purchase* purchase) {
+bool PurchaseRepository::saveToDatabase(QSharedPointer<Purchase> purchase) {
     if (!purchase) return false;
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -250,7 +253,7 @@ bool PurchaseRepository::savePurchaseItems(int purchaseId, const QVector<CartIte
     return true;
 }
 
-bool PurchaseRepository::loadPurchaseItems(Purchase* purchase) {
+bool PurchaseRepository::loadPurchaseItems(QSharedPointer<Purchase> purchase) {
     if (!purchase) return false;
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -291,7 +294,7 @@ bool PurchaseRepository::loadPurchaseItems(Purchase* purchase) {
 }
 
 
-void PurchaseRepository::addToCache(Purchase* purchase) {
+void PurchaseRepository::addToCache(QSharedPointer<Purchase> purchase) {
     if (!purchase) return;
     purchasesById[purchase->getPurchaseId()] = purchase;
 }
@@ -302,7 +305,6 @@ void PurchaseRepository::removeFromCache(int purchaseId) {
 }
 
 void PurchaseRepository::clearCache() {
-    qDeleteAll(purchasesById);
     purchasesById.clear();
 }
 

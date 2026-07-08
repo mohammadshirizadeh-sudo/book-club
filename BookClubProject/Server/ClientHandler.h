@@ -60,6 +60,7 @@ public:
 
 
     void setSession(int userId, UserRole role);
+    void disconnectFromClient();
 signals:
     void disconnected();
     void responseReady(const Response& response);
@@ -109,6 +110,7 @@ private:
     int m_sessionUserId = -1;
     UserRole m_sessionRole = UserRole::User;
     bool m_isAuthenticated = false;
+
 
 
 

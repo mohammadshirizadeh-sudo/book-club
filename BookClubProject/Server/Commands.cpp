@@ -584,7 +584,7 @@ Response CheckoutCommand::execute(const QVariantMap& params)
 {
     int userId = params["userId"].toInt();
 
-    Purchase* purchase = m_purchaseService->checkout(userId);
+    QSharedPointer<Purchase> purchase = m_purchaseService->checkout(userId);
     if (purchase) {
         QVariantMap data;
         data["purchaseId"] = purchase->getPurchaseId();
@@ -605,10 +605,10 @@ GetPurchaseHistoryCommand::GetPurchaseHistoryCommand(PurchaseService* purchaseSe
 Response GetPurchaseHistoryCommand::execute(const QVariantMap& params)
 {
     int userId = params["userId"].toInt();
-    QVector<Purchase*> purchases = m_purchaseService->getPurchaseHistory(userId);
+    QVector<QSharedPointer<Purchase>> purchases = m_purchaseService->getPurchaseHistory(userId);
 
     QVariantList purchaseList;
-    for (Purchase* purchase : purchases) {
+    for (QSharedPointer<Purchase> purchase : purchases) {
         QVariantMap purchaseData;
         purchaseData["purchaseId"] = purchase->getPurchaseId();
         purchaseData["finalPrice"] = purchase->getFinalPrice();
@@ -633,7 +633,7 @@ GetPurchaseByIdCommand::GetPurchaseByIdCommand(PurchaseService* purchaseService)
 Response GetPurchaseByIdCommand::execute(const QVariantMap& params)
 {
     int purchaseId = params["purchaseId"].toInt();
-    Purchase* purchase = m_purchaseService->getPurchaseById(purchaseId);
+    QSharedPointer<Purchase> purchase = m_purchaseService->getPurchaseById(purchaseId);
 
     if (purchase) {
         QVariantMap data;
@@ -712,6 +712,23 @@ Response DeleteReviewCommand::execute(const QVariantMap& params)
     return Response::error("Failed to delete review");
 }
 
+
+/*
+class AdminDeleteReviewCommand : public Command
+{
+public:
+    explicit AdminDeleteReviewCommand(ReviewService* reviewService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::DeleteReview; }
+    QString getName() const override { return "AdminDeleteReview"; }
+    bool requiresAdmin() const override { return true; }
+
+private:
+    ReviewService* m_reviewService;
+};
+
+*/
+
 // ----- GetReviewsForBookCommand -----
 GetReviewsForBookCommand::GetReviewsForBookCommand(ReviewService* reviewService)
     : m_reviewService(reviewService)
@@ -721,10 +738,10 @@ GetReviewsForBookCommand::GetReviewsForBookCommand(ReviewService* reviewService)
 Response GetReviewsForBookCommand::execute(const QVariantMap& params)
 {
     int bookId = params["bookId"].toInt();
-    QVector<Review*> reviews = m_reviewService->getReviewsForBook(bookId);
+    QVector<QSharedPointer<Review>> reviews = m_reviewService->getReviewsForBook(bookId);
 
     QVariantList reviewList;
-    for (Review* review : reviews) {
+    for (QSharedPointer<Review> review : reviews) {
         QVariantMap reviewData;
         reviewData["reviewId"] = review->getReviewId();
         reviewData["userId"] = review->getUserId();

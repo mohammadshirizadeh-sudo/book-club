@@ -9,6 +9,7 @@ DatabaseManager* DatabaseManager::m_instance = nullptr;
 DatabaseManager* DatabaseManager::instance()
 {
     static DatabaseManager* inst = new DatabaseManager();
+    m_instance = inst;
     return inst;
 }
 
@@ -198,7 +199,12 @@ QSqlDatabase DatabaseManager::connectionForCurrentThread()
                                  .arg(reinterpret_cast<quintptr>(QThread::currentThread()));
 
     if (QSqlDatabase::contains(connName)) {
-        return QSqlDatabase::database(connName);
+        QSqlDatabase dp = QSqlDatabase::database(connName);
+        if (dp.isOpen()) return dp;
+        qWarning() << "Connection" << connName << "exists but is not open, recreating...";
+        dp.close();
+        QSqlDatabase::removeDatabase(connName);
+
     }
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);

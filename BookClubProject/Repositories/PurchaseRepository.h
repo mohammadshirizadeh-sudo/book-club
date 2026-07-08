@@ -11,11 +11,11 @@
 class PurchaseRepository : public QObject {
     Q_OBJECT
 private:
-    QMap<int, Purchase*> purchasesById;
+    QMap<int, QSharedPointer<Purchase>> purchasesById;
      mutable QMutex m_mutex;
 
 
-    void addToCache(Purchase* purchase);
+    void addToCache(QSharedPointer<Purchase> purchase);
     void removeFromCache(int purchaseId);
     void clearCache();
 
@@ -26,26 +26,26 @@ public:
     // ===== CRUD Operations =====
 
 
-    bool addPurchase(Purchase* purchase);
+    bool addPurchase(QSharedPointer<Purchase> purchase);
 
-    Purchase* findById(int id) const;
+    QSharedPointer<Purchase> findById(int id) const;
 
-    QVector<Purchase*> getAllPurchases() const;
+    QVector<QSharedPointer<Purchase>> getAllPurchases() const;
 
 
-    QVector<Purchase*> getPurchasesByUserId(int userId) const;
+    QVector<QSharedPointer<Purchase>> getPurchasesByUserId(int userId) const;
 
-    QVector<Purchase*> getPurchasesByBookId(int bookId) const;
+    QVector<QSharedPointer<Purchase>> getPurchasesByBookId(int bookId) const;
 
-    bool updatePurchase(Purchase* purchase);
+    bool updatePurchase(QSharedPointer<Purchase> purchase);
 
     bool deletePurchase(int purchaseId);
 
     bool loadAllFromDatabase();
-    bool saveToDatabase(Purchase* purchase);
+    bool saveToDatabase(QSharedPointer<Purchase> purchase);
     bool deleteFromDatabase(int purchaseId);
     bool savePurchaseItems(int purchaseId, const QVector<CartItem>& items);
-    bool loadPurchaseItems(Purchase* purchase);
+    bool loadPurchaseItems(QSharedPointer<Purchase> purchase);
     static PurchaseStatus stringToStatus(const QString& statusStr);
 
     static QString statusToString(PurchaseStatus status);

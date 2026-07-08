@@ -53,6 +53,7 @@ bool BookRepository::updateBook(QSharedPointer<Book> book) {
     if (!book) return false;
 
     int id = book->getBookId();
+    QSharedPointer<Book> oldBook;
 
     {
 
@@ -63,13 +64,13 @@ bool BookRepository::updateBook(QSharedPointer<Book> book) {
             return false;
         }
 
-
+        oldBook = booksById[id];
         booksById[id] = book;
     }
     if (!saveToDatabase(book)) {
         QMutexLocker locker(&m_mutex);
-        booksById.remove(book->getBookId());
-        qWarning() << "Failed to update book in database, removed from cache";
+        booksById[id] = oldBook;
+        qWarning() << "Failed to update book in database, reverted cache";
         return false;
     }
     return true;

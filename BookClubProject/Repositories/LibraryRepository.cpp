@@ -11,7 +11,7 @@ LibraryRepository::~LibraryRepository() {
     clearCache();
 }
 
-bool LibraryRepository::addLibrary(Library* library) {
+bool LibraryRepository::addLibrary(QSharedPointer<Library> library) {
 
     if (!library) {
         qWarning() << "Library is null!";
@@ -42,7 +42,10 @@ bool LibraryRepository::addLibrary(Library* library) {
 
     // 3. Save shelves
     if (!saveShelves(userId, library->getShelves())) {
-        qWarning() << "Failed to save shelves!";
+        QMutexLocker locker(&m_mutex);
+        removeFromCache(userId);
+        deleteFromDatabase(userId);
+        qWarning() << "Failed to save shelves, rolled back library";
         return false;
     }
 
@@ -50,24 +53,26 @@ bool LibraryRepository::addLibrary(Library* library) {
     return true;
 }
 
-Library* LibraryRepository::findByUserId(int userId) const {
+QSharedPointer<Library> LibraryRepository::findByUserId(int userId) const {
      QMutexLocker locker(&m_mutex);
     return librariesByUserId.value(userId, nullptr);
 }
 
-QVector<Library*> LibraryRepository::getAllLibraries() const {
+QVector<QSharedPointer<Library>> LibraryRepository::getAllLibraries() const {
      QMutexLocker locker(&m_mutex);
     return librariesByUserId.values().toVector();
 }
 
-bool LibraryRepository::updateLibrary(Library* library) {
+bool LibraryRepository::updateLibrary(QSharedPointer<Library> library) {
 
     if (!library) {
         qWarning() << "Library is null!";
         return false;
     }
 
+
     int userId = library->getUserId();
+    QSharedPointer<Library> oldLibrary = nullptr;
     {
         QMutexLocker locker(&m_mutex);
         if (!librariesByUserId.contains(userId)) {
@@ -75,7 +80,7 @@ bool LibraryRepository::updateLibrary(Library* library) {
             return false;
         }
 
-
+        oldLibrary = librariesByUserId[userId];
         librariesByUserId[userId] = library;
 
 
@@ -84,26 +89,24 @@ bool LibraryRepository::updateLibrary(Library* library) {
     if (!saveToDatabase(library)) {
         QMutexLocker locker(&m_mutex);
 
-        removeFromCache(userId);
-        qWarning() << "Failed to update library in database, removed from cache";
+        librariesByUserId[userId] = oldLibrary;
+
         return false;
     }
 
     // 3. Update shelves
     if (!saveShelves(userId, library->getShelves())) {
         QMutexLocker locker(&m_mutex);
-        removeFromCache(userId);
-        qWarning() << "Failed to save shelves!";
+        librariesByUserId[userId] = oldLibrary;
         return false;
     }
-
     qDebug() << "Library updated for user:" << userId;
     return true;
 }
 
 bool LibraryRepository::deleteLibrary(int userId) {
     QMutexLocker locker(&m_mutex);
-    Library* library = librariesByUserId.value(userId, nullptr);
+    QSharedPointer<Library> library = librariesByUserId.value(userId, nullptr);
     if (!library) {
         qWarning() << "Library for user" << userId << "not found!";
         return false;
@@ -117,7 +120,6 @@ bool LibraryRepository::deleteLibrary(int userId) {
 
     // 2. Remove from cache
     removeFromCache(userId);
-    delete library;
     qDebug() << "Library deleted for user:" << userId;
     return true;
 }
@@ -153,11 +155,11 @@ bool LibraryRepository::loadAllFromDatabase() {
 
     int count = 0;
     while (sqlQuery.next()) {
-        Library* library = new Library(
+        QSharedPointer<Library> library = QSharedPointer<Library>::create(
             sqlQuery.value("user_id").toInt(),
-            QVector<int>(),  // ownedBooks - loaded separately
-            QVector<int>(),  // savedBooks - loaded separately
-            QVector<Shelf>() // shelves - loaded separately
+            QVector<int>(),
+            QVector<int>(),
+            QVector<Shelf>()
             );
 
         // Load shelves
@@ -170,7 +172,7 @@ bool LibraryRepository::loadAllFromDatabase() {
     return true;
 }
 
-bool LibraryRepository::saveToDatabase(Library* library) {
+bool LibraryRepository::saveToDatabase(QSharedPointer<Library> library) {
     if (!library) return false;
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -305,7 +307,7 @@ bool LibraryRepository::saveShelves(int userId, const QVector<Shelf>& shelves) {
         return false;
     }
 }
-bool LibraryRepository::loadShelves(Library* library) {
+bool LibraryRepository::loadShelves(QSharedPointer<Library> library) {
     if (!library) return false;
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -378,7 +380,7 @@ bool LibraryRepository::loadShelves(Library* library) {
 // ===== Helper Methods =====
 // =============================================
 
-void LibraryRepository::addToCache(Library* library) {
+void LibraryRepository::addToCache(QSharedPointer<Library> library) {
 
     if (!library) return;
     librariesByUserId[library->getUserId()] = library;
@@ -389,6 +391,5 @@ void LibraryRepository::removeFromCache(int userId) {
 }
 
 void LibraryRepository::clearCache() {
-    qDeleteAll(librariesByUserId);
     librariesByUserId.clear();
 }

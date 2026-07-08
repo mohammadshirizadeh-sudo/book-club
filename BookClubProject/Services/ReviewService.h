@@ -29,7 +29,7 @@ public:
     bool editReview(int reviewId, int userId, const QString& newText, int newRating);
     bool deleteReview(int reviewId, int userId);
 
-    bool deleteReviewByAdmin(int reviewId, const QString& reason = "");
+    bool deleteReviewByAdmin(int reviewId);
 
     // ===== Rating Calculations =====
 
@@ -40,17 +40,17 @@ public:
 
     // ===== Getters =====
 
-    QVector<Review*> getReviewsForBook(int bookId) const;
+    QVector<QSharedPointer<Review>> getReviewsForBook(int bookId) const;
 
-    QVector<Review*> getReviewsByUser(int userId) const;
+    QVector<QSharedPointer<Review>> getReviewsByUser(int userId) const;
 
 
-    Review* getReviewById(int reviewId) const;
+    QSharedPointer<Review> getReviewById(int reviewId) const;
 
     bool hasUserReviewed(int userId, int bookId) const;
 
-    Review* getUserReview(int userId, int bookId) const;
-    QVector<Review*> getAllReviews() const;
+    QSharedPointer<Review> getUserReview(int userId, int bookId) const;
+    QVector<QSharedPointer<Review>> getAllReviews() const;
 private:
 
     void updateBookAverageRating(int bookId);

@@ -41,11 +41,10 @@ bool ReviewService::addReview(int userId, int bookId, const QString& text, int r
 
     // 5. Create review
     int newId = reviewRepo->getNextId();
-    Review* review = new Review(newId, userId, bookId, text, rating);
+    QSharedPointer<Review> review = QSharedPointer<Review>::create(newId, userId, bookId, text, rating);
 
     // 6. Add to repository
     if (!reviewRepo->addReview(review)) {
-        delete review;
         qWarning() << "Failed to add review to repository";
         return false;
     }
@@ -77,7 +76,7 @@ bool ReviewService::editReview(int reviewId, int userId, const QString& newText,
     }
 
     // 3. Find review
-    Review* review = reviewRepo->findById(reviewId);
+    QSharedPointer<Review> review = reviewRepo->findById(reviewId);
     if (!review) {
         qWarning() << "Review not found with ID:" << reviewId;
         return false;
@@ -109,7 +108,7 @@ bool ReviewService::editReview(int reviewId, int userId, const QString& newText,
 
 bool ReviewService::deleteReview(int reviewId, int userId) {
     // 1. Find review
-    Review* review = reviewRepo->findById(reviewId);
+    QSharedPointer<Review> review = reviewRepo->findById(reviewId);
     if (!review) {
         qWarning() << "Review not found with ID:" << reviewId;
         return false;
@@ -137,8 +136,8 @@ bool ReviewService::deleteReview(int reviewId, int userId) {
     return true;
 }
 
-bool ReviewService::deleteReviewByAdmin(int reviewId, const QString& reason) {
-    Review* review = reviewRepo->findById(reviewId);
+bool ReviewService::deleteReviewByAdmin(int reviewId) {
+    QSharedPointer<Review> review = reviewRepo->findById(reviewId);
     if (!review) {
         qWarning() << "Review not found with ID:" << reviewId;
         return false;
@@ -153,21 +152,21 @@ bool ReviewService::deleteReviewByAdmin(int reviewId, const QString& reason) {
 
     updateBookAverageRating(bookId);
 
-    qDebug() << "Review deleted by admin:" << reviewId << "Reason:" << reason;
+    qDebug() << "Review deleted by admin:" << reviewId;
     return true;
 }
 
 // ===== Rating Calculations =====
 
 double ReviewService::getAverageRating(int bookId) const {
-    QVector<Review*> reviews = reviewRepo->getReviewsByBookId(bookId);
+    QVector<QSharedPointer<Review>> reviews = reviewRepo->getReviewsByBookId(bookId);
 
     if (reviews.isEmpty()) {
         return 0.0;
     }
 
     int total = 0;
-    for (Review* review : reviews) {
+    for (QSharedPointer<Review> review : reviews) {
         total += review->getRating();
     }
 
@@ -182,8 +181,8 @@ QMap<int, int> ReviewService::getRatingDistribution(int bookId) const {
         distribution[i] = 0;
     }
 
-    QVector<Review*> reviews = reviewRepo->getReviewsByBookId(bookId);
-    for (Review* review : reviews) {
+    QVector<QSharedPointer<Review>> reviews = reviewRepo->getReviewsByBookId(bookId);
+    for (QSharedPointer<Review> review : reviews) {
         int rating = review->getRating();
         distribution[rating] = distribution[rating] + 1;
     }
@@ -193,15 +192,15 @@ QMap<int, int> ReviewService::getRatingDistribution(int bookId) const {
 
 // ===== Getters =====
 
-QVector<Review*> ReviewService::getReviewsForBook(int bookId) const {
+QVector<QSharedPointer<Review>> ReviewService::getReviewsForBook(int bookId) const {
     return reviewRepo->getReviewsByBookId(bookId);
 }
 
-QVector<Review*> ReviewService::getReviewsByUser(int userId) const {
+QVector<QSharedPointer<Review>> ReviewService::getReviewsByUser(int userId) const {
     return reviewRepo->getReviewsByUserId(userId);
 }
 
-Review* ReviewService::getReviewById(int reviewId) const {
+QSharedPointer<Review> ReviewService::getReviewById(int reviewId) const {
     return reviewRepo->findById(reviewId);
 }
 
@@ -209,7 +208,7 @@ bool ReviewService::hasUserReviewed(int userId, int bookId) const {
     return reviewRepo->hasUserReviewed(userId, bookId);
 }
 
-Review* ReviewService::getUserReview(int userId, int bookId) const {
+QSharedPointer<Review> ReviewService::getUserReview(int userId, int bookId) const {
     return reviewRepo->getUserReview(userId, bookId);
 }
 
@@ -248,7 +247,7 @@ void ReviewService::sendReviewNotification(int bookId, int rating) {
     // This would require a "getUsersWhoSavedBook" method
 }
 
-QVector<Review*> ReviewService::getAllReviews() const
+QVector<QSharedPointer<Review>> ReviewService::getAllReviews() const
 {
 
     return reviewRepo->getAllReviews();

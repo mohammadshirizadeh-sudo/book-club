@@ -38,6 +38,7 @@ ClientHandler::ClientHandler(qintptr socketDescriptor,
         qWarning() << "Failed to set socket descriptor:" << socketDescriptor;
         m_socket->close();
         m_socket->deleteLater();
+        m_socket = nullptr;
         deleteLater();
         return;
     }
@@ -70,8 +71,7 @@ void ClientHandler::onSocketError(QAbstractSocket::SocketError socketError)
         << "(Code:" << socketError << ")";
 
     m_socket->close();
-    emit disconnected();
-    deleteLater();
+    onDisconnected();
 }
 
 void ClientHandler::onReadyRead() {
@@ -93,8 +93,9 @@ void ClientHandler::onDisconnected() {
     m_isDestroying.storeRelease(1);
     emit disconnected();
 
-    while (m_pendingTasks.loadAcquire() > 0) {
-        QThread::msleep(10);
+    if (m_pendingTasks.loadAcquire() > 0) {
+        QTimer::singleShot(100, this, &ClientHandler::onDisconnected);
+        return;
     }
 
     deleteLater();
@@ -255,5 +256,27 @@ void ClientHandler::onResponseReady(const Response& response)
     sendResponse(response);
 }
 
+
+void ClientHandler::disconnectFromClient()
+{
+    if (m_isDestroying.loadAcquire()) {
+        return;
+    }
+
+    m_isDestroying.storeRelease(1);
+
+    if (m_socket && m_socket->state() == QTcpSocket::ConnectedState) {
+        m_socket->close();
+    }
+
+    emit disconnected();
+
+    if (m_pendingTasks.loadAcquire() > 0) {
+        QTimer::singleShot(50, this, &ClientHandler::disconnectFromClient);
+        return;
+    }
+
+    deleteLater();
+}
 
 
