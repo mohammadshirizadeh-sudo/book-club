@@ -1,4 +1,4 @@
-// DatabaseManager.h
+
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
@@ -38,6 +38,8 @@ public:
     bool commit();
     bool rollback();
 
+    QSqlDatabase connectionForCurrentThread();
+
     static void shutdown();
 
 private:
@@ -54,4 +56,4 @@ private:
 
 };
 
-#endif // DATABASEMANAGER_H
+#endif

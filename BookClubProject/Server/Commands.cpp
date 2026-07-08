@@ -276,7 +276,7 @@ GetBookByIdCommand::GetBookByIdCommand(BookService* bookService)
 Response GetBookByIdCommand::execute(const QVariantMap& params)
 {
     int bookId = params["bookId"].toInt();
-    Book* book = m_bookService->getBookById(bookId);
+    QSharedPointer<Book> book = m_bookService->getBookById(bookId);
 
     if (book) {
         QVariantMap data;
@@ -395,10 +395,10 @@ GetFreeBooksCommand::GetFreeBooksCommand(BookService* bookService)
 
 Response GetFreeBooksCommand::execute(const QVariantMap& params)
 {
-    QVector<Book*> books = m_bookService->getFreeBooks();
+    QVector<QSharedPointer<Book>> books = m_bookService->getFreeBooks();
 
     QVariantList bookList;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
@@ -1056,4 +1056,15 @@ Response GetSystemStatsCommand::execute(const QVariantMap& params)
         data[it.key()] = it.value();
     }
     return Response::success(data);
+}
+RequestPasswordResetCommand::RequestPasswordResetCommand(AuthService *authService)
+    :m_authService(authService)
+{
+
+}
+
+ResetPasswordWithTokenCommand::ResetPasswordWithTokenCommand(AuthService *authService)
+    :m_authService(authService)
+{
+
 }

@@ -2,15 +2,14 @@
 #include "DatabaseManager.h"
 #include <QFile>
 #include <QDir>
+#include <QThread>
 
 DatabaseManager* DatabaseManager::m_instance = nullptr;
 
 DatabaseManager* DatabaseManager::instance()
 {
-    if (!m_instance) {
-        m_instance = new DatabaseManager();
-    }
-    return m_instance;
+    static DatabaseManager* inst = new DatabaseManager();
+    return inst;
 }
 
 DatabaseManager::DatabaseManager(QObject *parent)
@@ -77,13 +76,13 @@ bool DatabaseManager::isOpen() const
 
 bool DatabaseManager::executeQuery(const QString& query)
 {
-    QMutexLocker locker(&m_mutex);
-    if (!isOpen()) {
-        qWarning() << "⚠️ Database is not open!";
+    QSqlDatabase db = connectionForCurrentThread();
+    if (!db.isOpen()) {
+        qWarning() << "Database is not open for this thread!";
         return false;
     }
 
-    QSqlQuery sqlQuery(m_database);
+    QSqlQuery sqlQuery(db);
     if (!sqlQuery.exec(query)) {
         qCritical() << "❌ Query failed:" << sqlQuery.lastError().text();
         qCritical() << "   Query:" << query;
@@ -95,14 +94,13 @@ bool DatabaseManager::executeQuery(const QString& query)
 
 bool DatabaseManager::executeQuery(const QString& query, const QVariantMap& params)
 {
-    QMutexLocker locker(&m_mutex);
-    if (!isOpen()) {
-        qWarning() << "⚠️ Database is not open!";
+    QSqlDatabase db = connectionForCurrentThread();
+    if (!db.isOpen()) {
+        qWarning() << "Database is not open for this thread!";
         return false;
     }
 
-
-    QSqlQuery sqlQuery(m_database);
+    QSqlQuery sqlQuery(db);
     sqlQuery.prepare(query);
     bindValues(sqlQuery, params);
 
@@ -115,42 +113,39 @@ bool DatabaseManager::executeQuery(const QString& query, const QVariantMap& para
     return true;
 }
 
-QSqlQuery DatabaseManager::executeSelect(const QString& query) {
-    if (!isOpen()) {
-        qWarning() << "⚠️ DatabaseManager::executeSelect: Database is not open!";
+QSqlQuery DatabaseManager::executeSelect(const QString& query)
+{
+    QSqlDatabase db = connectionForCurrentThread();
+    if (!db.isOpen()) {
+        qWarning() << "Database is not open for this thread!";
         return QSqlQuery();
     }
 
-    QSqlQuery sqlQuery(m_database);
+    QSqlQuery sqlQuery(db);
     if (!sqlQuery.exec(query)) {
-        qWarning() << "❌ executeSelect failed:" << sqlQuery.lastError().text();
-        qWarning() << "   Query:" << query;
+        qCritical() << "❌ Select failed:" << sqlQuery.lastError().text();
+        qCritical() << "   Query:" << query;
     }
-
     return sqlQuery;
 }
 
-QSqlQuery DatabaseManager::executeSelect(const QString& query, const QVariantMap& params) {
-    if (!isOpen()) {
-        qWarning() << "⚠️ DatabaseManager::executeSelect: Database is not open!";
+
+QSqlQuery DatabaseManager::executeSelect(const QString& query, const QVariantMap& params)
+{
+    QSqlDatabase db = connectionForCurrentThread();
+    if (!db.isOpen()) {
+        qWarning() << "Database is not open for this thread!";
         return QSqlQuery();
     }
 
-    QSqlQuery sqlQuery(m_database);
-    if (!sqlQuery.prepare(query)) {
-        qWarning() << "❌ executeSelect: Failed to prepare query!";
-        qWarning() << "   Query:" << query;
-        qWarning() << "   Error:" << sqlQuery.lastError().text();
-        return sqlQuery;
-    }
+    QSqlQuery sqlQuery(db);
+    sqlQuery.prepare(query);
     bindValues(sqlQuery, params);
-    if (!sqlQuery.exec()) {
-        qWarning() << "❌ executeSelect: Failed to execute query!";
-        qWarning() << "   Query:" << query;
-        qWarning() << "   Params:" << params;
-        qWarning() << "   Error:" << sqlQuery.lastError().text();
-    }
 
+    if (!sqlQuery.exec()) {
+        qCritical() << "❌ Select failed:" << sqlQuery.lastError().text();
+        qCritical() << "   Query:" << query;
+    }
     return sqlQuery;
 }
 
@@ -193,4 +188,30 @@ bool DatabaseManager::rollback()
 {
     if (!isOpen()) return false;
     return m_database.rollback();
+}
+
+
+QSqlDatabase DatabaseManager::connectionForCurrentThread()
+{
+
+    const QString connName = QString("conn_%1")
+                                 .arg(reinterpret_cast<quintptr>(QThread::currentThread()));
+
+    if (QSqlDatabase::contains(connName)) {
+        return QSqlDatabase::database(connName);
+    }
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connName);
+    db.setDatabaseName(m_databasePath);
+
+    if (!db.open()) {
+        qCritical() << "Failed to open database for thread:" << connName;
+        return QSqlDatabase();
+    }
+
+    QSqlQuery(db).exec("PRAGMA foreign_keys = ON;");
+    QSqlQuery(db).exec("PRAGMA busy_timeout = 5000;");
+
+    qDebug() << "✅ Database connection created for thread:" << connName;
+    return db;
 }

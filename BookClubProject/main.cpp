@@ -12,6 +12,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    qRegisterMetaType<Response>("Response");
     NetworkManager* networkManager = new NetworkManager();
     networkManager->connectToServer("127.0.0.1", 8080);
 

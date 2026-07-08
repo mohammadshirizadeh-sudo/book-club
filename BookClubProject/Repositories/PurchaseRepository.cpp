@@ -12,27 +12,26 @@ PurchaseRepository::~PurchaseRepository() {
 
 bool PurchaseRepository::addPurchase(Purchase* purchase) {
     if (!purchase) return false;
-    QMutexLocker locker(&m_mutex);
+
 
     int id = purchase->getPurchaseId();
-    if (purchasesById.contains(id)) {
-        qWarning() << "Purchase with ID" << id << "already exists!";
-        return false;
+    {
+
+        QMutexLocker locker(&m_mutex);
+        if (purchasesById.contains(id)) {
+            qWarning() << "Purchase with ID" << id << "already exists!";
+            return false;
+        }
+        addToCache(purchase);
+
     }
-
-    // 1. Add to cache
-    addToCache(purchase);
-
-    // 2. Save to SQLite
     if (!saveToDatabase(purchase)) {
         removeFromCache(id);
         return false;
     }
 
-    // 3. Save purchase items
     if (!savePurchaseItems(id, purchase->getItems())) {
         qWarning() << "Failed to save purchase items!";
-        // TODO: Rollback purchase
         return false;
     }
 
@@ -77,15 +76,20 @@ QVector<Purchase*> PurchaseRepository::getPurchasesByBookId(int bookId) const {
 bool PurchaseRepository::updatePurchase(Purchase* purchase) {
 
     if (!purchase) return false;
-    QMutexLocker locker(&m_mutex);
+
 
     int id = purchase->getPurchaseId();
-    if (!purchasesById.contains(id)) {
-        qWarning() << "Purchase with ID" << id << "not found!";
-        return false;
-    }
+    {
+        QMutexLocker locker(&m_mutex);
+        if (!purchasesById.contains(id)) {
+            qWarning() << "Purchase with ID" << id << "not found!";
+            return false;
+        }
 
-    purchasesById[id] = purchase;
+        purchasesById[id] = purchase;
+
+
+    }
 
 
     if (!saveToDatabase(purchase)) {
@@ -99,16 +103,10 @@ bool PurchaseRepository::deletePurchase(int purchaseId) {
     QMutexLocker locker(&m_mutex);
     Purchase* purchase = purchasesById.value(purchaseId, nullptr);
     if (!purchase) return false;
-
-
-
-    // 1. Delete from SQLite first
     if (!deleteFromDatabase(purchaseId)) {
         qWarning() << "Failed to delete purchase from database!";
         return false;
     }
-
-    // 2. Remove from cache
     removeFromCache(purchaseId);
     delete purchase;
 
@@ -206,13 +204,11 @@ bool PurchaseRepository::deleteFromDatabase(int purchaseId) {
         return false;
     }
 
-    // 1. Delete purchase items first (foreign key)
     QString deleteItemsQuery = "DELETE FROM purchase_item WHERE purchase_id = :purchase_id";
     QVariantMap params;
     params["purchase_id"] = purchaseId;
     db->executeQuery(deleteItemsQuery, params);
 
-    // 2. Delete purchase
     QString deletePurchaseQuery = "DELETE FROM purchase WHERE id = :id";
     params.clear();
     params["id"] = purchaseId;
@@ -225,14 +221,11 @@ bool PurchaseRepository::savePurchaseItems(int purchaseId, const QVector<CartIte
         qWarning() << "Database is not open!";
         return false;
     }
-
-    // Delete existing items first
     QString deleteQuery = "DELETE FROM purchase_item WHERE purchase_id = :purchase_id";
     QVariantMap deleteParams;
     deleteParams["purchase_id"] = purchaseId;
     db->executeQuery(deleteQuery, deleteParams);
 
-    // Insert new items
     QString insertQuery = R"(
         INSERT INTO purchase_item (
             purchase_id, book_id, quantity, unit_price, discounted_price
@@ -297,29 +290,23 @@ bool PurchaseRepository::loadPurchaseItems(Purchase* purchase) {
     return true;
 }
 
-// =============================================
-// ===== Helper Methods =====
-// =============================================
 
 void PurchaseRepository::addToCache(Purchase* purchase) {
-    QMutexLocker locker(&m_mutex);
     if (!purchase) return;
     purchasesById[purchase->getPurchaseId()] = purchase;
 }
 
 void PurchaseRepository::removeFromCache(int purchaseId) {
-    QMutexLocker locker(&m_mutex);
+
     purchasesById.remove(purchaseId);
 }
 
 void PurchaseRepository::clearCache() {
-    QMutexLocker locker(&m_mutex);
     qDeleteAll(purchasesById);
     purchasesById.clear();
 }
 
 
-// ===== Helper Functions =====
 PurchaseStatus PurchaseRepository:: stringToStatus(const QString& statusStr)
 {
     if (statusStr == "Pending") return PurchaseStatus::Pending;

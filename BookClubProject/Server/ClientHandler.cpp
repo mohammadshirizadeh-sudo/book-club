@@ -74,29 +74,32 @@ void ClientHandler::onSocketError(QAbstractSocket::SocketError socketError)
     deleteLater();
 }
 
-void ClientHandler::onReadyRead()
-{
+void ClientHandler::onReadyRead() {
     QByteArray data = m_socket->readAll();
     QString requestData = QString::fromUtf8(data).trimmed();
+    if (requestData.isEmpty()) return;
 
-    if (!requestData.isEmpty()) {
+    m_pendingTasks.fetchAndAddOrdered(1);
 
-        QFuture<void> future = QtConcurrent::run([this, requestData]() {
+    QFuture<void> future  = QtConcurrent::run([this, requestData]() {
+        if (!m_isDestroying.loadAcquire()) {
             processRequest(requestData);
-        });
-    }
+        }
+        m_pendingTasks.fetchAndSubOrdered(1);
+    });
 }
 
-void ClientHandler::onDisconnected()
-{
-    qDebug() << "Client disconnected:" << m_socketDescriptor;
+void ClientHandler::onDisconnected() {
+    m_isDestroying.storeRelease(1);
     emit disconnected();
+
+    while (m_pendingTasks.loadAcquire() > 0) {
+        QThread::msleep(10);
+    }
+
     deleteLater();
 }
 
-// ===== Core Methods =====
-
-// ClientHandler.cpp
 void ClientHandler::handleRequest(const QString& requestData)
 {
     // 1. Parse request
@@ -204,6 +207,7 @@ void ClientHandler::sendResponse(const Response& response)
 
 void ClientHandler::setSession(int userId, UserRole role)
 {
+    QMutexLocker locker(&m_sessionMutex);
     m_sessionUserId = userId;
     m_sessionRole = role;
     m_isAuthenticated = true;

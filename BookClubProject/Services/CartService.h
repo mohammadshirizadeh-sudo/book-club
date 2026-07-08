@@ -19,7 +19,7 @@ private:
     QMap<int , Cart*> carts;
     mutable QMutex m_mutex;
 
-    BookRepository* bookRepo;   // To get book prices and discounts
+    BookRepository* bookRepo;
     int currentUserId;
 
 public:

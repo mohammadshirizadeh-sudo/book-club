@@ -56,7 +56,7 @@ bool UserRepository::addUser(User* user) {
 
 bool UserRepository::addUser(User* user) {
     if (!user) return false;
-    QMutexLocker locker(&m_mutex);
+
 
     DatabaseManager* db = DatabaseManager::instance();
     db->transaction();
@@ -82,7 +82,11 @@ bool UserRepository::addUser(User* user) {
 
     if (success) {
         db->commit();
-        addToCache(user);
+
+        {
+            QMutexLocker locker(&m_mutex);
+            addToCache(user);
+        }
         qDebug() << "✅ User added successfully:" << user->getId();
         return true;
     } else {
@@ -163,17 +167,21 @@ bool UserRepository::updateUser(User* user, const QString& oldUsername, const QS
 
     if (success) {
         db->commit();
+        {
 
-        if (oldUsername != user->getUsername()) {
-            usersByUsername.remove(oldUsername);
-        }
-        if (oldEmail != user->getEmail()) {
-            usersByEmail.remove(oldEmail);
-        }
+            QMutexLocker locker(&m_mutex);
 
-        usersById[user->getId()] = user;
-        usersByUsername[user->getUsername()] = user;
-        usersByEmail[user->getEmail()] = user;
+            if (oldUsername != user->getUsername()) {
+                usersByUsername.remove(oldUsername);
+            }
+            if (oldEmail != user->getEmail()) {
+                usersByEmail.remove(oldEmail);
+            }
+
+            usersById[user->getId()] = user;
+            usersByUsername[user->getUsername()] = user;
+            usersByEmail[user->getEmail()] = user;
+        }
 
         qDebug() << "✅ User updated successfully:" << user->getId();
         return true;
@@ -569,7 +577,6 @@ bool UserRepository::deleteFromDatabase(int userId) {
 
 void UserRepository::addToCache(User* user)
 {
-    QMutexLocker locker(&m_mutex);
     if (!user) return;
 
     usersById[user->getId()] = user;
@@ -582,7 +589,6 @@ void UserRepository::addToCache(User* user)
 
 void UserRepository::removeFromCache(int userId)
 {
-    QMutexLocker locker(&m_mutex);
     User* user = usersById.value(userId, nullptr);
     if (!user) return;
 
@@ -595,7 +601,6 @@ void UserRepository::removeFromCache(int userId)
 
 void UserRepository::clearCache()
 {
-    QMutexLocker locker(&m_mutex);
     qDeleteAll(usersById);
     usersById.clear();
     usersByUsername.clear();

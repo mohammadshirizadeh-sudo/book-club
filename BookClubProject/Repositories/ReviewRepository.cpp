@@ -14,7 +14,7 @@ ReviewRepository::~ReviewRepository() {
 }
 
 bool ReviewRepository::addReview(Review* review) {
-    QMutexLocker locker(&m_mutex);
+
     if (!review) {
         qWarning() << "Review is null!";
         return false;
@@ -22,19 +22,17 @@ bool ReviewRepository::addReview(Review* review) {
 
     int id = review->getReviewId();
 
-    // Check if review already exists
-    if (reviewsById.contains(id)) {
-        qWarning() << "Review with ID" << id << "already exists!";
-        return false;
+    {
+         QMutexLocker locker(&m_mutex);
+        // Check if review already exists
+        if (reviewsById.contains(id)) {
+            qWarning() << "Review with ID" << id << "already exists!";
+            return false;
+        }
+        addToCache(review);
     }
-
-
-
-    addToCache(review);
-
-    // 2. Save to SQLite
     if (!saveToDatabase(review)) {
-        // Rollback: remove from cache if DB fails
+        QMutexLocker locker(&m_mutex);
         removeFromCache(id);
         return false;
     }
@@ -85,15 +83,20 @@ bool ReviewRepository::updateReview(Review* review) {
         qWarning() << "Review is null!";
         return false;
     }
-    QMutexLocker locker(&m_mutex);
+
 
     int id = review->getReviewId();
-    if (!reviewsById.contains(id)) {
-        qWarning() << "Review with ID" << id << "not found!";
-        return false;
+    {
+        QMutexLocker locker(&m_mutex);
+        if (!reviewsById.contains(id)) {
+            qWarning() << "Review with ID" << id << "not found!";
+            return false;
+        }
+
+        reviewsById[id] = review;
+
     }
 
-    reviewsById[id] = review;
 
 
     if (!saveToDatabase(review)) {
@@ -252,18 +255,16 @@ bool ReviewRepository::deleteFromDatabase(int reviewId) {
 
 
 void ReviewRepository::addToCache(Review* review) {
-    QMutexLocker locker(&m_mutex);
     if (!review) return;
     reviewsById[review->getReviewId()] = review;
 }
 
 void ReviewRepository::removeFromCache(int reviewId) {
-    QMutexLocker locker(&m_mutex);
+
     reviewsById.remove(reviewId);
 }
 
 void ReviewRepository::clearCache() {
-    QMutexLocker locker(&m_mutex);
     qDeleteAll(reviewsById);
     reviewsById.clear();
 }

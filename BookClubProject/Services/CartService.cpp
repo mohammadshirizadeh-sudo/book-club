@@ -15,7 +15,7 @@ CartService::~CartService() {
 // ===== Cart Management =====
 
 Cart* CartService::getOrcreateCart(int userId) {
-    QMutexLocker locker(&m_mutex);
+
     if (carts.contains(userId)) {
         return carts[userId];
     }
@@ -147,7 +147,6 @@ void CartService::clearCart(int userId) {
 
 
 void CartService::calculateTotal(int userId) {
-    QMutexLocker locker(&m_mutex);
     Cart* cart = carts[userId];
     if (!cart) {
         qWarning() << "Cart not initialized!";
@@ -215,7 +214,9 @@ bool CartService::contains(int userId ,int bookId) const {
 }
 
 CartItem* CartService::getCartItem(int userId ,int bookId) {
-    Cart* cart = carts[userId];
+    QMutexLocker locker(&m_mutex);
+
+    Cart* cart = carts.value(userId , nullptr);
     if (!cart) return nullptr;
     return cart->getItem(bookId);
 }
@@ -459,18 +460,15 @@ bool CartService::loadCartItems(Cart* cart) {
 
 
 void CartService::addToCache(Cart* cart) {
-    QMutexLocker locker(&m_mutex);
     if (!cart) return;
     carts[cart->getUserId()] = cart;
 }
 
 void CartService::removeFromCache(int userId) {
-    QMutexLocker locker(&m_mutex);
     carts.remove(userId);
 }
 
 void CartService::clearCache() {
-    QMutexLocker locker(&m_mutex);
     qDeleteAll(carts);
     carts.clear();
 }

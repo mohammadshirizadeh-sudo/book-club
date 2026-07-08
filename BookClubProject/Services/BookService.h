@@ -25,7 +25,7 @@ public:
     // ===== Book Management =====
 
 
-    bool addBook(Book* book);
+    int addBook(QSharedPointer<Book> book);
 
     bool editBook(int bookId, const QString& newTitle,
                   const QString& newAuthor, const Genre& newGenre,
@@ -39,33 +39,33 @@ public:
 
     // ===== Search & Filter =====
 
-    QVector<Book*> searchBooks(const QString& keyword) const;
+    QVector<QSharedPointer<Book>> searchBooks(const QString& keyword) const;
 
-    QVector<Book*> filterByGenre(const QString& genre) const;
+    QVector<QSharedPointer<Book>> filterByGenre(const QString& genre) const;
 
-    QVector<Book*> filterByPrice(double minPrice, double maxPrice) const;
+    QVector<QSharedPointer<Book>> filterByPrice(double minPrice, double maxPrice) const;
 
-    QVector<Book*> filterByAuthor(const QString& author) const;
+    QVector<QSharedPointer<Book>> filterByAuthor(const QString& author) const;
 
-    QVector<Book*> filterByPublisher(int publisherId) const;
+    QVector<QSharedPointer<Book>> filterByPublisher(int publisherId) const;
 
     // ===== Recommendations =====
 
-    QVector<Book*> getRecommendedBooks(const QVector<Genre>& favoriteGenres, int limit = 10) const;
+    QVector<QSharedPointer<Book>> getRecommendedBooks(const QVector<Genre>& favoriteGenres, int limit = 10) const;
 
-    QVector<Book*> getPopularBooks(int limit = 10) const;
+    QVector<QSharedPointer<Book>> getPopularBooks(int limit = 10) const;
 
-    QVector<Book*> getNewBooks(int limit = 10) const;
+    QVector<QSharedPointer<Book>> getNewBooks(int limit = 10) const;
 
-    QVector<Book*> getFreeBooks() const;
+    QVector<QSharedPointer<Book>> getFreeBooks() const;
 
-    QVector<Book*> getBooksByGenre(const QString& genre) const;
+    QVector<QSharedPointer<Book>> getBooksByGenre(const QString& genre) const;
 
     // ===== Helper Methods =====
-    Book* getBookById(int bookId) const;
-    QVector<Book*> getAllBooks() const;
+    QSharedPointer<Book> getBookById(int bookId) const;
+    QVector<QSharedPointer<Book>> getAllBooks() const;
 
-    QVector<Book*> getBooksByPublisher(int publisherId) const;
+    QVector<QSharedPointer<Book>> getBooksByPublisher(int publisherId) const;
 
     bool updateAverageRating(int bookId, double newRating);
 
@@ -75,7 +75,7 @@ public:
 
     bool deleteBook(int bookId);
 
-    int calculateGenreMatchScore(const Book* book, const QVector<Genre>& favoriteGenres) const;
+    int calculateGenreMatchScore(const QSharedPointer<Book> book, const QVector<Genre>& favoriteGenres) const;
 };
 
 #endif // BOOKSERVICE_H
