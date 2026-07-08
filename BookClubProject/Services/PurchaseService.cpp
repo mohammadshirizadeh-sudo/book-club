@@ -20,9 +20,9 @@ PurchaseService::PurchaseService(PurchaseRepository* purchaseRepo,
 
 // ===== Purchase Operations =====
 
-Purchase* PurchaseService::checkout(int userId) {
+QSharedPointer<Purchase> PurchaseService::checkout(int userId) {
     // 1. Get current cart
-    Cart* cart = cartService->getCart(userId);
+    QSharedPointer<Cart> cart = cartService->getCart(userId);
     if (!cart || cart->isEmpty()) {
         qWarning() << "Cart is empty or not initialized!";
         return nullptr;
@@ -47,7 +47,7 @@ Purchase* PurchaseService::checkout(int userId) {
     }
 
     // 5. Create purchase
-    Purchase* purchase = createPurchase(userId, cartItems, totalPrice, discountAmount, finalPrice);
+    QSharedPointer<Purchase> purchase = createPurchase(userId, cartItems, totalPrice, discountAmount, finalPrice);
     if (!purchase) {
         qWarning() << "Failed to create purchase for user:" << userId;
         return nullptr;
@@ -75,19 +75,18 @@ Purchase* PurchaseService::checkout(int userId) {
     return purchase;
 }
 
-Purchase* PurchaseService::createPurchase(int userId, const QVector<CartItem>& cartItems,
+QSharedPointer<Purchase> PurchaseService::createPurchase(int userId, const QVector<CartItem>& cartItems,
                                           double totalPrice, double discountAmount,
                                           double finalPrice) {
     // 1. Generate new purchase ID
     int purchaseId = nextPurchaseId++;
 
     // 2. Create purchase
-    Purchase* purchase = new Purchase(purchaseId, userId, cartItems,
+    QSharedPointer<Purchase> purchase = QSharedPointer<Purchase>::create(purchaseId, userId, cartItems,
                                       totalPrice, discountAmount, finalPrice);
 
     // 3. Save to repository
     if (!purchaseRepo->addPurchase(purchase)) {
-        delete purchase;
         qWarning() << "Failed to save purchase to repository!";
         return nullptr;
     }
@@ -98,10 +97,10 @@ Purchase* PurchaseService::createPurchase(int userId, const QVector<CartItem>& c
 
 bool PurchaseService::moveToLibrary(int userId, const QVector<CartItem>& purchaseItems) {
     // 1. Get user's library
-    Library* library = libraryRepo->findByUserId(userId);
+    QSharedPointer<Library> library = libraryRepo->findByUserId(userId);
     if (!library) {
         // If library doesn't exist, create one
-        library = new Library(userId);
+        library = QSharedPointer<Library>::create(userId);
         libraryRepo->addLibrary(library);
     }
 
@@ -131,26 +130,26 @@ bool PurchaseService::moveToLibrary(int userId, const QVector<CartItem>& purchas
 
 // ===== Purchase History =====
 
-QVector<Purchase*> PurchaseService::getPurchaseHistory(int userId) const {
+QVector<QSharedPointer<Purchase>> PurchaseService::getPurchaseHistory(int userId) const {
     return purchaseRepo->getPurchasesByUserId(userId);
 }
 
-Purchase* PurchaseService::getPurchaseById(int purchaseId) const {
+QSharedPointer<Purchase> PurchaseService::getPurchaseById(int purchaseId) const {
     return purchaseRepo->findById(purchaseId);
 }
 
-QVector<Purchase*> PurchaseService::getAllPurchases() const {
+QVector<QSharedPointer<Purchase>> PurchaseService::getAllPurchases() const {
     return purchaseRepo->getAllPurchases();
 }
 
-QVector<Purchase*> PurchaseService::getPurchasesForBook(int bookId) const {
+QVector<QSharedPointer<Purchase>> PurchaseService::getPurchasesForBook(int bookId) const {
     return purchaseRepo->getPurchasesByBookId(bookId);
 }
 
 // ===== Status Management =====
 
 bool PurchaseService::updatePurchaseStatus(int purchaseId, PurchaseStatus newStatus) {
-    Purchase* purchase = purchaseRepo->findById(purchaseId);
+    QSharedPointer<Purchase> purchase = purchaseRepo->findById(purchaseId);
     if (!purchase) {
         qWarning() << "Purchase not found:" << purchaseId;
         return false;
@@ -161,7 +160,7 @@ bool PurchaseService::updatePurchaseStatus(int purchaseId, PurchaseStatus newSta
 }
 
 bool PurchaseService::cancelPurchase(int purchaseId) {
-    Purchase* purchase = purchaseRepo->findById(purchaseId);
+    QSharedPointer<Purchase> purchase = purchaseRepo->findById(purchaseId);
     if (!purchase) {
         qWarning() << "Purchase not found:" << purchaseId;
         return false;
@@ -177,7 +176,7 @@ bool PurchaseService::cancelPurchase(int purchaseId) {
 }
 
 bool PurchaseService::refundPurchase(int purchaseId) {
-    Purchase* purchase = purchaseRepo->findById(purchaseId);
+    QSharedPointer<Purchase> purchase = purchaseRepo->findById(purchaseId);
     if (!purchase) {
         qWarning() << "Purchase not found:" << purchaseId;
         return false;
@@ -213,7 +212,7 @@ void PurchaseService::updateBookSales(const QVector<CartItem>& purchaseItems) {
         int bookId = item.getBookId();
         int quantity = item.getQuantity();
 
-        Book* book = bookRepo->findById(bookId);
+        QSharedPointer<Book> book = bookRepo->findById(bookId);
         if (book) {
             int newSales = book->getSalesCount() + quantity;
             book->setSalesCount(newSales);
@@ -225,7 +224,7 @@ void PurchaseService::updateBookSales(const QVector<CartItem>& purchaseItems) {
     }
 }
 
-void PurchaseService::sendPurchaseConfirmation(int userId, Purchase* purchase) {
+void PurchaseService::sendPurchaseConfirmation(int userId, QSharedPointer<Purchase> purchase) {
     if (!notifService) return;
 
     QString title = "✅ Purchase Confirmed!";
@@ -237,7 +236,7 @@ void PurchaseService::sendPurchaseConfirmation(int userId, Purchase* purchase) {
 
     // Notify publishers about their book sales
     for (const CartItem& item : purchase->getItems()) {
-        Book* book = bookRepo->findById(item.getBookId());
+        QSharedPointer<Book> book = bookRepo->findById(item.getBookId());
         if (book) {
             QString publisherMsg = QString("Your book '%1' was sold! (x%2)")
             .arg(book->getTitle())

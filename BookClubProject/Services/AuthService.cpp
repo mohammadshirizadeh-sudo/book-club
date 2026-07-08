@@ -197,20 +197,18 @@ bool AuthService::isUsernameAvailable(const QString& username) const {
 
 
 
-bool AuthService::requestPasswordReset(const QString& email)
+ValidationResult AuthService::requestPasswordReset(const QString& email)
 {
 
     ValidationResult result = EmailValidator::isValid(email);
     if (!result.isValid) {
-        qDebug() << "❌ Invalid email:" << result.errorMessage;
-        return false;
+        return ValidationResult::failure(result.errorMessage);
     }
 
     // 2. Find user by email
     User* user = userRepo->findByEmail(email);
     if (!user) {
-        qDebug() << "❌ No user found with email:" << email;
-        return false;
+        return ValidationResult::failure("❌ No user found with email:");
     }
 
     // 3. Generate reset token
@@ -221,10 +219,10 @@ bool AuthService::requestPasswordReset(const QString& email)
     qDebug() << "   (expires in 1 hour)";
 
 
-    return true;
+    return ValidationResult::success();
 }
 
-bool AuthService::resetPasswordWithToken(const QString& token, const QString& newPassword)
+ValidationResult AuthService::resetPasswordWithToken(const QString& token, const QString& newPassword)
 {
     // 1. Find user by token (search through all users)
     User* user = nullptr;
@@ -236,21 +234,19 @@ bool AuthService::resetPasswordWithToken(const QString& token, const QString& ne
     }
 
     if (!user) {
-        qDebug() << "❌ Invalid reset token";
-        return false;
+        return ValidationResult::failure("❌ Invalid reset token");
     }
 
     // 2. Reset password with token
     if (!user->resetPasswordWithToken(token, newPassword)) {
-        qDebug() << "❌ Failed to reset password";
-        return false;
+        return ValidationResult::failure("❌ Failed to reset password");
     }
 
     // 3. Save changes
     userRepo->updateUser(user , user->getUsername(), user->getEmail());
 
     qDebug() << "✅ Password reset successfully for user:" << user->getUsername();
-    return true;
+    return ValidationResult::success();
 }
 
 User* AuthService::getUserByUsername(const QString& username) const

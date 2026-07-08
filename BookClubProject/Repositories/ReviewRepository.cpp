@@ -9,12 +9,11 @@ ReviewRepository::ReviewRepository(QObject* parent) :QObject(parent) {
 }
 
 ReviewRepository::~ReviewRepository() {
-    // Clean up all reviews to prevent memory leak
-    qDeleteAll(reviewsById);
+
 }
 
-bool ReviewRepository::addReview(Review* review) {
-    QMutexLocker locker(&m_mutex);
+bool ReviewRepository::addReview(QSharedPointer<Review> review) {
+
     if (!review) {
         qWarning() << "Review is null!";
         return false;
@@ -22,19 +21,17 @@ bool ReviewRepository::addReview(Review* review) {
 
     int id = review->getReviewId();
 
-    // Check if review already exists
-    if (reviewsById.contains(id)) {
-        qWarning() << "Review with ID" << id << "already exists!";
-        return false;
+    {
+         QMutexLocker locker(&m_mutex);
+        // Check if review already exists
+        if (reviewsById.contains(id)) {
+            qWarning() << "Review with ID" << id << "already exists!";
+            return false;
+        }
+        addToCache(review);
     }
-
-
-
-    addToCache(review);
-
-    // 2. Save to SQLite
     if (!saveToDatabase(review)) {
-        // Rollback: remove from cache if DB fails
+        QMutexLocker locker(&m_mutex);
         removeFromCache(id);
         return false;
     }
@@ -43,22 +40,22 @@ bool ReviewRepository::addReview(Review* review) {
     return true;
 }
 
-Review* ReviewRepository::findById(int id) const {
+QSharedPointer<Review> ReviewRepository::findById(int id) const {
     QMutexLocker locker(&m_mutex);
     return reviewsById.value(id, nullptr);
 }
 
-QVector<Review*> ReviewRepository::getAllReviews() const {
+QVector<QSharedPointer<Review>> ReviewRepository::getAllReviews() const {
     QMutexLocker locker(&m_mutex);
     return reviewsById.values().toVector();
 }
 
-QVector<Review*> ReviewRepository::getReviewsByBookId(int bookId) const {
+QVector<QSharedPointer<Review>> ReviewRepository::getReviewsByBookId(int bookId) const {
 
     QMutexLocker locker(&m_mutex);
-    QVector<Review*> result;
+    QVector<QSharedPointer<Review>> result;
 
-    for (Review* review : reviewsById) {
+    for (QSharedPointer<Review> review : reviewsById) {
         if (review->getBookId() == bookId) {
             result.append(review);
         }
@@ -67,11 +64,11 @@ QVector<Review*> ReviewRepository::getReviewsByBookId(int bookId) const {
     return result;
 }
 
-QVector<Review*> ReviewRepository::getReviewsByUserId(int userId) const {
+QVector<QSharedPointer<Review>> ReviewRepository::getReviewsByUserId(int userId) const {
     QMutexLocker locker(&m_mutex);
-    QVector<Review*> result;
+    QVector<QSharedPointer<Review>> result;
 
-    for (Review* review : reviewsById) {
+    for (QSharedPointer<Review> review : reviewsById) {
         if (review->getUserId() == userId) {
             result.append(review);
         }
@@ -80,25 +77,34 @@ QVector<Review*> ReviewRepository::getReviewsByUserId(int userId) const {
     return result;
 }
 
-bool ReviewRepository::updateReview(Review* review) {
+bool ReviewRepository::updateReview(QSharedPointer<Review> review) {
     if (!review) {
         qWarning() << "Review is null!";
         return false;
     }
-    QMutexLocker locker(&m_mutex);
+
 
     int id = review->getReviewId();
-    if (!reviewsById.contains(id)) {
-        qWarning() << "Review with ID" << id << "not found!";
-        return false;
+     QSharedPointer<Review> oldReview = nullptr;
+    {
+        QMutexLocker locker(&m_mutex);
+        if (!reviewsById.contains(id)) {
+            qWarning() << "Review with ID" << id << "not found!";
+            return false;
+        }
+
+        oldReview = reviewsById[id];
+
+        reviewsById[id] = review;
+
     }
 
-    reviewsById[id] = review;
 
 
     if (!saveToDatabase(review)) {
         // Rollback: reload from DB
-        loadAllFromDatabase();
+        QMutexLocker locker(&m_mutex);
+        reviewsById[id] = oldReview;
         return false;
     }
 
@@ -108,7 +114,7 @@ bool ReviewRepository::updateReview(Review* review) {
 
 bool ReviewRepository::deleteReview(int reviewId) {
     QMutexLocker locker(&m_mutex);
-    Review* review = reviewsById.value(reviewId, nullptr);
+    QSharedPointer<Review> review = reviewsById.value(reviewId, nullptr);
     if (!review) {
         qWarning() << "Review with ID" << reviewId << "not found!";
         return false;
@@ -124,7 +130,6 @@ bool ReviewRepository::deleteReview(int reviewId) {
 
     // 2. Remove from cache
     removeFromCache(reviewId);
-    delete review;
 
     qDebug() << "Review deleted:" << reviewId;
     return true;
@@ -135,7 +140,7 @@ bool ReviewRepository::deleteReview(int reviewId) {
 
 bool ReviewRepository::hasUserReviewed(int userId, int bookId) const {
     QMutexLocker locker(&m_mutex);
-    for (Review* review : reviewsById) {
+    for (QSharedPointer<Review> review : reviewsById) {
         if (review->getUserId() == userId && review->getBookId() == bookId) {
             return true;
         }
@@ -143,9 +148,9 @@ bool ReviewRepository::hasUserReviewed(int userId, int bookId) const {
     return false;
 }
 
-Review* ReviewRepository::getUserReview(int userId, int bookId) const {
+QSharedPointer<Review> ReviewRepository::getUserReview(int userId, int bookId) const {
     QMutexLocker locker(&m_mutex);
-    for (Review* review : reviewsById) {
+    for (QSharedPointer<Review> review : reviewsById) {
         if (review->getUserId() == userId && review->getBookId() == bookId) {
             return review;
         }
@@ -182,15 +187,13 @@ bool ReviewRepository::loadAllFromDatabase() {
 
     int count = 0;
     while (sqlQuery.next()) {
-        Review* review = new Review(
-            sqlQuery.value("id").toInt(),
+        QSharedPointer<Review> review = QSharedPointer<Review>::create(sqlQuery.value("id").toInt(),
             sqlQuery.value("user_id").toInt(),
             sqlQuery.value("book_id").toInt(),
             sqlQuery.value("text").toString(),
             sqlQuery.value("rating").toInt(),
             QDateTime::fromString(sqlQuery.value("created_at").toString(), Qt::ISODate),
-            QDateTime::fromString(sqlQuery.value("updated_at").toString(), Qt::ISODate)
-            );
+            QDateTime::fromString(sqlQuery.value("updated_at").toString(), Qt::ISODate));
 
 
 
@@ -206,7 +209,7 @@ bool ReviewRepository::loadAllFromDatabase() {
 
 
 
-bool ReviewRepository::saveToDatabase(Review* review) {
+bool ReviewRepository::saveToDatabase(QSharedPointer<Review> review) {
     if (!review) return false;
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -251,19 +254,16 @@ bool ReviewRepository::deleteFromDatabase(int reviewId) {
 }
 
 
-void ReviewRepository::addToCache(Review* review) {
-    QMutexLocker locker(&m_mutex);
+void ReviewRepository::addToCache(QSharedPointer<Review> review) {
     if (!review) return;
     reviewsById[review->getReviewId()] = review;
 }
 
 void ReviewRepository::removeFromCache(int reviewId) {
-    QMutexLocker locker(&m_mutex);
+
     reviewsById.remove(reviewId);
 }
 
 void ReviewRepository::clearCache() {
-    QMutexLocker locker(&m_mutex);
-    qDeleteAll(reviewsById);
     reviewsById.clear();
 }

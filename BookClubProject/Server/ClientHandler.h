@@ -60,6 +60,7 @@ public:
 
 
     void setSession(int userId, UserRole role);
+    void disconnectFromClient();
 signals:
     void disconnected();
     void responseReady(const Response& response);
@@ -75,6 +76,12 @@ private:
     QTcpSocket* m_socket = nullptr;
     qintptr m_socketDescriptor;
 
+    QAtomicInt m_pendingTasks{0};
+    QAtomicInt m_isDestroying{0};
+
+
+    mutable QMutex m_sessionMutex;
+
     AuthService* m_authService;
     BookService* m_bookService;
     UserService* m_userService;
@@ -87,7 +94,11 @@ private:
     RequestParser* m_parser = nullptr;
 
     void sendResponse(const QString& response);
+private slots:
+
     void sendResponse(const Response& response);
+private:
+
     void handleRequest(const QString& requestData);
 
     void handleRequestSync(const QString& requestData);
@@ -99,6 +110,7 @@ private:
     int m_sessionUserId = -1;
     UserRole m_sessionRole = UserRole::User;
     bool m_isAuthenticated = false;
+
 
 
 

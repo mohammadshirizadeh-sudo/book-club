@@ -13,9 +13,9 @@
 class LibraryRepository : public QObject {
     Q_OBJECT
 private:
-    QMap<int, Library*> librariesByUserId;
+    QMap<int, QSharedPointer<Library>> librariesByUserId;
     mutable QMutex m_mutex;
-    void addToCache(Library* library);
+    void addToCache(QSharedPointer<Library> library);
     void removeFromCache(int userId);
     void clearCache();
 
@@ -24,11 +24,11 @@ public:
     ~LibraryRepository();
 
     // ===== CRUD Operations =====
-    bool addLibrary(Library* library);
+    bool addLibrary(QSharedPointer<Library> library);
 
-    Library* findByUserId(int userId) const;
-    QVector<Library*> getAllLibraries() const;
-    bool updateLibrary(Library* library);
+    QSharedPointer<Library> findByUserId(int userId) const;
+    QVector<QSharedPointer<Library>> getAllLibraries() const;
+    bool updateLibrary(QSharedPointer<Library> library);
     bool deleteLibrary(int userId);
     bool exists(int userId) const;
 
@@ -36,10 +36,10 @@ public:
 
 
     bool loadAllFromDatabase();
-    bool saveToDatabase(Library* library);
+    bool saveToDatabase(QSharedPointer<Library> library);
     bool deleteFromDatabase(int userId);
     bool saveShelves(int userId, const QVector<Shelf>& shelves);
-    bool loadShelves(Library* library);
+    bool loadShelves(QSharedPointer<Library> library);
 };
 
 #endif // LIBRARYREPOSITORY_H

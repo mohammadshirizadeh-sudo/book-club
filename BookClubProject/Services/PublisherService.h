@@ -26,7 +26,7 @@ public:
     explicit PublisherService(BookService* bookService ,BookRepository* repo , UserRepository* userRepo  , QObject* parent = nullptr);
 
     int getBooksPublishedCount(int publisherId) const;
-    QVector<Book*> getBooksByPublisher(int publisherId) const;
+    QVector<QSharedPointer<Book>> getBooksByPublisher(int publisherId) const;
     BookRepository *getBookRepo() const;
     BookService *getBookService() const;
     QMap<QString, QVariant> getSalesStatistics(int publisherId) const;

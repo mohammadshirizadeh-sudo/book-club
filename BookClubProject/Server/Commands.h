@@ -431,6 +431,7 @@ private:
     ReviewService* m_reviewService;
 };
 
+
 class GetReviewsForBookCommand : public Command
 {
 public:

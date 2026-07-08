@@ -46,5 +46,6 @@ private:
     QVariantMap m_data;
     int m_errorCode;
 };
+Q_DECLARE_METATYPE(Response)
 
 #endif // RESPONSE_H

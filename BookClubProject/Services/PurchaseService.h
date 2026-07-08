@@ -33,9 +33,9 @@ public:
     // ===== Purchase Operations =====
 
 
-    Purchase* checkout(int userId);
+    QSharedPointer<Purchase> checkout(int userId);
 
-    Purchase* createPurchase(int userId, const QVector<CartItem>& cartItems,
+    QSharedPointer<Purchase> createPurchase(int userId, const QVector<CartItem>& cartItems,
                              double totalPrice, double discountAmount, double finalPrice);
 
 
@@ -43,11 +43,11 @@ public:
 
     // ===== Purchase History =====
 
-    QVector<Purchase*> getPurchaseHistory(int userId) const;
-    Purchase* getPurchaseById(int purchaseId) const;
-    QVector<Purchase*> getAllPurchases() const;
+    QVector<QSharedPointer<Purchase>> getPurchaseHistory(int userId) const;
+    QSharedPointer<Purchase> getPurchaseById(int purchaseId) const;
+    QVector<QSharedPointer<Purchase>> getAllPurchases() const;
 
-    QVector<Purchase*> getPurchasesForBook(int bookId) const;
+    QVector<QSharedPointer<Purchase>> getPurchasesForBook(int bookId) const;
 
     // ===== Status Management =====
     bool updatePurchaseStatus(int purchaseId, PurchaseStatus newStatus);
@@ -59,7 +59,7 @@ private:
     bool processPayment(double amount);
     void updateBookSales(const QVector<CartItem>& purchaseItems);
 
-    void sendPurchaseConfirmation(int userId, Purchase* purchase);
+    void sendPurchaseConfirmation(int userId, QSharedPointer<Purchase> purchase);
 };
 
 #endif // PURCHASESERVICE_H
