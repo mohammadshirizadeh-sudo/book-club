@@ -57,7 +57,7 @@
      <string>Home Page</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="userProfilePushButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -77,7 +77,7 @@
      <string>Profile</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="userLibraryPushButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -97,7 +97,7 @@
      <string>My Library</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="userCartPushButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -117,7 +117,7 @@
      <string>Cart</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_5">
+   <widget class="QPushButton" name="userSearchPushButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -137,7 +137,7 @@
      <string>Search</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_6">
+   <widget class="QPushButton" name="quitPushButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -154,10 +154,10 @@
 }</string>
     </property>
     <property name="text">
-     <string>Quit --&gt;           </string>
+     <string>&lt;-- Quit</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_7">
+   <widget class="QPushButton" name="bookGenresPushButton">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -177,7 +177,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_8">
+   <widget class="QPushButton" name="recentlyAddedPushButton">
     <property name="geometry">
      <rect>
       <x>390</x>
@@ -197,7 +197,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_9">
+   <widget class="QPushButton" name="freeBooksPushButton">
     <property name="geometry">
      <rect>
       <x>760</x>
@@ -217,7 +217,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_10">
+   <widget class="QPushButton" name="bestsellersPushButton">
     <property name="geometry">
      <rect>
       <x>1140</x>
@@ -237,7 +237,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_11">
+   <widget class="QPushButton" name="recommendedPushButton">
     <property name="geometry">
      <rect>
       <x>759</x>
