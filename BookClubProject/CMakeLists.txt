@@ -71,6 +71,9 @@ qt_add_executable(BookClubProject
     Publishers/mybooks.h Publishers/mybooks.cpp Publishers/mybooks.ui
     Publishers/bookstatics.h Publishers/bookstatics.cpp Publishers/bookstatics.ui
     appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
+    Users/edituserinfodialog.h Users/edituserinfodialog.cpp Users/edituserinfodialog.ui
+    Users/userinfodialog.h Users/userinfodialog.cpp Users/userinfodialog.ui
+    Users/changeuserpassdialog.h Users/changeuserpassdialog.cpp Users/changeuserpassdialog.ui
 
 
 

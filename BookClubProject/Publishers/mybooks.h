@@ -15,6 +15,19 @@ public:
     explicit MyBooks(QWidget *parent = nullptr);
     ~MyBooks();
 
+private slots:
+    void on_addBookPushButton_clicked();
+
+    void on_editBookPushButton_clicked();
+
+    void on_staticsPushButton_clicked();
+
+    void on_applyDiscountPushButton_clicked();
+
+    void on_deleteDeactivatePushButton_clicked();
+
+    void on_backPushButton_clicked();
+
 private:
     Ui::MyBooks *ui;
 };
