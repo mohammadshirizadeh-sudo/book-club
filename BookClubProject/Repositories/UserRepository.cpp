@@ -226,7 +226,7 @@ bool UserRepository::isEmailTaken(const QString& email) const {
 }
 
 void UserRepository::resetNextId() {
-    QMutexLocker locker(&m_mutex);
+    // QMutexLocker locker(&m_mutex);
     int maxId = 1000;
     for (int id : usersById.keys()) {
         if (id > maxId) {

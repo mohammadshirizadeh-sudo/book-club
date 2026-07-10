@@ -76,6 +76,7 @@ void ClientHandler::onSocketError(QAbstractSocket::SocketError socketError)
 
 void ClientHandler::onReadyRead() {
     QByteArray data = m_socket->readAll();
+    qDebug() << "📥 Server received:" << data;
     QString requestData = QString::fromUtf8(data).trimmed();
     if (requestData.isEmpty()) return;
 
@@ -106,7 +107,7 @@ void ClientHandler::handleRequest(const QString& requestData)
     // 1. Parse request
     Request request = m_parser->parse(requestData);
     if (!request.isValid()) {
-        sendResponse(Response::error("Invalid request format"));
+        sendResponse( Response::error(request.getCommandType(),"Invalid request format"));
         return;
     }
 
@@ -124,7 +125,7 @@ void ClientHandler::handleRequest(const QString& requestData)
         ));
 
     if (!command) {
-        sendResponse(Response::error("Unknown command: " + request.getCommandTypeString()));
+        sendResponse(Response::error(request.getCommandType() , "Unknown command: " + request.getCommandTypeString()));
         return;
     }
 
@@ -136,12 +137,12 @@ void ClientHandler::handleRequest(const QString& requestData)
     catch (const std::exception& e) {
 
         qCritical() << "❌ Command execution failed:" << e.what();
-        sendResponse(Response::error("Internal error: " + QString(e.what())));
+        sendResponse(Response::error(request.getCommandType(), "Internal error: " + QString(e.what())));
     }
     catch (...) {
 
         qCritical() << "❌ Unknown command execution error!";
-        sendResponse(Response::error("Internal server error"));
+        sendResponse(Response::error(request.getCommandType(),"Internal server error"));
     }
 }
 
@@ -151,7 +152,7 @@ void ClientHandler::handleRequestSync(const QString& requestData)
     // 1. Parse request
     Request request = m_parser->parse(requestData);
     if (!request.isValid()) {
-        sendResponseSync(Response::error("Invalid request format"));
+        sendResponseSync(Response::error(request.getCommandType(),"Invalid request format"));
         return;
     }
 
@@ -168,7 +169,7 @@ void ClientHandler::handleRequestSync(const QString& requestData)
         m_adminService,this
         ));
     if (!command) {
-        sendResponseSync(Response::error("Unknown command"));
+        sendResponseSync(Response::error(request.getCommandType(),"Unknown command"));
         return;
     }
 
@@ -176,7 +177,7 @@ void ClientHandler::handleRequestSync(const QString& requestData)
         Response response = command->execute(request.getParams());
         sendResponseSync(response);
     } catch (const std::exception& e) {
-        sendResponseSync(Response::error("Internal error: " + QString(e.what())));
+        sendResponseSync(Response::error(request.getCommandType(),"Internal error: " + QString(e.what())));
     }
 }
 
@@ -220,7 +221,7 @@ void ClientHandler::processRequest(const QString& requestData)
 {
     Request request = m_parser->parse(requestData);
     if (!request.isValid()) {
-        emit responseReady(Response::error("Invalid request format"));
+        emit responseReady(Response::error(request.getCommandType(),"Invalid request format"));
         return;
     }
     std::unique_ptr<Command> command(CommandFactory::create(
@@ -235,7 +236,7 @@ void ClientHandler::processRequest(const QString& requestData)
         m_adminService,this
         ));
     if (!command) {
-        emit responseReady(Response::error("Unknown command"));
+        emit responseReady(Response::error(request.getCommandType(),"Unknown command"));
         return;
     }
 
@@ -244,9 +245,9 @@ void ClientHandler::processRequest(const QString& requestData)
         Response response = command->execute(request.getParams());
         emit responseReady(response);
     } catch (const std::exception& e) {
-        emit responseReady(Response::error("Internal error: " + QString(e.what())));
+        emit responseReady(Response::error(request.getCommandType(),"Internal error: " + QString(e.what())));
     } catch (...) {
-        emit responseReady(Response::error("Internal server error"));
+        emit responseReady(Response::error(request.getCommandType(),"Internal server error"));
     }
 }
 

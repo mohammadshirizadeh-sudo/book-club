@@ -46,7 +46,9 @@ Server::~Server()
 void Server::initServices()
 {
     // ===== Repositories =====
+    qDebug()<<"mio";
     m_userRepo = new UserRepository(this);
+    qDebug()<<"sio";
     m_bookRepo = new BookRepository(this);
     m_reviewRepo = new ReviewRepository(this);
     m_purchaseRepo = new PurchaseRepository(this);

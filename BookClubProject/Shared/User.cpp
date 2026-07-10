@@ -4,18 +4,6 @@
 
 
 
-//These constructors are for sign up
-
-
-
-
-
-
-
-
-
-
-
 
 UserRole User::getRole() const
 {
@@ -71,8 +59,14 @@ User::User()
 User::User(int id, const QString& username, const QString& email, const QString& plainPassword)
     : id(id), username(username), email(email)
     , role(UserRole::User)
+
     , status(AccountStatus::Active)
+
     , createdAt(QDateTime::currentDateTime())
+    , favouriteGenre(QVector<Genre>())
+    , lastLogin(QDateTime())
+    ,updatedAt(QDateTime::currentDateTime())
+    ,salt(PasswordHelper::generateSalt())
     , passwordResetToken("")
     , resetTokenExpiry(QDateTime())
 

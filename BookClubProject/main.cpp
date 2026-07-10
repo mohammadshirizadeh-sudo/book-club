@@ -1,3 +1,4 @@
+
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
@@ -7,6 +8,8 @@
 #include "appWindow/publisherwindow.h"
 #include "appWindow/adminwindow.h"
 #include "appWindow/SessionManager.h"
+#include "Server/server.h"
+#include "Database/DatabaseInitializer.h"
 
 #include <QApplication>
 #include <QStackedWidget>
@@ -17,12 +20,32 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    // برای Signal/Slotهایی که Response ارسال می‌کنند
+
+
+    // ===== مقداردهی دیتابیس =====
+    DatabaseInitializer dbInit;
+    if (!dbInit.initialize("bookclub.db")) {
+        qCritical() << "❌ Failed to initialize database!";
+        return -1;
+    }
+
+
+
+
+    Server server;
+    if (!server.start(8080)) {
+        qCritical() << "❌ Server failed to start!";
+        return -1;
+    }
+    qDebug() << "✅ Server started on port 8080";
+
     qRegisterMetaType<Response>("Response");
 
-    // ایجاد NetworkManager
     NetworkManager* networkManager = new NetworkManager();
     networkManager->connectToServer("127.0.0.1", 8080);
+
+
+
 
     // پنجره اصلی
     QStackedWidget stackedWidget;

@@ -98,6 +98,8 @@ void NetworkManager::onDisconnected()
 
 void NetworkManager::onReadyRead()
 {
+    qDebug() << "im in in the onready read";
+
     QByteArray data = m_socket->readAll();
 
     qDebug() << "📥 Raw data received:" << data.left(100) << "...";

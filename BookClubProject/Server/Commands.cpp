@@ -9,6 +9,7 @@
 #include "../Services/PublisherService.h"
 #include "../Repositories/UserRepository.h"
 #include "ClientHandler.h"
+#include "Request.h"
 #include <QDebug>
 
 
@@ -31,14 +32,14 @@ Response LoginCommand::execute(const QVariantMap& params)
 
     ValidationResult result = m_authService->login(username, password);
 
-    if(!result.isValid){
-        return Response::error(result.errorMessage);
 
+    if(!result.isValid){
+        return Response::error(CommandType::Login,result.errorMessage);
     }
 
     User* user = m_authService->getUserByUsername(username);
     if (!user) {
-        return Response::error("User created but could not be retrieved");
+        return Response::error(CommandType::Login,"User created but could not be retrieved");
     }
 
         QVariantMap data ;
@@ -51,7 +52,7 @@ Response LoginCommand::execute(const QVariantMap& params)
         data["role"] = role;
         m_clientHandler->setSession(userId, UserRepository::stringToRole(role));
 
-        return Response::success("Login successful", data);
+        return Response::success(CommandType::Login,"Login successful", data);
 
 }
 
@@ -78,19 +79,19 @@ Response RegisterCommand::execute(const QVariantMap& params)
     ValidationResult result = m_authService->registerUser(username, email, password, role);
 
     if (!result.isValid) {
-        return Response::error(result.errorMessage);
+        return Response::error(CommandType::Register,result.errorMessage);
     }
     User* user = m_authService->getUserByUsername(username);
 
 
     if (!user) {
-        return Response::error("User created but could not be retrieved");
+        return Response::error(CommandType::Register , "User created but could not be retrieved");
     }
 
     QVariantMap data;
     data["userId"] = user->getId();
     data["username"] = user->getUsername();
-    return Response::success("Registration successful", data);
+    return Response::success(CommandType::Register , "Registration successful", data);
 }
 
 // ----- LogoutCommand -----
@@ -102,9 +103,9 @@ LogoutCommand::LogoutCommand(AuthService* authService)
 Response LogoutCommand::execute(const QVariantMap& params)
 {
     if (m_authService->logout()) {
-        return Response::success("Logout successful");
+        return Response::success(CommandType::Logout ,"Logout successful");
     }
-    return Response::error("No user logged in");
+    return Response::error(CommandType::Logout , "No user logged in");
 }
 
 // ----- ResetPasswordCommand -----
@@ -118,12 +119,14 @@ Response ResetPasswordCommand::execute(const QVariantMap& params)
     QString email = params["email"].toString();
 
     if (m_authService->requestPasswordReset(email).isValid) {
-        return Response::success("Password reset link sent to your email");
+        return Response::success(CommandType::ResetPassword , "Password reset link sent to your email");
     }
-    return Response::error("Email not found");
+    return Response::error(CommandType::ResetPassword , "Email not found");
 }
 
 
+
+//check this !!!!!!!!!!!!!
 // ----- ConfirmResetPasswordCommand -----
 ConfirmResetPasswordCommand::ConfirmResetPasswordCommand(AuthService* authService)
     : m_authService(authService)
@@ -136,9 +139,9 @@ Response ConfirmResetPasswordCommand::execute(const QVariantMap& params)
     QString newPassword = params["newPassword"].toString();
 
     if (m_authService->resetPasswordWithToken(token, newPassword).isValid)
-        return Response::success("Password reset successfully");
+        return Response::success(CommandType::ResetPasswordWithToken , "Password reset successfully");
 
-    return Response::error("Invalid or expired token");
+    return Response::error(CommandType::ResetPasswordWithToken , "Invalid or expired token");
 }
 
 // =============================================
@@ -170,9 +173,9 @@ Response GetProfileCommand::execute(const QVariantMap& params)
         }
         data["favoriteGenres"] = genreStrings;
 
-        return Response::success(data);
+        return Response::success(CommandType::GetProfile , data);
     }
-    return Response::error("User not found");
+    return Response::error(CommandType::GetProfile , "User not found");
 }
 
 // ----- UpdateProfileCommand -----
@@ -190,9 +193,9 @@ Response UpdateProfileCommand::execute(const QVariantMap& params)
     QVector<Genre> genreVector = GenreHelper::stringListToGenres(genres.toVector());
 
     if (m_userService->updateProfile(userId, email, fullName, genreVector)) {
-        return Response::success("Profile updated successfully");
+        return Response::success(CommandType::UpdateProfile , "Profile updated successfully");
     }
-    return Response::error("Failed to update profile");
+    return Response::error(CommandType::UpdateProfile ,"Failed to update profile");
 }
 
 // ----- ChangePasswordCommand -----
@@ -208,9 +211,9 @@ Response ChangePasswordCommand::execute(const QVariantMap& params)
     QString newPassword = params["newPassword"].toString();
 
     if (m_userService->changePassword(userId, oldPassword, newPassword)) {
-        return Response::success("Password changed successfully");
+        return Response::success(CommandType::ChangePassword, "Password changed successfully");
     }
-    return Response::error("Failed to change password");
+    return Response::error(CommandType::ChangePassword ,"Failed to change password");
 }
 
 // ----- UpdateFavoriteGenresCommand -----
@@ -226,9 +229,9 @@ Response UpdateFavoriteGenresCommand::execute(const QVariantMap& params)
     QVector<Genre> genreVector = GenreHelper::stringListToGenres(genres.toVector());
 
     if (m_userService->updateFavoriteGenres(userId, genreVector)) {
-        return Response::success("Favorite genres updated");
+        return Response::success(CommandType::UpdateFavoriteGenres , "Favorite genres updated");
     }
-    return Response::error("Failed to update favorite genres");
+    return Response::error(CommandType::UpdateFavoriteGenres ,"Failed to update favorite genres");
 }
 
 // =============================================
@@ -264,7 +267,7 @@ Response SearchBooksCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["books"] = bookList;
     data["count"] = bookList.size();
-    return Response::success(data);
+    return Response::success(CommandType::SearchBooks, data);
 }
 
 // ----- GetBookByIdCommand -----
@@ -293,9 +296,9 @@ Response GetBookByIdCommand::execute(const QVariantMap& params)
         data["isActive"] = book->getIsActive();
         data["coverPath"] = book->getCoverPath();
         data["pdfPath"] = book->getPdfPath();
-        return Response::success(data);
+        return Response::success(CommandType::GetBookById , data);
     }
-    return Response::error("Book not found");
+    return Response::error(CommandType::GetBookById ,"Book not found");
 }
 
 // ----- GetBooksByGenreCommand -----
@@ -324,7 +327,7 @@ Response GetBooksByGenreCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["books"] = bookList;
     data["count"] = bookList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetBooksByGenre , data);
 }
 
 // ----- GetPopularBooksCommand -----
@@ -355,7 +358,7 @@ Response GetPopularBooksCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["books"] = bookList;
     data["count"] = bookList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetPopularBooks , data);
 }
 
 // ----- GetNewBooksCommand -----
@@ -384,7 +387,7 @@ Response GetNewBooksCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["books"] = bookList;
     data["count"] = bookList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetNewBooks , data);
 }
 
 // ----- GetFreeBooksCommand -----
@@ -413,7 +416,7 @@ Response GetFreeBooksCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["books"] = bookList;
     data["count"] = bookList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetFreeBooks , data);
 }
 
 // ----- GetRecommendedBooksCommand -----
@@ -430,7 +433,7 @@ Response GetRecommendedBooksCommand::execute(const QVariantMap& params)
     User* user = m_userService->getProfile(userId);
 
     if (!user) {
-        return Response::error("User not found");
+        return Response::error(CommandType::GetRecommendedBooks ,"User not found");
     }
 
     QVector<QSharedPointer<Book>> books = m_bookService->getRecommendedBooks(
@@ -453,7 +456,7 @@ Response GetRecommendedBooksCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["books"] = bookList;
     data["count"] = bookList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetRecommendedBooks , data);
 }
 
 // =============================================
@@ -476,9 +479,9 @@ Response AddToCartCommand::execute(const QVariantMap& params)
         QVariantMap data;
         data["totalItems"] = m_cartService->getTotalItemCount(userId);
         data["finalPrice"] = m_cartService->getFinalPrice(userId);
-        return Response::success("Added to cart", data);
+        return Response::success(CommandType::AddToCart ,"Added to cart", data);
     }
-    return Response::error("Failed to add to cart");
+    return Response::error(CommandType::AddToCart,"Failed to add to cart");
 }
 
 // ----- RemoveFromCartCommand -----
@@ -496,9 +499,9 @@ Response RemoveFromCartCommand::execute(const QVariantMap& params)
         QVariantMap data;
         data["totalItems"] = m_cartService->getTotalItemCount(userId);
         data["finalPrice"] = m_cartService->getFinalPrice(userId);
-        return Response::success("Removed from cart", data);
+        return Response::success(CommandType::RemoveFromCart , "Removed from cart", data);
     }
-    return Response::error("Failed to remove from cart");
+    return Response::error(CommandType::RemoveFromCart ,"Failed to remove from cart");
 }
 
 // ----- UpdateCartQuantityCommand -----
@@ -517,9 +520,9 @@ Response UpdateCartQuantityCommand::execute(const QVariantMap& params)
         QVariantMap data;
         data["totalItems"] = m_cartService->getTotalItemCount(userId);
         data["finalPrice"] = m_cartService->getFinalPrice(userId);
-        return Response::success("Cart updated", data);
+        return Response::success(CommandType::UpdateCartQuantity , "Cart updated", data);
     }
-    return Response::error("Failed to update cart");
+    return Response::error(CommandType::UpdateCartQuantity ,"Failed to update cart");
 }
 
 // ----- GetCartCommand -----
@@ -554,7 +557,7 @@ Response GetCartCommand::execute(const QVariantMap& params)
     data["finalPrice"] = m_cartService->getFinalPrice(userId);
     data["isEmpty"] = m_cartService->isEmpty(userId);
 
-    return Response::success(data);
+    return Response::success(CommandType::GetCart , data);
 }
 
 // ----- ClearCartCommand -----
@@ -567,7 +570,7 @@ Response ClearCartCommand::execute(const QVariantMap& params)
 {
     int userId = params["userId"].toInt();
     m_cartService->clearCart(userId);
-    return Response::success("Cart cleared");
+    return Response::success(CommandType::ClearCart , "Cart cleared");
 }
 
 // =============================================
@@ -591,9 +594,9 @@ Response CheckoutCommand::execute(const QVariantMap& params)
         data["finalPrice"] = purchase->getFinalPrice();
         data["totalItems"] = purchase->getTotalItemCount();
         data["status"] = purchase->getStatusString();
-        return Response::success("Purchase successful", data);
+        return Response::success(CommandType::Checkout, "Purchase successful", data);
     }
-    return Response::error("Purchase failed");
+    return Response::error(CommandType::Checkout ,"Purchase failed");
 }
 
 // ----- GetPurchaseHistoryCommand -----
@@ -621,7 +624,7 @@ Response GetPurchaseHistoryCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["purchases"] = purchaseList;
     data["count"] = purchaseList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetPurchaseHistory , data);
 }
 
 // ----- GetPurchaseByIdCommand -----
@@ -644,9 +647,9 @@ Response GetPurchaseByIdCommand::execute(const QVariantMap& params)
         data["finalPrice"] = purchase->getFinalPrice();
         data["status"] = purchase->getStatusString();
         data["purchasedAt"] = purchase->getPurchasedAt().toString(Qt::ISODate);
-        return Response::success(data);
+        return Response::success(CommandType::GetPurchaseById,  data);
     }
-    return Response::error("Purchase not found");
+    return Response::error(CommandType::GetPurchaseById ,"Purchase not found");
 }
 
 // =============================================
@@ -671,9 +674,9 @@ Response AddReviewCommand::execute(const QVariantMap& params)
         data["bookId"] = bookId;
         data["rating"] = rating;
         data["averageRating"] = m_reviewService->getAverageRating(bookId);
-        return Response::success("Review added", data);
+        return Response::success(CommandType::AddReview ,"Review added", data);
     }
-    return Response::error("Failed to add review");
+    return Response::error(CommandType::AddReview ,"Failed to add review");
 }
 
 // ----- EditReviewCommand -----
@@ -690,9 +693,9 @@ Response EditReviewCommand::execute(const QVariantMap& params)
     int rating = params["rating"].toInt();
 
     if (m_reviewService->editReview(reviewId, userId, text, rating)) {
-        return Response::success("Review updated");
+        return Response::success(CommandType::EditReview, "Review updated");
     }
-    return Response::error("Failed to update review");
+    return Response::error(CommandType::EditBook ,"Failed to update review");
 }
 
 // ----- DeleteReviewCommand -----
@@ -707,9 +710,12 @@ Response DeleteReviewCommand::execute(const QVariantMap& params)
     int userId = params["userId"].toInt();
 
     if (m_reviewService->deleteReview(reviewId, userId)) {
-        return Response::success("Review deleted");
+        return Response::success(CommandType::DeleteReview, "Review deleted");
     }
-    return Response::error("Failed to delete review");
+
+
+    //you should fixe deleteownreview and review commands !!!!!!!!!!!
+    return Response::error(CommandType::DeleteReview ,"Failed to delete review");
 }
 
 
@@ -755,7 +761,7 @@ Response GetReviewsForBookCommand::execute(const QVariantMap& params)
     data["reviews"] = reviewList;
     data["count"] = reviewList.size();
     data["averageRating"] = m_reviewService->getAverageRating(bookId);
-    return Response::success(data);
+    return Response::success(CommandType::GetReviewsForBook , data);
 }
 
 // ----- GetAverageRatingCommand -----
@@ -772,7 +778,7 @@ Response GetAverageRatingCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["bookId"] = bookId;
     data["averageRating"] = avg;
-    return Response::success(data);
+    return Response::success(CommandType::GetAverageRating , data);
 }
 
 // =============================================
@@ -801,9 +807,9 @@ Response AddBookCommand::execute(const QVariantMap& params)
         QVariantMap data;
         data["title"] = title;
         data["author"] = author;
-        return Response::success("Book added successfully", data);
+        return Response::success(CommandType::AddBook , "Book added successfully", data);
     }
-    return Response::error("Failed to add book");
+    return Response::error(CommandType::AddBook ,"Failed to add book");
 }
 
 // ----- EditBookCommand -----
@@ -824,9 +830,9 @@ Response EditBookCommand::execute(const QVariantMap& params)
 
     if (m_publisherService->getBookService()->editBook( bookId, title, author, genre, description, price, discount)) {
 
-        return Response::success("Book updated successfully");
+        return Response::success(CommandType::EditBook , "Book updated successfully");
     }
-    return Response::error("Failed to update book");
+    return Response::error(CommandType::EditBook ,"Failed to update book");
 }
 
 // ----- DeactivateBookCommand -----
@@ -841,9 +847,9 @@ Response DeactivateBookCommand::execute(const QVariantMap& params)
     int bookId = params["bookId"].toInt();
 
     if (m_publisherService->getBookService()->deactivateBook(bookId)) {
-        return Response::success("Book deactivated");
+        return Response::success(CommandType::DeactivateBook , "Book deactivated");
     }
-    return Response::error("Failed to deactivate book");
+    return Response::error(CommandType::DeactivateBook ,"Failed to deactivate book");
 }
 
 // ----- ReactivateBookCommand -----
@@ -858,9 +864,9 @@ Response ReactivateBookCommand::execute(const QVariantMap& params)
     int bookId = params["bookId"].toInt();
 
     if (m_publisherService->getBookService()->reactivateBook(bookId)) {
-        return Response::success("Book reactivated");
+        return Response::success(CommandType::ReactivateBook ,"Book reactivated");
     }
-    return Response::error("Failed to reactivate book");
+    return Response::error(CommandType::ReactivateBook ,"Failed to reactivate book");
 }
 
 // ----- GetPublisherBooksCommand -----
@@ -890,7 +896,7 @@ Response GetPublisherBooksCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["books"] = bookList;
     data["count"] = bookList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetPublisherBooks, data);
 }
 
 // ----- GetPublisherStatsCommand -----
@@ -909,7 +915,7 @@ Response GetPublisherStatsCommand::execute(const QVariantMap& params)
     for (auto it = stats.begin(); it != stats.end(); ++it) {
         data[it.key()] = it.value();
     }
-    return Response::success(data);
+    return Response::success(CommandType::GetPublisherStats, data);
 }
 
 // =============================================
@@ -928,9 +934,9 @@ Response BlockUserCommand::execute(const QVariantMap& params)
     QString reason = params["reason"].toString();
 
     if (m_adminService->blockUser(userId, reason)) {
-        return Response::success("User blocked");
+        return Response::success(CommandType::BlockUser ,"User blocked");
     }
-    return Response::error("Failed to block user");
+    return Response::error(CommandType::BlockUser ,"Failed to block user");
 }
 
 // ----- UnblockUserCommand -----
@@ -944,9 +950,9 @@ Response UnblockUserCommand::execute(const QVariantMap& params)
     int userId = params["userId"].toInt();
 
     if (m_adminService->unblockUser(userId)) {
-        return Response::success("User unblocked");
+        return Response::success(CommandType::UnblockUser , "User unblocked");
     }
-    return Response::error("Failed to unblock user");
+    return Response::error(CommandType::UnblockUser , "Failed to unblock user");
 }
 
 // ----- DeleteUserCommand -----
@@ -961,9 +967,9 @@ Response DeleteUserCommand::execute(const QVariantMap& params)
     int userId = params["userId"].toInt();
 
     if (m_adminService->deleteUser(userId)) {
-        return Response::success("User deleted");
+        return Response::success(CommandType::DeleteUser , "User deleted");
     }
-    return Response::error("Failed to delete user");
+    return Response::error(CommandType::DeleteUser , "Failed to delete user");
 }
 
 // ----- GetAllUsersCommand -----
@@ -991,7 +997,7 @@ Response GetAllUsersCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["users"] = userList;
     data["count"] = userList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetAllUsers , data);
 }
 
 // ----- GetBlockedUsersCommand -----
@@ -1018,7 +1024,7 @@ Response GetBlockedUsersCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["users"] = userList;
     data["count"] = userList.size();
-    return Response::success(data);
+    return Response::success(CommandType::GetBlockedUsers, data);
 }
 
 // ----- AdminDeleteBookCommand -----
@@ -1034,9 +1040,11 @@ Response AdminDeleteBookCommand::execute(const QVariantMap& params)
 
     if (m_bookService->deleteBook(bookId)) {
 
-        return Response::success("Book deleted by admin");
+        return Response::success(CommandType::DeleteBook , "Book deleted by admin");
     }
-    return Response::error("Failed to delete book");
+
+    //you should fix deleteownbook and book!!!!!!!!!!!!!!
+    return Response::error(CommandType::DeleteBook , "Failed to delete book");
 }
 
 // ----- AdminDeleteReviewCommand -----
@@ -1052,9 +1060,12 @@ Response AdminDeleteReviewCommand::execute(const QVariantMap& params)
     QString reason = params["reason"].toString();
 
     if (m_reviewService->deleteReview(reviewId ,userId)) {
-        return Response::success("Review deleted by admin");
+        return Response::success(CommandType::DeleteReview ,"Review deleted by admin");
     }
-    return Response::error("Failed to delete review");
+
+
+    //you should fix deleteownreview and review
+    return Response::error(CommandType::DeleteReview , "Failed to delete review");
 }
 
 // ----- GetSystemStatsCommand -----
@@ -1072,7 +1083,7 @@ Response GetSystemStatsCommand::execute(const QVariantMap& params)
     for (auto it = stats.begin(); it != stats.end(); ++it) {
         data[it.key()] = it.value();
     }
-    return Response::success(data);
+    return Response::success(CommandType::GetSystemStats , data);
 }
 RequestPasswordResetCommand::RequestPasswordResetCommand(AuthService *authService)
     :m_authService(authService)
@@ -1084,14 +1095,14 @@ Response RequestPasswordResetCommand::execute(const QVariantMap& params)
     QString email = params.value("email").toString();
 
     if (email.isEmpty()) {
-        return Response::error("Email address is required");
+        return Response::error(CommandType::RequestPasswordReset ,"Email address is required");
     }
     ValidationResult result = m_authService->requestPasswordReset(email);
 
     if (result.isValid) {
-        return Response::success("Password reset link sent to your email");
+        return Response::success(CommandType::RequestPasswordReset, "Password reset link sent to your email");
     } else {
-        return Response::error(result.errorMessage);
+        return Response::error(CommandType::RequestPasswordReset ,result.errorMessage);
     }
 }
 
@@ -1107,18 +1118,18 @@ Response ResetPasswordWithTokenCommand::execute(const QVariantMap& params)
     QString newPassword = params.value("newPassword").toString();
 
     if (token.isEmpty()) {
-        return Response::error("Reset token is required");
+        return Response::error(CommandType::ResetPasswordWithToken, "Reset token is required");
     }
 
     if (newPassword.isEmpty()) {
-        return Response::error("New password is required");
+        return Response::error(CommandType::ResetPasswordWithToken , "New password is required");
     }
 
     ValidationResult result = m_authService->resetPasswordWithToken(token, newPassword);
 
     if (result.isValid) {
-        return Response::success("Password reset successfully");
+        return Response::success(CommandType::ResetPasswordWithToken, "Password reset successfully");
     } else {
-        return Response::error(result.errorMessage);
+        return Response::error(CommandType::ResetPasswordWithToken , result.errorMessage);
     }
 }
