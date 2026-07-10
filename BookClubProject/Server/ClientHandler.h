@@ -27,6 +27,7 @@
 #include "Commands.h"
 #include "CommandFactory.h"
 
+
 class RequestParser;
 class Request;
 class Response;
@@ -57,19 +58,30 @@ public:
                            QObject *parent = nullptr);
     ~ClientHandler();
 
+
+    void setSession(int userId, UserRole role);
+    void disconnectFromClient();
 signals:
     void disconnected();
+    void responseReady(const Response& response);
+
 
 private slots:
     void onReadyRead();
     void onDisconnected();
+    void onSocketError(QAbstractSocket::SocketError socketError);
+     void onResponseReady(const Response& response);
 
 private:
-    // ===== Socket =====
-    QTcpSocket* m_socket;
+    QTcpSocket* m_socket = nullptr;
     qintptr m_socketDescriptor;
 
-    // ===== Services =====
+    QAtomicInt m_pendingTasks{0};
+    QAtomicInt m_isDestroying{0};
+
+
+    mutable QMutex m_sessionMutex;
+
     AuthService* m_authService;
     BookService* m_bookService;
     UserService* m_userService;
@@ -79,17 +91,29 @@ private:
     PublisherService* m_publisherService;
     AdminService* m_adminService;
 
-    // ===== Parser =====
-    RequestParser* m_parser;
+    RequestParser* m_parser = nullptr;
 
     void sendResponse(const QString& response);
+private slots:
+
     void sendResponse(const Response& response);
+private:
+
     void handleRequest(const QString& requestData);
 
+    void handleRequestSync(const QString& requestData);
+    void sendResponseSync(const Response& response);
+
+
+    void processRequest(const QString& requestData);
+private:
+    int m_sessionUserId = -1;
+    UserRole m_sessionRole = UserRole::User;
+    bool m_isAuthenticated = false;
 
 
 
-    // ===== Helper Methods =====
+
 
 };
 

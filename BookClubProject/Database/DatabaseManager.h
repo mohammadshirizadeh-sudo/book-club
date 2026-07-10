@@ -1,4 +1,4 @@
-// DatabaseManager.h
+
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
@@ -11,6 +11,7 @@
 #include <QVariant>
 #include <QString>
 #include <QDebug>
+#include <QMutex>
 
 class DatabaseManager : public QObject
 {
@@ -37,11 +38,15 @@ public:
     bool commit();
     bool rollback();
 
+    QSqlDatabase connectionForCurrentThread();
+
     static void shutdown();
 
 private:
     explicit DatabaseManager(QObject *parent = nullptr);
     static DatabaseManager* m_instance;
+
+    QMutex m_mutex;
 
     QSqlDatabase m_database;
     QString m_databasePath;
@@ -51,4 +56,4 @@ private:
 
 };
 
-#endif // DATABASEMANAGER_H
+#endif

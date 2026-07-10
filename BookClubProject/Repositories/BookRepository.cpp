@@ -10,21 +10,27 @@ BookRepository::~BookRepository() {
     clearCache();
 }
 
-bool BookRepository::addBook(Book* book) {
-    if (!book) return false;
+bool BookRepository::addBook(QSharedPointer<Book> book) {
 
+    if (!book) return false;
     int id = book->getBookId();
 
-    // Check if book already exists
-    if (booksById.contains(id)) {
-        qWarning() << "Book with ID" << id << "already exists!";
-        return false;
-    }
 
-    addToCache(book);
+    {
+        QMutexLocker locker(&m_mutex);
+
+        // Check if book already exists
+        if (booksById.contains(id)) {
+            qWarning() << "Book with ID" << id << "already exists!";
+            return false;
+        }
+
+        addToCache(book);
+    }
 
     // 2. Save to SQLite
     if (!saveToDatabase(book)) {
+        QMutexLocker locker(&m_mutex);
         removeFromCache(id);
         return false;
     }
@@ -32,36 +38,47 @@ bool BookRepository::addBook(Book* book) {
     return true;
 }
 
-Book* BookRepository::findById(int id) const {
+QSharedPointer<Book> BookRepository::findById(int id) const {
+    QMutexLocker locker(&m_mutex);
     return booksById.value(id, nullptr);
 }
 
-QVector<Book*> BookRepository::getAllBooks() const {
+QVector<QSharedPointer<Book>> BookRepository::getAllBooks() const {
+     QMutexLocker locker(&m_mutex);
     return booksById.values().toVector();
 }
 
-bool BookRepository::updateBook(Book* book) {
+bool BookRepository::updateBook(QSharedPointer<Book> book) {
+
     if (!book) return false;
 
     int id = book->getBookId();
-    if (!booksById.contains(id)) {
-        qWarning() << "Book with ID" << id << "not found!";
-        return false;
+    QSharedPointer<Book> oldBook;
+
+    {
+
+        QMutexLocker locker(&m_mutex);
+
+        if (!booksById.contains(id)) {
+            qWarning() << "Book with ID" << id << "not found!";
+            return false;
+        }
+
+        oldBook = booksById[id];
+        booksById[id] = book;
     }
-
-
-    booksById[id] = book;
-
-    // 2. Update in SQLite
     if (!saveToDatabase(book)) {
-        loadAllFromDatabase();
+        QMutexLocker locker(&m_mutex);
+        booksById[id] = oldBook;
+        qWarning() << "Failed to update book in database, reverted cache";
         return false;
     }
     return true;
 }
 
 bool BookRepository::deleteBook(int bookId) {
-    Book* book = booksById.value(bookId, nullptr);
+    QMutexLocker locker(&m_mutex);
+    QSharedPointer<Book> book = booksById.value(bookId, nullptr);
     if (!book) {
         qWarning() << "Book with ID" << bookId << "not found!";
         return false;
@@ -75,13 +92,13 @@ bool BookRepository::deleteBook(int bookId) {
 
     // 2. Remove from cache
     removeFromCache(bookId);
-    delete book;
     return true;
 }
 
 
 
 bool BookRepository::loadAllFromDatabase() {
+    QMutexLocker locker(&m_mutex);
     clearCache();
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -107,8 +124,7 @@ bool BookRepository::loadAllFromDatabase() {
 
     int count = 0;
     while (sqlQuery.next()) {
-        Book* book = new Book(
-            sqlQuery.value("id").toInt(),
+        QSharedPointer<Book> book = QSharedPointer<Book>::create(sqlQuery.value("id").toInt(),
             sqlQuery.value("title").toString(),
             sqlQuery.value("author").toString(),
             GenreHelper::fromString(sqlQuery.value("genre").toString()),
@@ -122,8 +138,7 @@ bool BookRepository::loadAllFromDatabase() {
             sqlQuery.value("sales_count").toInt(),
             sqlQuery.value("publisher_id").toInt(),
             QDateTime::fromString(sqlQuery.value("created_at").toString(), Qt::ISODate),
-            QDateTime::fromString(sqlQuery.value("updated_at").toString(), Qt::ISODate)
-            );
+            QDateTime::fromString(sqlQuery.value("updated_at").toString(), Qt::ISODate));
 
         addToCache(book);
         count++;
@@ -133,7 +148,7 @@ bool BookRepository::loadAllFromDatabase() {
     return true;
 }
 
-bool BookRepository::saveToDatabase(Book* book) {
+bool BookRepository::saveToDatabase(QSharedPointer<Book> book) {
     if (!book) return false;
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -194,7 +209,7 @@ bool BookRepository::deleteFromDatabase(int bookId) {
 // ===== Helper Methods =====
 // =============================================
 
-void BookRepository::addToCache(Book* book) {
+void BookRepository::addToCache(QSharedPointer<Book> book) {
     if (!book) return;
     booksById[book->getBookId()] = book;
 }
@@ -204,7 +219,6 @@ void BookRepository::removeFromCache(int bookId) {
 }
 
 void BookRepository::clearCache() {
-    qDeleteAll(booksById);
     booksById.clear();
 }
 

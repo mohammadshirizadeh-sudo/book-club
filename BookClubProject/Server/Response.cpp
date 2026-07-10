@@ -87,6 +87,7 @@ Response Response::fromJson(const QJsonObject& json)
     Response resp;
     resp.setSuccess(json["success"].toBool(false));
     resp.setMessage(json["message"].toString(""));
+    resp.setErrorCode(json["errorCode"].toInt(0));
 
     if (json.contains("data") && json["data"].isObject()) {
         QJsonObject dataObj = json["data"].toObject();

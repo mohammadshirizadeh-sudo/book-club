@@ -9,6 +9,7 @@
 #include "../Repositories/ReviewRepository.h"
 #include "../Services/AdminService.h"
 
+
 // Forward declarations
 class AuthService;
 class UserService;
@@ -18,6 +19,7 @@ class PurchaseService;
 class ReviewService;
 class PublisherService;
 class AdminService;
+class ClientHandler;
 
 
 
@@ -77,7 +79,7 @@ private:
 class LoginCommand : public Command
 {
 public:
-    explicit LoginCommand(AuthService* authService);
+    LoginCommand(AuthService* authService, ClientHandler* clientHandler);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::Login; }
     QString getName() const override { return "Login"; }
@@ -85,6 +87,7 @@ public:
 
 private:
     AuthService* m_authService;
+    ClientHandler* m_clientHandler;
 };
 
 class RegisterCommand : public Command
@@ -427,6 +430,7 @@ public:
 private:
     ReviewService* m_reviewService;
 };
+
 
 class GetReviewsForBookCommand : public Command
 {

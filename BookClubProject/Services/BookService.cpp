@@ -12,17 +12,15 @@ BookRepository *BookService::getBookRepo() const
 
 bool BookService::deleteBook(int bookId)
 {
-    // 1. Check if book exists
-    Book* book = bookRepo->findById(bookId);
+
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
     }
 
-    // 2. Log the deletion
     qDebug() << "Deleting book:" << book->getTitle() << "(ID:" << bookId << ")";
 
-    // 3. Delete from repository
     if (!bookRepo->deleteBook(bookId)) {
         qWarning() << "Failed to delete book:" << bookId;
         return false;
@@ -41,36 +39,39 @@ BookService::BookService(BookRepository* repo, ReviewRepository* reviewRepo , QO
 
 // ===== Book Management =====
 
-bool BookService::addBook(Book* book) {
+int BookService::addBook(QSharedPointer<Book> book) {
     if (!book) {
         qWarning() << "Book is null!";
-        return false;
+        return -1;
     }
 
     // Validate book data
     if (book->getTitle().isEmpty()) {
         qWarning() << "Book title cannot be empty!";
-        return false;
+        return -1;
     }
 
     if (book->getAuthor().isEmpty()) {
         qWarning() << "Book author cannot be empty!";
-        return false;
+        return -1;
     }
 
     if (book->getPrice() < 0) {
         qWarning() << "Book price cannot be negative!";
-        return false;
+        return -1;
     }
 
-    // Add to repository
+    int id = bookRepo->getNextId();
+    book->setBookId(id);
+
+
     if (!bookRepo->addBook(book)) {
         qWarning() << "Failed to add book to repository!";
-        return false;
+        return -1;
     }
 
     qDebug() << "Book added:" << book->getTitle() << "by" << book->getAuthor();
-    return true;
+    return id;
 }
 
 bool BookService::editBook(int bookId, const QString& newTitle,
@@ -78,7 +79,7 @@ bool BookService::editBook(int bookId, const QString& newTitle,
                            const QString& newDescription, double newPrice,
                            double newDiscountPercent) {
     // 1. Find book
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
@@ -125,7 +126,7 @@ bool BookService::editBook(int bookId, const QString& newTitle,
 }
 
 bool BookService::deactivateBook(int bookId) {
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
@@ -144,7 +145,7 @@ bool BookService::deactivateBook(int bookId) {
 }
 
 bool BookService::reactivateBook(int bookId) {
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
@@ -164,16 +165,15 @@ bool BookService::reactivateBook(int bookId) {
 
 // ===== Search & Filter =====
 
-QVector<Book*> BookService::searchBooks(const QString& keyword) const {
+QVector<QSharedPointer<Book>> BookService::searchBooks(const QString& keyword) const {
     if (keyword.isEmpty()) {
-        return QVector<Book*>();
+        return QVector<QSharedPointer<Book>>();
     }
 
-    QVector<Book*> results;
+    QVector<QSharedPointer<Book>> results;
     QString lowerKeyword = keyword.toLower();
 
-    for (Book* book : bookRepo->getAllBooks()) {
-        // Only search active books
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (!book->getIsActive()) continue;
 
 
@@ -191,10 +191,10 @@ QVector<Book*> BookService::searchBooks(const QString& keyword) const {
     return results;
 }
 
-QVector<Book*> BookService::filterByGenre(const QString& genre) const {
-    QVector<Book*> results;
+QVector<QSharedPointer<Book>> BookService::filterByGenre(const QString& genre) const {
+    QVector<QSharedPointer<Book>> results;
 
-    for (Book* book : bookRepo->getAllBooks()) {
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (!book->getIsActive()) continue;
 
 
@@ -208,10 +208,10 @@ QVector<Book*> BookService::filterByGenre(const QString& genre) const {
     return results;
 }
 
-QVector<Book*> BookService::filterByPrice(double minPrice, double maxPrice) const {
-    QVector<Book*> results;
+QVector<QSharedPointer<Book>> BookService::filterByPrice(double minPrice, double maxPrice) const {
+    QVector<QSharedPointer<Book>> results;
 
-    for (Book* book : bookRepo->getAllBooks()) {
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (!book->getIsActive()) continue;
 
         double finalPrice = book->getFinalPrice();
@@ -223,10 +223,11 @@ QVector<Book*> BookService::filterByPrice(double minPrice, double maxPrice) cons
     return results;
 }
 
-QVector<Book*> BookService::filterByAuthor(const QString& author) const {
-    QVector<Book*> results;
+QVector<QSharedPointer<Book>> BookService::filterByAuthor(const QString& author) const {
 
-    for (Book* book : bookRepo->getAllBooks()) {
+    QVector<QSharedPointer<Book>> results;
+
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (!book->getIsActive()) continue;
 
         if (book->getAuthor().toLower().contains(author.toLower())) {
@@ -237,10 +238,10 @@ QVector<Book*> BookService::filterByAuthor(const QString& author) const {
     return results;
 }
 
-QVector<Book*> BookService::filterByPublisher(int publisherId) const {
-    QVector<Book*> results;
+QVector<QSharedPointer<Book>> BookService::filterByPublisher(int publisherId) const {
+    QVector<QSharedPointer<Book>> results;
 
-    for (Book* book : bookRepo->getAllBooks()) {
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (!book->getIsActive()) continue;
 
         if (book->getPublisherId() == publisherId) {
@@ -312,21 +313,21 @@ QVector<Book*> BookService::filterByPublisher(int publisherId) const {
     return recommendations;
 }*/
 
-QVector<Book*> BookService::getRecommendedBooks(const QVector<Genre>& favoriteGenres, int limit) const {
+QVector<QSharedPointer<Book>> BookService::getRecommendedBooks(const QVector<Genre>& favoriteGenres, int limit) const {
     if (favoriteGenres.isEmpty()) {
         qWarning() << "No favorite genres provided!";
-        return QVector<Book*>();
+        return QVector<QSharedPointer<Book>>();
     }
 
-    QVector<Book*> recommendations;
+    QVector<QSharedPointer<Book>> recommendations;
 
     // Get all active books
-    QVector<Book*> allBooks = bookRepo->getAllBooks();
+    QVector<QSharedPointer<Book>> allBooks = bookRepo->getAllBooks();
 
     // Score each book based on genre match
-    QVector<QPair<Book*, int>> scoredBooks;
+    QVector<QPair<QSharedPointer<Book>, int>> scoredBooks;
 
-    for (Book* book : allBooks) {
+    for (QSharedPointer<Book> book : allBooks) {
         if (!book->getIsActive()) continue;
 
         int score = calculateGenreMatchScore(book, favoriteGenres);
@@ -348,7 +349,7 @@ QVector<Book*> BookService::getRecommendedBooks(const QVector<Genre>& favoriteGe
 
     // Sort by score (descending)
     std::sort(scoredBooks.begin(), scoredBooks.end(),
-              [](const QPair<Book*, int>& a, const QPair<Book*, int>& b) {
+              [](const QPair<QSharedPointer<Book>, int>& a, const QPair<QSharedPointer<Book>, int>& b) {
                   return a.second > b.second;
               });
 
@@ -362,7 +363,7 @@ QVector<Book*> BookService::getRecommendedBooks(const QVector<Genre>& favoriteGe
 }
 
 
-int BookService::calculateGenreMatchScore(const Book* book, const QVector<Genre>& favoriteGenres) const {
+int BookService::calculateGenreMatchScore(const QSharedPointer<Book> book, const QVector<Genre>& favoriteGenres) const {
     int score = 0;
     Genre bookGenre = book->getGenre();
 
@@ -386,13 +387,13 @@ int BookService::calculateGenreMatchScore(const Book* book, const QVector<Genre>
 }
 
 
-QVector<Book*> BookService::getPopularBooks(int limit) const {
-    QVector<Book*> popular;
-    QVector<Book*> allBooks = bookRepo->getAllBooks();
+QVector<QSharedPointer<Book>> BookService::getPopularBooks(int limit) const {
+    QVector<QSharedPointer<Book>> popular;
+    QVector<QSharedPointer<Book>> allBooks = bookRepo->getAllBooks();
 
     // Sort by sales count (descending)
     std::sort(allBooks.begin(), allBooks.end(),
-              [](const Book* a, const Book* b) {
+              [](const QSharedPointer<Book> a, const QSharedPointer<Book> b) {
                   return a->getSalesCount() > b->getSalesCount();
               });
 
@@ -406,13 +407,13 @@ QVector<Book*> BookService::getPopularBooks(int limit) const {
     return popular;
 }
 
-QVector<Book*> BookService::getNewBooks(int limit) const {
-    QVector<Book*> newBooks;
-    QVector<Book*> allBooks = bookRepo->getAllBooks();
+QVector<QSharedPointer<Book>> BookService::getNewBooks(int limit) const {
+    QVector<QSharedPointer<Book>> newBooks;
+    QVector<QSharedPointer<Book>> allBooks = bookRepo->getAllBooks();
 
     // Sort by createdAt (descending - newest first)
     std::sort(allBooks.begin(), allBooks.end(),
-              [](const Book* a, const Book* b) {
+              [](const QSharedPointer<Book> a, const QSharedPointer<Book> b) {
                   return a->getCreatedAt() > b->getCreatedAt();
               });
 
@@ -426,10 +427,10 @@ QVector<Book*> BookService::getNewBooks(int limit) const {
     return newBooks;
 }
 
-QVector<Book*> BookService::getFreeBooks() const {
-    QVector<Book*> freeBooks;
+QVector<QSharedPointer<Book>> BookService::getFreeBooks() const {
+    QVector<QSharedPointer<Book>> freeBooks;
 
-    for (Book* book : bookRepo->getAllBooks()) {
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (book->getIsActive() && book->isFree()) {
             freeBooks.append(book);
         }
@@ -438,19 +439,19 @@ QVector<Book*> BookService::getFreeBooks() const {
     return freeBooks;
 }
 
-QVector<Book*> BookService::getBooksByGenre(const QString& genre) const {
+QVector<QSharedPointer<Book>> BookService::getBooksByGenre(const QString& genre) const {
     return filterByGenre(genre);
 }
 
 // ===== Helper Methods =====
 
-Book* BookService::getBookById(int bookId) const {
+QSharedPointer<Book> BookService::getBookById(int bookId) const {
     return bookRepo->findById(bookId);
 }
 
-QVector<Book*> BookService::getAllBooks() const {
-    QVector<Book*> activeBooks;
-    for (Book* book : bookRepo->getAllBooks()) {
+QVector<QSharedPointer<Book>> BookService::getAllBooks() const {
+    QVector<QSharedPointer<Book>> activeBooks;
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (book->getIsActive()) {
             activeBooks.append(book);
         }
@@ -458,12 +459,12 @@ QVector<Book*> BookService::getAllBooks() const {
     return activeBooks;
 }
 
-QVector<Book*> BookService::getBooksByPublisher(int publisherId) const {
+QVector<QSharedPointer<Book>> BookService::getBooksByPublisher(int publisherId) const {
     return filterByPublisher(publisherId);
 }
 
 bool BookService::updateAverageRating(int bookId, double newRating) {
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;
@@ -492,7 +493,7 @@ bool BookService::updateAverageRating(int bookId, double newRating) {
 }
 
 bool BookService::updateSalesCount(int bookId, int quantity) {
-    Book* book = bookRepo->findById(bookId);
+    QSharedPointer<Book> book = bookRepo->findById(bookId);
     if (!book) {
         qWarning() << "Book not found with ID:" << bookId;
         return false;

@@ -78,7 +78,7 @@ void NetworkManager::sendRequest(const QString& command, const QVariantMap& para
     Request request;
     request.setCommandType(Request::stringToCommandType(command));
     request.setParams(params);
-    request.setValid(true);
+    request.setValid(request.getCommandType() != CommandType::Unknown);
     sendRequest(request);
 }
 

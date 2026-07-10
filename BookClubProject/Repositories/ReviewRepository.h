@@ -11,11 +11,14 @@
 class ReviewRepository : public QObject {
     Q_OBJECT
 private:
-    QMap<int, Review*> reviewsById;
+    // QMap<int, QSharedPointer<Review>> reviewsById;
+    QMap<int , QSharedPointer<Review>> reviewsById;
     int nextId = 1000;
 
+    mutable QMutex m_mutex;
 
-    void addToCache(Review* review);
+
+    void addToCache(QSharedPointer<Review> review);
     void removeFromCache(int reviewId);
     void clearCache();
 
@@ -26,27 +29,27 @@ public:
     // ===== CRUD Operations =====
 
 
-    bool addReview(Review* review);
+    bool addReview(QSharedPointer<Review> review);
 
-    Review* findById(int id) const;
+    QSharedPointer<Review> findById(int id) const;
 
-    QVector<Review*> getAllReviews() const;
+    QVector<QSharedPointer<Review>> getAllReviews() const;
 
-    QVector<Review*> getReviewsByBookId(int bookId) const;
+    QVector<QSharedPointer<Review>> getReviewsByBookId(int bookId) const;
 
-    QVector<Review*> getReviewsByUserId(int userId) const;
-    bool updateReview(Review* review);
+    QVector<QSharedPointer<Review>> getReviewsByUserId(int userId) const;
+    bool updateReview(QSharedPointer<Review> review);
     bool deleteReview(int reviewId);
     bool hasUserReviewed(int userId, int bookId) const;
 
-    Review* getUserReview(int userId, int bookId) const;
+    QSharedPointer<Review> getUserReview(int userId, int bookId) const;
 
     int getNextId() { return nextId++; }
 
 
     // ===== SQLite Operations (Persistence) =====
     bool loadAllFromDatabase();
-    bool saveToDatabase(Review* review);
+    bool saveToDatabase(QSharedPointer<Review> review);
     bool deleteFromDatabase(int reviewId);
 
 };

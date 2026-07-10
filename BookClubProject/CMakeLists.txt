@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(BookClubProject LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network Sql)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network Sql Concurrent)
 
 qt_standard_project_setup()
 
@@ -71,6 +71,9 @@ qt_add_executable(BookClubProject
     Publishers/mybooks.h Publishers/mybooks.cpp Publishers/mybooks.ui
     Publishers/bookstatics.h Publishers/bookstatics.cpp Publishers/bookstatics.ui
     appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
+    Users/edituserinfodialog.h Users/edituserinfodialog.cpp Users/edituserinfodialog.ui
+    Users/userinfodialog.h Users/userinfodialog.cpp Users/userinfodialog.ui
+    Users/changeuserpassdialog.h Users/changeuserpassdialog.cpp Users/changeuserpassdialog.ui
 
 
 
@@ -85,6 +88,7 @@ target_link_libraries(BookClubProject
         Qt::Widgets
         Qt::Network
         Qt6::Sql
+        Qt::Concurrent
 )
 
 install(TARGETS BookClubProject

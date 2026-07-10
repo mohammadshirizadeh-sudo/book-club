@@ -14,14 +14,15 @@ Command* CommandFactory::create(
     ReviewService* reviewService,
     CartService* cartService,
     PublisherService* publisherService,
-    AdminService* adminService)
+    AdminService* adminService,
+    ClientHandler* clientHandler)
 {
     switch (type) {
     // =============================================
     // ===== Auth Commands =====
     // =============================================
     case CommandType::Login:
-        return new LoginCommand(authService);
+        return new LoginCommand(authService, clientHandler);
 
     case CommandType::Register:
         return new RegisterCommand(authService);
@@ -162,9 +163,21 @@ Command* CommandFactory::create(
 
     case CommandType::DeleteReview:
         return new AdminDeleteReviewCommand(userService , reviewService);
+    case CommandType::DeleteOwnReview:
+        return new DeleteReviewCommand(reviewService);
+
+
 
     case CommandType::GetSystemStats:
         return new GetSystemStatsCommand(adminService);
+
+    case CommandType::RequestPasswordReset:
+        return new RequestPasswordResetCommand(authService);
+
+    case CommandType::ResetPasswordWithToken:
+        return new ResetPasswordWithTokenCommand(authService);
+
+
 
     // =============================================
     // ===== Unknown Command =====

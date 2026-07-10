@@ -7,15 +7,19 @@
 #include "../Services/PurchaseService.h"
 #include "../Services/ReviewService.h"
 #include "../Services/PublisherService.h"
+#include "../Repositories/UserRepository.h"
+#include "ClientHandler.h"
 #include <QDebug>
+
 
 // =============================================
 // ===== Auth Commands =====
 // =============================================
 
-// ----- LoginCommand -----
-LoginCommand::LoginCommand(AuthService* authService)
+
+LoginCommand::LoginCommand(AuthService* authService, ClientHandler* clientHandler)
     : m_authService(authService)
+    , m_clientHandler(clientHandler)
 {
 }
 
@@ -37,10 +41,15 @@ Response LoginCommand::execute(const QVariantMap& params)
         return Response::error("User created but could not be retrieved");
     }
 
-        QVariantMap data;
-        data["userId"] = user->getId();
+        QVariantMap data ;
+
+        int userId = user->getId();
+        data["userId"] = userId;
+
         data["username"] = user->getUsername();
-        data["role"] = user->getRoleString();
+        QString role = user->getRoleString();
+        data["role"] = role;
+        m_clientHandler->setSession(userId, UserRepository::stringToRole(role));
 
         return Response::success("Login successful", data);
 
@@ -108,7 +117,7 @@ Response ResetPasswordCommand::execute(const QVariantMap& params)
 {
     QString email = params["email"].toString();
 
-    if (m_authService->requestPasswordReset(email)) {
+    if (m_authService->requestPasswordReset(email).isValid) {
         return Response::success("Password reset link sent to your email");
     }
     return Response::error("Email not found");
@@ -126,7 +135,7 @@ Response ConfirmResetPasswordCommand::execute(const QVariantMap& params)
     QString token = params["token"].toString();
     QString newPassword = params["newPassword"].toString();
 
-    if (m_authService->resetPasswordWithToken(token, newPassword))
+    if (m_authService->resetPasswordWithToken(token, newPassword).isValid)
         return Response::success("Password reset successfully");
 
     return Response::error("Invalid or expired token");
@@ -155,7 +164,12 @@ Response GetProfileCommand::execute(const QVariantMap& params)
         data["fullName"] = user->getFullname();
         data["role"] = user->getRoleString();
         data["status"] = static_cast<int>(user->getStatus());
-        data["favoriteGenres"] = QVariant::fromValue(user->getFavouriteGenre());
+        QStringList genreStrings;
+        for (const Genre& genre : user->getFavouriteGenre()) {
+            genreStrings.append(GenreHelper::toString(genre));
+        }
+        data["favoriteGenres"] = genreStrings;
+
         return Response::success(data);
     }
     return Response::error("User not found");
@@ -230,10 +244,10 @@ SearchBooksCommand::SearchBooksCommand(BookService* bookService)
 Response SearchBooksCommand::execute(const QVariantMap& params)
 {
     QString keyword = params["keyword"].toString();
-    QVector<Book*> books = m_bookService->searchBooks(keyword);
+    QVector<QSharedPointer<Book>> books = m_bookService->searchBooks(keyword);
 
     QVariantList bookList;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
@@ -262,7 +276,7 @@ GetBookByIdCommand::GetBookByIdCommand(BookService* bookService)
 Response GetBookByIdCommand::execute(const QVariantMap& params)
 {
     int bookId = params["bookId"].toInt();
-    Book* book = m_bookService->getBookById(bookId);
+    QSharedPointer<Book> book = m_bookService->getBookById(bookId);
 
     if (book) {
         QVariantMap data;
@@ -293,10 +307,10 @@ GetBooksByGenreCommand::GetBooksByGenreCommand(BookService* bookService)
 Response GetBooksByGenreCommand::execute(const QVariantMap& params)
 {
     QString genre = params["genre"].toString();
-    QVector<Book*> books = m_bookService->getBooksByGenre(genre);
+    QVector<QSharedPointer<Book>> books = m_bookService->getBooksByGenre(genre);
 
     QVariantList bookList;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
@@ -323,10 +337,10 @@ Response GetPopularBooksCommand::execute(const QVariantMap& params)
 {
 
     int limit = params.value("limit", 10).toInt();
-    QVector<Book*> books = m_bookService->getPopularBooks(limit);
+    QVector<QSharedPointer<Book>> books = m_bookService->getPopularBooks(limit);
 
     QVariantList bookList;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
@@ -353,10 +367,10 @@ GetNewBooksCommand::GetNewBooksCommand(BookService* bookService)
 Response GetNewBooksCommand::execute(const QVariantMap& params)
 {
     int limit = params.value("limit", 10).toInt();
-    QVector<Book*> books = m_bookService->getNewBooks(limit);
+    QVector<QSharedPointer<Book>> books = m_bookService->getNewBooks(limit);
 
     QVariantList bookList;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
@@ -381,10 +395,10 @@ GetFreeBooksCommand::GetFreeBooksCommand(BookService* bookService)
 
 Response GetFreeBooksCommand::execute(const QVariantMap& params)
 {
-    QVector<Book*> books = m_bookService->getFreeBooks();
+    QVector<QSharedPointer<Book>> books = m_bookService->getFreeBooks();
 
     QVariantList bookList;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
@@ -419,13 +433,13 @@ Response GetRecommendedBooksCommand::execute(const QVariantMap& params)
         return Response::error("User not found");
     }
 
-    QVector<Book*> books = m_bookService->getRecommendedBooks(
+    QVector<QSharedPointer<Book>> books = m_bookService->getRecommendedBooks(
         user->getFavouriteGenre(),
         limit
         );
 
     QVariantList bookList;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
@@ -570,7 +584,7 @@ Response CheckoutCommand::execute(const QVariantMap& params)
 {
     int userId = params["userId"].toInt();
 
-    Purchase* purchase = m_purchaseService->checkout(userId);
+    QSharedPointer<Purchase> purchase = m_purchaseService->checkout(userId);
     if (purchase) {
         QVariantMap data;
         data["purchaseId"] = purchase->getPurchaseId();
@@ -591,10 +605,10 @@ GetPurchaseHistoryCommand::GetPurchaseHistoryCommand(PurchaseService* purchaseSe
 Response GetPurchaseHistoryCommand::execute(const QVariantMap& params)
 {
     int userId = params["userId"].toInt();
-    QVector<Purchase*> purchases = m_purchaseService->getPurchaseHistory(userId);
+    QVector<QSharedPointer<Purchase>> purchases = m_purchaseService->getPurchaseHistory(userId);
 
     QVariantList purchaseList;
-    for (Purchase* purchase : purchases) {
+    for (QSharedPointer<Purchase> purchase : purchases) {
         QVariantMap purchaseData;
         purchaseData["purchaseId"] = purchase->getPurchaseId();
         purchaseData["finalPrice"] = purchase->getFinalPrice();
@@ -619,7 +633,7 @@ GetPurchaseByIdCommand::GetPurchaseByIdCommand(PurchaseService* purchaseService)
 Response GetPurchaseByIdCommand::execute(const QVariantMap& params)
 {
     int purchaseId = params["purchaseId"].toInt();
-    Purchase* purchase = m_purchaseService->getPurchaseById(purchaseId);
+    QSharedPointer<Purchase> purchase = m_purchaseService->getPurchaseById(purchaseId);
 
     if (purchase) {
         QVariantMap data;
@@ -698,6 +712,23 @@ Response DeleteReviewCommand::execute(const QVariantMap& params)
     return Response::error("Failed to delete review");
 }
 
+
+/*
+class AdminDeleteReviewCommand : public Command
+{
+public:
+    explicit AdminDeleteReviewCommand(ReviewService* reviewService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::DeleteReview; }
+    QString getName() const override { return "AdminDeleteReview"; }
+    bool requiresAdmin() const override { return true; }
+
+private:
+    ReviewService* m_reviewService;
+};
+
+*/
+
 // ----- GetReviewsForBookCommand -----
 GetReviewsForBookCommand::GetReviewsForBookCommand(ReviewService* reviewService)
     : m_reviewService(reviewService)
@@ -707,10 +738,10 @@ GetReviewsForBookCommand::GetReviewsForBookCommand(ReviewService* reviewService)
 Response GetReviewsForBookCommand::execute(const QVariantMap& params)
 {
     int bookId = params["bookId"].toInt();
-    QVector<Review*> reviews = m_reviewService->getReviewsForBook(bookId);
+    QVector<QSharedPointer<Review>> reviews = m_reviewService->getReviewsForBook(bookId);
 
     QVariantList reviewList;
-    for (Review* review : reviews) {
+    for (QSharedPointer<Review> review : reviews) {
         QVariantMap reviewData;
         reviewData["reviewId"] = review->getReviewId();
         reviewData["userId"] = review->getUserId();
@@ -841,10 +872,10 @@ GetPublisherBooksCommand::GetPublisherBooksCommand(PublisherService* publisherSe
 Response GetPublisherBooksCommand::execute(const QVariantMap& params)
 {
     int publisherId = params["publisherId"].toInt();
-    QVector<Book*> books = m_publisherService->getBooksByPublisher(publisherId);
+    QVector<QSharedPointer<Book>> books = m_publisherService->getBooksByPublisher(publisherId);
 
     QVariantList bookList;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
@@ -1042,4 +1073,52 @@ Response GetSystemStatsCommand::execute(const QVariantMap& params)
         data[it.key()] = it.value();
     }
     return Response::success(data);
+}
+RequestPasswordResetCommand::RequestPasswordResetCommand(AuthService *authService)
+    :m_authService(authService)
+{
+
+}
+Response RequestPasswordResetCommand::execute(const QVariantMap& params)
+{
+    QString email = params.value("email").toString();
+
+    if (email.isEmpty()) {
+        return Response::error("Email address is required");
+    }
+    ValidationResult result = m_authService->requestPasswordReset(email);
+
+    if (result.isValid) {
+        return Response::success("Password reset link sent to your email");
+    } else {
+        return Response::error(result.errorMessage);
+    }
+}
+
+ResetPasswordWithTokenCommand::ResetPasswordWithTokenCommand(AuthService *authService)
+    :m_authService(authService)
+{
+
+}
+
+Response ResetPasswordWithTokenCommand::execute(const QVariantMap& params)
+{
+    QString token = params.value("token").toString();
+    QString newPassword = params.value("newPassword").toString();
+
+    if (token.isEmpty()) {
+        return Response::error("Reset token is required");
+    }
+
+    if (newPassword.isEmpty()) {
+        return Response::error("New password is required");
+    }
+
+    ValidationResult result = m_authService->resetPasswordWithToken(token, newPassword);
+
+    if (result.isValid) {
+        return Response::success("Password reset successfully");
+    } else {
+        return Response::error(result.errorMessage);
+    }
 }

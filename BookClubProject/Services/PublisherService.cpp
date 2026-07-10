@@ -15,18 +15,15 @@ QMap<QString, QVariant> PublisherService::getSalesStatistics(int publisherId) co
 {
     QMap<QString, QVariant> stats;
 
-    // دریافت همه کتاب‌های ناشر
-    QVector<Book*> books = bookService->getBooksByPublisher(publisherId);
+    QVector<QSharedPointer<Book>> books = bookService->getBooksByPublisher(publisherId);
 
-    // آمار پایه
-    stats["totalBooks"] = books.size();                     // تعداد کل کتاب‌ها
-    stats["totalSales"] = getTotalSalesCount(publisherId);  // تعداد کل فروش
-    stats["totalRevenue"] = getTotalRevenue(publisherId);   // درآمد کل
+    stats["totalBooks"] = books.size();
+    stats["totalSales"] = getTotalSalesCount(publisherId);
+    stats["totalRevenue"] = getTotalRevenue(publisherId);
 
-    // محاسبه میانگین امتیاز
     double totalRating = 0.0;
     int ratedBooks = 0;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         if (book->getAverageRating() > 0) {
             totalRating += book->getAverageRating();
             ratedBooks++;
@@ -34,9 +31,9 @@ QMap<QString, QVariant> PublisherService::getSalesStatistics(int publisherId) co
     }
     stats["averageRating"] = ratedBooks > 0 ? totalRating / ratedBooks : 0.0;
 
-    // (اختیاری) تعداد کتاب‌های فعال و غیرفعال
+
     int activeBooks = 0;
-    for (Book* book : books) {
+    for (QSharedPointer<Book> book : books) {
         if (book->getIsActive()) activeBooks++;
     }
     stats["activeBooks"] = activeBooks;
@@ -52,7 +49,7 @@ PublisherService::PublisherService(BookService* bookService ,BookRepository* rep
 
 int PublisherService::getBooksPublishedCount(int publisherId) const {
     int count = 0;
-    for (Book* book : bookRepo->getAllBooks()) {
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (book->getPublisherId() == publisherId && book->getIsActive()) {
             count++;
         }
@@ -60,16 +57,15 @@ int PublisherService::getBooksPublishedCount(int publisherId) const {
     return count;
 }
 
-QVector<Book*> PublisherService::getBooksByPublisher(int publisherId) const {
-    QVector<Book*> result;
-    for (Book* book : bookRepo->getAllBooks()) {
+QVector<QSharedPointer<Book>> PublisherService::getBooksByPublisher(int publisherId) const {
+    QVector<QSharedPointer<Book>> result;
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (book->getPublisherId() == publisherId && book->getIsActive()) {
             result.append(book);
         }
     }
     return result;
 }
-
 
 
 
@@ -107,7 +103,8 @@ bool PublisherService::addBook(int publisherId, const QString& title, const QStr
     }
 
     // 3. Create book
-    Book* book = new Book(0, title, author, genre, price, publisherId);
+    QSharedPointer<Book> book = QSharedPointer<Book>::create(0, title, author, genre, price, publisherId);
+    // Book* book = new Book(0, title, author, genre, price, publisherId);
     book->setDescription(description);
     book->setDiscountPercent(discountPercent);
     book->setCoverPath(coverPath);
@@ -118,7 +115,6 @@ bool PublisherService::addBook(int publisherId, const QString& title, const QStr
 
     // 4. Add book using BookService
     if (!bookService->addBook(book)) {
-        delete book;
         qWarning() << "Failed to add book:" << title;
         return false;
     }
@@ -140,8 +136,7 @@ bool PublisherService::editBook(int bookId, const QString& newTitle,
 double PublisherService::getTotalRevenue(int publisherId) const
 {
     double total = 0.0;
-    for (Book* book : bookService->getBooksByPublisher(publisherId)) {
-        // قیمت نهایی × تعداد فروش
+    for (QSharedPointer<Book> book : bookService->getBooksByPublisher(publisherId)) {
         total += book->getFinalPrice() * book->getSalesCount();
     }
     return total;
@@ -150,7 +145,7 @@ double PublisherService::getTotalRevenue(int publisherId) const
 int PublisherService::getTotalSalesCount(int publisherId) const
 {
     int total = 0;
-    for (Book* book : bookService->getBooksByPublisher(publisherId)) {
+    for (QSharedPointer<Book> book : bookService->getBooksByPublisher(publisherId)) {
         total += book->getSalesCount();
     }
     return total;

@@ -50,6 +50,7 @@ enum class CommandType {
     AddReview,
     EditReview,
     DeleteReview,
+    DeleteOwnReview,
     GetReviewsForBook,
     GetAverageRating,
 

@@ -118,7 +118,7 @@ CommandType Request::stringToCommandType(const QString& str)
         // Review
         {"AddReview", CommandType::AddReview},
         {"EditReview", CommandType::EditReview},
-        {"DeleteReview", CommandType::DeleteReview},
+        {"DeleteOwnReview", CommandType::DeleteOwnReview},
         {"GetReviewsForBook", CommandType::GetReviewsForBook},
         {"GetAverageRating", CommandType::GetAverageRating},
 
@@ -138,7 +138,15 @@ CommandType Request::stringToCommandType(const QString& str)
         {"GetBlockedUsers", CommandType::GetBlockedUsers},
         {"DeleteBook", CommandType::DeleteBook},
         {"DeleteReview", CommandType::DeleteReview},
-        {"GetSystemStats", CommandType::GetSystemStats}
+        {"GetSystemStats", CommandType::GetSystemStats},
+
+
+
+        {"RequestPasswordReset", CommandType::RequestPasswordReset},
+        {"ResetPasswordWithToken", CommandType::ResetPasswordWithToken},
+        {"ConfirmResetPassword", CommandType::ConfirmResetPassword},
+
+
     };
 
     return CommandTypeMap.value(str, CommandType::Unknown);
@@ -209,6 +217,13 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::DeleteBook: return "DeleteBook";
     case CommandType::GetSystemStats: return "GetSystemStats";
 
+
+
+    case CommandType::RequestPasswordReset: return "RequestPasswordReset";
+    case CommandType::ResetPasswordWithToken: return "ResetPasswordWithToken";
+
+    case CommandType::DeleteOwnReview: return "DeleteOwnReview";
+
     default: return "Unknown";
     }
 }
@@ -218,7 +233,7 @@ QString Request::CommandTypeToString(CommandType cmd)
 QJsonObject Request::toJson() const
 {
     QJsonObject obj;
-    obj["CommandType"] = getCommandTypeString();
+    obj["command"] = getCommandTypeString();
 
     if (!m_params.isEmpty()) {
         QJsonObject paramsObj;
@@ -247,8 +262,8 @@ Request Request::fromJson(const QJsonObject& json)
 {
     Request request;
 
-    QString CommandTypeStr = json["CommandType"].toString();
-    request.setCommandType(stringToCommandType(CommandTypeStr));
+    QString commandstr = json["commandstr"].toString();
+    request.setCommandType(stringToCommandType(commandstr));
 
     if (json.contains("params") && json["params"].isObject()) {
         QJsonObject paramsObj = json["params"].toObject();

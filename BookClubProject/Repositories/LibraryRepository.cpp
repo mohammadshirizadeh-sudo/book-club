@@ -11,7 +11,8 @@ LibraryRepository::~LibraryRepository() {
     clearCache();
 }
 
-bool LibraryRepository::addLibrary(Library* library) {
+bool LibraryRepository::addLibrary(QSharedPointer<Library> library) {
+
     if (!library) {
         qWarning() << "Library is null!";
         return false;
@@ -19,23 +20,32 @@ bool LibraryRepository::addLibrary(Library* library) {
 
     int userId = library->getUserId();
 
-    // Check if library already exists
-    if (librariesByUserId.contains(userId)) {
-        qWarning() << "Library for user" << userId << "already exists!";
-        return false;
+    {
+        QMutexLocker locker(&m_mutex);
+        // Check if library already exists
+        if (librariesByUserId.contains(userId)) {
+            qWarning() << "Library for user" << userId << "already exists!";
+            return false;
+        }
+
+        addToCache(library);
+
     }
 
-    addToCache(library);
 
     // 2. Save to SQLite
     if (!saveToDatabase(library)) {
+        QMutexLocker locker(&m_mutex);
         removeFromCache(userId);
         return false;
     }
 
     // 3. Save shelves
     if (!saveShelves(userId, library->getShelves())) {
-        qWarning() << "Failed to save shelves!";
+        QMutexLocker locker(&m_mutex);
+        removeFromCache(userId);
+        deleteFromDatabase(userId);
+        qWarning() << "Failed to save shelves, rolled back library";
         return false;
     }
 
@@ -43,47 +53,60 @@ bool LibraryRepository::addLibrary(Library* library) {
     return true;
 }
 
-Library* LibraryRepository::findByUserId(int userId) const {
+QSharedPointer<Library> LibraryRepository::findByUserId(int userId) const {
+     QMutexLocker locker(&m_mutex);
     return librariesByUserId.value(userId, nullptr);
 }
 
-QVector<Library*> LibraryRepository::getAllLibraries() const {
+QVector<QSharedPointer<Library>> LibraryRepository::getAllLibraries() const {
+     QMutexLocker locker(&m_mutex);
     return librariesByUserId.values().toVector();
 }
 
-bool LibraryRepository::updateLibrary(Library* library) {
+bool LibraryRepository::updateLibrary(QSharedPointer<Library> library) {
+
     if (!library) {
         qWarning() << "Library is null!";
         return false;
     }
 
+
     int userId = library->getUserId();
-    if (!librariesByUserId.contains(userId)) {
-        qWarning() << "Library for user" << userId << "not found!";
-        return false;
+    QSharedPointer<Library> oldLibrary = nullptr;
+    {
+        QMutexLocker locker(&m_mutex);
+        if (!librariesByUserId.contains(userId)) {
+            qWarning() << "Library for user" << userId << "not found!";
+            return false;
+        }
+
+        oldLibrary = librariesByUserId[userId];
+        librariesByUserId[userId] = library;
+
+
     }
 
-
-    librariesByUserId[userId] = library;
-
-    // 2. Update in SQLite
     if (!saveToDatabase(library)) {
-        loadAllFromDatabase();
+        QMutexLocker locker(&m_mutex);
+
+        librariesByUserId[userId] = oldLibrary;
+
         return false;
     }
 
     // 3. Update shelves
     if (!saveShelves(userId, library->getShelves())) {
-        qWarning() << "Failed to save shelves!";
+        QMutexLocker locker(&m_mutex);
+        librariesByUserId[userId] = oldLibrary;
         return false;
     }
-
     qDebug() << "Library updated for user:" << userId;
     return true;
 }
 
 bool LibraryRepository::deleteLibrary(int userId) {
-    Library* library = librariesByUserId.value(userId, nullptr);
+    QMutexLocker locker(&m_mutex);
+    QSharedPointer<Library> library = librariesByUserId.value(userId, nullptr);
     if (!library) {
         qWarning() << "Library for user" << userId << "not found!";
         return false;
@@ -97,17 +120,18 @@ bool LibraryRepository::deleteLibrary(int userId) {
 
     // 2. Remove from cache
     removeFromCache(userId);
-    delete library;
     qDebug() << "Library deleted for user:" << userId;
     return true;
 }
 
 bool LibraryRepository::exists(int userId) const {
+     QMutexLocker locker(&m_mutex);
     return librariesByUserId.contains(userId);
 }
 
 
 bool LibraryRepository::loadAllFromDatabase() {
+    QMutexLocker locker(&m_mutex);
     clearCache();
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -131,11 +155,11 @@ bool LibraryRepository::loadAllFromDatabase() {
 
     int count = 0;
     while (sqlQuery.next()) {
-        Library* library = new Library(
+        QSharedPointer<Library> library = QSharedPointer<Library>::create(
             sqlQuery.value("user_id").toInt(),
-            QVector<int>(),  // ownedBooks - loaded separately
-            QVector<int>(),  // savedBooks - loaded separately
-            QVector<Shelf>() // shelves - loaded separately
+            QVector<int>(),
+            QVector<int>(),
+            QVector<Shelf>()
             );
 
         // Load shelves
@@ -148,7 +172,7 @@ bool LibraryRepository::loadAllFromDatabase() {
     return true;
 }
 
-bool LibraryRepository::saveToDatabase(Library* library) {
+bool LibraryRepository::saveToDatabase(QSharedPointer<Library> library) {
     if (!library) return false;
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -208,7 +232,14 @@ bool LibraryRepository::saveShelves(int userId, const QVector<Shelf>& shelves) {
         return false;
     }
 
-    // Get library database id
+
+    if (!db->transaction()) {
+        qWarning() << "Failed to start transaction";
+        return false;
+    }
+
+    bool ok = true;
+
     QString getLibIdQuery = "SELECT id FROM library WHERE user_id = :user_id";
     QVariantMap libParams;
     libParams["user_id"] = userId;
@@ -216,57 +247,67 @@ bool LibraryRepository::saveShelves(int userId, const QVector<Shelf>& shelves) {
 
     if (!libQuery.next()) {
         qWarning() << "Library not found for user:" << userId;
+        db->rollback();
         return false;
     }
     int libDbId = libQuery.value("id").toInt();
 
-    // Delete existing shelves for this library
     QString deleteShelvesQuery = "DELETE FROM shelf WHERE library_id = :library_id";
     QVariantMap deleteParams;
     deleteParams["library_id"] = libDbId;
-    db->executeQuery(deleteShelvesQuery, deleteParams);
+    ok = db->executeQuery(deleteShelvesQuery, deleteParams);
 
-    // Insert shelves
-    QString insertShelfQuery = R"(
-        INSERT INTO shelf (id, library_id, name, created_at, updated_at)
-        VALUES (:id, :library_id, :name, :created_at, :updated_at)
-    )";
+    if (ok) {
+        QString insertShelfQuery = R"(
+            INSERT INTO shelf (id, library_id, name, created_at, updated_at)
+            VALUES (:id, :library_id, :name, :created_at, :updated_at)
+        )";
 
-    QString insertShelfBookQuery = R"(
-        INSERT INTO shelf_book (shelf_id, book_id, added_at)
-        VALUES (:shelf_id, :book_id, :added_at)
-    )";
+        QString insertShelfBookQuery = R"(
+            INSERT INTO shelf_book (shelf_id, book_id, added_at)
+            VALUES (:shelf_id, :book_id, :added_at)
+        )";
 
-    for (const Shelf& shelf : shelves) {
-        // Insert shelf
-        QVariantMap shelfParams;
-        shelfParams["id"] = shelf.getShelfId();
-        shelfParams["library_id"] = libDbId;
-        shelfParams["name"] = shelf.getName();
-        shelfParams["created_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
-        shelfParams["updated_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+        for (const Shelf& shelf : shelves) {
+            QVariantMap shelfParams;
+            shelfParams["id"] = shelf.getShelfId();
+            shelfParams["library_id"] = libDbId;
+            shelfParams["name"] = shelf.getName();
+            shelfParams["created_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+            shelfParams["updated_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
 
-        if (!db->executeQuery(insertShelfQuery, shelfParams)) {
-            return false;
-        }
+            ok = db->executeQuery(insertShelfQuery, shelfParams);
+            if (!ok) break;
 
-        // Insert shelf books
-        for (int bookId : shelf.getBookIds()) {
-            QVariantMap bookParams;
-            bookParams["shelf_id"] = shelf.getShelfId();
-            bookParams["book_id"] = bookId;
-            bookParams["added_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+            for (int bookId : shelf.getBookIds()) {
+                QVariantMap bookParams;
+                bookParams["shelf_id"] = shelf.getShelfId();
+                bookParams["book_id"] = bookId;
+                bookParams["added_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
 
-            if (!db->executeQuery(insertShelfBookQuery, bookParams)) {
-                return false;
+                ok = db->executeQuery(insertShelfBookQuery, bookParams);
+                if (!ok) break;
             }
+            if (!ok) break;
         }
     }
 
-    return true;
+    // ✅ 2. Commit یا Rollback
+    if (ok) {
+        if (!db->commit()) {
+            qWarning() << "Commit failed!";
+            db->rollback();
+            return false;
+        }
+        qDebug() << "✅ Shelves saved successfully for user:" << userId;
+        return true;
+    } else {
+        db->rollback();
+        qWarning() << "❌ Shelves save failed, rolling back";
+        return false;
+    }
 }
-
-bool LibraryRepository::loadShelves(Library* library) {
+bool LibraryRepository::loadShelves(QSharedPointer<Library> library) {
     if (!library) return false;
 
     DatabaseManager* db = DatabaseManager::instance();
@@ -339,7 +380,8 @@ bool LibraryRepository::loadShelves(Library* library) {
 // ===== Helper Methods =====
 // =============================================
 
-void LibraryRepository::addToCache(Library* library) {
+void LibraryRepository::addToCache(QSharedPointer<Library> library) {
+
     if (!library) return;
     librariesByUserId[library->getUserId()] = library;
 }
@@ -349,6 +391,5 @@ void LibraryRepository::removeFromCache(int userId) {
 }
 
 void LibraryRepository::clearCache() {
-    qDeleteAll(librariesByUserId);
     librariesByUserId.clear();
 }
