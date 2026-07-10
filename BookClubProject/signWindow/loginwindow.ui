@@ -74,7 +74,7 @@
      <rect>
       <x>510</x>
       <y>190</y>
-      <width>141</width>
+      <width>151</width>
       <height>51</height>
      </rect>
     </property>
@@ -87,7 +87,7 @@
 }</string>
     </property>
     <property name="text">
-     <string>Username:</string>
+     <string> Username:</string>
     </property>
    </widget>
    <widget class="QLabel" name="passwordLabel">
@@ -95,7 +95,7 @@
      <rect>
       <x>510</x>
       <y>270</y>
-      <width>141</width>
+      <width>151</width>
       <height>51</height>
      </rect>
     </property>
@@ -108,7 +108,7 @@
 }</string>
     </property>
     <property name="text">
-     <string>Password:</string>
+     <string> Password:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="usernameLineEdit">
