@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
                      [&](const QString& message)
                      {
                          QMessageBox::critical(nullptr,
-                                               "خطا",
+                                               "Error",
                                                message);
                      });
 
