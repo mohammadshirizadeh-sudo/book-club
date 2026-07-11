@@ -78,7 +78,7 @@ void Server::cleanupServices()
 
 bool Server::start(quint16 port)
 {
-    if (!listen(QHostAddress::Any, port)) {
+    if (!listen(QHostAddress::LocalHost, port)) {
         qCritical() << "❌ Server could not start on port" << port << ":" << errorString();
         return false;
     }
@@ -102,7 +102,9 @@ void Server::stop()
 
 void Server::incomingConnection(qintptr socketDescriptor)
 {
-    qDebug() << "📡 New client connected:" << socketDescriptor;
+
+    qDebug() << "[4] incomingConnection";
+    qDebug() << "[4] descriptor =" << socketDescriptor;
 
     ClientHandler* handler = new ClientHandler(
         socketDescriptor,

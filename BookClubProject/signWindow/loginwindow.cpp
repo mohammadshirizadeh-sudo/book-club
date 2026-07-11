@@ -49,11 +49,13 @@ void LoginWindow::on_signinPushButton_clicked()
     params["password"] = password;
 
     Request request(CommandType::Login, params);
+    qDebug()<<"We are in the onsignin button";
 
     m_networkManager->sendRequest(request);
 }
 void LoginWindow::handleLoginResponse(const Response& response)
 {
+
 
     if (response.getCommandType() != CommandType::Login) {
         return;

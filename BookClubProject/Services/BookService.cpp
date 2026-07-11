@@ -431,6 +431,13 @@ QVector<QSharedPointer<Book>> BookService::getFreeBooks() const {
     QVector<QSharedPointer<Book>> freeBooks;
 
     for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
+
+
+        qDebug()
+        << "Title:" << book->getTitle()
+        << "Price:" << book->getPrice()
+        << "Active:" << book->getIsActive()
+        << "isFree:" << book->isFree();
         if (book->getIsActive() && book->isFree()) {
             freeBooks.append(book);
         }

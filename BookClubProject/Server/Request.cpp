@@ -262,7 +262,7 @@ Request Request::fromJson(const QJsonObject& json)
 {
     Request request;
 
-    QString commandstr = json["commandstr"].toString();
+    QString commandstr = json["command"].toString();
     request.setCommandType(stringToCommandType(commandstr));
 
     if (json.contains("params") && json["params"].isObject()) {

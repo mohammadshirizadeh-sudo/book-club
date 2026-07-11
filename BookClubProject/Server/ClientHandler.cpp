@@ -32,6 +32,8 @@ ClientHandler::ClientHandler(qintptr socketDescriptor,
     , m_publisherService(publisherService)
     , m_adminService(adminService)
 {
+
+    qDebug() << "[5] ClientHandler created";
     m_socket = new QTcpSocket(this);
 
     if (!m_socket->setSocketDescriptor(socketDescriptor)) {
@@ -74,6 +76,7 @@ void ClientHandler::onSocketError(QAbstractSocket::SocketError socketError)
     onDisconnected();
 }
 
+/*
 void ClientHandler::onReadyRead() {
     QByteArray data = m_socket->readAll();
     qDebug() << "📥 Server received:" << data;
@@ -88,6 +91,55 @@ void ClientHandler::onReadyRead() {
         }
         m_pendingTasks.fetchAndSubOrdered(1);
     });
+}
+*/
+
+
+
+void ClientHandler::onReadyRead()
+{
+
+
+    QByteArray newData = m_socket->readAll();
+    qDebug() << "[SERVER IN] Triggered onReadyRead. Bytes read:" << newData.size();
+    qDebug() << "[SERVER IN] Raw data:" << newData;
+
+    m_recvBuffer += newData;
+
+    while (true) {
+
+        int idx = m_recvBuffer.indexOf('\n');
+
+        if (idx == -1)
+            break;
+
+
+        QByteArray messageData =
+            m_recvBuffer.left(idx);
+
+        m_recvBuffer.remove(0, idx + 1);
+
+
+        QString requestData =
+            QString::fromUtf8(messageData).trimmed();
+
+
+        if (requestData.isEmpty())
+            continue;
+
+
+        m_pendingTasks.fetchAndAddOrdered(1);
+
+
+        QtConcurrent::run([this, requestData]() {
+
+            if (!m_isDestroying.loadAcquire()) {
+                processRequest(requestData);
+            }
+
+            m_pendingTasks.fetchAndSubOrdered(1);
+        });
+    }
 }
 
 void ClientHandler::onDisconnected() {
@@ -193,10 +245,13 @@ void ClientHandler::sendResponseSync(const Response& response)
 void ClientHandler::sendResponse(const QString& response)
 {
     if (m_socket && m_socket->state() == QTcpSocket::ConnectedState) {
-        QByteArray data = response.toUtf8();
-        m_socket->write(data);
+        QByteArray data = response.toUtf8() + "\n";
+        qint64 bytesWritten = m_socket->write(data);
         m_socket->flush();
-        qDebug() << "Response sent to client:" << response.left(100) << "...";
+        qDebug() << "[SERVER OUT] Bytes written:" << bytesWritten;
+        qDebug() << "[SERVER OUT] Raw payload:" << data;
+    } else {
+        qWarning() << "[SERVER OUT ERROR] Socket is not connected! State:" << (m_socket ? m_socket->state() : -1);
     }
 }
 
@@ -219,11 +274,17 @@ void ClientHandler::setSession(int userId, UserRole role)
 
 void ClientHandler::processRequest(const QString& requestData)
 {
+
+
+    qDebug() << "[SERVER PROCESS] Attempting to parse extracted string:" << requestData;
     Request request = m_parser->parse(requestData);
+    qDebug() << "[SERVER PROCESS] Parsed successfully? Valid:" << request.isValid() << "Command:" << request.getCommandTypeString();
     if (!request.isValid()) {
         emit responseReady(Response::error(request.getCommandType(),"Invalid request format"));
         return;
     }
+
+
     std::unique_ptr<Command> command(CommandFactory::create(
         request.getCommandType(),
         m_authService,

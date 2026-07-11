@@ -66,6 +66,7 @@ Book::Book(int bookId, const QString& title, const QString& author,
 {
 }
 
+
 // ===== Core Methods =====
 
 void Book::applyDiscount(double percent) {

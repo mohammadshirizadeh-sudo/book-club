@@ -26,6 +26,7 @@ LoginCommand::LoginCommand(AuthService* authService, ClientHandler* clientHandle
 
 Response LoginCommand::execute(const QVariantMap& params)
 {
+    qDebug() << "[COMMAND EXECUTE] Login command started for user:" << params["username"].toString();
     QString username = params["username"].toString();
     QString password = params["password"].toString();
 
@@ -381,6 +382,7 @@ Response GetNewBooksCommand::execute(const QVariantMap& params)
         bookData["price"] = book->getPrice();
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
+        bookData["coverPath"] = book->getCoverPath();
         bookList.append(bookData);
     }
 
@@ -398,6 +400,8 @@ GetFreeBooksCommand::GetFreeBooksCommand(BookService* bookService)
 
 Response GetFreeBooksCommand::execute(const QVariantMap& params)
 {
+
+    qDebug() << "🔍 [Server DB] Executing Free Books SQL Query...";
     QVector<QSharedPointer<Book>> books = m_bookService->getFreeBooks();
 
     QVariantList bookList;
@@ -406,12 +410,16 @@ Response GetFreeBooksCommand::execute(const QVariantMap& params)
         bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
         bookData["author"] = book->getAuthor();
+        bookData["genre"] = GenreHelper::toString(book->getGenre());//this
         bookData["price"] = book->getPrice();
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["coverPath"] = book->getCoverPath();
         bookList.append(bookData);
     }
+    qDebug() << "📦 [Server DB] Successfully pulled"
+             << bookList.size()
+             << "books from database.";
 
     QVariantMap data;
     data["books"] = bookList;
@@ -450,6 +458,7 @@ Response GetRecommendedBooksCommand::execute(const QVariantMap& params)
         bookData["price"] = book->getPrice();
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
+        bookData["coverPath"] = book->getCoverPath();
         bookList.append(bookData);
     }
 
@@ -1078,7 +1087,6 @@ Response GetSystemStatsCommand::execute(const QVariantMap& params)
 {
     QMap<QString, QVariant> stats = m_adminService->getSystemStats();
 
-
     QVariantMap data;
     for (auto it = stats.begin(); it != stats.end(); ++it) {
         data[it.key()] = it.value();
@@ -1090,6 +1098,9 @@ RequestPasswordResetCommand::RequestPasswordResetCommand(AuthService *authServic
 {
 
 }
+
+
+/*
 Response RequestPasswordResetCommand::execute(const QVariantMap& params)
 {
     QString email = params.value("email").toString();
@@ -1104,6 +1115,39 @@ Response RequestPasswordResetCommand::execute(const QVariantMap& params)
     } else {
         return Response::error(CommandType::RequestPasswordReset ,result.errorMessage);
     }
+}
+*/
+
+
+Response RequestPasswordResetCommand::execute(const QVariantMap& params)
+{
+    QString email = params.value("email").toString();
+
+    if (email.isEmpty()) {
+        return Response::error(CommandType::RequestPasswordReset, "Email address is required");
+    }
+
+    // 1. درخواست ریست پسورد (توکن تولید می‌شود)
+    ValidationResult result = m_authService->requestPasswordReset(email);
+    User* user = m_authService->getUserByEmail(email);
+    QString token = user->getPasswordResetToken();
+    QDateTime expiry = user->getResetTokenExpiry();
+
+    if (!result.isValid) {
+        return Response::error(CommandType::RequestPasswordReset, result.errorMessage);
+    }
+
+    // 3. برگرداندن توکن به کلاینت
+    QVariantMap responseData;
+    responseData["token"] = token;
+    responseData["email"] = email;
+    responseData["expiry"] = expiry.toString(Qt::ISODate);
+
+    return Response::success(
+        CommandType::RequestPasswordReset,
+        "Password reset link sent to your email",
+        responseData
+        );
 }
 
 ResetPasswordWithTokenCommand::ResetPasswordWithTokenCommand(AuthService *authService)
@@ -1120,15 +1164,15 @@ Response ResetPasswordWithTokenCommand::execute(const QVariantMap& params)
     if (token.isEmpty()) {
         return Response::error(CommandType::ResetPasswordWithToken, "Reset token is required");
     }
-
     if (newPassword.isEmpty()) {
         return Response::error(CommandType::ResetPasswordWithToken , "New password is required");
     }
 
     ValidationResult result = m_authService->resetPasswordWithToken(token, newPassword);
-
     if (result.isValid) {
-        return Response::success(CommandType::ResetPasswordWithToken, "Password reset successfully");
+        QVariantMap data = result.getData();
+
+        return Response::success(CommandType::ResetPasswordWithToken, "Password reset successfully", data);
     } else {
         return Response::error(CommandType::ResetPasswordWithToken , result.errorMessage);
     }
