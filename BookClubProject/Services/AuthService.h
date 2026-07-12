@@ -34,6 +34,7 @@ public:
     ValidationResult resetPasswordWithToken(const QString& token, const QString& newPassword);
 
     User* getUserByUsername(const QString& username) const;
+    User* getUserByEmail(const QString& email) const;
 
 };
 

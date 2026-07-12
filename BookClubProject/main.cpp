@@ -1,4 +1,3 @@
-
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
@@ -20,8 +19,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-
-
     // ===== مقداردهی دیتابیس =====
     DatabaseInitializer dbInit;
     if (!dbInit.initialize("bookclub.db")) {
@@ -29,23 +26,17 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-
-
-
     Server server;
-    if (!server.start(8080)) {
+    if (!server.start(8099)) {
         qCritical() << "❌ Server failed to start!";
         return -1;
     }
-    qDebug() << "✅ Server started on port 8080";
+    qDebug() << "✅ Server started on port 8099";
 
     qRegisterMetaType<Response>("Response");
 
     NetworkManager* networkManager = new NetworkManager();
-    networkManager->connectToServer("127.0.0.1", 8080);
-
-
-
+    networkManager->connectToServer("127.0.0.1", 8099);
 
     // پنجره اصلی
     QStackedWidget stackedWidget;
@@ -54,10 +45,10 @@ int main(int argc, char *argv[])
 
     // صفحات
     LoginWindow* loginWindow = new LoginWindow(networkManager);
-    ForgotPasswordWindow* forgotWindow = new ForgotPasswordWindow();
+    ForgotPasswordWindow* forgotWindow = new ForgotPasswordWindow(networkManager);
     RegisterWindow* registerWindow = new RegisterWindow(networkManager);
-    GenreWindow* genreWindow = new GenreWindow();
-    UserWindow* userWindow = new UserWindow();
+    GenreWindow* genreWindow = new GenreWindow(networkManager);
+    UserWindow* userWindow = new UserWindow(networkManager);
     PublisherWindow* publisherWindow = new PublisherWindow();
     AdminWindow* adminWindow = new AdminWindow();
 
@@ -109,7 +100,6 @@ int main(int argc, char *argv[])
                          stackedWidget.setCurrentIndex(genreIndex);
                      });
 
-    // از main دوم
     QObject::connect(registerWindow,
                      &RegisterWindow::openPublisherWindow,
                      [&]()
@@ -117,12 +107,19 @@ int main(int argc, char *argv[])
                          stackedWidget.setCurrentIndex(publisherIndex);
                      });
 
+    // 💡 اصلاح شده: اتصال صفحه ژانر به پنجره اصلی کاربر
     QObject::connect(genreWindow,
                      &GenreWindow::openUserWindow,
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(userIndex);
+
+                         // 🔑 بعد از اینکه ثبت‌نام کامل شد و کاربر ژانرها را انتخاب کرد، کتاب‌ها اینجا لود می‌شوند:
+                         userWindow->loadFreeBooks();
                      });
+
+
+
 
     //-------------------------------------------------
     // Network Responses
@@ -147,6 +144,9 @@ int main(int argc, char *argv[])
                          if (role == "User")
                          {
                              stackedWidget.setCurrentIndex(userIndex);
+                             userWindow->loadFreeBooks(); // لود کتاب‌ها هنگام لاگین مستقیم کاربر
+                             userWindow->loadRecommendedBooks();
+                             userWindow->loadNewBooks();
                          }
                          else if (role == "Publisher")
                          {
@@ -167,6 +167,14 @@ int main(int argc, char *argv[])
                                                message);
                      });
 
+
+    QObject::connect(forgotWindow, &ForgotPasswordWindow::openUserWindow,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(userIndex);
+                         userWindow->loadFreeBooks();
+                         userWindow->loadRecommendedBooks();
+                         userWindow->loadNewBooks();
+                     });
     //-------------------------------------------------
 
     stackedWidget.show();
@@ -175,5 +183,9 @@ int main(int argc, char *argv[])
         "QMessageBox QLabel { color: white; }"
         "QPushButton { color: white; }");
 
-    return a.exec();
+    int exitCode = a.exec();
+
+    DatabaseManager::instance()->shutdown();
+
+    return exitCode;
 }

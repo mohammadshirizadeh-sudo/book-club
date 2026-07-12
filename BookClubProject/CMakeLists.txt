@@ -29,7 +29,7 @@ qt_add_executable(BookClubProject
     Shared/UserFactory.h
     Services/AuthService.h Services/AuthService.cpp
     Services/PublisherService.h Services/PublisherService.cpp
-    Shared/ValidationResult.h
+    Shared/ValidationResult.h Shared/ValidationResult.cpp
     Shared/PasswordValidator.cpp
     Shared/EmailValidator.cpp
     Services/BookService.h Services/BookService.cpp
@@ -54,7 +54,6 @@ qt_add_executable(BookClubProject
     appWindow/publisherwindow.h appWindow/publisherwindow.cpp appWindow/publisherwindow.ui
     Users/UserProfileWindow.h Users/UserProfileWindow.cpp Users/UserProfileWindow.ui
     Users/searchwindow.h Users/searchwindow.cpp Users/searchwindow.ui
-    Shared/ValidationResault.cpp
     Services/AdminService.h Services/AdminService.cpp
     Network-Manger/NetworkManager.h Network-Manger/NetworkManager.cpp
     Database/DatabaseInitializer.h Database/DatabaseInitializer.cpp

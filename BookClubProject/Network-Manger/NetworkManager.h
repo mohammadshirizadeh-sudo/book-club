@@ -4,6 +4,7 @@
 
 #include <QTcpSocket>
 #include <QObject>
+#include <QQueue>
 #include "../Server/Request.h"
 #include "../Server/Response.h"
 
@@ -51,6 +52,12 @@ private:
 
     void handleResponse(const Response& response);
     void emitSignals(const Response& response);
+
+
+    QByteArray m_recvBuffer;
+
+    QQueue<Request> m_pendingRequests;
+    void flushPendingRequests();
 };
 
 #endif

@@ -94,6 +94,8 @@ private:
     RequestParser* m_parser = nullptr;
 
     void sendResponse(const QString& response);
+
+    QByteArray m_recvBuffer;
 private slots:
 
     void sendResponse(const Response& response);

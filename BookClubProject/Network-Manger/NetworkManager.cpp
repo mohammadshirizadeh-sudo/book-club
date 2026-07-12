@@ -60,17 +60,26 @@ bool NetworkManager::isConnected() const
 
 void NetworkManager::sendRequest(const Request& request)
 {
+
+
+    qDebug() << "[1] sendRequest called";
+    qDebug() << "[1] Command =" << request.getCommandTypeString();
+    qDebug() << "[1] Connected =" << m_socket->state();
     if (!isConnected()) {
         qWarning() << "❌ Not connected to server!";
-        emit errorReceived("Not connected to server");
+        // emit errorReceived("Not connected to server");
+        m_pendingRequests.enqueue(request);
         return;
     }
 
-    QByteArray data = request.toUtf8();
-    m_socket->write(data);
-    m_socket->flush();
+    // QByteArray data = request.toUtf8();
+    QByteArray data = request.toUtf8() + "\n";
+    qint64 bytes = m_socket->write(data);
+    qDebug() << "[2] Bytes written =" << bytes;
+    bool ok = m_socket->flush();
+    qDebug() << "[3] Flush =" << ok;
 
-    qDebug() << "📤 Request sent:" << request.getCommandTypeString();
+
 }
 
 void NetworkManager::sendRequest(const QString& command, const QVariantMap& params)
@@ -82,11 +91,26 @@ void NetworkManager::sendRequest(const QString& command, const QVariantMap& para
     sendRequest(request);
 }
 
+void NetworkManager::flushPendingRequests()
+{
+    if (m_pendingRequests.isEmpty()) {
+        return;
+    }
+
+    qDebug() << "📤 Flushing" << m_pendingRequests.size() << "queued request(s) after reconnect";
+
+    while (!m_pendingRequests.isEmpty()) {
+        Request request = m_pendingRequests.dequeue();
+        sendRequest(request);   // socket is connected now, so this sends immediately
+    }
+}
+
 void NetworkManager::onConnected()
 {
     m_isConnected = true;
     qDebug() << "✅ Connected to server:" << m_host << ":" << m_port;
     emit connected();
+    flushPendingRequests();
 }
 
 void NetworkManager::onDisconnected()
@@ -96,9 +120,10 @@ void NetworkManager::onDisconnected()
     emit disconnected();
 }
 
+
+/*
 void NetworkManager::onReadyRead()
 {
-    qDebug() << "im in in the onready read";
 
     QByteArray data = m_socket->readAll();
 
@@ -115,6 +140,49 @@ void NetworkManager::onReadyRead()
     // Convert to Response
     Response response = Response::fromJson(doc.object());
     handleResponse(response);
+}
+*/
+
+
+void NetworkManager::onReadyRead()
+{
+
+
+    QByteArray newData = m_socket->readAll();
+    qDebug() << "[CLIENT IN] Triggered onReadyRead. Bytes read:" << newData.size();
+    qDebug() << "[CLIENT IN] Raw data:" << newData;
+
+    m_recvBuffer += newData;
+
+    while (true) {
+
+        int newlineIdx = m_recvBuffer.indexOf('\n');
+
+        if (newlineIdx == -1)
+            break;   // پیام کامل نیست، منتظر داده بعدی بمان
+
+        QByteArray messageData = m_recvBuffer.left(newlineIdx);
+
+        m_recvBuffer.remove(0, newlineIdx + 1);
+
+
+        QJsonDocument doc = QJsonDocument::fromJson(messageData);
+
+        if (!doc.isObject()) {
+
+            qWarning() << "❌ Invalid JSON response!" << messageData;
+
+            emit errorReceived("Invalid JSON response");
+
+            continue;
+        }
+
+
+        Response response = Response::fromJson(doc.object());
+        qDebug()<<"we send this to handleresponse";
+
+        handleResponse(response);
+    }
 }
 
 void NetworkManager::onErrorOccurred(QAbstractSocket::SocketError socketError)
