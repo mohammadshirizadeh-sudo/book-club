@@ -438,3 +438,6 @@ void UserWindow::on_newBooksListWidget_itemClicked(QListWidgetItem *item)
         QMessageBox::information(this, "Book Details", info);
     }
 }
+
+
+
