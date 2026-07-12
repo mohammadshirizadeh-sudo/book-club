@@ -199,6 +199,7 @@ Response UpdateProfileCommand::execute(const QVariantMap& params)
     return Response::error(CommandType::UpdateProfile ,"Failed to update profile");
 }
 
+
 // ----- ChangePasswordCommand -----
 ChangePasswordCommand::ChangePasswordCommand(UserService* userService)
     : m_userService(userService)

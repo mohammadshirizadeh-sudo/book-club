@@ -181,7 +181,7 @@ void UserWindow::updateBooksDisplay()
             QPixmap pixmap(coverPath);
             if (!pixmap.isNull()) {
                 // 🖼️ عکس رو بزرگتر اسکیل می‌کنیم تا تمام فضای اختصاصی رو پر کنه
-                QPixmap scaled = pixmap.scaled(240, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                QPixmap scaled = pixmap.scaled(240, 360, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
                 item->setIcon(QIcon(scaled));
             }
         }
