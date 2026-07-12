@@ -70,9 +70,13 @@ qt_add_executable(BookClubProject
     Publishers/mybooks.h Publishers/mybooks.cpp Publishers/mybooks.ui
     Publishers/bookstatics.h Publishers/bookstatics.cpp Publishers/bookstatics.ui
     appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
-    Users/edituserinfodialog.h Users/edituserinfodialog.cpp Users/edituserinfodialog.ui
-    Users/userinfodialog.h Users/userinfodialog.cpp Users/userinfodialog.ui
-    Users/changeuserpassdialog.h Users/changeuserpassdialog.cpp Users/changeuserpassdialog.ui
+
+
+
+    Mutual/infodialog.h Mutual/infodialog.cpp Mutual/infodialog.ui
+    Mutual/editinfodialog.h Mutual/editinfodialog.cpp Mutual/editinfodialog.ui
+    Mutual/changepassworddialog.h Mutual/changepassworddialog.cpp Mutual/changepassworddialog.ui
+
 
 
 
