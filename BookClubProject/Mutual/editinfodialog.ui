@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UserInfoDialog</class>
- <widget class="QDialog" name="UserInfoDialog">
+ <class>EditInfoDialog</class>
+ <widget class="QDialog" name="EditInfoDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
+    <width>1200</width>
     <height>600</height>
    </rect>
   </property>
@@ -14,15 +14,15 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/skyblueBack.jpg);</string>
+   <string notr="true">background-image: url(:/resources/clouds.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>501</width>
-     <height>601</height>
+     <width>1200</width>
+     <height>600</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -34,14 +34,17 @@
    <widget class="QDialogButtonBox" name="buttonBox">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>1000</x>
       <y>560</y>
-      <width>161</width>
+      <width>191</width>
       <height>32</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 30px;color: rgb(0, 0, 0);
+background-image: url(:/resources/whiteWood.jpg);</string>
     </property>
     <property name="orientation">
      <enum>Qt::Orientation::Horizontal</enum>
@@ -53,144 +56,112 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>191</width>
+      <x>40</x>
+      <y>80</y>
+      <width>171</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background: transparent;
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
-	color: rgb(0, 0, 0);
-}</string>
-    </property>
-    <property name="text">
-     <string>Full Name:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>130</y>
-      <width>191</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QLabel {
-	background: transparent;
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
-	color: rgb(0, 0, 0);
-}</string>
+     <string notr="true">background: transparent;
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 40px;
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>Username:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>260</y>
-      <width>131</width>
+      <x>90</x>
+      <y>220</y>
+      <width>121</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background: transparent;
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
-	color: rgb(0, 0, 0);
-}</string>
+     <string notr="true">background: transparent;
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 40px;
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>E-mail:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>60</y>
-      <width>471</width>
+      <x>20</x>
+      <y>370</y>
+      <width>191</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 35px;
-	color: rgb(0, 0, 0);
-}</string>
+     <string notr="true">background: transparent;
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 40px;
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
-     <string/>
+     <string>Full Name:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QLineEdit" name="changeEmaiLineEdit">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>180</y>
-      <width>471</width>
+      <x>220</x>
+      <y>220</y>
+      <width>631</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 35px;
-	color: rgb(0, 0, 0);
-}</string>
-    </property>
-    <property name="text">
-     <string/>
+     <string notr="true">background: transparent;
+border-color: rgb(0, 0, 127);
+selection-background-color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 35px;
+color: rgb(0, 0, 0);</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLineEdit" name="changeFullnameLineEdit">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>310</y>
-      <width>471</width>
+      <x>220</x>
+      <y>370</y>
+      <width>631</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 35px;
-	color: rgb(0, 0, 0);
-}</string>
-    </property>
-    <property name="text">
-     <string/>
+     <string notr="true">background: transparent;
+border-color: rgb(0, 0, 127);
+selection-background-color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 35px;
+color: rgb(0, 0, 0);</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLineEdit" name="changeUsernameLineEdit">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>350</y>
-      <width>181</width>
-      <height>251</height>
+      <x>220</x>
+      <y>80</y>
+      <width>631</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	image: url(:/resources/userInfo.png);
-	background: transparent;
-	border: none;
-}</string>
-    </property>
-    <property name="text">
-     <string/>
+     <string notr="true">background: transparent;
+border-color: rgb(0, 0, 127);
+selection-background-color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 35px;
+color: rgb(0, 0, 0);</string>
     </property>
    </widget>
   </widget>
@@ -200,7 +171,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>UserInfoDialog</receiver>
+   <receiver>EditInfoDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -216,7 +187,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>UserInfoDialog</receiver>
+   <receiver>EditInfoDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
