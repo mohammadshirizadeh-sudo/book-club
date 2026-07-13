@@ -52,8 +52,11 @@ private slots:
 
 
 
+    void on_pushButton_5_clicked();
+
 signals:
     void userProfileWindow();
+    void searchWindow();
 
 private:
     Ui::UserWindow *ui;

@@ -31,6 +31,12 @@
      <height>800</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}
+</string>
+   </property>
    <property name="frameShape">
     <enum>QFrame::Shape::StyledPanel</enum>
    </property>
@@ -185,9 +191,9 @@
     <property name="geometry">
      <rect>
       <x>360</x>
-      <y>140</y>
-      <width>701</width>
-      <height>591</height>
+      <y>160</y>
+      <width>741</width>
+      <height>571</height>
      </rect>
     </property>
    </widget>

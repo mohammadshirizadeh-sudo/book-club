@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QMap>
 #include <QVariant>
+#include <QListWidgetItem>
 #include "../Network-Manger/NetworkManager.h"
 
 
@@ -22,11 +23,14 @@ public:
     ~SearchWindow();
 
 private slots:
-    // این اسلات به صورت خودکار توسط Qt به دکمه متصل می‌شود (Auto-connection)
-    void on_searchBookPushButton_clicked();
+
 
     // اسلاتی که به سیگنال شبکه متصل شده است
     void handleResponse(const Response& response);
+
+    void on_showSearchPushButton_clicked();
+
+    void on_searchResultsListWidget_itemClicked(QListWidgetItem *item);
 
 private:
     Ui::SearchWindow *ui;

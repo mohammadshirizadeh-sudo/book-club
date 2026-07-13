@@ -1,10 +1,13 @@
 #include "searchwindow.h"
 #include "Users/ui_searchwindow.h"
 #include "../Server/Request.h"
+#include "BookDetailDialog.h"
 #include <QListWidgetItem>
 
 #include <QMessageBox>
 #include <QDebug>
+#include <QGroupBox>
+#include <QButtonGroup>
 
 SearchWindow::SearchWindow(NetworkManager* networkManager , QWidget *parent)
     : QWidget(parent)
@@ -12,6 +15,25 @@ SearchWindow::SearchWindow(NetworkManager* networkManager , QWidget *parent)
     , m_networkManager(networkManager)
 {
     ui->setupUi(this);
+
+
+
+
+    ui->searchBookPushButton->setCheckable(true);
+    ui->searchAuthorPushButton->setCheckable(true);
+    ui->searchPublisherPushButton->setCheckable(true);
+
+    // ۲. ایجاد یک گروه برای دکمه‌ها تا رفتار انحصاری (Exclusive) داشته باشند
+    QButtonGroup* searchTypeGroup = new QButtonGroup(this);
+    searchTypeGroup->addButton(ui->searchBookPushButton);
+    searchTypeGroup->addButton(ui->searchAuthorPushButton);
+    searchTypeGroup->addButton(ui->searchPublisherPushButton);
+
+    // انحصاری کردن گروه: با فشرده شدن یکی، بقیه خودکار بالا می‌آیند
+    searchTypeGroup->setExclusive(true);
+
+    // ۳. به صورت پیش‌فرض دکمه کتاب را فعال می‌گذاریم
+    ui->searchBookPushButton->setChecked(true);
 
     connect(m_networkManager, &NetworkManager::responseReceived,
             this, &SearchWindow::handleResponse);
@@ -23,33 +45,34 @@ SearchWindow::~SearchWindow()
 }
 
 
-void SearchWindow::on_searchBookPushButton_clicked()
+void SearchWindow::on_showSearchPushButton_clicked()
 {
-    // ۱. دریافت عبارت جستجو و حذف فاصله‌های اضافی ابتدای و انتها
-    QString keyword = ui->searchLineEdit->text().trimmed();
 
-    // ۲. اعتبارسنحی اولیه (اگر کاربر چیزی تایپ نکرده باشد، هشدار می‌دهیم)
-    if (keyword.isEmpty()) {
-        QMessageBox::warning(this, "خطا", "لطفاً کلمه کلیدی یا عنوان کتاب را برای جستجو وارد کنید.", QMessageBox::Ok);
-        return;
+
+    if(ui->searchBookPushButton->isChecked()){
+
+        QString keyword = ui->searchLineEdit->text().trimmed();
+        if (keyword.isEmpty()) {
+            QMessageBox::warning(this, "خطا", "لطفاً کلمه کلیدی یا عنوان کتاب را برای جستجو وارد کنید.", QMessageBox::Ok);
+            return;
+        }
+
+
+        QVariantMap params;
+        params["keyword"] = keyword;
+
+        Request request(CommandType::SearchBooks, params);
+
+        qDebug() << "🔍 [Client] Sending SearchBooks request with keyword:" << keyword;
+
+        m_networkManager->sendRequest(request);
+
     }
 
-    // ۳. بسته‌بندی پارامترها با کلید دقیقاً یکسان با سرور ("keyword")
-    QVariantMap params;
-    params["keyword"] = keyword;
-
-    // ۴. ساخت شیء درخواست با کامند مربوطه
-    Request request(CommandType::SearchBooks, params);
-
-    qDebug() << "🔍 [Client] Sending SearchBooks request with keyword:" << keyword;
-
-    // ۵. ارسال درخواست به سرور
-    m_networkManager->sendRequest(request);
 }
 
 void SearchWindow::handleResponse(const Response& response)
 {
-    // مدیریت پاسخ درخواست جستجوی کتاب
     if (response.getCommandType() == CommandType::SearchBooks) {
 
         if (!response.isSuccess()) {
@@ -57,11 +80,9 @@ void SearchWindow::handleResponse(const Response& response)
             return;
         }
 
-        // ۱. استخراج داده‌ها از پاسخ سرور
         QVariantList books = response.getData()["books"].toList();
         int count = response.getData()["count"].toInt();
 
-        // ۲. پاکسازی لیست قبلی و کش مربوط به جستجو
         ui->searchResultsListWidget->clear();
         m_searchBooksCache.clear();
 
@@ -104,3 +125,27 @@ void SearchWindow::handleResponse(const Response& response)
         qDebug() << "✅ Successfully loaded" << count << "search results.";
     }
 }
+
+
+
+void SearchWindow::on_searchResultsListWidget_itemClicked(QListWidgetItem *item)
+{
+    if (!item) return;
+
+    // ۱. استخراج آیدی کتاب که قبلاً در این آیتم ذخیره کرده بودیم
+    int bookId = item->data(Qt::UserRole).toInt();
+
+    // ۲. پیدا کردن اطلاعات کامل آن کتاب از روی "کش" پنجره جستجو
+    if (m_searchBooksCache.contains(bookId)) {
+        QVariantMap selectedBookData = m_searchBooksCache[bookId];
+
+        qDebug() << "📖 Opening details for book:" << selectedBookData["title"].toString();
+
+        // ۳. ساخت دیالوگ به صورت مودال و پاس دادن کل اطلاعات کتاب به آن
+        BookDetailDialog dialog(selectedBookData, this);
+
+        // ۴. نمایش دیالوگ روی صفحه قبلی
+        dialog.exec();
+    }
+}
+

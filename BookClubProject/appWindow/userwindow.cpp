@@ -445,3 +445,10 @@ void UserWindow::on_pushButton_2_clicked()
     emit userProfileWindow();
 }
 
+
+void UserWindow::on_pushButton_5_clicked()
+{
+    emit searchWindow();
+
+}
+

@@ -9,6 +9,7 @@
 #include "appWindow/adminwindow.h"
 #include "appWindow/SessionManager.h"
 #include "appWindow/userwindow.h"
+#include "Users/searchwindow.h"
 #include "Users/UserProfileWindow.h"
 #include "Server/server.h"
 #include "Database/DatabaseInitializer.h"
@@ -57,6 +58,7 @@ int main(int argc, char *argv[])
     PublisherWindow* publisherWindow = new PublisherWindow();
     AdminWindow* adminWindow = new AdminWindow();
     UserProfileWindow* profileWindow = new UserProfileWindow(networkManager);
+    SearchWindow* searchWindow = new SearchWindow(networkManager);
 
 
 
@@ -70,10 +72,20 @@ int main(int argc, char *argv[])
     int publisherIndex = stackedWidget.addWidget(publisherWindow);
     int adminIndex = stackedWidget.addWidget(adminWindow);
     int profileIndex = stackedWidget.addWidget(profileWindow);
+    int searchIndex = stackedWidget.addWidget(searchWindow);
+
 
     //-------------------------------------------------
     // Navigation
     //-------------------------------------------------
+
+
+    QObject::connect(userWindow,
+                     &UserWindow::searchWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(searchIndex);
+                     });
 
 
     QObject::connect(userWindow,
