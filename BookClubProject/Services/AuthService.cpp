@@ -61,10 +61,14 @@ ValidationResult AuthService::registerUser(const QString& username, const QStrin
 
 */
 
-ValidationResult AuthService::registerUser(const QString& username, const QString& email,
+ValidationResult AuthService::registerUser(const QString& Fullname , const QString& username, const QString& email,
                                            const QString& password, UserRole role)
 {
     // 1. Validate username
+
+    if (Fullname.isEmpty()) {
+        return ValidationResult::failure("Fullname is Empty");
+    }
     if (username.isEmpty() || username.length() < 3) {
         return ValidationResult::failure("Username must be at least 3 characters");
     }
@@ -94,6 +98,7 @@ ValidationResult AuthService::registerUser(const QString& username, const QStrin
     if (!newUser) {
         return ValidationResult::failure("Failed to create user");
     }
+    newUser->setFullname(Fullname);
 
     // 5. Save to repository
     if (!userRepo->addUser(newUser)) {

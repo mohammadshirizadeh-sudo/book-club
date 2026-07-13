@@ -1,6 +1,7 @@
 #include "searchwindow.h"
 #include "Users/ui_searchwindow.h"
 #include "../Server/Request.h"
+#include <QListWidgetItem>
 
 #include <QMessageBox>
 #include <QDebug>

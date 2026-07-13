@@ -17,7 +17,7 @@ public:
 
 
 
-    ValidationResult registerUser(const QString& username, const QString& email, const QString& password , UserRole role);
+    ValidationResult registerUser(const QString& Fullname , const QString& username, const QString& email, const QString& password , UserRole role);
 
 
     ValidationResult login(const QString& usernameOrEmail, const QString& password);

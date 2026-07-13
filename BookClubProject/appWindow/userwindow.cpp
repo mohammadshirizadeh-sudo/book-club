@@ -440,4 +440,8 @@ void UserWindow::on_newBooksListWidget_itemClicked(QListWidgetItem *item)
 }
 
 
+void UserWindow::on_pushButton_2_clicked()
+{
+    emit userProfileWindow();
+}
 

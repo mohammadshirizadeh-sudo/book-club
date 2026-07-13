@@ -18,10 +18,17 @@ public:
 
     // ===== Profile Management =====
     User* getProfile(int userId) const;
+    QString getStringStatus(int userId)const;
+    QString getStringStatus(AccountStatus status);
+
+
+    // bool updateProfile(int userId, const QString& newEmail,
+    //                    const QString& newFullName,
+    //                    const QVector<Genre>& newGenres);
 
     bool updateProfile(int userId, const QString& newEmail,
-                       const QString& newFullName,
-                       const QVector<Genre>& newGenres);
+                                    const QString& newFullName,
+                       const QString& newUserName);
 
     bool updateFavoriteGenres(int userId, const QVector<Genre>& newGenres);
 

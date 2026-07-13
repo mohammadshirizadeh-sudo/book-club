@@ -5,50 +5,58 @@
 #include "../Network-Manger/NetworkManager.h"
 #include "../Server/Request.h"
 #include "../Server/Response.h"
+#include "../Mutual/infodialog.h"
+#include "../Mutual/changepassworddialog.h"
+#include "../Mutual/editinfodialog.h"
 
-Form::Form(QWidget *parent)
+UserProfileWindow::UserProfileWindow(NetworkManager* networkManager, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::UserProfileWindow)
+        , m_networkManager(networkManager)
 {
     ui->setupUi(this);
 }
 
-Form::~Form()
+UserProfileWindow::~UserProfileWindow()
 {
     delete ui;
 }
 
-void Form::on_favGenresPushButton_clicked()
+void UserProfileWindow::on_favGenresPushButton_clicked()
 {
     emit openGenreWindow();
 }
 
 
-void Form::on_UserInfPushButton_clicked()
+void UserProfileWindow::on_UserInfPushButton_clicked()
 {
-    emit openUserInfoDialog();
+    InfoDialog dialog(m_networkManager , this);
+    dialog.exec();
 }
 
 
-void Form::on_editUserInfPushButton_clicked()
+void UserProfileWindow::on_editUserInfPushButton_clicked()
 {
-    emit openEditUserInfoDialog();
+    EditInfoDialog dialog(m_networkManager , this);
+    dialog.exec();
+
 }
 
 
-void Form::on_changePassPushButton_clicked()
+void UserProfileWindow::on_changePassPushButton_clicked()
 {
-    emit openChangeUserPassDialog();
+    ChangePasswordDialog dialog(m_networkManager , this);
+    dialog.exec();
 }
 
 
-void Form::on_shoppingHistoryPushButton_clicked()
+void UserProfileWindow::on_shoppingHistoryPushButton_clicked()
 {
     emit openShoppingHistoryDialog();
 }
 
 
-void Form::on_favBooksPushButton_clicked()
+void UserProfileWindow::on_favBooksPushButton_clicked()
 {
     emit openFavBooksDialog();
 }

@@ -181,6 +181,16 @@
      <string>&lt;-- Back</string>
     </property>
    </widget>
+   <widget class="QListWidget" name="searchResultsListWidget">
+    <property name="geometry">
+     <rect>
+      <x>360</x>
+      <y>140</y>
+      <width>701</width>
+      <height>591</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources>
