@@ -30,7 +30,7 @@ User* UserService::getProfile(int userId) const {
 
 bool UserService::updateProfile(int userId, const QString& newEmail,
                                 const QString& newFullName,
-                                const QVector<Genre>& newGenres) {
+                                const QString& newUserName) {
     // 1. Find user
     User* user = userRepo->findById(userId);
     QString oldUserName =  user->getUsername();
@@ -54,16 +54,11 @@ bool UserService::updateProfile(int userId, const QString& newEmail,
         return false;
     }
 
-    // 4. Validate genres (1-3 genres)
-    if (newGenres.isEmpty() || newGenres.size() > 3) {
-        qWarning() << "Invalid number of genres. Must be 1-3.";
-        return false;
-    }
 
     // 5. Update user data
     user->setEmail(newEmail);
     user->setFullname(newFullName);
-    user->setFavouriteGenre(newGenres);
+    user->setUsername(newUserName);
     user->setUpdatedAt(QDateTime::currentDateTime());
 
     // 6. Save to repository
@@ -120,7 +115,7 @@ bool UserService::changePassword(int userId, const QString& oldPassword, const Q
 
     // 4. Validate new password
 
-    ValidationResult pass = EmailValidator::isValid(newPassword);
+    ValidationResult pass = PasswordValidator::isValid(newPassword);
     if (!pass.isValid) {
         qWarning() << "Invalid new password:" << pass.errorMessage;
         return false;
@@ -273,4 +268,18 @@ bool UserService::isUsernameAvailable(const QString& username) const {
 
 bool UserService::isEmailAvailable(const QString& email) const {
     return !userRepo->isEmailTaken(email);
+}
+
+
+// UserService.cpp
+QString UserService::getStringStatus(AccountStatus status)
+{
+    switch(status) {
+    case AccountStatus::Active:   return "Active";
+    case AccountStatus::Blocked:  return "Blocked";
+    case AccountStatus::Inactive: return "Inactive";
+    case AccountStatus::Suspended:return "Suspended";
+    case AccountStatus::Pending:  return "Pending";
+    default: return "Unknown";
+    }
 }

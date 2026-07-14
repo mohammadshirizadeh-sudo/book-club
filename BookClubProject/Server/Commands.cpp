@@ -65,6 +65,7 @@ RegisterCommand::RegisterCommand(AuthService* authService)
 
 Response RegisterCommand::execute(const QVariantMap& params)
 {
+    QString fullname = params["fullName"].toString();
     QString username = params["username"].toString();
     QString email = params["email"].toString();
     QString password = params["password"].toString();
@@ -77,7 +78,7 @@ Response RegisterCommand::execute(const QVariantMap& params)
 
 
 
-    ValidationResult result = m_authService->registerUser(username, email, password, role);
+    ValidationResult result = m_authService->registerUser(fullname , username, email, password, role);
 
     if (!result.isValid) {
         return Response::error(CommandType::Register,result.errorMessage);
@@ -159,6 +160,7 @@ Response GetProfileCommand::execute(const QVariantMap& params)
 {
     int userId = params["userId"].toInt();
     User* user = m_userService->getProfile(userId);
+    AccountStatus status = user->getStatus();
 
     if (user) {
         QVariantMap data;
@@ -167,7 +169,7 @@ Response GetProfileCommand::execute(const QVariantMap& params)
         data["email"] = user->getEmail();
         data["fullName"] = user->getFullname();
         data["role"] = user->getRoleString();
-        data["status"] = static_cast<int>(user->getStatus());
+        data["status"] = m_userService->getStringStatus(status);
         QStringList genreStrings;
         for (const Genre& genre : user->getFavouriteGenre()) {
             genreStrings.append(GenreHelper::toString(genre));
@@ -190,10 +192,9 @@ Response UpdateProfileCommand::execute(const QVariantMap& params)
     int userId = params["userId"].toInt();
     QString email = params["email"].toString();
     QString fullName = params["fullName"].toString();
-    QStringList genres = params["favoriteGenres"].toStringList();
-    QVector<Genre> genreVector = GenreHelper::stringListToGenres(genres.toVector());
+    QString userName = params["userName"].toString();
 
-    if (m_userService->updateProfile(userId, email, fullName, genreVector)) {
+    if (m_userService->updateProfile(userId, email, fullName, userName)) {
         return Response::success(CommandType::UpdateProfile , "Profile updated successfully");
     }
     return Response::error(CommandType::UpdateProfile ,"Failed to update profile");

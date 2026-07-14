@@ -2,13 +2,18 @@
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
 
+
 #include "appWindow/genrewindow.h"
 #include "appWindow/userwindow.h"
 #include "appWindow/publisherwindow.h"
 #include "appWindow/adminwindow.h"
 #include "appWindow/SessionManager.h"
+#include "appWindow/userwindow.h"
+#include "Users/searchwindow.h"
+#include "Users/UserProfileWindow.h"
 #include "Server/server.h"
 #include "Database/DatabaseInitializer.h"
+#
 
 #include <QApplication>
 #include <QStackedWidget>
@@ -17,6 +22,7 @@
 
 int main(int argc, char *argv[])
 {
+
     QApplication a(argc, argv);
 
     // ===== مقداردهی دیتابیس =====
@@ -51,6 +57,11 @@ int main(int argc, char *argv[])
     UserWindow* userWindow = new UserWindow(networkManager);
     PublisherWindow* publisherWindow = new PublisherWindow();
     AdminWindow* adminWindow = new AdminWindow();
+    UserProfileWindow* profileWindow = new UserProfileWindow(networkManager);
+    SearchWindow* searchWindow = new SearchWindow(networkManager);
+
+
+
 
     // اضافه کردن صفحات
     int loginIndex = stackedWidget.addWidget(loginWindow);
@@ -60,10 +71,29 @@ int main(int argc, char *argv[])
     int userIndex = stackedWidget.addWidget(userWindow);
     int publisherIndex = stackedWidget.addWidget(publisherWindow);
     int adminIndex = stackedWidget.addWidget(adminWindow);
+    int profileIndex = stackedWidget.addWidget(profileWindow);
+    int searchIndex = stackedWidget.addWidget(searchWindow);
+
 
     //-------------------------------------------------
     // Navigation
     //-------------------------------------------------
+
+
+    QObject::connect(userWindow,
+                     &UserWindow::searchWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(searchIndex);
+                     });
+
+
+    QObject::connect(userWindow,
+                     &UserWindow::userProfileWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(profileIndex);
+                     });
 
     QObject::connect(loginWindow,
                      &LoginWindow::openForgotPasswordWindow,

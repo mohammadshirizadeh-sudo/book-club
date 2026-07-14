@@ -438,3 +438,17 @@ void UserWindow::on_newBooksListWidget_itemClicked(QListWidgetItem *item)
         QMessageBox::information(this, "Book Details", info);
     }
 }
+
+
+void UserWindow::on_pushButton_2_clicked()
+{
+    emit userProfileWindow();
+}
+
+
+void UserWindow::on_pushButton_5_clicked()
+{
+    emit searchWindow();
+
+}
+

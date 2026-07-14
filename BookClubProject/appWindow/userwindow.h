@@ -46,6 +46,18 @@ private slots:
     void on_nextNewPushButton_clicked();
     void on_prevNewPushButton_clicked();
 
+    // void on_pushButton_2_clicked();
+
+    void on_pushButton_2_clicked();
+
+
+
+    void on_pushButton_5_clicked();
+
+signals:
+    void userProfileWindow();
+    void searchWindow();
+
 private:
     Ui::UserWindow *ui;
     NetworkManager* m_networkManager;

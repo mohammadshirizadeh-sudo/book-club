@@ -14,9 +14,6 @@ LoginWindow::LoginWindow(NetworkManager* networkManager,QWidget *parent)
     qDebug() << "🔗 Connecting responseReceived to handleLoginResponse";
     connect(m_networkManager, &NetworkManager::responseReceived,
             this, &LoginWindow::handleLoginResponse);
-
-
-    qDebug() << "mioooo";
 }
 
 LoginWindow::~LoginWindow()

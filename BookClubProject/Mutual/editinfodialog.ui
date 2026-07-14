@@ -25,6 +25,11 @@
      <height>600</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}</string>
+   </property>
    <property name="frameShape">
     <enum>QFrame::Shape::StyledPanel</enum>
    </property>
@@ -44,7 +49,10 @@
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
 font-size: 30px;color: rgb(0, 0, 0);
-background-image: url(:/resources/whiteWood.jpg);</string>
+background-image: url(:/resources/whiteWood.jpg);
+QFrame {
+	background-color: rgba(255,255,255,10);
+}</string>
     </property>
     <property name="orientation">
      <enum>Qt::Orientation::Horizontal</enum>

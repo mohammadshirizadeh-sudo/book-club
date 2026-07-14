@@ -1,55 +1,35 @@
-#include "changepassworddialog.h"
-#include "ui_changepassworddialog.h"
-
+#include "changeuserpassdialog.h"
+#include "ui_changeuserpassdialog.h"
 #include "../Server/Request.h"
 #include "../appWindow/SessionManager.h"
 
 #include <QMessageBox>
 #include <QDebug>
 
-ChangePasswordDialog::ChangePasswordDialog(NetworkManager* networkManager ,QWidget *parent)
+ChangeUserPassDialog::ChangeUserPassDialog(NetworkManager* networkManager , QWidget *parent)
     : QDialog(parent)
-    , ui(new Ui::ChangePasswordDialog)
+    , ui(new Ui::ChangeUserPassDialog)
     , m_networkManager(networkManager)
 {
     ui->setupUi(this);
+
     connect(m_networkManager, &NetworkManager::responseReceived,
-            this, &ChangePasswordDialog::handleResponse);
+            this, &ChangeUserPassDialog::handleResponse);
 }
 
-ChangePasswordDialog::~ChangePasswordDialog()
+ChangeUserPassDialog::~ChangeUserPassDialog()
 {
     delete ui;
 }
 
 
 
-void ChangePasswordDialog::handleResponse(const Response& response)
+void ChangeUserPassDialog::on_buttonBox_accepted()
 {
-    // مدیریت پاسخ تغییر رمز عبور
-    if (response.getCommandType() == CommandType::ChangePassword) {
 
-        if (!response.isSuccess()) {
-            // نمایش خطای سرور (مثلاً رمز عبور قدیمی اشتباه است)
-            QMessageBox::critical(this, "خطا", response.getMessage());
-            return;
-        }
-
-        // در صورت موفقیت آمیز بودن
-        QMessageBox::information(this, "موفقیت", "رمز عبور شما با موفقیت تغییر یافت.");
-
-        // پاکسازی فیلدها و بستن دیالوگ
-        ui->oldPassLineEdit->clear();
-        ui->newPassLineEdit->clear();
-
-        this->accept(); // بستن دیالوگ با وضعیت پذیرفته شده
-    }
-}
-void ChangePasswordDialog::on_buttonBox_accepted()
-{
-    QString oldPassword = ui->oldPassLineEdit->text();
-    QString newPassword = ui->newPassLineEdit->text();
-    QString confirmPassword = ui->newPassLineEdit_2->text();
+    QString oldPassword = ui->oldPasswordLineEdit->text();
+    QString newPassword = ui->newPasswordLineEdit->text();
+    QString confirmPassword = ui->confirmPasswordLineEdit->text();
     if (newPassword != confirmPassword) {
         QMessageBox::warning(this, "خطا", "رمز عبور جدید با تکرار آن مطابقت ندارد.");
         return;
@@ -82,3 +62,27 @@ void ChangePasswordDialog::on_buttonBox_accepted()
     m_networkManager->sendRequest(request);
 }
 
+
+
+
+void ChangeUserPassDialog::handleResponse(const Response& response)
+{
+    // مدیریت پاسخ تغییر رمز عبور
+    if (response.getCommandType() == CommandType::ChangePassword) {
+
+        if (!response.isSuccess()) {
+            // نمایش خطای سرور (مثلاً رمز عبور قدیمی اشتباه است)
+            QMessageBox::critical(this, "خطا", response.getMessage());
+            return;
+        }
+
+        // در صورت موفقیت آمیز بودن
+        QMessageBox::information(this, "موفقیت", "رمز عبور شما با موفقیت تغییر یافت.");
+
+        // پاکسازی فیلدها و بستن دیالوگ
+        ui->oldPasswordLineEdit->clear();
+        ui->newPasswordLineEdit->clear();
+
+        this->accept(); // بستن دیالوگ با وضعیت پذیرفته شده
+    }
+}

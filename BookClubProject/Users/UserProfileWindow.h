@@ -3,17 +3,19 @@
 
 #include <QWidget>
 
+#include "../Network-Manger/NetworkManager.h"
+
 namespace Ui {
 class UserProfileWindow;
 }
 
-class Form : public QWidget
+class UserProfileWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Form(QWidget *parent = nullptr);
-    ~Form();
+    explicit UserProfileWindow(NetworkManager* networkManager  ,QWidget *parent = nullptr);
+    ~UserProfileWindow();
 
 signals:
     void openGenreWindow();
@@ -33,6 +35,7 @@ private slots:
 
 private:
     Ui::UserProfileWindow *ui;
+     NetworkManager* m_networkManager;
 };
 
 #endif // USERPROFILEWINDOW_H
