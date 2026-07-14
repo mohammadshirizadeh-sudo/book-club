@@ -18,9 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
-	background-image: url(:/resources/skyblueBack.jpg);
-}</string>
+   <string notr="true">background-image: url(:/resources/white.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -51,8 +49,9 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
-}
-</string>
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
     </property>
     <property name="text">
      <string>Add a New Book</string>
@@ -94,8 +93,9 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
-}
-</string>
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
     </property>
     <property name="text">
      <string>Edit Books</string>
@@ -115,8 +115,9 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
-}
-</string>
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
     </property>
     <property name="text">
      <string>Apply discounts On Books</string>
@@ -136,8 +137,9 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
-}
-</string>
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
     </property>
     <property name="text">
      <string>Delete Or Deactivate Books</string>
@@ -157,8 +159,9 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
-}
-</string>
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
     </property>
     <property name="text">
      <string>Book Statics</string>
@@ -170,14 +173,16 @@
       <x>0</x>
       <y>0</y>
       <width>211</width>
-      <height>51</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:30px;
+	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }</string>
     </property>
     <property name="text">

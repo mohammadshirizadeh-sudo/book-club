@@ -24,9 +24,9 @@ void BookDetailDialog::displayBookInfo(const QVariantMap& bookData)
     ui->titleLabel->setText(bookData["title"].toString());
     ui->authorLabel->setText(bookData["author"].toString());
     ui->genreLabel->setText(bookData["genre"].toString());
-    ui->priceLabel->setText(bookData["price"].toString() + " تومان");
+    ui->priceLabel->setText(bookData["price"].toString() + " Tooman");
     ui->discountLabel->setText(bookData["discountPercent"].toString() + " ٪");
-    ui->finalPriceLabel->setText(bookData["finalPrice"].toString() + " تومان");
+    ui->finalPriceLabel->setText(bookData["finalPrice"].toString() + " Tooman");
     ui->ratingLabel->setText(bookData["averageRating"].toString());
 
     // نمایش تصویر جلد کتاب در ابعاد بزرگتر در دیالوگ
