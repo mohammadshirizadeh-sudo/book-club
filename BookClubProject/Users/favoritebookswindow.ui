@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FavoriteBooksWindow</class>
+ <widget class="QWidget" name="FavoriteBooksWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/skyblueBack.jpg);</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1500</width>
+     <height>800</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QPushButton" name="backPushButton">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>211</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:40px;
+	color: rgb(0, 0, 0);
+}
+
+</string>
+    </property>
+    <property name="text">
+     <string>&lt;-- Back</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>10</y>
+      <width>271</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: transparent;
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 45px;
+color: rgb(0, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>Favorite Books</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
