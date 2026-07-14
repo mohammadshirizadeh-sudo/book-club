@@ -144,7 +144,11 @@ CommandType Request::stringToCommandType(const QString& str)
 
         {"RequestPasswordReset", CommandType::RequestPasswordReset},
         {"ResetPasswordWithToken", CommandType::ResetPasswordWithToken},
-        {"ConfirmResetPassword", CommandType::ConfirmResetPassword},
+
+
+        {"SearchUsers", CommandType::SearchUsers},
+        {"SearchAuthors" , CommandType ::SearchAuthors},
+
 
 
     };
@@ -223,6 +227,10 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::ResetPasswordWithToken: return "ResetPasswordWithToken";
 
     case CommandType::DeleteOwnReview: return "DeleteOwnReview";
+
+
+    case CommandType::SearchUsers: return "SearchUsers";
+    case CommandType::SearchAuthors : return "SearchAuthors";
 
     default: return "Unknown";
     }

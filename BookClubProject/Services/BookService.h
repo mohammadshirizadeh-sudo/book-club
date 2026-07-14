@@ -76,6 +76,9 @@ public:
     bool deleteBook(int bookId);
 
     int calculateGenreMatchScore(const QSharedPointer<Book> book, const QVector<Genre>& favoriteGenres) const;
+
+
+     QMap<QString, QVector<QSharedPointer<Book>>> searchAuthorsWithBooks(const QString& keyword) const;
 };
 
 #endif // BOOKSERVICE_H

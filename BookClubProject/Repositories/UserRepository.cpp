@@ -816,4 +816,25 @@ QString UserRepository::adminLevelToString(AdminLevel level) const {
 }
 
 
+// UserRepository.cpp
+QVector<User*> UserRepository::searchUsers(const QString& keyword) const
+{
+    if (keyword.isEmpty()) {
+        return QVector<User*>();
+    }
+
+    QVector<User*> results;
+    QString lowerKeyword = keyword.toLower();
+
+    for (User* user : usersById) {
+        if (user->getUsername().toLower().contains(lowerKeyword) ||
+            user->getEmail().toLower().contains(lowerKeyword) ||
+            user->getFullname().toLower().contains(lowerKeyword)) {
+            results.append(user);
+        }
+    }
+
+    return results;
+}
+
 

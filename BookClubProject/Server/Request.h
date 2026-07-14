@@ -70,7 +70,15 @@ enum class CommandType {
     GetBlockedUsers,
     DeleteBook,
 
-    GetSystemStats
+    GetSystemStats,
+
+
+
+
+    SearchUsers,
+
+
+    SearchAuthors
 };
 
 

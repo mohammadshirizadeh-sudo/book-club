@@ -36,6 +36,10 @@ public:
     User* getUserByUsername(const QString& username) const;
     User* getUserByEmail(const QString& email) const;
 
+
+
+    QVector<User*> searchUsers(const QString& keyword) const;
+
 };
 
 #endif // AUTHSERVICE_H

@@ -247,7 +247,6 @@ ValidationResult AuthService::resetPasswordWithToken(const QString& token, const
         return ValidationResult::failure("❌ Failed to reset password");
     }
 
-    // 3. Save changes
     userRepo->updateUser(user , user->getUsername(), user->getEmail());
     QVariantMap data;
     data["userId"] = user->getId();
@@ -268,7 +267,6 @@ User* AuthService::getUserByUsername(const QString& username) const
     return userRepo->findByUsername(username);
 }
 
-// AuthService.cpp
 User* AuthService::getUserByEmail(const QString& email) const
 {
     if (email.isEmpty()) {
@@ -277,4 +275,15 @@ User* AuthService::getUserByEmail(const QString& email) const
     }
 
     return userRepo->findByEmail(email);
+}
+
+
+
+QVector<User*> AuthService::searchUsers(const QString& keyword) const
+{
+    if (keyword.isEmpty()) {
+        return QVector<User*>();
+    }
+
+    return userRepo->searchUsers(keyword);
 }
