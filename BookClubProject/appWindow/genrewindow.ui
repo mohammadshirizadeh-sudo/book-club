@@ -18,13 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
-	background-image: url(:/resources/blueBack.png);
-}
-
-QFrame {
-	background-color: rgba(255,255,255,10);
-}</string>
+   <string notr="true">background-image: url(:/resources/white.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -44,19 +38,18 @@ QFrame {
    <widget class="QLabel" name="chooseGenre">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>310</x>
       <y>10</y>
-      <width>641</width>
+      <width>711</width>
       <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-}</string>
+	font-size:45px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string> Choose 1 - 3 genres for book suggesting.</string>
@@ -67,17 +60,16 @@ QFrame {
      <rect>
       <x>250</x>
       <y>70</y>
-      <width>741</width>
+      <width>821</width>
       <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-}</string>
+	font-size:45px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string> You can change these anytime in your profile.</string>
@@ -86,19 +78,20 @@ QFrame {
    <widget class="QCheckBox" name="Adventure">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>30</x>
       <y>170</y>
-      <width>151</width>
-      <height>41</height>
+      <width>181</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Adventure</string>
@@ -109,17 +102,18 @@ QFrame {
      <rect>
       <x>420</x>
       <y>170</y>
-      <width>71</width>
-      <height>41</height>
+      <width>91</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Art</string>
@@ -130,17 +124,18 @@ QFrame {
      <rect>
       <x>770</x>
       <y>170</y>
-      <width>161</width>
-      <height>41</height>
+      <width>191</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Biography</string>
@@ -152,16 +147,17 @@ QFrame {
       <x>1140</x>
       <y>170</y>
       <width>141</width>
-      <height>41</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Business</string>
@@ -170,19 +166,20 @@ QFrame {
    <widget class="QCheckBox" name="Comedy">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>30</x>
       <y>250</y>
-      <width>131</width>
-      <height>41</height>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Cemedy</string>
@@ -193,17 +190,18 @@ QFrame {
      <rect>
       <x>420</x>
       <y>250</y>
-      <width>111</width>
-      <height>41</height>
+      <width>131</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Comics</string>
@@ -214,17 +212,18 @@ QFrame {
      <rect>
       <x>770</x>
       <y>250</y>
-      <width>131</width>
-      <height>41</height>
+      <width>151</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Cooking</string>
@@ -235,17 +234,18 @@ QFrame {
      <rect>
       <x>1140</x>
       <y>250</y>
-      <width>211</width>
-      <height>41</height>
+      <width>241</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Documentation</string>
@@ -254,19 +254,20 @@ QFrame {
    <widget class="QCheckBox" name="Drama">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>30</x>
       <y>330</y>
-      <width>121</width>
-      <height>41</height>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Drama</string>
@@ -277,17 +278,18 @@ QFrame {
      <rect>
       <x>420</x>
       <y>330</y>
-      <width>151</width>
-      <height>41</height>
+      <width>171</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Education</string>
@@ -298,17 +300,18 @@ QFrame {
      <rect>
       <x>770</x>
       <y>330</y>
-      <width>131</width>
-      <height>41</height>
+      <width>151</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Fantacy</string>
@@ -319,17 +322,18 @@ QFrame {
      <rect>
       <x>1140</x>
       <y>330</y>
-      <width>111</width>
-      <height>41</height>
+      <width>131</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Fiction</string>
@@ -338,19 +342,20 @@ QFrame {
    <widget class="QCheckBox" name="Health">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>30</x>
       <y>410</y>
-      <width>121</width>
-      <height>41</height>
+      <width>131</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Health</string>
@@ -361,17 +366,18 @@ QFrame {
      <rect>
       <x>420</x>
       <y>410</y>
-      <width>131</width>
-      <height>41</height>
+      <width>151</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>History</string>
@@ -382,17 +388,18 @@ QFrame {
      <rect>
       <x>770</x>
       <y>410</y>
-      <width>121</width>
-      <height>41</height>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Horror</string>
@@ -403,17 +410,18 @@ QFrame {
      <rect>
       <x>1140</x>
       <y>410</y>
-      <width>271</width>
-      <height>41</height>
+      <width>311</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Language Learning</string>
@@ -422,19 +430,20 @@ QFrame {
    <widget class="QCheckBox" name="Lgbtq">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>30</x>
       <y>490</y>
-      <width>151</width>
-      <height>41</height>
+      <width>171</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>LGBTQ+</string>
@@ -445,17 +454,18 @@ QFrame {
      <rect>
       <x>420</x>
       <y>490</y>
-      <width>121</width>
-      <height>41</height>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Manga</string>
@@ -466,17 +476,18 @@ QFrame {
      <rect>
       <x>770</x>
       <y>490</y>
-      <width>111</width>
-      <height>41</height>
+      <width>131</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Music</string>
@@ -487,17 +498,18 @@ QFrame {
      <rect>
       <x>1140</x>
       <y>490</y>
-      <width>271</width>
-      <height>41</height>
+      <width>311</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Mystery and Crime</string>
@@ -506,19 +518,20 @@ QFrame {
    <widget class="QCheckBox" name="PersonalDevelopment">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>30</x>
       <y>570</y>
-      <width>301</width>
-      <height>41</height>
+      <width>351</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Personal Development</string>
@@ -529,17 +542,18 @@ QFrame {
      <rect>
       <x>420</x>
       <y>570</y>
-      <width>171</width>
-      <height>41</height>
+      <width>201</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Philosophy</string>
@@ -550,17 +564,18 @@ QFrame {
      <rect>
       <x>770</x>
       <y>570</y>
-      <width>111</width>
-      <height>41</height>
+      <width>131</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Poetry</string>
@@ -571,17 +586,18 @@ QFrame {
      <rect>
       <x>1140</x>
       <y>570</y>
-      <width>261</width>
-      <height>41</height>
+      <width>311</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Politics and Society</string>
@@ -590,19 +606,20 @@ QFrame {
    <widget class="QCheckBox" name="Psycology">
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>650</y>
-      <width>161</width>
-      <height>41</height>
+      <x>30</x>
+      <y>660</y>
+      <width>181</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Psycology</string>
@@ -613,17 +630,18 @@ QFrame {
      <rect>
       <x>420</x>
       <y>650</y>
-      <width>141</width>
-      <height>41</height>
+      <width>161</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Refrence</string>
@@ -634,17 +652,18 @@ QFrame {
      <rect>
       <x>770</x>
       <y>650</y>
-      <width>141</width>
-      <height>41</height>
+      <width>171</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Romance</string>
@@ -655,17 +674,18 @@ QFrame {
      <rect>
       <x>1140</x>
       <y>650</y>
-      <width>121</width>
-      <height>41</height>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Science</string>
@@ -676,17 +696,18 @@ QFrame {
      <rect>
       <x>1140</x>
       <y>730</y>
-      <width>281</width>
-      <height>41</height>
+      <width>331</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Other (not in the list)</string>
@@ -697,17 +718,18 @@ QFrame {
      <rect>
       <x>770</x>
       <y>730</y>
-      <width>131</width>
-      <height>41</height>
+      <width>151</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Thriller</string>
@@ -716,19 +738,20 @@ QFrame {
    <widget class="QCheckBox" name="ScienceFiction">
     <property name="geometry">
      <rect>
-      <x>80</x>
+      <x>30</x>
       <y>730</y>
-      <width>201</width>
-      <height>41</height>
+      <width>241</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Science-Fiction</string>
@@ -739,17 +762,18 @@ QFrame {
      <rect>
       <x>420</x>
       <y>730</y>
-      <width>171</width>
-      <height>41</height>
+      <width>191</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QCheckBox {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-	font-size:30px;
-}</string>
+	font-size:35px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Technology</string>
@@ -765,12 +789,13 @@ QFrame {
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QPushButton {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
 	color: rgb(28, 20, 18);
-}</string>
+	font-size:45px;
+	border: 2px solid black;
+	border-radius: 12px;
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string>Enter</string>

@@ -14,7 +14,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/clouds.jpg);</string>
+   <string notr="true">background-image: url(:/resources/white.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -39,20 +39,18 @@
    <widget class="QDialogButtonBox" name="buttonBox">
     <property name="geometry">
      <rect>
-      <x>1000</x>
-      <y>560</y>
-      <width>191</width>
-      <height>32</height>
+      <x>500</x>
+      <y>550</y>
+      <width>171</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);
-font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 30px;color: rgb(0, 0, 0);
-background-image: url(:/resources/whiteWood.jpg);
-QFrame {
-	background-color: rgba(255,255,255,10);
-}</string>
+     <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:35px;
+color: rgb(0, 0, 0);
+border: 2px solid black;
+border-radius: 12px;</string>
     </property>
     <property name="orientation">
      <enum>Qt::Orientation::Horizontal</enum>
@@ -64,7 +62,7 @@ QFrame {
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>110</x>
       <y>80</y>
       <width>171</width>
       <height>51</height>
@@ -83,7 +81,7 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>150</x>
       <y>220</y>
       <width>121</width>
       <height>51</height>
@@ -102,7 +100,7 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>80</x>
       <y>370</y>
       <width>191</width>
       <height>51</height>
@@ -121,10 +119,10 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLineEdit" name="changeEmaiLineEdit">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>300</x>
       <y>220</y>
       <width>631</width>
-      <height>51</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -133,16 +131,19 @@ border-color: rgb(0, 0, 127);
 selection-background-color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
 font-size: 35px;
-color: rgb(0, 0, 0);</string>
+color: rgb(0, 0, 0);
+border: 3px solid black;
+border-radius: 12px;
+</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="changeFullnameLineEdit">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>300</x>
       <y>370</y>
       <width>631</width>
-      <height>51</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -151,16 +152,19 @@ border-color: rgb(0, 0, 127);
 selection-background-color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
 font-size: 35px;
-color: rgb(0, 0, 0);</string>
+color: rgb(0, 0, 0);
+border: 3px solid black;
+border-radius: 12px;
+</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="changeUsernameLineEdit">
     <property name="geometry">
      <rect>
-      <x>220</x>
+      <x>300</x>
       <y>80</y>
       <width>631</width>
-      <height>51</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -169,7 +173,10 @@ border-color: rgb(0, 0, 127);
 selection-background-color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
 font-size: 35px;
-color: rgb(0, 0, 0);</string>
+color: rgb(0, 0, 0);
+border: 3px solid black;
+border-radius: 12px;
+</string>
     </property>
    </widget>
   </widget>

@@ -18,9 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
-	background-image: url(:/resources/skyblueBack.jpg);
-}</string>
+   <string notr="true">background-image: url(:/resources/white.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -56,6 +54,8 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }
 </string>
     </property>
@@ -77,6 +77,8 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }
 </string>
     </property>
@@ -98,6 +100,8 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }
 </string>
     </property>
@@ -119,6 +123,8 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }
 </string>
     </property>
@@ -140,6 +146,8 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }
 </string>
     </property>
@@ -161,6 +169,8 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }
 </string>
     </property>
@@ -273,7 +283,7 @@
     <property name="geometry">
      <rect>
       <x>880</x>
-      <y>430</y>
+      <y>420</y>
       <width>301</width>
       <height>191</height>
      </rect>
@@ -313,7 +323,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
+      <y>120</y>
       <width>371</width>
       <height>301</height>
      </rect>
@@ -400,7 +410,7 @@
       <x>0</x>
       <y>0</y>
       <width>211</width>
-      <height>51</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -408,6 +418,9 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+	padding: 8px;
 }
 </string>
     </property>

@@ -53,14 +53,16 @@
       <x>0</x>
       <y>0</y>
       <width>211</width>
-      <height>51</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:30px;
+	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
