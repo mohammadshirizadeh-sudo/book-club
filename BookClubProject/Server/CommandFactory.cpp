@@ -177,6 +177,14 @@ Command* CommandFactory::create(
     case CommandType::ResetPasswordWithToken:
         return new ResetPasswordWithTokenCommand(authService);
 
+    case CommandType::SearchUsers:
+        return new SearchUserCommand(userService , bookService);
+
+
+
+    case CommandType::SearchAuthors:
+        return new SearchAuthorCommand(bookService);
+
 
 
     // =============================================

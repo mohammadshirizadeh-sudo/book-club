@@ -649,4 +649,39 @@ private:
     AdminService* m_adminService;
 };
 
+
+
+
+// Commands.h
+class SearchUserCommand : public Command
+{
+public:
+    explicit SearchUserCommand(UserService* userService , BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::SearchUsers; }
+    QString getName() const override { return "SearchUsers"; }
+    bool requiresAdmin() const override { return true; }  // فقط ادمین
+
+private:
+    UserService* m_userService;
+    BookService* m_bookService;
+};
+
+
+
+
+// Commands.h
+class SearchAuthorCommand : public Command
+{
+public:
+    explicit SearchAuthorCommand(BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::SearchAuthors; }
+    QString getName() const override { return "SearchAuthors"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    BookService* m_bookService;
+};
+
 #endif // COMMANDS_H

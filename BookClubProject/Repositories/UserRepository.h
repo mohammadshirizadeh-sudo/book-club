@@ -84,6 +84,9 @@ public:
 
     QString adminLevelToString(AdminLevel level) const;
 
+
+    QVector<User*> searchUsers(const QString& keyword) const;
+
 };
 
 #endif

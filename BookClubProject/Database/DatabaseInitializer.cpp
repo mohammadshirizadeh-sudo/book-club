@@ -333,6 +333,7 @@ bool DatabaseInitializer::createShelfBookTable()
 
 
 // DatabaseInitializer.cpp
+/*
 bool DatabaseInitializer::insertDefaultBooks()
 {
     // 1. اول یک ناشر پیش‌فرض اضافه کن (اگر وجود نداشت)
@@ -354,6 +355,153 @@ bool DatabaseInitializer::insertDefaultBooks()
         DatabaseManager::instance()->executeQuery(insertPublisher);
     } else {
         publisherId = checkQuery.value("id").toInt();
+    }
+
+    QList<QMap<QString, QVariant>> books = {
+        {
+            {"title", "The Great Gatsby"},
+            {"author", "F. Scott Fitzgerald"},
+            {"genre", "Fiction"},
+            {"description", "A story of the mysteriously wealthy Jay Gatsby"},
+            {"price", 0},
+            {"cover_path", "://resources/Screen-Shot-2017-05-31-at-2.19.46-PM.png"},
+            {"pdf_path", ":/pdfs/gatsby.pdf"},
+            {"sales_count", 150}
+        },
+        {
+            {"title", "1984"},
+            {"author", "George Orwell"},
+            {"genre", "Science_Fiction"},
+            {"description", "A dystopian novel set in a totalitarian society"},
+            {"price", 0},
+            {"cover_path", "://resources/41gH8Q32oFL._SY445_SX342_QL70_ML2_.jpg"},
+            {"pdf_path", ":/pdfs/1984.pdf"},
+            {"sales_count", 200}
+        },
+        {
+            {"title", "To Kill a Mockingbird"},
+            {"author", "Harper Lee"},
+            {"genre", "Fiction"},
+            {"description", "A classic novel about racial injustice"},
+            {"price", 0},
+            {"cover_path", "://resources/17273.webp"},
+            {"pdf_path", ":/pdfs/mockingbird.pdf"},
+            {"sales_count", 120}
+        },
+        {
+            {"title", "Pride and Prejudice"},
+            {"author", "Jane Austen"},
+            {"genre", "Romance"},
+            {"description", "A classic romantic novel"},
+            {"price", 0},
+            {"cover_path", "://resources/51lNDh-2N2L._SY445_SX342_ML2_.jpg"},
+            {"pdf_path", ":/pdfs/pride.pdf"},
+            {"sales_count", 90}
+        },
+        {
+            {"title", "The Hobbit"},
+            {"author", "J.R.R. Tolkien"},
+            {"genre", "Fantasy"},
+            {"description", "A fantasy adventure novel"},
+            {"price", 0},
+            {"cover_path", "://resources/51QnRBHJ+sL._SY445_SX342_ML2_.jpg"},
+            {"pdf_path", ":/pdfs/hobbit.pdf"},
+            {"sales_count", 180}
+        }
+    };
+
+    for (const auto& bookData : books) {
+        // بررسی اینکه کتاب قبلاً اضافه نشده باشد
+        QString checkQueryStr = QString("SELECT id FROM book WHERE title = '%1' AND author = '%2'")
+                                    .arg(bookData["title"].toString())
+                                    .arg(bookData["author"].toString());
+
+        QSqlQuery check = DatabaseManager::instance()->executeSelect(checkQueryStr);
+        if (check.next()) {
+            continue; // کتاب قبلاً وجود دارد
+        }
+
+        QString insertQuery = R"(
+            INSERT INTO book (
+                title, author, genre, description, price,
+                cover_path, pdf_path, publisher_id, sales_count,
+                is_active, average_rating, created_at, updated_at
+            ) VALUES (
+                :title, :author, :genre, :description, :price,
+                :cover_path, :pdf_path, :publisher_id, :sales_count,
+                1, 0, datetime('now'), datetime('now')
+            )
+        )";
+
+        QVariantMap params;
+        params["title"] = bookData["title"];
+        params["author"] = bookData["author"];
+        params["genre"] = bookData["genre"];
+        params["description"] = bookData["description"];
+        params["price"] = bookData["price"];
+        params["cover_path"] = bookData["cover_path"];
+        params["pdf_path"] = bookData["pdf_path"];
+        params["publisher_id"] = publisherId;
+        params["sales_count"] = bookData["sales_count"];
+
+        DatabaseManager::instance()->executeQuery(insertQuery, params);
+    }
+
+    qDebug() << "✅ Default books inserted successfully!";
+    return true;
+}
+*/
+
+
+
+bool DatabaseInitializer::insertDefaultBooks()
+{
+    // 1. اول یک ناشر پیش‌فرض اضافه کن (اگر وجود نداشت)
+    QString checkPublisher = "SELECT id FROM user WHERE username = 'default_publisher'";
+    QSqlQuery checkQuery = DatabaseManager::instance()->executeSelect(checkPublisher);
+
+    int publisherId = 1;
+    if (!checkQuery.next()) {
+        // الف) ایجاد کاربر با نقش ناشر در جدول user
+        QString insertUser = R"(
+            INSERT INTO user (
+                id, username, email, password_hash, salt, full_name, role, status,
+                created_at, updated_at
+            ) VALUES (
+                1, 'default_publisher', 'publisher@bookclub.com', '', '', 'Default Publisher',
+                'Publisher', 'Active', datetime('now'), datetime('now')
+            )
+        )";
+
+        if (DatabaseManager::instance()->executeQuery(insertUser)) {
+            // ب) ایجاد رکورد مشخصات ناشر در جدول publisher_info
+            QString insertPublisherInfo = R"(
+                INSERT INTO publisher_info (
+                    user_id, publisher_name, total_revenue, joined_at
+                ) VALUES (
+                    1, 'Default Publisher Name', 0.0, datetime('now')
+                )
+            )";
+            DatabaseManager::instance()->executeQuery(insertPublisherInfo);
+            qDebug() << "✨ Created default publisher and its info successfully.";
+        }
+    } else {
+        publisherId = checkQuery.value("id").toInt();
+
+        // ج) جهت اطمینان: اگر کاربر در جدول user بود ولی رکورد publisher_info جا افتاده بود، آن را درج کن
+        QString checkInfo = QString("SELECT user_id FROM publisher_info WHERE user_id = %1").arg(publisherId);
+        QSqlQuery infoQuery = DatabaseManager::instance()->executeSelect(checkInfo);
+        if (!infoQuery.next()) {
+            QString insertPublisherInfo = QString(R"(
+                INSERT INTO publisher_info (
+                    user_id, publisher_name, total_revenue, joined_at
+                ) VALUES (
+                    %1, 'Default Publisher Name', 0.0, datetime('now')
+                )
+            )").arg(publisherId);
+            DatabaseManager::instance()->executeQuery(insertPublisherInfo);
+            qDebug() << "✨ Fixed missing publisher_info record for existing default publisher.";
+        }
     }
 
     QList<QMap<QString, QVariant>> books = {

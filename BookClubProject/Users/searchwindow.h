@@ -36,8 +36,14 @@ private:
     Ui::SearchWindow *ui;
     NetworkManager* m_networkManager;
 
-    // کش مربوط به ذخیره‌سازی کتاب‌های جستجو شده (شناسه کتاب -> اطلاعات کتاب)
+
     QMap<int, QVariantMap> m_searchBooksCache;
+
+    QMap<int, QVariantMap> m_searchUsersCache;
+    QMap<int, QVariantMap> m_searchAuthorsCache;
+
+
+
 };
 
 #endif // SEARCHWINDOW_H
