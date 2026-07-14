@@ -76,12 +76,11 @@ qt_add_executable(BookClubProject
     Mutual/infodialog.h Mutual/infodialog.cpp Mutual/infodialog.ui
     Mutual/editinfodialog.h Mutual/editinfodialog.cpp Mutual/editinfodialog.ui
     Mutual/changepassworddialog.h Mutual/changepassworddialog.cpp Mutual/changepassworddialog.ui
-<<<<<<< HEAD
     Users/shoppinghistorywindow.h Users/shoppinghistorywindow.cpp Users/shoppinghistorywindow.ui
     Users/favoritebookswindow.h Users/favoritebookswindow.cpp Users/favoritebookswindow.ui
-=======
     Users/BookDetailDialog.h Users/BookDetailDialog.cpp Users/BookDetailDialog.ui
->>>>>>> 4fff7faf8ede25006ef2ccbb82fe0c210653c8ca
+    Users/UserDetailDialog.h Users/UserDetailDialog.cpp Users/UserDetailDialog.ui
+    Users/AuthorDetailDialog.h Users/AuthorDetailDialog.cpp Users/AuthorDetailDialog.ui
 
 
 

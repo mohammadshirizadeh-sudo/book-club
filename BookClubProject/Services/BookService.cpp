@@ -684,3 +684,31 @@ bool BookService::areGenresRelated(Genre genre1, Genre genre2) const
         return false;
     }
 }
+
+
+
+// BookService.cpp
+QMap<QString, QVector<QSharedPointer<Book>>> BookService::searchAuthorsWithBooks(const QString& keyword) const
+{
+    QMap<QString, QVector<QSharedPointer<Book>>> result;
+
+    if (keyword.isEmpty()) {
+        return result;
+    }
+
+    QString lowerKeyword = keyword.toLower();
+
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
+        if (!book->getIsActive()) continue;
+
+        QString author = book->getAuthor();
+        if (author.toLower().contains(lowerKeyword)) {
+            if (!result.contains(author)) {
+                result[author] = QVector<QSharedPointer<Book>>();
+            }
+            result[author].append(book);
+        }
+    }
+
+    return result;
+}
