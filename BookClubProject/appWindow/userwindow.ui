@@ -292,9 +292,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: 5px solid black;
-border-radius: 12px;
-padding: 8px;</string>
+     <string notr="true">border: 3px solid black;
+border-radius: 12px;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="nextPushButton">
@@ -349,9 +348,8 @@ border-radius: 12px;
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: 5px solid black;
-border-radius: 12px;
-padding: 8px;</string>
+     <string notr="true">border: 3px solid black;
+border-radius: 12px;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="nextRecPushButton">
@@ -446,9 +444,8 @@ border-radius: 12px;
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: 5px solid black;
-border-radius: 12px;
-padding: 8px;</string>
+     <string notr="true">border: 3px solid black;
+border-radius: 12px;</string>
     </property>
    </widget>
    <widget class="QListWidget" name="bestSellersListWidget">
@@ -461,9 +458,9 @@ padding: 8px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: 5px solid black;
+     <string notr="true">border: 3px solid black;
 border-radius: 12px;
-padding: 8px;</string>
+</string>
     </property>
    </widget>
    <widget class="QPushButton" name="prevBestPushButton">
