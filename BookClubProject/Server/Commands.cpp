@@ -151,13 +151,14 @@ Response ConfirmResetPasswordCommand::execute(const QVariantMap& params)
 // =============================================
 
 // ----- GetProfileCommand -----
-GetProfileCommand::GetProfileCommand(UserService* userService)
-    : m_userService(userService)
+GetProfileCommand::GetProfileCommand(UserService* userService,PurchaseService* m_purchaseService)
+    : m_userService(userService), m_purchaseService(m_purchaseService)
 {
 }
 
 Response GetProfileCommand::execute(const QVariantMap& params)
 {
+    qDebug()<<"Enter to getprofile execute";
     int userId = params["userId"].toInt();
     User* user = m_userService->getProfile(userId);
     AccountStatus status = user->getStatus();
@@ -175,6 +176,23 @@ Response GetProfileCommand::execute(const QVariantMap& params)
             genreStrings.append(GenreHelper::toString(genre));
         }
         data["favoriteGenres"] = genreStrings;
+
+
+        if(user->getRole()==UserRole::User){
+            qDebug()<<"Enter to if role ";
+            int purchaseCount = m_purchaseService->getPurchaseCount(userId);
+
+            data["purchaseCount"] = purchaseCount;
+            qDebug()<<"Exit if role";
+        }
+
+        if(user->getRole() == UserRole::Publisher){
+            Publisher* publisher = static_cast<Publisher*>(user);
+            data["publisherName"] = publisher->getPublisherName();
+            data["totalRevenue"] = publisher->getTotalRevenue();
+            data["joinedAt"] = publisher->getJoinedAt();
+
+        }
 
         return Response::success(CommandType::GetProfile , data);
     }

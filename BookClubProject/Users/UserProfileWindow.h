@@ -17,6 +17,10 @@ public:
     explicit UserProfileWindow(NetworkManager* networkManager  ,QWidget *parent = nullptr);
     ~UserProfileWindow();
 
+
+    void loadprof();
+
+
 signals:
     void openGenreWindow();
     void openUserInfoDialog();
@@ -33,9 +37,12 @@ private slots:
     void on_shoppingHistoryPushButton_clicked();
     void on_favBooksPushButton_clicked();
 
+
+    void handleResponse(const Response& response);
+
 private:
     Ui::UserProfileWindow *ui;
-     NetworkManager* m_networkManager;
+    NetworkManager* m_networkManager;
 };
 
 #endif // USERPROFILEWINDOW_H

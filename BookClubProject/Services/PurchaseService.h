@@ -54,6 +54,9 @@ public:
     bool cancelPurchase(int purchaseId);
     bool refundPurchase(int purchaseId);
 
+
+    int getPurchaseCount(int userId) const;
+
 private:
 
     bool processPayment(double amount);

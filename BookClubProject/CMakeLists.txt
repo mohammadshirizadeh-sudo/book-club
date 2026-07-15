@@ -85,6 +85,7 @@ qt_add_executable(BookClubProject
     Users/BookDetailDialog.h Users/BookDetailDialog.cpp Users/BookDetailDialog.ui
     Users/UserDetailDialog.h Users/UserDetailDialog.cpp Users/UserDetailDialog.ui
     Users/AuthorDetailDialog.h Users/AuthorDetailDialog.cpp Users/AuthorDetailDialog.ui
+    Publishers/PublisherInfoDialog.h Publishers/PublisherInfoDialog.cpp Publishers/PublisherInfoDialog.ui
 
 
 
