@@ -34,7 +34,14 @@ void BookDetailDialog::displayBookInfo(const QVariantMap& bookData)
     if (!coverPath.isEmpty()) {
         QPixmap pixmap(coverPath);
         if (!pixmap.isNull()) {
-            ui->coverLable->setPixmap(pixmap.scaled(200, 300, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            ui->coverLable->setAlignment(Qt::AlignCenter);
+
+            // ۲. اسکیل کردن عکس دقیقاً به اندازه خودِ لیبل در محیط گرافیکی
+            QPixmap scaledPixmap = pixmap.scaled(ui->coverLable->size(),
+                                                 Qt::KeepAspectRatio,
+                                                 Qt::SmoothTransformation);
+
+            ui->coverLable->setPixmap(scaledPixmap);
         }
     }
 }

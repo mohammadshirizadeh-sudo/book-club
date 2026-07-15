@@ -1215,38 +1215,27 @@ Response SearchUserCommand::execute(const QVariantMap& params)
         return Response::error(CommandType::SearchUsers, "Keyword is required");
     }
 
-    // 2. جستجوی کاربران
     QVector<User*> users = m_userService->searchUsers(keyword);
 
     if (users.isEmpty()) {
         return Response::error(CommandType::SearchUsers, "No users found");
     }
-
-    // 3. ساخت لیست کاربران برای پاسخ (بر اساس نقش)
     QVariantList userList;
     for (User* user : users) {
         QVariantMap userData;
-
-        // ===== اطلاعات عمومی (همه کاربران) =====
         userData["id"] = user->getId();
         userData["username"] = user->getUsername();
         userData["email"] = user->getEmail();
         userData["role"] = user->getRoleString();
-
-        // ===== اطلاعات بر اساس نقش =====
         if (user->isPublisher()) {
-            // ✅ ناشر: اطلاعات انتشاراتی
             Publisher* publisher = static_cast<Publisher*>(user);
 
             userData["publisherName"] = publisher->getPublisherName();
             userData["totalRevenue"] = publisher->getTotalRevenue();
             userData["joinedAt"] = publisher->getJoinedAt().toString(Qt::ISODate);
-
-            // تعداد کتاب‌های منتشرشده
             QVector<QSharedPointer<Book>> books = m_bookService->getBooksByPublisher(user->getId());
             userData["publishedBooksCount"] = books.size();
 
-            // لیست کتاب‌ها (فقط عنوان و ID)
             QVariantList bookList;
             for (QSharedPointer<Book> book : books) {
                 QVariantMap bookData;
@@ -1281,9 +1270,6 @@ Response SearchUserCommand::execute(const QVariantMap& params)
     return Response::success(CommandType::SearchUsers, "Search completed", data);
 }
 
-
-
-// Commands.cpp
 SearchAuthorCommand::SearchAuthorCommand(BookService* bookService)
     : m_bookService(bookService)
 {
@@ -1298,14 +1284,12 @@ Response SearchAuthorCommand::execute(const QVariantMap& params)
         return Response::error(CommandType::SearchAuthors, "Keyword is required");
     }
 
-    // 2. جستجوی نویسندگان (با کتاب‌هایشان)
     QMap<QString, QVector<QSharedPointer<Book>>> authorBooks = m_bookService->searchAuthorsWithBooks(keyword);
 
     if (authorBooks.isEmpty()) {
         return Response::error(CommandType::SearchAuthors, "No authors found");
     }
 
-    // 3. ساخت لیست نویسندگان با کتاب‌هایشان
     QVariantList authorList;
     for (auto it = authorBooks.begin(); it != authorBooks.end(); ++it) {
         QString authorName = it.key();
@@ -1314,8 +1298,6 @@ Response SearchAuthorCommand::execute(const QVariantMap& params)
         QVariantMap authorData;
         authorData["author"] = authorName;
         authorData["bookCount"] = books.size();
-
-        // لیست کامل کتاب‌های نویسنده
         QVariantList bookList;
         for (QSharedPointer<Book> book : books) {
             QVariantMap bookData;

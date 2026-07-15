@@ -1,6 +1,7 @@
 #include "userwindow.h"
 #include "appWindow/ui_userwindow.h"
 #include "SessionManager.h"
+#include "../Users/BookDetailDialog.h"
 #include <QPixmap>
 #include <QIcon>
 #include <QMessageBox>
@@ -16,49 +17,34 @@ UserWindow::UserWindow(NetworkManager* networkManager, QWidget *parent)
     ui->setupUi(this);
 
 
-    ui->freeBooksListWidget->setViewMode(QListView::IconMode);
-    ui->freeBooksListWidget->setResizeMode(QListView::Adjust);
-    ui->freeBooksListWidget->setMovement(QListView::Static);
-    ui->freeBooksListWidget->setIconSize(QSize(250, 380));
+    ui->freeBooksLabel->installEventFilter(this);
+    ui->freeBooksLabel->setCursor(Qt::PointingHandCursor);
+    ui->freeBooksLabel->setAlignment(Qt::AlignCenter);
+
+    ui->recommendedBooksLabel1->installEventFilter(this);
+    ui->recommendedBooksLabel1->setCursor(Qt::PointingHandCursor);
+    ui->recommendedBooksLabel1->setAlignment(Qt::AlignCenter);
+    ui->recommendedBooksTitleLabel1->setAlignment(Qt::AlignCenter);
 
 
+    // تنظیمات کتاب دوم پیشنهادی (راست)
+    ui->recommendedBooksLabel2->installEventFilter(this);
+    ui->recommendedBooksLabel2->setCursor(Qt::PointingHandCursor);
+    ui->recommendedBooksLabel2->setAlignment(Qt::AlignCenter);
+    ui->recommendedBooksTitleLabel2->setAlignment(Qt::AlignCenter);
 
-    ui->recommendedBooksListWidget->setViewMode(QListView::IconMode);
-    ui->recommendedBooksListWidget->setResizeMode(QListView::Adjust);
-    ui->recommendedBooksListWidget->setMovement(QListView::Static);
-    // چون فضای بزرگتری دارید و ۲ کتاب جا می‌گیرد، ابعاد ۲۲۰ در ۳۲۰ انتخاب مناسبی است
-    ui->recommendedBooksListWidget->setIconSize(QSize(300, 380));
+    ui->newBooksLabel->installEventFilter(this);
+    ui->newBooksLabel->setCursor(Qt::PointingHandCursor);
+    ui->newBooksLabel->setAlignment(Qt::AlignCenter);
 
-
-
-    //for recently added books
-    ui->newBooksListWidget->setViewMode(QListView::IconMode);
-    ui->newBooksListWidget->setResizeMode(QListView::Adjust);
-    ui->newBooksListWidget->setMovement(QListView::Static);
-
-    // تنظیم ظرفیت فضای آیکون‌ها (مثلاً عرض 250 و ارتفاع 420)
-    ui->newBooksListWidget->setIconSize(QSize(250, 420));
-
-
-
-
-
-    ui->newBooksListWidget->setGridSize(QSize(260, 480));
-    ui->freeBooksListWidget->setGridSize(QSize(260, 480));
-    ui->recommendedBooksListWidget->setGridSize(QSize(260, 480));
-
+    // ۲. تراز کردن متن‌های زیر کتاب‌ها در وسط
+    ui->freeBooksLabel->setAlignment(Qt::AlignCenter);
+    ui->recommendedBooksLabel->setAlignment(Qt::AlignCenter);
+    ui->newBooksTitleLabel->setAlignment(Qt::AlignCenter);
 
     // اتصال به پاسخ سرور
     connect(m_networkManager, &NetworkManager::responseReceived,
             this, &UserWindow::handleResponse);
-
-
-
-    ui->newBooksListWidget->setStyleSheet(
-        "QListWidget { background: transparent; border: none; }"
-        "QListWidget::item { background: transparent; }"
-        "QListWidget::item:selected { background: transparent; border: none; }"
-        );
 
 }
 
@@ -162,45 +148,38 @@ void UserWindow::handleResponse(const Response& response)
 }
 void UserWindow::updateBooksDisplay()
 {
-    ui->freeBooksListWidget->clear();
-    m_booksCache.clear();
-
-    if (m_allFreeBooks.isEmpty()) {
+    // اگر کتابی نبود، لیبل‌ها را خالی کن
+    if (m_allFreeBooks.isEmpty() || m_currentPage < 0 || m_currentPage >= m_allFreeBooks.size()) {
+        ui->freeBooksLabel->clear();
+        ui->freeBooksTitleLabel->setText("No Books Available");
         return;
     }
 
-    int startIndex = m_currentPage * m_booksPerPage;
-    int endIndex = qMin(startIndex + m_booksPerPage, m_allFreeBooks.size());
+    // چون در هر صفحه فقط یک کتاب داریم، ایندکس ما دقیقاً همان شماره صفحه (m_currentPage) است
+    QVariantMap book = m_allFreeBooks[m_currentPage].toMap();
+    QString title = book["title"].toString();
+    QString author = book["author"].toString();
+    QString coverPath = book["coverPath"].toString();
 
-    for (int i = startIndex; i < endIndex; ++i) {
-        QVariantMap book = m_allFreeBooks[i].toMap();
-        int bookId = book["bookId"].toInt();
-        QString title = book["title"].toString();
-        QString author = book["author"].toString();
-        QString coverPath = book["coverPath"].toString();
+    // تنظیم متن عنوان و نویسنده
+    ui->freeBooksTitleLabel->setText(title + "\n" + author);
 
-        m_booksCache[bookId] = book;
-
-        QListWidgetItem* item = new QListWidgetItem();
-        item->setData(Qt::UserRole, bookId);
-
-        // متن زیر کتاب (می‌تونی فونتش رو هم بزرگتر کنی)
-        item->setText(title + "\n" + author);
-        item->setTextAlignment(Qt::AlignCenter);
-
-        if (!coverPath.isEmpty()) {
-            QPixmap pixmap(coverPath);
-            if (!pixmap.isNull()) {
-                // 🖼️ عکس رو بزرگتر اسکیل می‌کنیم تا تمام فضای اختصاصی رو پر کنه
-                QPixmap scaled = pixmap.scaled(240, 360, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-                item->setIcon(QIcon(scaled));
-            }
+    // تنظیم عکس روی لیبل
+    if (!coverPath.isEmpty()) {
+        QPixmap pixmap(coverPath);
+        if (!pixmap.isNull()) {
+            // اسکیل کردن متناسب با ابعاد دلخواه (مثلاً ۲۴۰ در ۳۶۰) بدون دفرمه شدن
+            QPixmap scaled = pixmap.scaled(240, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            ui->freeBooksLabel->setPixmap(scaled);
+        } else {
+            ui->freeBooksLabel->setText("No Cover");
         }
-        ui->freeBooksListWidget->addItem(item);
+    } else {
+        ui->freeBooksLabel->setText("No Cover");
     }
 
-    // مدیریت دکمه‌ها بدون تغییر باقی می‌مونه و عالی کار می‌کنه
-    ui->nextPushButton->setEnabled(endIndex < m_allFreeBooks.size());
+    // مدیریت فعال/غیرفعال بودن دکمه‌ها
+    ui->nextPushButton->setEnabled(m_currentPage < m_allFreeBooks.size() - 1);
     ui->prevPushButton->setEnabled(m_currentPage > 0);
 }
 
@@ -267,49 +246,79 @@ void UserWindow::loadRecommendedBooks()
 
 void UserWindow::updateRecommendedBooksDisplay()
 {
-    ui->recommendedBooksListWidget->clear();
-    m_recBooksCache.clear();
-
     if (m_allRecBooks.isEmpty()) {
+        ui->recommendedBooksLabel1->clear();
+        ui->recommendedBooksTitleLabel1->setText("No Recommendations");
+        ui->recommendedBooksLabel2->clear();
+        ui->recommendedBooksTitleLabel2->clear();
+        ui->nextRecPushButton->setEnabled(false);
+        ui->prevRecPushButton->setEnabled(false);
         return;
     }
 
-    // محاسبه ایندکس شروع و پایان بر اساس ظرفیت ۲
-    int startIndex = m_currentRecPage * m_recBooksPerPage;
-    int endIndex = qMin(startIndex + m_recBooksPerPage, m_allRecBooks.size());
+    int booksPerPage = 2; // تعداد کتاب‌ها در هر صفحه
+    int startIndex = m_currentRecPage * booksPerPage;
 
-    for (int i = startIndex; i < endIndex; ++i) {
-        QVariantMap book = m_allRecBooks[i].toMap();
-        int bookId = book["bookId"].toInt();
-        QString title = book["title"].toString();
-        QString author = book["author"].toString();
-        QString coverPath = book["coverPath"].toString();
+    // ---------------- کتاب اول (سمت چپ) ----------------
+    if (startIndex < m_allRecBooks.size()) {
+        QVariantMap book1 = m_allRecBooks[startIndex].toMap();
+        QString title1 = book1["title"].toString();
+        QString author1 = book1["author"].toString();
+        QString coverPath1 = book1["coverPath"].toString();
 
-        m_recBooksCache[bookId] = book;
+        ui->recommendedBooksTitleLabel1->setText(title1 + "\n" + author1);
+        ui->recommendedBooksTitleLabel1->setVisible(true);
+        ui->recommendedBooksLabel1->setVisible(true);
 
-        QListWidgetItem* item = new QListWidgetItem();
-        item->setData(Qt::UserRole, bookId);
-
-        item->setText(title + "\n" + author);
-        item->setTextAlignment(Qt::AlignCenter);
-
-        if (!coverPath.isEmpty()) {
-            QPixmap pixmap(coverPath);
+        if (!coverPath1.isEmpty()) {
+            QPixmap pixmap(coverPath1);
             if (!pixmap.isNull()) {
-                // سایز عکس کمی کوچکتر از باکس آیکون (مثلا ۲۱۰ در ۳۰۰) تا کنار هم قشنگ جا شوند
-                QPixmap scaled = pixmap.scaled(210, 300, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-                item->setIcon(QIcon(scaled));
+                QPixmap scaled = pixmap.scaled(180, 270, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                ui->recommendedBooksLabel1->setPixmap(scaled);
+            } else {
+                ui->recommendedBooksLabel1->setText("No Cover");
             }
+        } else {
+            ui->recommendedBooksLabel1->setText("No Cover");
         }
-        ui->recommendedBooksListWidget->addItem(item);
     }
 
-    // مدیریت وضعیت فعال/غیرفعال بودن دکمه‌های بعدی و قبلیِ پیشنهادی‌ها
-    ui->nextRecPushButton->setEnabled(endIndex < m_allRecBooks.size());
+    // ---------------- کتاب دوم (سمت راست) ----------------
+    if (startIndex + 1 < m_allRecBooks.size()) {
+        QVariantMap book2 = m_allRecBooks[startIndex + 1].toMap();
+        QString title2 = book2["title"].toString();
+        QString author2 = book2["author"].toString();
+        QString coverPath2 = book2["coverPath"].toString();
+
+        ui->recommendedBooksTitleLabel2->setText(title2 + "\n" + author2);
+        ui->recommendedBooksTitleLabel2->setVisible(true);
+        ui->recommendedBooksLabel2->setVisible(true);
+
+        if (!coverPath2.isEmpty()) {
+            QPixmap pixmap(coverPath2);
+            if (!pixmap.isNull()) {
+                QPixmap scaled = pixmap.scaled(180, 270, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                ui->recommendedBooksLabel2->setPixmap(scaled);
+
+
+            } else {
+                ui->recommendedBooksLabel2->setText("No Cover");
+            }
+        } else {
+            ui->recommendedBooksLabel2->setText("No Cover");
+        }
+    } else {
+        // اگر کتاب دومی در این صفحه وجود نداشت، لیبل‌های سمت راست را پاک و مخفی کن
+        ui->recommendedBooksLabel2->clear();
+        ui->recommendedBooksTitleLabel2->clear();
+        ui->recommendedBooksLabel2->setVisible(false);
+        ui->recommendedBooksTitleLabel2->setVisible(false);
+    }
+
+    // ناوبری صفحات بر اساس پله‌های دوتایی
+    ui->nextRecPushButton->setEnabled((m_currentRecPage + 1) * booksPerPage < m_allRecBooks.size());
     ui->prevRecPushButton->setEnabled(m_currentRecPage > 0);
 }
-
-
 void UserWindow::on_nextRecPushButton_clicked()
 {
     m_currentRecPage++;
@@ -421,75 +430,34 @@ void UserWindow::updateNewBooksDisplay()
 
 void UserWindow::updateNewBooksDisplay()
 {
-    ui->newBooksListWidget->clear();
-    m_newBooksCache.clear();
-
-    if (m_allNewBooks.isEmpty()) {
+    if (m_allNewBooks.isEmpty() || m_currentNewPage < 0 || m_currentNewPage >= m_allNewBooks.size()) {
+        ui->newBooksLabel->clear();
+        ui->newBooksTitleLabel->setText("No New Books");
         return;
     }
 
-    // ۱. تنظیم حالت نمایش به صورت IconMode برای قرارگیری متن زیر آیکون
-    ui->newBooksListWidget->setViewMode(QListView::IconMode);
-    ui->newBooksListWidget->setMovement(QListView::Static);
+    QVariantMap book = m_allNewBooks[m_currentNewPage].toMap();
+    QString title = book["title"].toString();
+    QString author = book["author"].toString();
+    QString coverPath = book["coverPath"].toString();
 
-    // محاسبه ایندکس شروع و پایان
-    int startIndex = m_currentNewPage * m_newBooksPerPage;
-    int endIndex = qMin(startIndex + m_newBooksPerPage, m_allNewBooks.size());
+    ui->newBooksTitleLabel->setText(title + "\n" + author);
 
-    for (int i = startIndex; i < endIndex; ++i) {
-        QVariantMap book = m_allNewBooks[i].toMap();
-        int bookId = book["bookId"].toInt();
-        QString title = book["title"].toString();
-        QString author = book["author"].toString();
-        QString coverPath = book["coverPath"].toString();
-
-        m_newBooksCache[bookId] = book;
-
-        QListWidgetItem* item = new QListWidgetItem();
-        item->setData(Qt::UserRole, bookId);
-
-        // ۲. ساخت یک ویجت کانتینر سفارشی با لایوت وسط‌چین
-        QWidget* container = new QWidget();
-        QVBoxLayout* layout = new QVBoxLayout(container);
-        layout->setAlignment(Qt::AlignCenter); // وسط‌چین کردن عمودی و افقی لایوت داخلی
-        layout->setContentsMargins(65, 0, 0, 0);
-        layout->setSpacing(10); // فاصله ۱۰ پیکسلی بین عکس و متن زیر آن
-
-        // ایجاد لیبل برای تصویر کتاب
-        QLabel* imageLabel = new QLabel();
-        imageLabel->setAlignment(Qt::AlignCenter);
-        if (!coverPath.isEmpty()) {
-            QPixmap pixmap(coverPath);
-            if (!pixmap.isNull()) {
-                // اسکیل کردن عکس (مثلا ۲۴۰ در ۴۰۰)
-                QPixmap scaled = pixmap.scaled(180, 300, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-                imageLabel->setPixmap(scaled);
-            }
+    if (!coverPath.isEmpty()) {
+        QPixmap pixmap(coverPath);
+        if (!pixmap.isNull()) {
+            QPixmap scaled = pixmap.scaled(240, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            ui->newBooksLabel->setPixmap(scaled);
+        } else {
+            ui->newBooksLabel->setText("No Cover");
         }
-        layout->addWidget(imageLabel);
-
-        // ایجاد لیبل برای متن (عنوان و نویسنده)
-        QLabel* textLabel = new QLabel(title + "\n" + author);
-        textLabel->setAlignment(Qt::AlignCenter);
-        textLabel->setStyleSheet("font-size: 14px; font-weight: bold; color: #222;"); // استایل متنی زیبا
-        layout->addWidget(textLabel);
-
-        container->setLayout(layout);
-
-        // ۳. ترفند اصلی: عرض آیتم را هم‌اندازه با عرض کل لیست‌ویجت می‌کنیم
-        // این کار باعث می‌شود آیتم تمام فضا را پر کند و لایوت داخلی، تصویر را کاملاً سنتر نشان دهد
-        int itemWidth = ui->newBooksListWidget->width() - 30; // کسر ۳۰ پیکسل برای حاشیه و اسکرول‌بار احتمالی
-        item->setSizeHint(QSize(itemWidth, 460)); // ارتفاع متناسب با عکس (۴۰۰) + متن و فاصله‌ها (۶۰)
-
-        ui->newBooksListWidget->addItem(item);
-        ui->newBooksListWidget->setItemWidget(item, container); // قرار دادن ویجت سفارشی روی آیتم
+    } else {
+        ui->newBooksLabel->setText("No Cover");
     }
 
-    // فعال یا غیرفعال کردن دکمه‌های بعدی و قبلی
-    ui->nextNewPushButton->setEnabled(endIndex < m_allNewBooks.size());
+    ui->nextNewPushButton->setEnabled(m_currentNewPage < m_allNewBooks.size() - 1);
     ui->prevNewPushButton->setEnabled(m_currentNewPage > 0);
 }
-
 void UserWindow::on_nextNewPushButton_clicked()
 {
     m_currentNewPage++;
@@ -526,6 +494,63 @@ void UserWindow::on_newBooksListWidget_itemClicked(QListWidgetItem *item)
                            .arg(book["averageRating"].toDouble());
 
         QMessageBox::information(this, "Book Details", info);
+    }
+}
+
+
+
+bool UserWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress) {
+        if (watched == ui->freeBooksLabel) {
+            onFreeBookClicked();
+            return true;
+        }
+        else if (watched == ui->recommendedBooksLabel1) {
+            onRecommendedBookClicked(0); // کتاب اول (سمت چپ)
+            return true;
+        }
+        else if (watched == ui->recommendedBooksLabel2) {
+            onRecommendedBookClicked(1); // کتاب دوم (سمت راست)
+            return true;
+        }
+        else if (watched == ui->newBooksLabel) {
+            onNewBookClicked();
+            return true;
+        }
+    }
+    return QWidget::eventFilter(watched, event);
+}
+
+
+
+void UserWindow::onFreeBookClicked()
+{
+    if (m_currentPage >= 0 && m_currentPage < m_allFreeBooks.size()) {
+        QVariantMap book = m_allFreeBooks[m_currentPage].toMap();
+        BookDetailDialog dialog(book, this);
+        dialog.exec();
+    }
+}
+
+void UserWindow::onRecommendedBookClicked(int offset)
+{
+    int booksPerPage = 2;
+    int targetIndex = (m_currentRecPage * booksPerPage) + offset;
+
+    if (targetIndex >= 0 && targetIndex < m_allRecBooks.size()) {
+        QVariantMap book = m_allRecBooks[targetIndex].toMap();
+        BookDetailDialog dialog(book, this);
+        dialog.exec();
+    }
+}
+
+void UserWindow::onNewBookClicked()
+{
+    if (m_currentNewPage >= 0 && m_currentNewPage < m_allNewBooks.size()) {
+        QVariantMap book = m_allNewBooks[m_currentNewPage].toMap();
+        BookDetailDialog dialog(book, this);
+        dialog.exec();
     }
 }
 

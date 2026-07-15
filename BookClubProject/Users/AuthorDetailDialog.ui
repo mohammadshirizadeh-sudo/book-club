@@ -25,6 +25,11 @@
      <height>600</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}</string>
+   </property>
    <property name="frameShape">
     <enum>QFrame::Shape::StyledPanel</enum>
    </property>
@@ -130,7 +135,11 @@ color: rgb(0, 0, 0);
      <string notr="true">background: transparent;
 border: 5px solid black;
 border-radius: 12px;
-padding: 8px;</string>
+padding: 8px;
+
+QFrame {
+	background-color: rgba(255,255,255,10);
+}</string>
     </property>
    </widget>
    <widget class="QDialogButtonBox" name="buttonBox">
