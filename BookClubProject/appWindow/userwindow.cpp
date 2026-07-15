@@ -5,6 +5,9 @@
 #include <QIcon>
 #include <QMessageBox>
 
+#include <QLabel>
+#include <QVBoxLayout>
+
 UserWindow::UserWindow(NetworkManager* networkManager, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::UserWindow)
@@ -48,6 +51,14 @@ UserWindow::UserWindow(NetworkManager* networkManager, QWidget *parent)
     // اتصال به پاسخ سرور
     connect(m_networkManager, &NetworkManager::responseReceived,
             this, &UserWindow::handleResponse);
+
+
+
+    ui->newBooksListWidget->setStyleSheet(
+        "QListWidget { background: transparent; border: none; }"
+        "QListWidget::item { background: transparent; }"
+        "QListWidget::item:selected { background: transparent; border: none; }"
+        );
 
 }
 
@@ -286,7 +297,7 @@ void UserWindow::updateRecommendedBooksDisplay()
             QPixmap pixmap(coverPath);
             if (!pixmap.isNull()) {
                 // سایز عکس کمی کوچکتر از باکس آیکون (مثلا ۲۱۰ در ۳۰۰) تا کنار هم قشنگ جا شوند
-                QPixmap scaled = pixmap.scaled(280, 300, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+                QPixmap scaled = pixmap.scaled(210, 300, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
                 item->setIcon(QIcon(scaled));
             }
         }
@@ -354,7 +365,7 @@ void UserWindow::loadNewBooks()
 
 
 
-
+/*
 void UserWindow::updateNewBooksDisplay()
 {
     ui->newBooksListWidget->clear();
@@ -363,6 +374,8 @@ void UserWindow::updateNewBooksDisplay()
     if (m_allNewBooks.isEmpty()) {
         return;
     }
+
+      ui->newBooksListWidget->setItemAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     // محاسبه ایندکس شروع و پایان بر اساس مروارید صفحات
     int startIndex = m_currentNewPage * m_newBooksPerPage;
@@ -382,7 +395,8 @@ void UserWindow::updateNewBooksDisplay()
 
         // تنظیم متن زیر عکس کتاب
         item->setText(title + "\n" + author);
-        item->setTextAlignment(Qt::AlignCenter);
+        // item->setTextAlignment(Qt::AlignCenter);
+        item->setTextAlignment(Qt::AlignHCenter | Qt::AlignBottom);
 
         if (!coverPath.isEmpty()) {
             QPixmap pixmap(coverPath);
@@ -393,9 +407,85 @@ void UserWindow::updateNewBooksDisplay()
             }
         }
         ui->newBooksListWidget->addItem(item);
+
     }
+    ui->newBooksListWidget->setItemAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     // فعال یا غیرفعال کردن دکمه‌های بعدی و قبلی مخصوص کتاب‌های جدید
+    ui->nextNewPushButton->setEnabled(endIndex < m_allNewBooks.size());
+    ui->prevNewPushButton->setEnabled(m_currentNewPage > 0);
+}
+*/
+
+
+
+void UserWindow::updateNewBooksDisplay()
+{
+    ui->newBooksListWidget->clear();
+    m_newBooksCache.clear();
+
+    if (m_allNewBooks.isEmpty()) {
+        return;
+    }
+
+    // ۱. تنظیم حالت نمایش به صورت IconMode برای قرارگیری متن زیر آیکون
+    ui->newBooksListWidget->setViewMode(QListView::IconMode);
+    ui->newBooksListWidget->setMovement(QListView::Static);
+
+    // محاسبه ایندکس شروع و پایان
+    int startIndex = m_currentNewPage * m_newBooksPerPage;
+    int endIndex = qMin(startIndex + m_newBooksPerPage, m_allNewBooks.size());
+
+    for (int i = startIndex; i < endIndex; ++i) {
+        QVariantMap book = m_allNewBooks[i].toMap();
+        int bookId = book["bookId"].toInt();
+        QString title = book["title"].toString();
+        QString author = book["author"].toString();
+        QString coverPath = book["coverPath"].toString();
+
+        m_newBooksCache[bookId] = book;
+
+        QListWidgetItem* item = new QListWidgetItem();
+        item->setData(Qt::UserRole, bookId);
+
+        // ۲. ساخت یک ویجت کانتینر سفارشی با لایوت وسط‌چین
+        QWidget* container = new QWidget();
+        QVBoxLayout* layout = new QVBoxLayout(container);
+        layout->setAlignment(Qt::AlignCenter); // وسط‌چین کردن عمودی و افقی لایوت داخلی
+        layout->setContentsMargins(65, 0, 0, 0);
+        layout->setSpacing(10); // فاصله ۱۰ پیکسلی بین عکس و متن زیر آن
+
+        // ایجاد لیبل برای تصویر کتاب
+        QLabel* imageLabel = new QLabel();
+        imageLabel->setAlignment(Qt::AlignCenter);
+        if (!coverPath.isEmpty()) {
+            QPixmap pixmap(coverPath);
+            if (!pixmap.isNull()) {
+                // اسکیل کردن عکس (مثلا ۲۴۰ در ۴۰۰)
+                QPixmap scaled = pixmap.scaled(180, 300, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+                imageLabel->setPixmap(scaled);
+            }
+        }
+        layout->addWidget(imageLabel);
+
+        // ایجاد لیبل برای متن (عنوان و نویسنده)
+        QLabel* textLabel = new QLabel(title + "\n" + author);
+        textLabel->setAlignment(Qt::AlignCenter);
+        textLabel->setStyleSheet("font-size: 14px; font-weight: bold; color: #222;"); // استایل متنی زیبا
+        layout->addWidget(textLabel);
+
+        container->setLayout(layout);
+
+        // ۳. ترفند اصلی: عرض آیتم را هم‌اندازه با عرض کل لیست‌ویجت می‌کنیم
+        // این کار باعث می‌شود آیتم تمام فضا را پر کند و لایوت داخلی، تصویر را کاملاً سنتر نشان دهد
+        int itemWidth = ui->newBooksListWidget->width() - 30; // کسر ۳۰ پیکسل برای حاشیه و اسکرول‌بار احتمالی
+        item->setSizeHint(QSize(itemWidth, 460)); // ارتفاع متناسب با عکس (۴۰۰) + متن و فاصله‌ها (۶۰)
+
+        ui->newBooksListWidget->addItem(item);
+        ui->newBooksListWidget->setItemWidget(item, container); // قرار دادن ویجت سفارشی روی آیتم
+    }
+
+    // فعال یا غیرفعال کردن دکمه‌های بعدی و قبلی
     ui->nextNewPushButton->setEnabled(endIndex < m_allNewBooks.size());
     ui->prevNewPushButton->setEnabled(m_currentNewPage > 0);
 }

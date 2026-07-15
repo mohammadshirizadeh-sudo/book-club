@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(profileIndex);
+                         profileWindow->loadprof();
                      });
 
     QObject::connect(loginWindow,

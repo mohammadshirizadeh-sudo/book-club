@@ -246,3 +246,25 @@ void PurchaseService::sendPurchaseConfirmation(int userId, QSharedPointer<Purcha
         }
     }
 }
+
+
+
+
+int PurchaseService::getPurchaseCount(int userId) const
+{
+    if (userId <= 0) {
+        qWarning() << "Invalid user ID:" << userId;
+        return 0;
+    }
+
+    QVector<QSharedPointer<Purchase>> purchases = purchaseRepo->getPurchasesByUserId(userId);
+
+    int count = 0;
+    for (QSharedPointer<Purchase> purchase : purchases) {
+        if (purchase->getStatus() == PurchaseStatus::Completed) {
+            count++;
+        }
+    }
+
+    return count;
+}
