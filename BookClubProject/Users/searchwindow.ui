@@ -126,6 +126,8 @@
      <string notr="true">QLineEdit {
 	font-size:27px;
 	color: rgb(0, 0, 0);
+border: 3px solid black;
+border-radius: 12px;
 }</string>
     </property>
     <property name="placeholderText">
@@ -208,6 +210,10 @@
       <width>1161</width>
       <height>601</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 3px solid black;
+border-radius: 12px;</string>
     </property>
    </widget>
   </widget>
