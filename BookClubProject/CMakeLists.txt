@@ -69,7 +69,7 @@ qt_add_executable(BookClubProject
     Publishers/publisherprofilewindow.h Publishers/publisherprofilewindow.cpp Publishers/publisherprofilewindow.ui
     Publishers/mybooks.h Publishers/mybooks.cpp Publishers/mybooks.ui
     Publishers/bookstatics.h Publishers/bookstatics.cpp Publishers/bookstatics.ui
-    appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
+
 
 
 
@@ -85,16 +85,12 @@ qt_add_executable(BookClubProject
     Users/BookDetailDialog.h Users/BookDetailDialog.cpp Users/BookDetailDialog.ui
     Users/UserDetailDialog.h Users/UserDetailDialog.cpp Users/UserDetailDialog.ui
     Users/AuthorDetailDialog.h Users/AuthorDetailDialog.cpp Users/AuthorDetailDialog.ui
+    Users/mylibrarywindow.h Users/mylibrarywindow.cpp Users/mylibrarywindow.ui
+
     Publishers/PublisherInfoDialog.h Publishers/PublisherInfoDialog.cpp Publishers/PublisherInfoDialog.ui
     Publishers/addnewbookdialog.h Publishers/addnewbookdialog.cpp Publishers/addnewbookdialog.ui
     Publishers/deleteBookWindow.h Publishers/deleteBookWindow.cpp Publishers/deleteBookWindow.ui
 
-
-
-
-
-
-     
 
 )
 
