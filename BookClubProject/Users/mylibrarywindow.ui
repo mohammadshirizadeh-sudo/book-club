@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FavoriteBooksWindow</class>
- <widget class="QWidget" name="FavoriteBooksWindow">
+ <class>MyLibraryWindow</class>
+ <widget class="QWidget" name="MyLibraryWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -31,56 +31,35 @@
    <property name="frameShadow">
     <enum>QFrame::Shadow::Raised</enum>
    </property>
-   <widget class="QPushButton" name="backPushButton">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>211</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(0, 0, 0);
-	border: 3px solid black;
-	border-radius: 12px;
-	padding: 8px;
-}
-</string>
-    </property>
-    <property name="text">
-     <string>&lt;-- Back</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>10</y>
-      <width>271</width>
-      <height>61</height>
+      <x>650</x>
+      <y>20</y>
+      <width>201</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background: transparent;
-font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 45px;
-color: rgb(0, 0, 0);</string>
+     <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 40px;
+	color: rgb(0, 0, 0);
+}</string>
     </property>
     <property name="text">
-     <string>Favorite Books</string>
+     <string>My Library</string>
     </property>
    </widget>
    <widget class="QListWidget" name="listWidget">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>120</y>
-      <width>1421</width>
-      <height>631</height>
+      <x>10</x>
+      <y>170</y>
+      <width>381</width>
+      <height>621</height>
      </rect>
     </property>
     <property name="styleSheet">
