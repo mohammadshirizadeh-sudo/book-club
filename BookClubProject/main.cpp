@@ -6,6 +6,7 @@
 #include "appWindow/genrewindow.h"
 #include "appWindow/userwindow.h"
 #include "appWindow/publisherwindow.h"
+#include "Publishers/publisherprofilewindow.h"
 #include "appWindow/adminwindow.h"
 #include "appWindow/SessionManager.h"
 #include "appWindow/userwindow.h"
@@ -55,10 +56,13 @@ int main(int argc, char *argv[])
     RegisterWindow* registerWindow = new RegisterWindow(networkManager);
     GenreWindow* genreWindow = new GenreWindow(networkManager);
     UserWindow* userWindow = new UserWindow(networkManager);
-    PublisherWindow* publisherWindow = new PublisherWindow();
+    PublisherWindow* publisherWindow = new PublisherWindow(networkManager);
     AdminWindow* adminWindow = new AdminWindow();
     UserProfileWindow* profileWindow = new UserProfileWindow(networkManager);
     SearchWindow* searchWindow = new SearchWindow(networkManager);
+    PublisherProfileWindow* publisherProfileWindow =  new PublisherProfileWindow(networkManager);
+
+
 
 
 
@@ -73,6 +77,7 @@ int main(int argc, char *argv[])
     int adminIndex = stackedWidget.addWidget(adminWindow);
     int profileIndex = stackedWidget.addWidget(profileWindow);
     int searchIndex = stackedWidget.addWidget(searchWindow);
+    int publisherProfileindex = stackedWidget.addWidget(publisherProfileWindow);
 
 
     //-------------------------------------------------
@@ -95,6 +100,14 @@ int main(int argc, char *argv[])
                          stackedWidget.setCurrentIndex(profileIndex);
                          profileWindow->loadprof();
                      });
+    QObject::connect(publisherWindow,
+                     &PublisherWindow::publisherProfileWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(publisherProfileindex);
+                         profileWindow->loadprof();
+                     });
+
 
     QObject::connect(loginWindow,
                      &LoginWindow::openForgotPasswordWindow,

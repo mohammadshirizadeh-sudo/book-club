@@ -82,8 +82,10 @@ void RegisterWindow::handleRegisterResponse(const Response& response)
         "Registration Successful",
         "Welcome " + username
         );
+    qDebug()<<"roleeeeeeeeee:  " << role;
 
-    emit openGenreWindow();
+    if(role == "Publisher") emit openPublisherWindow();
+    else emit openGenreWindow();
 }
 
 void RegisterWindow::on_publisherSignupPushButton_clicked()
@@ -116,8 +118,6 @@ void RegisterWindow::on_publisherSignupPushButton_clicked()
 
     Request request(CommandType::Register, params);
     m_networkManager->sendRequest("Register", params);
-
-    emit openPublisherWindow();
 }
 
 void RegisterWindow::on_backToSigninPushButton_clicked()

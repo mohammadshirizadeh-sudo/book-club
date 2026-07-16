@@ -52,9 +52,6 @@ void PublisherInfoDialog::handleResponse(const Response& response)
         ui->fullnameLabel->setText(data["fullName"].toString());
         ui->roleLabel->setText(data["role"].toString());
         ui->statusLabel->setText(data["status"].toString());
-
-        QStringList favoriteGenres = data["favoriteGenres"].toStringList();
-        ui->favGenresLabel->setText(favoriteGenres.isEmpty() ? "بدون ژانر محبوب" : favoriteGenres.join("، "));
         ui->publisherNameLabel->setText(data["publisherName"].toString());
         ui->totalRevenueLabel->setText(data["totalRevenue"].toString());
         ui->joinedAtLabel->setText(data["joinedAt"].toString());

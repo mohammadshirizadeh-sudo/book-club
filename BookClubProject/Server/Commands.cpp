@@ -69,7 +69,8 @@ Response RegisterCommand::execute(const QVariantMap& params)
     QString username = params["username"].toString();
     QString email = params["email"].toString();
     QString password = params["password"].toString();
-    QString roleStr = params.value("role", "User").toString();
+    QString roleStr = params["role"].toString();
+
 
 
     UserRole role = UserRole::User;
@@ -93,6 +94,7 @@ Response RegisterCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["userId"] = user->getId();
     data["username"] = user->getUsername();
+    data["role"] = roleStr;
     return Response::success(CommandType::Register , "Registration successful", data);
 }
 
@@ -211,11 +213,12 @@ Response UpdateProfileCommand::execute(const QVariantMap& params)
     QString email = params["email"].toString();
     QString fullName = params["fullName"].toString();
     QString userName = params["userName"].toString();
+    ValidationResult result = m_userService->updateProfile(userId, email, fullName, userName);
 
-    if (m_userService->updateProfile(userId, email, fullName, userName)) {
+    if (result.isValid) {
         return Response::success(CommandType::UpdateProfile , "Profile updated successfully");
     }
-    return Response::error(CommandType::UpdateProfile ,"Failed to update profile");
+    return Response::error(CommandType::UpdateProfile ,result.errorMessage);
 }
 
 

@@ -91,7 +91,7 @@ color: rgb(0, 0, 0);</string>
     <rect>
      <x>240</x>
      <y>130</y>
-     <width>191</width>
+     <width>251</width>
      <height>41</height>
     </rect>
    </property>
@@ -162,25 +162,6 @@ color: rgb(0, 0, 0);</string>
     <string>Status:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_7">
-   <property name="geometry">
-    <rect>
-     <x>-10</x>
-     <y>470</y>
-     <width>261</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background: transparent;
-font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 40px;
-color: rgb(0, 0, 0);</string>
-   </property>
-   <property name="text">
-    <string>Favorite Genres:</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="fullnameLabel">
    <property name="geometry">
     <rect>
@@ -225,25 +206,6 @@ color: rgb(0, 0, 0);</string>
      <x>250</x>
      <y>370</y>
      <width>191</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background: transparent;
-font: 700 9pt &quot;Script MT&quot;;
-font-size: 35px;
-color: rgb(0, 0, 0);</string>
-   </property>
-   <property name="text">
-    <string>loading...</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="favGenresLabel">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>480</y>
-     <width>171</width>
      <height>41</height>
     </rect>
    </property>

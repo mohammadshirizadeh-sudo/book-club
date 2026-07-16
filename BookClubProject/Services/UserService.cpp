@@ -28,30 +28,28 @@ User* UserService::getProfile(int userId) const {
 
 }
 
-bool UserService::updateProfile(int userId, const QString& newEmail,
+ValidationResult UserService::updateProfile(int userId, const QString& newEmail,
                                 const QString& newFullName,
                                 const QString& newUserName) {
+
     // 1. Find user
     User* user = userRepo->findById(userId);
     QString oldUserName =  user->getUsername();
     QString oldEmail = user->getEmail();
     if (!user) {
-        qWarning() << "User not found with ID:" << userId;
-        return false;
+        return ValidationResult::failure("User not found");
     }
 
     // 2. Validate email
     ValidationResult email = EmailValidator::isValid(newEmail);
     if (!email.isValid) {
-        qWarning() << "Invalid email:" << email.errorMessage;
-        return false;
+        return email;
     }
 
     // 3. Check if email is taken by another user
     User* userWithEmail = userRepo->findByEmail(newEmail);
     if (userWithEmail && userWithEmail->getId() != userId) {
-        qWarning() << "Email" << newEmail << "is already taken by another user";
-        return false;
+        return ValidationResult::failure("This email is already taken by another user");
     }
 
 
@@ -63,12 +61,13 @@ bool UserService::updateProfile(int userId, const QString& newEmail,
 
     // 6. Save to repository
     if (!userRepo->updateUser(user , oldUserName , oldEmail)) {
-        qWarning() << "Failed to update user in repository";
-        return false;
+
+        return ValidationResult::failure("Failed to update user in repository");
+
     }
 
     qDebug() << "Profile updated for user:" << user->getUsername();
-    return true;
+    return ValidationResult::success();
 }
 
 bool UserService::updateFavoriteGenres(int userId, const QVector<Genre>& newGenres) {

@@ -34,8 +34,15 @@ void UserProfileWindow::on_favGenresPushButton_clicked()
 
 void UserProfileWindow::on_UserInfPushButton_clicked()
 {
-    InfoDialog dialog(m_networkManager , this);
-    dialog.exec();
+    EditInfoDialog* dialog = new EditInfoDialog(m_networkManager, this);
+
+    // ✅ اتصال به سیگنال accepted دیالوگ
+    connect(dialog, &QDialog::accepted, this, [this]() {
+        qDebug() << "📢 Dialog accepted! Reloading user profile...";
+        loadprof();
+    });
+
+    dialog->exec();
 }
 
 

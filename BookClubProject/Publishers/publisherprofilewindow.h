@@ -16,6 +16,8 @@ public:
     explicit PublisherProfileWindow(NetworkManager* networkManager, QWidget *parent = nullptr);
     ~PublisherProfileWindow();
 
+    void loadprof();
+    void handleResponse(const Response& response);
 
 signals:
 
@@ -23,7 +25,12 @@ signals:
 
 
 private slots:
+
+    void on_changePubPassPushButton_clicked();
+
     void on_publisherInfoPushButton_clicked();
+
+    void on_editPubInfoPushButton_clicked();
 
 private:
     Ui::PublisherProfileWindow *ui;
