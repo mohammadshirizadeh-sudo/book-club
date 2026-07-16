@@ -69,7 +69,8 @@ Response RegisterCommand::execute(const QVariantMap& params)
     QString username = params["username"].toString();
     QString email = params["email"].toString();
     QString password = params["password"].toString();
-    QString roleStr = params.value("role", "User").toString();
+    QString roleStr = params["role"].toString();
+
 
 
     UserRole role = UserRole::User;
@@ -93,6 +94,7 @@ Response RegisterCommand::execute(const QVariantMap& params)
     QVariantMap data;
     data["userId"] = user->getId();
     data["username"] = user->getUsername();
+    data["role"] = roleStr;
     return Response::success(CommandType::Register , "Registration successful", data);
 }
 
@@ -151,13 +153,14 @@ Response ConfirmResetPasswordCommand::execute(const QVariantMap& params)
 // =============================================
 
 // ----- GetProfileCommand -----
-GetProfileCommand::GetProfileCommand(UserService* userService)
-    : m_userService(userService)
+GetProfileCommand::GetProfileCommand(UserService* userService,PurchaseService* m_purchaseService)
+    : m_userService(userService), m_purchaseService(m_purchaseService)
 {
 }
 
 Response GetProfileCommand::execute(const QVariantMap& params)
 {
+    qDebug()<<"Enter to getprofile execute";
     int userId = params["userId"].toInt();
     User* user = m_userService->getProfile(userId);
     AccountStatus status = user->getStatus();
@@ -176,6 +179,23 @@ Response GetProfileCommand::execute(const QVariantMap& params)
         }
         data["favoriteGenres"] = genreStrings;
 
+
+        if(user->getRole()==UserRole::User){
+            qDebug()<<"Enter to if role ";
+            int purchaseCount = m_purchaseService->getPurchaseCount(userId);
+
+            data["purchaseCount"] = purchaseCount;
+            qDebug()<<"Exit if role";
+        }
+
+        if(user->getRole() == UserRole::Publisher){
+            Publisher* publisher = static_cast<Publisher*>(user);
+            data["publisherName"] = publisher->getPublisherName();
+            data["totalRevenue"] = publisher->getTotalRevenue();
+            data["joinedAt"] = publisher->getJoinedAt();
+
+        }
+
         return Response::success(CommandType::GetProfile , data);
     }
     return Response::error(CommandType::GetProfile , "User not found");
@@ -193,11 +213,12 @@ Response UpdateProfileCommand::execute(const QVariantMap& params)
     QString email = params["email"].toString();
     QString fullName = params["fullName"].toString();
     QString userName = params["userName"].toString();
+    ValidationResult result = m_userService->updateProfile(userId, email, fullName, userName);
 
-    if (m_userService->updateProfile(userId, email, fullName, userName)) {
+    if (result.isValid) {
         return Response::success(CommandType::UpdateProfile , "Profile updated successfully");
     }
-    return Response::error(CommandType::UpdateProfile ,"Failed to update profile");
+    return Response::error(CommandType::UpdateProfile ,result.errorMessage);
 }
 
 
@@ -812,6 +833,34 @@ Response AddBookCommand::execute(const QVariantMap& params)
     double price = params["price"].toDouble();
     double discountPercent = params.value("discountPercent", 0.0).toDouble();
 
+    // ۱. دریافت آدرس کاور از پارامترها
+    QString coverPath = params["coverPath"].toString();
+
+    // ۲. ارسال پارامتر جدید به متد سرویس (باید این متد را هم در سرویس خود آپدیت کنی)
+
+    if (m_publisherService->addBook(publisherId, title, author, genre, description, price , 0, coverPath,"hello")) {
+        QVariantMap data;
+        data["title"] = title;
+        data["author"] = author;
+        data["coverPath"] = coverPath;
+        return Response::success(CommandType::AddBook , "Book added successfully", data);
+    }
+    return Response::error(CommandType::AddBook ,"Failed to add book");
+}
+
+
+/*
+
+Response AddBookCommand::execute(const QVariantMap& params)
+{
+    int publisherId = params["publisherId"].toInt();
+    QString title = params["title"].toString();
+    QString author = params["author"].toString();
+    Genre genre = GenreHelper::fromString(params["genre"].toString());
+    QString description = params["description"].toString();
+    double price = params["price"].toDouble();
+    double discountPercent = params.value("discountPercent", 0.0).toDouble();
+
 
 
     if (m_publisherService->addBook(publisherId, title, author, genre, description, price)) {
@@ -822,6 +871,7 @@ Response AddBookCommand::execute(const QVariantMap& params)
     }
     return Response::error(CommandType::AddBook ,"Failed to add book");
 }
+*/
 
 // ----- EditBookCommand -----
 EditBookCommand::EditBookCommand(PublisherService* publisherService)
@@ -1197,38 +1247,27 @@ Response SearchUserCommand::execute(const QVariantMap& params)
         return Response::error(CommandType::SearchUsers, "Keyword is required");
     }
 
-    // 2. جستجوی کاربران
     QVector<User*> users = m_userService->searchUsers(keyword);
 
     if (users.isEmpty()) {
         return Response::error(CommandType::SearchUsers, "No users found");
     }
-
-    // 3. ساخت لیست کاربران برای پاسخ (بر اساس نقش)
     QVariantList userList;
     for (User* user : users) {
         QVariantMap userData;
-
-        // ===== اطلاعات عمومی (همه کاربران) =====
         userData["id"] = user->getId();
         userData["username"] = user->getUsername();
         userData["email"] = user->getEmail();
         userData["role"] = user->getRoleString();
-
-        // ===== اطلاعات بر اساس نقش =====
         if (user->isPublisher()) {
-            // ✅ ناشر: اطلاعات انتشاراتی
             Publisher* publisher = static_cast<Publisher*>(user);
 
             userData["publisherName"] = publisher->getPublisherName();
             userData["totalRevenue"] = publisher->getTotalRevenue();
             userData["joinedAt"] = publisher->getJoinedAt().toString(Qt::ISODate);
-
-            // تعداد کتاب‌های منتشرشده
             QVector<QSharedPointer<Book>> books = m_bookService->getBooksByPublisher(user->getId());
             userData["publishedBooksCount"] = books.size();
 
-            // لیست کتاب‌ها (فقط عنوان و ID)
             QVariantList bookList;
             for (QSharedPointer<Book> book : books) {
                 QVariantMap bookData;
@@ -1263,9 +1302,6 @@ Response SearchUserCommand::execute(const QVariantMap& params)
     return Response::success(CommandType::SearchUsers, "Search completed", data);
 }
 
-
-
-// Commands.cpp
 SearchAuthorCommand::SearchAuthorCommand(BookService* bookService)
     : m_bookService(bookService)
 {
@@ -1280,14 +1316,12 @@ Response SearchAuthorCommand::execute(const QVariantMap& params)
         return Response::error(CommandType::SearchAuthors, "Keyword is required");
     }
 
-    // 2. جستجوی نویسندگان (با کتاب‌هایشان)
     QMap<QString, QVector<QSharedPointer<Book>>> authorBooks = m_bookService->searchAuthorsWithBooks(keyword);
 
     if (authorBooks.isEmpty()) {
         return Response::error(CommandType::SearchAuthors, "No authors found");
     }
 
-    // 3. ساخت لیست نویسندگان با کتاب‌هایشان
     QVariantList authorList;
     for (auto it = authorBooks.begin(); it != authorBooks.end(); ++it) {
         QString authorName = it.key();
@@ -1296,8 +1330,6 @@ Response SearchAuthorCommand::execute(const QVariantMap& params)
         QVariantMap authorData;
         authorData["author"] = authorName;
         authorData["bookCount"] = books.size();
-
-        // لیست کامل کتاب‌های نویسنده
         QVariantList bookList;
         for (QSharedPointer<Book> book : books) {
             QVariantMap bookData;

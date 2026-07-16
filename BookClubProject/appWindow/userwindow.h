@@ -16,6 +16,10 @@ class UserWindow : public QWidget
 {
     Q_OBJECT
 
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 public:
     explicit UserWindow(NetworkManager* networkManager, QWidget *parent = nullptr);
     ~UserWindow();
@@ -86,6 +90,11 @@ private:
     int m_newBooksPerPage = 2; // تعداد کتاب در هر صفحه (می‌توانید روی 2 یا هر تعداد دیگری تنظیم کنید)
     QMap<int, QVariantMap> m_newBooksCache;
     void updateNewBooksDisplay();
+
+
+    void onFreeBookClicked();
+    void onRecommendedBookClicked(int offset);
+    void onNewBookClicked();
 };
 
 #endif // USERWINDOW_H

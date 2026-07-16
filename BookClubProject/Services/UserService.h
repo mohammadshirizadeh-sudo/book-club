@@ -26,7 +26,7 @@ public:
     //                    const QString& newFullName,
     //                    const QVector<Genre>& newGenres);
 
-    bool updateProfile(int userId, const QString& newEmail,
+    ValidationResult updateProfile(int userId, const QString& newEmail,
                                     const QString& newFullName,
                        const QString& newUserName);
 

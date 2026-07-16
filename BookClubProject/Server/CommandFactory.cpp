@@ -37,7 +37,7 @@ Command* CommandFactory::create(
     // ===== User Commands =====
     // =============================================
     case CommandType::GetProfile:
-        return new GetProfileCommand(userService);
+        return new GetProfileCommand(userService , purchaseService);
 
     case CommandType::UpdateProfile:
         return new UpdateProfileCommand(userService);

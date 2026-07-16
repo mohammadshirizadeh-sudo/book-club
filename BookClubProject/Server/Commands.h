@@ -152,13 +152,14 @@ private:
 class GetProfileCommand : public Command
 {
 public:
-    explicit GetProfileCommand(UserService* userService);
+    explicit GetProfileCommand(UserService* userService,PurchaseService* m_purchaseService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetProfile; }
     QString getName() const override { return "GetProfile"; }
 
 private:
     UserService* m_userService;
+    PurchaseService* m_purchaseService;
 };
 
 class UpdateProfileCommand : public Command

@@ -1,14 +1,19 @@
+
 #include "mybooks.h"
 #include "Publishers/ui_mybooks.h"
+#include "../Publishers/addnewbookdialog.h"
 
 #include "../appWindow/SessionManager.h"
 #include "../Network-Manger/NetworkManager.h"
+#include "../Publishers/mybooks.h"
+
 #include "../Server/Request.h"
 #include "../Server/Response.h"
 
-MyBooks::MyBooks(QWidget *parent)
+MyBooks::MyBooks(NetworkManager* networkManager,QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::MyBooks)
+    , m_networkManager(networkManager)
 {
     ui->setupUi(this);
 }
@@ -20,6 +25,10 @@ MyBooks::~MyBooks()
 
 void MyBooks::on_addBookPushButton_clicked()
 {
+
+    AddNewBookDialog dialog(m_networkManager , this);
+    // EditInfoDialog dialog(m_networkManager , this);
+    dialog.exec();
 
 }
 
