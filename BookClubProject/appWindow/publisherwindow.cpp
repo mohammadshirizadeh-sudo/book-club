@@ -5,6 +5,7 @@ PublisherWindow::PublisherWindow(NetworkManager* networkManager,QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::PublisherWindow)
     , m_networkManager(networkManager)
+
 {
     ui->setupUi(this);
     connect(m_networkManager, &NetworkManager::responseReceived,
@@ -26,3 +27,9 @@ void PublisherWindow::handleResponse(const Response& response)
 {
 
 }
+
+void PublisherWindow::on_pubBooksPushButton_clicked()
+{
+    emit myBooksWindow();
+}
+

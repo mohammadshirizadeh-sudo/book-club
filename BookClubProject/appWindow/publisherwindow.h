@@ -21,8 +21,12 @@ private slots:
 
     void handleResponse(const Response& response);
 
+    void on_pubBooksPushButton_clicked();
+
 signals:
     void publisherProfileWindow();
+
+    void myBooksWindow();
 
 private:
     Ui::PublisherWindow *ui;

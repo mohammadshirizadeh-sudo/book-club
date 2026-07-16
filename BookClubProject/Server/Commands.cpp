@@ -833,6 +833,34 @@ Response AddBookCommand::execute(const QVariantMap& params)
     double price = params["price"].toDouble();
     double discountPercent = params.value("discountPercent", 0.0).toDouble();
 
+    // ۱. دریافت آدرس کاور از پارامترها
+    QString coverPath = params["coverPath"].toString();
+
+    // ۲. ارسال پارامتر جدید به متد سرویس (باید این متد را هم در سرویس خود آپدیت کنی)
+
+    if (m_publisherService->addBook(publisherId, title, author, genre, description, price , 0, coverPath,"hello")) {
+        QVariantMap data;
+        data["title"] = title;
+        data["author"] = author;
+        data["coverPath"] = coverPath;
+        return Response::success(CommandType::AddBook , "Book added successfully", data);
+    }
+    return Response::error(CommandType::AddBook ,"Failed to add book");
+}
+
+
+/*
+
+Response AddBookCommand::execute(const QVariantMap& params)
+{
+    int publisherId = params["publisherId"].toInt();
+    QString title = params["title"].toString();
+    QString author = params["author"].toString();
+    Genre genre = GenreHelper::fromString(params["genre"].toString());
+    QString description = params["description"].toString();
+    double price = params["price"].toDouble();
+    double discountPercent = params.value("discountPercent", 0.0).toDouble();
+
 
 
     if (m_publisherService->addBook(publisherId, title, author, genre, description, price)) {
@@ -843,6 +871,7 @@ Response AddBookCommand::execute(const QVariantMap& params)
     }
     return Response::error(CommandType::AddBook ,"Failed to add book");
 }
+*/
 
 // ----- EditBookCommand -----
 EditBookCommand::EditBookCommand(PublisherService* publisherService)

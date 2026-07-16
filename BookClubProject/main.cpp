@@ -14,7 +14,8 @@
 #include "Users/UserProfileWindow.h"
 #include "Server/server.h"
 #include "Database/DatabaseInitializer.h"
-#
+
+#include "Publishers/mybooks.h"
 
 #include <QApplication>
 #include <QStackedWidget>
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
     UserProfileWindow* profileWindow = new UserProfileWindow(networkManager);
     SearchWindow* searchWindow = new SearchWindow(networkManager);
     PublisherProfileWindow* publisherProfileWindow =  new PublisherProfileWindow(networkManager);
+    MyBooks* mybooks = new MyBooks(networkManager);
 
 
 
@@ -78,6 +80,7 @@ int main(int argc, char *argv[])
     int profileIndex = stackedWidget.addWidget(profileWindow);
     int searchIndex = stackedWidget.addWidget(searchWindow);
     int publisherProfileindex = stackedWidget.addWidget(publisherProfileWindow);
+    int mybooksIndex = stackedWidget.addWidget(mybooks);
 
 
     //-------------------------------------------------
@@ -90,6 +93,17 @@ int main(int argc, char *argv[])
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(searchIndex);
+                     });
+
+
+
+
+
+    QObject::connect(publisherWindow,
+                     &PublisherWindow::myBooksWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(mybooksIndex);
                      });
 
 

@@ -69,6 +69,9 @@ QVector<QSharedPointer<Book>> PublisherService::getBooksByPublisher(int publishe
 
 
 
+
+
+
 bool PublisherService::addBook(int publisherId, const QString& title, const QString& author,
                                const Genre& genre, const QString& description, double price,
                                double discountPercent, const QString& coverPath,

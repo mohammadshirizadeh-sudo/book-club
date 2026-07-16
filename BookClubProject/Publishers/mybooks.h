@@ -2,6 +2,7 @@
 #define MYBOOKS_H
 
 #include <QWidget>
+#include "../Network-Manger/NetworkManager.h"
 
 namespace Ui {
 class MyBooks;
@@ -12,7 +13,7 @@ class MyBooks : public QWidget
     Q_OBJECT
 
 public:
-    explicit MyBooks(QWidget *parent = nullptr);
+    explicit MyBooks(NetworkManager* networkManager , QWidget *parent = nullptr);
     ~MyBooks();
 
 private slots:
@@ -30,6 +31,7 @@ private slots:
 
 private:
     Ui::MyBooks *ui;
+        NetworkManager* m_networkManager;
 };
 
 #endif // MYBOOKS_H
