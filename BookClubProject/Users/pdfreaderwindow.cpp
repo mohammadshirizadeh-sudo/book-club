@@ -2,7 +2,7 @@
 #include "Users/ui_pdfreaderwindow.h"
 
 #include <QPdfDocument>
-#include <QPdfView>
+#include <QtPdfWidgets/QPdfView>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QKeyEvent>

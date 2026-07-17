@@ -238,8 +238,8 @@ int main(int argc, char *argv[])
     stackedWidget.show();
 
     a.setStyleSheet(
-        "QMessageBox QLabel { color: white; }"
-        "QPushButton { color: white; }");
+        "QMessageBox QLabel { color: black; }"
+        "QPushButton { color: black; }");
 
     int exitCode = a.exec();
 

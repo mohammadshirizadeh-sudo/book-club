@@ -152,9 +152,9 @@
    <widget class="QPushButton" name="forgotpassPushButton">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>340</x>
       <y>390</y>
-      <width>231</width>
+      <width>281</width>
       <height>51</height>
      </rect>
     </property>
@@ -166,7 +166,7 @@
 	border-radius: 12px;</string>
     </property>
     <property name="text">
-     <string>Forgot Password?</string>
+     <string>🗝️ Forgot Password?</string>
     </property>
    </widget>
    <widget class="QPushButton" name="registerPushButton">
@@ -192,10 +192,10 @@
    <widget class="QPushButton" name="signinPushButton">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>310</x>
       <y>550</y>
-      <width>141</width>
-      <height>71</height>
+      <width>161</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="styleSheet">

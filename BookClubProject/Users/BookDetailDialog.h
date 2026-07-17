@@ -17,6 +17,9 @@ public:
     explicit BookDetailDialog(const QVariantMap& bookData, QWidget *parent = nullptr);
     ~BookDetailDialog();
 
+private slots:
+    void on_addFavoritePushButton_clicked();
+
 private:
     Ui::BookDetailDialog *ui;
     void displayBookInfo(const QVariantMap& bookData);

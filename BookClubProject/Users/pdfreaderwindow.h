@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QPdfDocument>
-#include <QPdfView>
+#include <QtPdfWidgets/QPdfView>
 
 namespace Ui {
 class PdfReaderWindow;

@@ -2,13 +2,20 @@
 #include "ui_cartwindow.h"
 
 CartWindow::CartWindow(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::CartWindow)
+    : QMainWindow(parent), ui(new Ui::CartWindow)
 {
     ui->setupUi(this);
+    setupUI();
 }
 
-CartWindow::~CartWindow()
+CartWindow::~CartWindow() { delete ui; }
+
+void CartWindow::setupUI()
 {
-    delete ui;
+    setWindowTitle("Shopping Cart - Book Club");
+    setGeometry(0, 0, 1500, 800);
 }
+
+void CartWindow::on_backButton_clicked() { close(); }
+
+void CartWindow::on_checkoutButton_clicked() { /* Checkout */ }

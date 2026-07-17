@@ -45,3 +45,8 @@ void BookDetailDialog::displayBookInfo(const QVariantMap& bookData)
         }
     }
 }
+void BookDetailDialog::on_addFavoritePushButton_clicked()
+{
+
+}
+
