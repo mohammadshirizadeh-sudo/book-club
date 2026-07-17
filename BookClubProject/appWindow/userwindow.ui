@@ -169,7 +169,7 @@
 }</string>
     </property>
     <property name="text">
-     <string>&lt;-- Quit</string>
+     <string>← Quit</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_7">
@@ -500,11 +500,14 @@ border-radius: 12px;</string>
    <widget class="QLabel" name="recommendedBooksTitleLabel1">
     <property name="geometry">
      <rect>
-      <x>780</x>
+      <x>790</x>
       <y>300</y>
       <width>231</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -513,11 +516,14 @@ border-radius: 12px;</string>
    <widget class="QLabel" name="freeBooksTitleLabel">
     <property name="geometry">
      <rect>
-      <x>700</x>
+      <x>720</x>
       <y>750</y>
       <width>271</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -532,6 +538,9 @@ border-radius: 12px;</string>
       <height>31</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
+    </property>
     <property name="text">
      <string>TextLabel</string>
     </property>
@@ -539,11 +548,14 @@ border-radius: 12px;</string>
    <widget class="QLabel" name="recommendedBooksTitleLabel2">
     <property name="geometry">
      <rect>
-      <x>1060</x>
+      <x>1070</x>
       <y>300</y>
       <width>231</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -606,6 +618,9 @@ border-radius: 12px;</string>
       <width>271</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>

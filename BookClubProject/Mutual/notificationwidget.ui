@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NotificationWidget</class>
+ <widget class="QWidget" name="NotificationWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>350</width>
+    <height>450</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Notifications</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/white.png);</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>500</width>
+     <height>600</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+    background-color: rgba(255,255,255,10);
+}</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QFrame" name="headerFrame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>501</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame#headerFrame {
+    background-color: rgba(100, 150, 255, 220);
+    border: 3px solid black;
+    border-radius: 12px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QLabel" name="titleLabel">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>10</y>
+       <width>250</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 30px;
+    color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string>🔔 Notifications</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="unreadBadgeLabel">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>10</y>
+       <width>81</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background-color: rgb(231, 76, 60);
+    color: black;
+    border-radius: 12px;
+    border: 2px solid black;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+}</string>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="toolbarFrame">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>70</y>
+      <width>491</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame#toolbarFrame {
+    background-color: rgba(255, 255, 255, 200);
+    border: 3px solid black;
+    border-radius: 12px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="markReadButton">
+     <property name="geometry">
+      <rect>
+       <x>8</x>
+       <y>10</y>
+       <width>111</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Mark selected notification as read</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(227, 242, 253);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(187, 222, 251);
+}</string>
+     </property>
+     <property name="text">
+      <string>✓ Read</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="markAllReadButton">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>10</y>
+       <width>111</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Mark all notifications as read</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(232, 245, 233);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(200, 230, 201);
+}</string>
+     </property>
+     <property name="text">
+      <string>All✓</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="clearAllButton">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>10</y>
+       <width>111</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Clear all notifications</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 235, 238);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(255, 205, 210);
+}</string>
+     </property>
+     <property name="text">
+      <string>🗑 Clear</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="refreshButton">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>10</y>
+       <width>111</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Refresh notifications from server</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 243, 224);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+}
+QPushButton:hover {
+    background-color: rgb(255, 224, 178);
+}</string>
+     </property>
+     <property name="text">
+      <string>🔄 Refresh</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QListWidget" name="notificationList">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>139</y>
+      <width>491</width>
+      <height>391</height>
+     </rect>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::FocusPolicy::StrongFocus</enum>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::ContextMenuPolicy::DefaultContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QListWidget#notificationList {
+    background-color: black;
+    border: 3px solid black;
+    border-radius: 12px;
+    outline: none;
+    font-size: 17px;
+}
+
+QListWidget#notificationList::item {
+    padding: 10px;
+    border-bottom: 1px solid rgb(233, 236, 239);
+    min-height: 60px;
+}
+
+QListWidget#notificationList::item:selected {
+    background-color: rgb(227, 242, 253);
+    border-left: 3px solid black;
+}
+
+QListWidget#notificationList::item:hover:!selected {
+    background-color: rgb(0, 0, 0);
+}
+
+QListWidget#notificationList::item:alternate {
+    background-color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="showDropIndicator" stdset="0">
+     <bool>false</bool>
+    </property>
+    <property name="dragDropMode">
+     <enum>QAbstractItemView::DragDropMode::NoDragDrop</enum>
+    </property>
+    <property name="alternatingRowColors">
+     <bool>true</bool>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>32</width>
+      <height>32</height>
+     </size>
+    </property>
+    <property name="textElideMode">
+     <enum>Qt::TextElideMode::ElideRight</enum>
+    </property>
+    <property name="verticalScrollMode">
+     <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
+    </property>
+    <property name="resizeMode">
+     <enum>QListView::ResizeMode::Adjust</enum>
+    </property>
+    <property name="layoutMode">
+     <enum>QListView::LayoutMode::SinglePass</enum>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QFrame" name="statusFrame">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>540</y>
+      <width>491</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame#statusFrame {
+    background-color: rgba(240, 240, 240, 230);
+    border: 3px solid black;
+    border-radius: 12px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QLabel" name="statusLabel">
+     <property name="geometry">
+      <rect>
+       <x>12</x>
+       <y>12</y>
+       <width>231</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string>Total: 0   |   Unread: 0</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="autoRefreshLabel">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>12</y>
+       <width>100</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 14px;
+    color: rgb(40, 167, 69);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

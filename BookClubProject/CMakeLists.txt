@@ -81,15 +81,20 @@ qt_add_executable(BookClubProject
     Users/BookDetailDialog.h Users/BookDetailDialog.cpp Users/BookDetailDialog.ui
     Users/allgenreswindow.h Users/allgenreswindow.cpp Users/allgenreswindow.ui
     Users/cartwindow.h Users/cartwindow.cpp Users/cartwindow.ui
-    Users/favoritebookswindow.h Users/favoritebookswindow.cpp Users/favoritebookswindow.ui
+
     Users/BookDetailDialog.h Users/BookDetailDialog.cpp Users/BookDetailDialog.ui
     Users/UserDetailDialog.h Users/UserDetailDialog.cpp Users/UserDetailDialog.ui
     Users/AuthorDetailDialog.h Users/AuthorDetailDialog.cpp Users/AuthorDetailDialog.ui
-    Users/mylibrarywindow.h Users/mylibrarywindow.cpp Users/mylibrarywindow.ui
+
 
     Publishers/PublisherInfoDialog.h Publishers/PublisherInfoDialog.cpp Publishers/PublisherInfoDialog.ui
-    Publishers/addnewbookdialog.h Publishers/addnewbookdialog.cpp Publishers/addnewbookdialog.ui
-    Publishers/deleteBookWindow.h Publishers/deleteBookWindow.cpp Publishers/deleteBookWindow.ui
+
+    Mutual/notificationwidget.h Mutual/notificationwidget.cpp Mutual/notificationwidget.ui
+    Users/pdfreaderwindow.h Users/pdfreaderwindow.cpp Users/pdfreaderwindow.ui
+    Publishers/addbookdialog.h Publishers/addbookdialog.cpp Publishers/addbookdialog.ui
+    Server/serverdashboardwindow.h Server/serverdashboardwindow.cpp Server/serverdashboardwindow.ui
+    Users/shelfmanagementdialog.h Users/shelfmanagementdialog.cpp Users/shelfmanagementdialog.ui
+
 
 
 )

@@ -1,9 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/whiteWood.jpg</file>
-        <file>resources/blueBack.png</file>
         <file>resources/icon.jpg</file>
-        <file>resources/skyblueBack.jpg</file>
         <file>resources/favBooks.png</file>
         <file>resources/shopping.png</file>
         <file>resources/password.png</file>
@@ -20,8 +17,7 @@
         <file>resources/51QnRBHJ+sL._SY445_SX342_ML2_.jpg</file>
         <file>resources/17273.webp</file>
         <file>resources/Screen-Shot-2017-05-31-at-2.19.46-PM.png</file>
-        <file>resources/clouds.jpg</file>
         <file>resources/white.png</file>
-        <file>resources/headphone.png</file>
+        <file>resources/blue.png</file>
     </qresource>
 </RCC>

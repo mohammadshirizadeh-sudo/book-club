@@ -125,7 +125,7 @@
 }</string>
     </property>
     <property name="text">
-     <string>&lt;-- Quit</string>
+     <string>← Quit</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
