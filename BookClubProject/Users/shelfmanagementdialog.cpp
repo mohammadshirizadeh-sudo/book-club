@@ -40,6 +40,7 @@ void ShelfManagementDialog::loadShelves()
     params["userId"] = m_userId;
 
     Request request(CommandType::GetUserShelves, params);
+
     m_networkManager->sendRequest(request);
 }
 
@@ -68,7 +69,7 @@ void ShelfManagementDialog::updateBookDetails(int bookId)
     QVariantMap params;
     params["bookId"] = bookId;
 
-    Request request(CommandType::GetBookDetails, params);
+    Request request(CommandType::GetBookById, params);
     m_networkManager->sendRequest(request);
 
     // Enable buttons
@@ -154,6 +155,7 @@ void ShelfManagementDialog::on_deleteShelfButton_clicked()
         params["shelfId"] = shelfId;
 
         Request request(CommandType::DeleteShelf, params);
+
         m_networkManager->sendRequest(request);
     }
 }
@@ -340,7 +342,7 @@ void ShelfManagementDialog::onResponseReceived(const Response& response)
         }
         break;
 
-    case CommandType::GetBookDetails:
+    case CommandType::GetBookById:
         if (response.isSuccess()) {
             QVariantMap book = response.getData()["book"].toMap();
 

@@ -1,7 +1,9 @@
 
 #include "mybooks.h"
 #include "Publishers/ui_mybooks.h"
-#include "../Publishers/addnewbookdialog.h"
+// #include "../Publishers/addnewbookdialog.h"
+
+#include "../Publishers/addbookdialog.h"
 
 #include "../appWindow/SessionManager.h"
 #include "../Network-Manger/NetworkManager.h"
@@ -26,9 +28,9 @@ MyBooks::~MyBooks()
 void MyBooks::on_addBookPushButton_clicked()
 {
 
-    AddNewBookDialog dialog(m_networkManager , this);
+    // AddNewBookDialog dialog(m_networkManager , this);
     // EditInfoDialog dialog(m_networkManager , this);
-    dialog.exec();
+    // dialog.exec();
 
 }
 

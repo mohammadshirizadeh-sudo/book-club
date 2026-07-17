@@ -7,6 +7,8 @@
 #include "../Services/PurchaseService.h"
 #include "../Services/ReviewService.h"
 #include "../Services/PublisherService.h"
+#include "../Services/LibraryService.h"
+
 #include "../Repositories/UserRepository.h"
 #include "ClientHandler.h"
 #include "Request.h"
@@ -849,6 +851,7 @@ Response AddBookCommand::execute(const QVariantMap& params)
 }
 
 
+
 /*
 
 Response AddBookCommand::execute(const QVariantMap& params)
@@ -1358,5 +1361,694 @@ Response SearchAuthorCommand::execute(const QVariantMap& params)
 
     return Response::success(CommandType::SearchAuthors, "Search completed", data);
 }
+
+
+
+
+
+// Commands.cpp
+GetNotificationsCommand::GetNotificationsCommand(NotificationService* notificationService)
+    : m_notificationService(notificationService)
+{
+}
+
+Response GetNotificationsCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت userId از پارامترها
+    int userId = params.value("userId").toInt();
+
+    if (userId <= 0) {
+        return Response::error(CommandType::GetNotifications, "Invalid user ID");
+    }
+
+    // 2. دریافت اعلان‌های کاربر
+    QVector<Notification> notifications = m_notificationService->getNotificationsForUser(userId);
+
+    // 3. ساخت لیست اعلان‌ها برای پاسخ
+    QVariantList notificationList;
+    for (const Notification& notif : notifications) {
+        QVariantMap notifData;
+        notifData["notificationId"] = notif.getNotificationId();
+        notifData["type"] = NotificationService::notificationTypeToString(notif.getType());
+        notifData["title"] = notif.getTitle();
+        notifData["message"] = notif.getMessage();
+        notifData["isRead"] = notif.getIsRead();
+        notifData["createdAt"] = notif.getCreatedAt().toString(Qt::ISODate);
+        notificationList.append(notifData);
+    }
+
+    // 4. دریافت تعداد اعلان‌های خوانده‌نشده
+    int unreadCount = m_notificationService->getUnreadCount(userId);
+
+    QVariantMap data;
+    data["notifications"] = notificationList;
+    data["count"] = notificationList.size();
+    data["unreadCount"] = unreadCount;
+
+    return Response::success(CommandType::GetNotifications, "Notifications loaded", data);
+
+}
+
+
+
+// Commands.cpp
+MarkNotificationReadCommand::MarkNotificationReadCommand(NotificationService* notificationService)
+    : m_notificationService(notificationService)
+{
+}
+
+Response MarkNotificationReadCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int notificationId = params.value("notificationId").toInt();
+    int userId = params.value("userId").toInt();
+
+    // 2. اعتبارسنجی
+    if (notificationId <= 0) {
+        return Response::error(CommandType::MarkNotificationRead, "Invalid notification ID");
+    }
+
+    if (userId <= 0) {
+        return Response::error(CommandType::MarkNotificationRead, "Invalid user ID");
+    }
+
+    // 3. علامت‌گذاری به عنوان خوانده‌شده
+    bool success = m_notificationService->markAsRead(notificationId, userId);
+
+    if (!success) {
+        return Response::error(CommandType::MarkNotificationRead, "Failed to mark notification as read");
+    }
+
+    // 4. دریافت تعداد اعلان‌های خوانده‌نشده باقی‌مانده
+    int unreadCount = m_notificationService->getUnreadCount(userId);
+    QVariantMap data;
+    data["notificationId"] = notificationId;
+    data["unreadCount"] = unreadCount;
+
+    return Response::success(CommandType::MarkNotificationRead, "Notification marked as read", data);
+}
+
+
+// Commands.cpp
+MarkAllNotificationsReadCommand::MarkAllNotificationsReadCommand(NotificationService* notificationService)
+    : m_notificationService(notificationService)
+{
+}
+
+Response MarkAllNotificationsReadCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت userId از پارامترها
+    int userId = params.value("userId").toInt();
+
+    if (userId <= 0) {
+        return Response::error(CommandType::MarkAllNotificationsRead, "Invalid user ID");
+    }
+
+    // 2. علامت‌گذاری همه اعلان‌ها به عنوان خوانده‌شده
+    m_notificationService->markAllAsRead(userId);
+
+    // 3. دریافت تعداد اعلان‌های خوانده‌نشده (که باید 0 باشد)
+    int unreadCount = m_notificationService->getUnreadCount(userId);
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["unreadCount"] = unreadCount;
+
+    return Response::success(CommandType::MarkAllNotificationsRead, "All notifications marked as read", data);
+}
+
+
+
+
+// Commands.cpp
+ClearAllNotificationsCommand::ClearAllNotificationsCommand(NotificationService* notificationService)
+    : m_notificationService(notificationService)
+{
+}
+
+Response ClearAllNotificationsCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت userId از پارامترها
+    int userId = params.value("userId").toInt();
+
+    if (userId <= 0) {
+        return Response::error(CommandType::ClearAllNotifications, "Invalid user ID");
+    }
+
+    // 2. پاک کردن همه اعلان‌های کاربر
+    m_notificationService->clearAllNotifications(userId);
+
+    // 3. دریافت تعداد اعلان‌های باقی‌مانده (که باید 0 باشد)
+    int unreadCount = m_notificationService->getUnreadCount(userId);
+    int totalCount = m_notificationService->getNotificationsForUser(userId).size();
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["unreadCount"] = unreadCount;
+    data["totalCount"] = totalCount;
+
+    return Response::success(CommandType::ClearAllNotifications, "All notifications cleared", data);
+}
+
+
+// Commands.cpp
+GetUserShelvesCommand::GetUserShelvesCommand(UserService* userService, LibraryService* libraryService)
+    : m_userService(userService)
+    , m_libraryService(libraryService)
+{
+}
+
+Response GetUserShelvesCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت userId از پارامترها
+    int userId = params.value("userId").toInt();
+
+    if (userId <= 0) {
+        return Response::error(CommandType::GetUserShelves, "Invalid user ID");
+    }
+
+    // 2. دریافت کتابخانه کاربر
+    QSharedPointer<Library> library = m_libraryService->getLibraryByUserId(userId);
+    if (!library) {
+        return Response::error(CommandType::GetUserShelves, "Library not found for this user");
+    }
+
+    // 3. دریافت قفسه‌ها
+    QVector<Shelf> shelves = library->getShelves();
+
+    // 4. ساخت لیست قفسه‌ها برای پاسخ
+    QVariantList shelfList;
+    for (const Shelf& shelf : shelves) {
+        QVariantMap shelfData;
+        shelfData["shelfId"] = shelf.getShelfId();
+        shelfData["name"] = shelf.getName();
+        shelfData["bookCount"] = shelf.getBookCount();
+
+        // لیست کتاب‌های هر قفسه
+        QVariantList bookIds;
+        for (int bookId : shelf.getBookIds()) {
+            bookIds.append(bookId);
+        }
+        shelfData["bookIds"] = bookIds;
+
+        shelfList.append(shelfData);
+    }
+
+    QVariantMap data;
+    data["shelves"] = shelfList;
+    data["count"] = shelfList.size();
+    data["userId"] = userId;
+
+    return Response::success(CommandType::GetUserShelves, "Shelves loaded successfully", data);
+}
+
+
+// Commands.cpp
+GetBooksInShelfCommand::GetBooksInShelfCommand(LibraryService* libraryService, BookService* bookService)
+    : m_libraryService(libraryService)
+    , m_bookService(bookService)
+{
+}
+
+Response GetBooksInShelfCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int userId = params.value("userId").toInt();
+    int shelfId = params.value("shelfId").toInt();
+
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::GetBooksInShelf, "Invalid user ID");
+    }
+
+    if (shelfId <= 0) {
+        return Response::error(CommandType::GetBooksInShelf, "Invalid shelf ID");
+    }
+
+    // 3. دریافت کتابخانه کاربر
+    QSharedPointer<Library> library = m_libraryService->getLibraryByUserId(userId);
+    if (!library) {
+        return Response::error(CommandType::GetBooksInShelf, "Library not found for this user");
+    }
+
+    // 4. دریافت قفسه
+    QVector<Shelf> shelves = library->getShelves();
+    QVector<int> bookIds;
+
+    bool shelfFound = false;
+    for (const Shelf& shelf : shelves) {
+        if (shelf.getShelfId() == shelfId) {
+            bookIds = shelf.getBookIds();
+            shelfFound = true;
+            break;
+        }
+    }
+
+    if (!shelfFound) {
+        return Response::error(CommandType::GetBooksInShelf, "Shelf not found");
+    }
+
+    // 5. دریافت اطلاعات کامل کتاب‌ها
+    QVariantList bookList;
+    for (int bookId : bookIds) {
+        QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+        if (book) {
+            QVariantMap bookData;
+            bookData["bookId"] = book->getBookId();
+            bookData["title"] = book->getTitle();
+            bookData["author"] = book->getAuthor();
+            bookData["genre"] = GenreHelper::toString(book->getGenre());
+            bookData["description"] = book->getDescription();
+            bookData["price"] = book->getPrice();
+            bookData["discountPercent"] = book->getDiscountPercent();
+            bookData["finalPrice"] = book->getFinalPrice();
+            bookData["averageRating"] = book->getAverageRating();
+            bookData["coverPath"] = book->getCoverPath();
+            bookData["pdfPath"] = book->getPdfPath();
+            bookData["isActive"] = book->getIsActive();
+            bookList.append(bookData);
+        }
+    }
+
+    // 6. دریافت نام قفسه
+    QString shelfName;
+    for (const Shelf& shelf : shelves) {
+        if (shelf.getShelfId() == shelfId) {
+            shelfName = shelf.getName();
+            break;
+        }
+    }
+
+    QVariantMap data;
+    data["shelfId"] = shelfId;
+    data["shelfName"] = shelfName;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+
+    return Response::success(CommandType::GetBooksInShelf, "Books in shelf loaded", data);
+}
+
+
+
+CreateShelfCommand::CreateShelfCommand(LibraryService* libraryService)
+    : m_libraryService(libraryService)
+{
+}
+
+Response CreateShelfCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int userId = params.value("userId").toInt();
+    QString shelfName = params.value("name").toString().trimmed();
+
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::CreateShelf, "Invalid user ID");
+    }
+
+    if (shelfName.isEmpty()) {
+        return Response::error(CommandType::CreateShelf, "Shelf name is required");
+    }
+
+    if (shelfName.length() > 50) {
+        return Response::error(CommandType::CreateShelf, "Shelf name is too long (max 50 characters)");
+    }
+
+    // 3. ایجاد قفسه
+    bool success = m_libraryService->createShelf(userId, shelfName);
+
+    if (!success) {
+        return Response::error(CommandType::CreateShelf, "Failed to create shelf. Maybe a shelf with this name already exists.");
+    }
+
+    // 4. دریافت لیست قفسه‌های به‌روز شده
+    QVector<Shelf> shelves = m_libraryService->getShelves(userId);
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["shelfName"] = shelfName;
+    data["message"] = "Shelf created successfully";
+
+    return Response::success(CommandType::CreateShelf, "Shelf created successfully", data);
+}
+
+
+
+// Commands.cpp
+DeleteShelfCommand::DeleteShelfCommand(LibraryService* libraryService)
+    : m_libraryService(libraryService)
+{
+}
+
+Response DeleteShelfCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int userId = params.value("userId").toInt();
+    int shelfId = params.value("shelfId").toInt();
+
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::DeleteShelf, "Invalid user ID");
+    }
+
+    if (shelfId <= 0) {
+        return Response::error(CommandType::DeleteShelf, "Invalid shelf ID");
+    }
+
+    // 3. دریافت کتابخانه کاربر
+    QSharedPointer<Library> library = m_libraryService->getLibraryByUserId(userId);
+    if (!library) {
+        return Response::error(CommandType::DeleteShelf, "Library not found for this user");
+    }
+
+    // 4. بررسی وجود قفسه
+    QVector<Shelf> shelves = library->getShelves();
+    bool shelfExists = false;
+    for (const Shelf& shelf : shelves) {
+        if (shelf.getShelfId() == shelfId) {
+            shelfExists = true;
+            break;
+        }
+    }
+
+    if (!shelfExists) {
+        return Response::error(CommandType::DeleteShelf, "Shelf not found");
+    }
+
+    // 5. حذف قفسه
+    bool success = m_libraryService->deleteShelf(userId, shelfId);
+
+    if (!success) {
+        return Response::error(CommandType::DeleteShelf, "Failed to delete shelf");
+    }
+
+    // 6. دریافت لیست به‌روز شده قفسه‌ها (اختیاری)
+    QVector<Shelf> updatedShelves = m_libraryService->getShelves(userId);
+    QVariantList shelfList;
+    for (const Shelf& shelf : updatedShelves) {
+        QVariantMap shelfData;
+        shelfData["shelfId"] = shelf.getShelfId();
+        shelfData["name"] = shelf.getName();
+        shelfData["bookCount"] = shelf.getBookCount();
+        shelfList.append(shelfData);
+    }
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["shelfId"] = shelfId;
+    data["shelves"] = shelfList;
+    data["count"] = shelfList.size();
+
+    return Response::success(CommandType::DeleteShelf, "Shelf deleted successfully", data);
+}
+
+
+
+
+// Commands.cpp
+RenameShelfCommand::RenameShelfCommand(LibraryService* libraryService)
+    : m_libraryService(libraryService)
+{
+}
+
+Response RenameShelfCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int userId = params.value("userId").toInt();
+    int shelfId = params.value("shelfId").toInt();
+    QString newName = params.value("newName").toString().trimmed();
+
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::RenameShelf, "Invalid user ID");
+    }
+
+    if (shelfId <= 0) {
+        return Response::error(CommandType::RenameShelf, "Invalid shelf ID");
+    }
+
+    if (newName.isEmpty()) {
+        return Response::error(CommandType::RenameShelf, "New shelf name is required");
+    }
+
+    if (newName.length() > 50) {
+        return Response::error(CommandType::RenameShelf, "Shelf name is too long (max 50 characters)");
+    }
+
+    // 3. دریافت کتابخانه کاربر
+    QSharedPointer<Library> library = m_libraryService->getLibraryByUserId(userId);
+    if (!library) {
+        return Response::error(CommandType::RenameShelf, "Library not found for this user");
+    }
+
+    // 4. بررسی وجود قفسه
+    QVector<Shelf> shelves = library->getShelves();
+    bool shelfExists = false;
+    for (const Shelf& shelf : shelves) {
+        if (shelf.getShelfId() == shelfId) {
+            shelfExists = true;
+            break;
+        }
+    }
+
+    if (!shelfExists) {
+        return Response::error(CommandType::RenameShelf, "Shelf not found");
+    }
+
+    // 5. بررسی اینکه نام جدید توسط قفسه دیگری استفاده نشده باشد
+    for (const Shelf& shelf : shelves) {
+        if (shelf.getShelfId() != shelfId && shelf.getName() == newName) {
+            return Response::error(CommandType::RenameShelf, "A shelf with this name already exists");
+        }
+    }
+
+    // 6. تغییر نام قفسه
+    bool success = m_libraryService->renameShelf(userId, shelfId, newName);
+
+    if (!success) {
+        return Response::error(CommandType::RenameShelf, "Failed to rename shelf");
+    }
+
+    // 7. دریافت لیست به‌روز شده قفسه‌ها
+    QVector<Shelf> updatedShelves = m_libraryService->getShelves(userId);
+    QVariantList shelfList;
+    for (const Shelf& shelf : updatedShelves) {
+        QVariantMap shelfData;
+        shelfData["shelfId"] = shelf.getShelfId();
+        shelfData["name"] = shelf.getName();
+        shelfData["bookCount"] = shelf.getBookCount();
+        shelfList.append(shelfData);
+    }
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["shelfId"] = shelfId;
+    data["newName"] = newName;
+    data["shelves"] = shelfList;
+    data["count"] = shelfList.size();
+
+    return Response::success(CommandType::RenameShelf, "Shelf renamed successfully", data);
+}
+
+
+
+
+// Commands.cpp
+RemoveBookFromShelfCommand::RemoveBookFromShelfCommand(LibraryService* libraryService)
+    : m_libraryService(libraryService)
+{
+}
+
+Response RemoveBookFromShelfCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int userId = params.value("userId").toInt();
+    int shelfId = params.value("shelfId").toInt();
+    int bookId = params.value("bookId").toInt();
+
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::RemoveBookFromShelf, "Invalid user ID");
+    }
+
+    if (shelfId <= 0) {
+        return Response::error(CommandType::RemoveBookFromShelf, "Invalid shelf ID");
+    }
+
+    if (bookId <= 0) {
+        return Response::error(CommandType::RemoveBookFromShelf, "Invalid book ID");
+    }
+
+    // 3. دریافت کتابخانه کاربر
+    QSharedPointer<Library> library = m_libraryService->getLibraryByUserId(userId);
+    if (!library) {
+        return Response::error(CommandType::RemoveBookFromShelf, "Library not found for this user");
+    }
+
+    // 4. بررسی وجود قفسه
+    QVector<Shelf> shelves = library->getShelves();
+    bool shelfExists = false;
+    bool bookInShelf = false;
+
+    for (const Shelf& shelf : shelves) {
+        if (shelf.getShelfId() == shelfId) {
+            shelfExists = true;
+            if (shelf.getBookIds().contains(bookId)) {
+                bookInShelf = true;
+            }
+            break;
+        }
+    }
+
+    if (!shelfExists) {
+        return Response::error(CommandType::RemoveBookFromShelf, "Shelf not found");
+    }
+
+    if (!bookInShelf) {
+        return Response::error(CommandType::RemoveBookFromShelf, "Book not found in this shelf");
+    }
+
+    // 5. حذف کتاب از قفسه
+    bool success = m_libraryService->removeBookFromShelf(userId, shelfId, bookId);
+
+    if (!success) {
+        return Response::error(CommandType::RemoveBookFromShelf, "Failed to remove book from shelf");
+    }
+
+    // 6. دریافت لیست به‌روز شده قفسه‌ها
+    QVector<Shelf> updatedShelves = m_libraryService->getShelves(userId);
+    QVariantList shelfList;
+    for (const Shelf& shelf : updatedShelves) {
+        QVariantMap shelfData;
+        shelfData["shelfId"] = shelf.getShelfId();
+        shelfData["name"] = shelf.getName();
+        shelfData["bookCount"] = shelf.getBookCount();
+
+        QVariantList bookIds;
+        for (int id : shelf.getBookIds()) {
+            bookIds.append(id);
+        }
+        shelfData["bookIds"] = bookIds;
+        shelfList.append(shelfData);
+    }
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["shelfId"] = shelfId;
+    data["bookId"] = bookId;
+    data["shelves"] = shelfList;
+    data["count"] = shelfList.size();
+
+    return Response::success(CommandType::RemoveBookFromShelf, "Book removed from shelf successfully", data);
+}
+
+
+
+// Commands.cpp
+MoveBookBetweenShelvesCommand::MoveBookBetweenShelvesCommand(LibraryService* libraryService)
+    : m_libraryService(libraryService)
+{
+}
+
+Response MoveBookBetweenShelvesCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int userId = params.value("userId").toInt();
+    int fromShelfId = params.value("fromShelfId").toInt();
+    int toShelfId = params.value("toShelfId").toInt();
+    int bookId = params.value("bookId").toInt();
+
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Invalid user ID");
+    }
+
+    if (fromShelfId <= 0) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Invalid source shelf ID");
+    }
+
+    if (toShelfId <= 0) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Invalid destination shelf ID");
+    }
+
+    if (bookId <= 0) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Invalid book ID");
+    }
+
+    if (fromShelfId == toShelfId) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Source and destination shelves are the same");
+    }
+
+    // 3. دریافت کتابخانه کاربر
+    QSharedPointer<Library> library = m_libraryService->getLibraryByUserId(userId);
+    if (!library) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Library not found for this user");
+    }
+
+    // 4. بررسی وجود هر دو قفسه و کتاب
+    QVector<Shelf> shelves = library->getShelves();
+    bool fromShelfExists = false;
+    bool toShelfExists = false;
+    bool bookInFromShelf = false;
+
+    for (const Shelf& shelf : shelves) {
+        if (shelf.getShelfId() == fromShelfId) {
+            fromShelfExists = true;
+            if (shelf.getBookIds().contains(bookId)) {
+                bookInFromShelf = true;
+            }
+        }
+        if (shelf.getShelfId() == toShelfId) {
+            toShelfExists = true;
+        }
+    }
+
+    if (!fromShelfExists) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Source shelf not found");
+    }
+
+    if (!toShelfExists) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Destination shelf not found");
+    }
+
+    if (!bookInFromShelf) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Book not found in source shelf");
+    }
+
+    // 5. انتقال کتاب بین قفسه‌ها
+    bool success = m_libraryService->moveBookBetweenShelves(userId, fromShelfId, toShelfId, bookId);
+
+    if (!success) {
+        return Response::error(CommandType::MoveBookBetweenShelves, "Failed to move book between shelves");
+    }
+
+    // 6. دریافت لیست به‌روز شده قفسه‌ها
+    QVector<Shelf> updatedShelves = m_libraryService->getShelves(userId);
+    QVariantList shelfList;
+    for (const Shelf& shelf : updatedShelves) {
+        QVariantMap shelfData;
+        shelfData["shelfId"] = shelf.getShelfId();
+        shelfData["name"] = shelf.getName();
+        shelfData["bookCount"] = shelf.getBookCount();
+
+        QVariantList bookIds;
+        for (int id : shelf.getBookIds()) {
+            bookIds.append(id);
+        }
+        shelfData["bookIds"] = bookIds;
+        shelfList.append(shelfData);
+    }
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["bookId"] = bookId;
+    data["fromShelfId"] = fromShelfId;
+    data["toShelfId"] = toShelfId;
+    data["shelves"] = shelfList;
+    data["count"] = shelfList.size();
+
+    return Response::success(CommandType::MoveBookBetweenShelves, "Book moved successfully", data);
+}
+
 
 

@@ -137,6 +137,9 @@ QLineEdit:focus {
     border-color: rgb(0, 100, 200);
 }</string>
     </property>
+    <property name="text">
+     <string/>
+    </property>
     <property name="maxLength">
      <number>255</number>
     </property>

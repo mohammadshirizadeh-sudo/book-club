@@ -76,7 +76,22 @@ enum class CommandType {
 
 
     SearchUsers,
+    GetNotifications,
 
+     MarkNotificationRead,
+    MarkAllNotificationsRead,
+    ClearAllNotifications,
+
+
+    GetUserShelves,
+    GetBooksInShelf,
+
+    CreateShelf,
+
+    DeleteShelf,
+    RenameShelf,
+    RemoveBookFromShelf,
+    MoveBookBetweenShelves,
 
     SearchAuthors
 };

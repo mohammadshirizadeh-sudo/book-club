@@ -13,6 +13,7 @@ class ReviewService;
 class CartService;
 class PublisherService;
 class AdminService;
+class NotificationService;
 
 /**
  * @brief Factory class for creating Command objects
@@ -33,7 +34,8 @@ public:
         ReviewService* reviewService,
         CartService* cartService,
         PublisherService* publisherService,
-        AdminService* adminService,ClientHandler* clientHandler
+        AdminService* adminService,NotificationService* notificationService, LibraryService* libraryService , ClientHandler* clientHandler
+
         );
 
 private:

@@ -94,6 +94,7 @@ qt_add_executable(BookClubProject
     Publishers/addbookdialog.h Publishers/addbookdialog.cpp Publishers/addbookdialog.ui
     Server/serverdashboardwindow.h Server/serverdashboardwindow.cpp Server/serverdashboardwindow.ui
     Users/shelfmanagementdialog.h Users/shelfmanagementdialog.cpp Users/shelfmanagementdialog.ui
+    Services/LibraryService.h Services/LibraryService.cpp
 
 
 
@@ -107,6 +108,7 @@ target_link_libraries(BookClubProject
         Qt6::Sql
         Qt::Concurrent
         Qt6::Charts
+        # Qt6::Pdf
 )
 
 install(TARGETS BookClubProject

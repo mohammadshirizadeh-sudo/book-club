@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QTimer>
 #include "../Server/server.h"
+#include <QDateTime>
+
 
 namespace Ui {
 class ServerDashboardWindow;
@@ -23,7 +25,7 @@ signals:
     void backRequested();
 
 private slots:
-    void on_backButton_clicked();
+    // void on_backButton_clicked();
     void on_startServerButton_clicked();
     void on_stopServerButton_clicked();
     void on_refreshStatsButton_clicked();
@@ -35,8 +37,8 @@ private slots:
     void autoRefreshStats();
 
     // Server signal handlers
-    void onClientConnected(const QString &socketId, const QString &ipAddress);
-    void onClientDisconnected(const QString &socketId);
+    void onClientConnected(qintptr socketId, const QString &ipAddress);
+    void onClientDisconnected(qintptr socketId);
     void onRequestReceived(const QString &requestInfo);
     void onResponseSent(const QString &responseInfo);
     void onServerError(const QString &errorMessage);

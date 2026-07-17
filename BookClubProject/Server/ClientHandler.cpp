@@ -72,6 +72,8 @@ void ClientHandler::onSocketError(QAbstractSocket::SocketError socketError)
     qWarning() << "⚠️ Socket error:" << m_socket->errorString()
         << "(Code:" << socketError << ")";
 
+    emit clientError(m_socket->errorString());
+
     m_socket->close();
     onDisconnected();
 }
@@ -173,7 +175,8 @@ void ClientHandler::handleRequest(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,this
+        m_adminService,m_notificationService,m_libraryService,this
+
         ));
 
     if (!command) {
@@ -218,7 +221,7 @@ void ClientHandler::handleRequestSync(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,this
+        m_adminService,m_notificationService ,m_libraryService,  this
         ));
     if (!command) {
         sendResponseSync(Response::error(request.getCommandType(),"Unknown command"));
@@ -248,6 +251,7 @@ void ClientHandler::sendResponse(const QString& response)
         QByteArray data = response.toUtf8() + "\n";
         qint64 bytesWritten = m_socket->write(data);
         m_socket->flush();
+
         qDebug() << "[SERVER OUT] Bytes written:" << bytesWritten;
         qDebug() << "[SERVER OUT] Raw payload:" << data;
     } else {
@@ -259,6 +263,8 @@ void ClientHandler::sendResponse(const QString& response)
 void ClientHandler::sendResponse(const Response& response)
 {
     sendResponse(response.toJsonString());
+    emit responseSent(response.toJsonString());
+
 }
 
 
@@ -284,6 +290,8 @@ void ClientHandler::processRequest(const QString& requestData)
         return;
     }
 
+    emit requestReceived(requestData);
+
 
     std::unique_ptr<Command> command(CommandFactory::create(
         request.getCommandType(),
@@ -294,7 +302,8 @@ void ClientHandler::processRequest(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,this
+        m_adminService,m_notificationService,m_libraryService, this
+
         ));
     if (!command) {
         emit responseReady(Response::error(request.getCommandType(),"Unknown command"));

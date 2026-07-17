@@ -7,6 +7,7 @@
 #include "Request.h"
 #include "Response.h"
 #include "../Repositories/ReviewRepository.h"
+#include "../Services/LibraryService.h"
 #include "../Services/AdminService.h"
 
 
@@ -684,5 +685,181 @@ public:
 private:
     BookService* m_bookService;
 };
+
+
+
+// Commands.h
+class GetNotificationsCommand : public Command
+{
+public:
+    explicit GetNotificationsCommand(NotificationService* notificationService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetNotifications; }
+    QString getName() const override { return "GetNotifications"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    NotificationService* m_notificationService;
+};
+
+
+// Commands.h
+class MarkNotificationReadCommand : public Command
+{
+public:
+    explicit MarkNotificationReadCommand(NotificationService* notificationService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::MarkNotificationRead; }
+    QString getName() const override { return "MarkNotificationRead"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    NotificationService* m_notificationService;
+};
+
+
+
+
+// Commands.h
+class MarkAllNotificationsReadCommand : public Command
+{
+public:
+    explicit MarkAllNotificationsReadCommand(NotificationService* notificationService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::MarkAllNotificationsRead; }
+    QString getName() const override { return "MarkAllNotificationsRead"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    NotificationService* m_notificationService;
+};
+
+
+
+class ClearAllNotificationsCommand : public Command
+{
+public:
+    explicit ClearAllNotificationsCommand(NotificationService* notificationService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::ClearAllNotifications; }
+    QString getName() const override { return "ClearAllNotifications"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    NotificationService* m_notificationService;
+};
+
+
+
+
+// Commands.h
+class GetUserShelvesCommand : public Command
+{
+public:
+    explicit GetUserShelvesCommand(UserService* userService, LibraryService* libraryService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetUserShelves; }
+    QString getName() const override { return "GetUserShelves"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    UserService* m_userService;
+    LibraryService* m_libraryService;
+};
+
+
+class GetBooksInShelfCommand : public Command
+{
+public:
+    explicit GetBooksInShelfCommand(LibraryService* libraryService, BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetBooksInShelf; }
+    QString getName() const override { return "GetBooksInShelf"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+    BookService* m_bookService;
+};
+
+
+class CreateShelfCommand : public Command
+{
+public:
+    explicit CreateShelfCommand(LibraryService* libraryService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::CreateShelf; }
+    QString getName() const override { return "CreateShelf"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+};
+
+
+
+
+
+
+
+// Commands.h
+class DeleteShelfCommand : public Command
+{
+public:
+    explicit DeleteShelfCommand(LibraryService* libraryService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::DeleteShelf; }
+    QString getName() const override { return "DeleteShelf"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+};
+
+
+
+class RenameShelfCommand : public Command
+{
+public:
+    explicit RenameShelfCommand(LibraryService* libraryService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::RenameShelf; }
+    QString getName() const override { return "RenameShelf"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+};
+
+
+// Commands.h
+class RemoveBookFromShelfCommand : public Command
+{
+public:
+    explicit RemoveBookFromShelfCommand(LibraryService* libraryService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::RemoveBookFromShelf; }
+    QString getName() const override { return "RemoveBookFromShelf"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+};
+
+
+class MoveBookBetweenShelvesCommand : public Command
+{
+public:
+    explicit MoveBookBetweenShelvesCommand(LibraryService* libraryService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::MoveBookBetweenShelves; }
+    QString getName() const override { return "MoveBookBetweenShelves"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+};
+
+
 
 #endif // COMMANDS_H

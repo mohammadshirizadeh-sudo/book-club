@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "../NetworkManger/NetworkManager.h"
+#include <QListWidgetItem>
 
 namespace Ui {
 class NotificationWidget;

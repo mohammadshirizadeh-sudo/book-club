@@ -33,6 +33,28 @@ public:
     bool start(quint16 port);
     void stop();
 
+     bool isRunning() const { return isListening(); }
+
+      void stopServer();
+
+
+     QList<ClientHandler*> getClients() const {
+         return m_clients.values();
+     }
+
+    void connectToClientSignals(ClientHandler* handler);
+      bool startServer(quint16 port);
+
+
+ signals:
+    void clientConnected(qintptr socketDescriptor, const QString& ipAddress);
+
+     void clientDisconnected(qintptr socketDescriptor);
+     void requestReceived(const QString& request);
+     void responseSent(const QString& response);
+     void errorOccurred(const QString& error);
+     void systemEvent(const QString& event);
+
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
 

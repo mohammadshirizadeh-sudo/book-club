@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include "../NetworkManger/NetworkManager.h"
+#include<QListWidgetItem>
+
 
 namespace Ui {
 class ShelfManagementDialog;
@@ -33,7 +35,7 @@ private slots:
     void on_bookList_currentItemChanged(QListWidgetItem *current);
     void onResponseReceived(const Response& response);
 
-    void on_backButton_clicked();
+    // void on_backButton_clicked();
 
 private:
     Ui::ShelfManagementDialog *ui;

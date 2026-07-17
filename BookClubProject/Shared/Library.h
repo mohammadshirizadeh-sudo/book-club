@@ -58,6 +58,7 @@ public:
     QVector<int> getBooksInShelf(int shelfId) const;
     QVector<int> getAllBooksInShelves() const;
     QVector<int> getUnshelvedBooks() const;
+
 };
 
 #endif // LIBRARY_H

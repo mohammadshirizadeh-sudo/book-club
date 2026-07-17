@@ -2,11 +2,14 @@
 #include "Server/ui_serverdashboardwindow.h"
 
 #include "../Server/server.h"
+#include "../Network-Manger/NetworkManager.h"
 
 #include <QDateTime>
 #include <QMessageBox>
 #include <QHeaderView>
 #include <QTableWidgetItem>
+
+#include <QtGlobal>
 
 ServerDashboardWindow::ServerDashboardWindow(QWidget *parent)
     : QWidget(parent)
@@ -100,8 +103,10 @@ void ServerDashboardWindow::refreshStatistics()
     static float cpuUsage = 0.0f;
     static float ramUsage = 30.0f;
 
-    cpuUsage = qMin(100.0f, cpuUsage + (qrand() % 20 - 10) * 0.1f);
-    ramUsage = qMin(95.0f, qMax(25.0f, ramUsage + (qrand() % 6 - 3) * 0.1f));
+    cpuUsage = qMin(100.0f, cpuUsage + (rand() % 20 - 10) * 0.1f);
+    ramUsage = qMin(95.0f, qMax(25.0f, ramUsage + (rand() % 6 - 3) * 0.1f));
+
+
 
     ui->cpuValueLabel->setText(QString("%1%").arg(cpuUsage, 0, 'f', 1));
     ui->cpuProgressBar->setValue(static_cast<int>(cpuUsage));
@@ -159,7 +164,7 @@ bool ServerDashboardWindow::startServer(int port)
     if (!m_server) {
         m_server = new Server(this);
 
-        // Connect server signals
+
         connect(m_server, &Server::clientConnected,
                 this, &ServerDashboardWindow::onClientConnected);
         connect(m_server, &Server::clientDisconnected,
@@ -246,10 +251,10 @@ void ServerDashboardWindow::logEvent(const QString &message, const QString &leve
 
 // ===== Slot Implementations =====
 
-void ServerDashboardWindow::on_backButton_clicked()
-{
-    emit backRequested();
-}
+// void ServerDashboardWindow::on_backButton_clicked()
+// {
+//     emit backRequested();
+// }
 
 void ServerDashboardWindow::on_startServerButton_clicked()
 {
@@ -285,8 +290,11 @@ void ServerDashboardWindow::on_clearLogsButton_clicked()
 
 // ===== Server Event Handlers =====
 
-void ServerDashboardWindow::onClientConnected(const QString &socketId, const QString &ipAddress)
+void ServerDashboardWindow::onClientConnected(qintptr socketDescriptor, const QString &ipAddress)
+
 {
+
+     QString socketId = QString::number(socketDescriptor);
     int row = ui->clientsTableWidget->rowCount();
     ui->clientsTableWidget->insertRow(row);
 
@@ -299,8 +307,10 @@ void ServerDashboardWindow::onClientConnected(const QString &socketId, const QSt
     logEvent(QString("Client connected: %1 (%2)").arg(ipAddress).arg(socketId), "SUCCESS");
 }
 
-void ServerDashboardWindow::onClientDisconnected(const QString &socketId)
+void ServerDashboardWindow::onClientDisconnected(qintptr socketDescriptor)
 {
+
+    QString socketId = QString::number(socketDescriptor);
     for (int i = 0; i < ui->clientsTableWidget->rowCount(); ++i) {
         QTableWidgetItem *idItem = ui->clientsTableWidget->item(i, 0);
         if (idItem && idItem->text() == socketId) {

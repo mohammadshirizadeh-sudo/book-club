@@ -1,9 +1,12 @@
+
+
+/*
 #ifndef PDFREADERWINDOW_H
 #define PDFREADERWINDOW_H
 
 #include <QWidget>
-#include <QPdfDocument>
-#include <QPdfView>
+// #include <QPdfDocument>
+// #include <QPdfView>
 
 namespace Ui {
 class PdfReaderWindow;
@@ -42,8 +45,8 @@ private slots:
 private:
     Ui::PdfReaderWindow *ui;
 
-    QPdfDocument *m_pdfDocument;
-    QPdfView *m_pdfView;
+    // QPdfDocument *m_pdfDocument;
+    // QPdfView *m_pdfView;
 
     int m_bookId;
     int m_currentPage;
@@ -58,3 +61,6 @@ private:
 };
 
 #endif // PDFREADERWINDOW_H
+
+
+*/

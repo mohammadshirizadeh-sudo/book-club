@@ -147,7 +147,27 @@ CommandType Request::stringToCommandType(const QString& str)
 
 
         {"SearchUsers", CommandType::SearchUsers},
-        {"SearchAuthors" , CommandType ::SearchAuthors},
+        {"GetNotifications" , CommandType ::GetNotifications},
+        {"MarkNotificationRead" , CommandType ::MarkNotificationRead},
+        {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
+
+        {"GetUserShelves" , CommandType ::GetUserShelves},
+
+        {"CreateShelf" , CommandType ::CreateShelf},
+        {"DeleteShelf" , CommandType ::DeleteShelf},
+        {"RenameShelf" , CommandType ::RenameShelf},
+
+        {"RemoveBookFromShelf" , CommandType ::RemoveBookFromShelf},
+
+
+        {"MoveBookBetweenShelves" , CommandType ::MoveBookBetweenShelves},
+
+
+
+
+
+
+
 
 
 
@@ -231,6 +251,33 @@ QString Request::CommandTypeToString(CommandType cmd)
 
     case CommandType::SearchUsers: return "SearchUsers";
     case CommandType::SearchAuthors : return "SearchAuthors";
+    case CommandType::GetNotifications: return "GetNotifications";
+    case CommandType::MarkAllNotificationsRead: return "MarkAllNotificationsRead";
+
+    case CommandType::ClearAllNotifications: return "ClearAllNotifications";
+    case CommandType::GetUserShelves: return "GetUserShelves";
+    case CommandType::DeleteShelf: return "DeleteShelf";
+
+
+    case CommandType::RenameShelf: return "RenameShelf";
+
+    case CommandType::RemoveBookFromShelf: return "RemoveBookFromShelf";
+
+
+    case CommandType::MoveBookBetweenShelves: return "MoveBookBetweenShelves";
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     default: return "Unknown";
     }

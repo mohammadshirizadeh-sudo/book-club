@@ -4,6 +4,7 @@
 #include "../Server/Request.h"
 #include "../Server/Response.h"
 #include "../Shared/Notification.h"
+#include "../appWindow/SessionManager.h"
 
 #include <QMessageBox>
 #include <QListWidgetItem>
@@ -30,7 +31,12 @@ NotificationWidget::~NotificationWidget()
 
 void NotificationWidget::loadNotifications()
 {
-    Request request(CommandType::GetNotifications);
+    int userId = SessionManager::instance()->getUserId();
+    QVariantMap data;
+    data["userId"] = userId;
+
+
+    Request request(CommandType::GetNotifications , data);
     m_networkManager->sendRequest(request);
 }
 
@@ -97,11 +103,14 @@ void NotificationWidget::on_markReadButton_clicked()
 
     QVariantMap notifData = currentItem->data(Qt::UserRole).toMap();
     int notificationId = notifData["id"].toInt();
+    int userId = SessionManager::instance()->getUserId();
 
     QVariantMap params;
     params["notificationId"] = notificationId;
+    params["userId"] = userId;
 
     Request request(CommandType::MarkNotificationRead, params);
+
     m_networkManager->sendRequest(request);
 }
 
@@ -114,7 +123,11 @@ void NotificationWidget::on_markAllReadButton_clicked()
         );
 
     if (reply == QMessageBox::Yes) {
-        Request request(CommandType::MarkAllNotificationsRead);
+        int userId = SessionManager::instance()->getUserId();
+        QVariantMap params;
+        params["userId"] = userId;
+        Request request(CommandType::MarkAllNotificationsRead , params);
+
         m_networkManager->sendRequest(request);
     }
 }
@@ -128,7 +141,10 @@ void NotificationWidget::on_clearAllButton_clicked()
         );
 
     if (reply == QMessageBox::Yes) {
-        Request request(CommandType::ClearAllNotifications);
+        int userId = SessionManager::instance()->getUserId();
+        QVariantMap params;
+        params["userId"] = userId;
+        Request request(CommandType::ClearAllNotifications , params);
         m_networkManager->sendRequest(request);
     }
 }

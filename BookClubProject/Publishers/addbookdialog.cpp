@@ -54,7 +54,7 @@ void AddBookDialog::clearForm()
     ui->pdfFileSizeLabel->setText("");
     ui->pdfStatusLabel->setText("");
 
-    charCountLabel->setText("0 chars");
+    ui->charCountLabel->setText("0 chars");
 
     validateForm();
 }

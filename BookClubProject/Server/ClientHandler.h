@@ -61,9 +61,30 @@ public:
 
     void setSession(int userId, UserRole role);
     void disconnectFromClient();
+
+
+    bool isValidSocket() const
+    {
+        return m_socket != nullptr;
+    }
+
+    QString peerAddress() const
+    {
+        return m_socket
+                   ? m_socket->peerAddress().toString()
+                   : QString();
+    }
+
+
+    qintptr m_socketDescriptor;
 signals:
     void disconnected();
     void responseReady(const Response& response);
+
+    void requestReceived(const QString& request);
+    void responseSent(const QString& response);
+    void clientError(const QString& error);
+
 
 
 private slots:
@@ -74,7 +95,7 @@ private slots:
 
 private:
     QTcpSocket* m_socket = nullptr;
-    qintptr m_socketDescriptor;
+
 
     QAtomicInt m_pendingTasks{0};
     QAtomicInt m_isDestroying{0};
@@ -90,6 +111,8 @@ private:
     CartService* m_cartService;
     PublisherService* m_publisherService;
     AdminService* m_adminService;
+    NotificationService* m_notificationService;
+    LibraryService* m_libraryService;
 
     RequestParser* m_parser = nullptr;
 

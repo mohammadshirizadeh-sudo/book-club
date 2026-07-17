@@ -1,8 +1,11 @@
+
+
+/*
 #include "pdfreaderwindow.h"
 #include "Users/ui_pdfreaderwindow.h"
 
-#include <QPdfDocument>
-#include <QPdfView>
+// #include <QPdfDocument>
+// #include <QPdfView>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QKeyEvent>
@@ -293,3 +296,4 @@ void PdfReaderWindow::keyPressEvent(QKeyEvent *event)
         break;
     }
 }
+*/
