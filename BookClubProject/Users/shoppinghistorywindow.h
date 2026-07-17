@@ -1,14 +1,13 @@
 #ifndef SHOPPINGHISTORYWINDOW_H
 #define SHOPPINGHISTORYWINDOW_H
 
-#include <QWidget>
-#include <QStandardItemModel>
+#include <QMainWindow>
 
-namespace Ui {
-class ShoppingHistoryWindow;
-}
+QT_BEGIN_NAMESPACE
+namespace Ui { class ShoppingHistoryWindow; }
+QT_END_NAMESPACE
 
-class ShoppingHistoryWindow : public QWidget
+class ShoppingHistoryWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -16,18 +15,12 @@ public:
     explicit ShoppingHistoryWindow(QWidget *parent = nullptr);
     ~ShoppingHistoryWindow();
 
-    // پاک کردن جدول
-    void clearHistory();
-
-    // اضافه کردن یک خرید
-    void addPurchase(const QString &bookName,
-                     const QString &author,
-                     const QString &amount);
+private slots:
+    void on_backButton_clicked();
 
 private:
     Ui::ShoppingHistoryWindow *ui;
-
-    QStandardItemModel *model;
+    void setupUI();
 };
 
 #endif // SHOPPINGHISTORYWINDOW_H

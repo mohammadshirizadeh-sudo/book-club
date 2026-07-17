@@ -2,6 +2,8 @@
 #define NOTIFICATIONWIDGET_H
 
 #include <QWidget>
+#include <QListWidgetItem>
+
 #include "../NetworkManger/NetworkManager.h"
 
 namespace Ui {

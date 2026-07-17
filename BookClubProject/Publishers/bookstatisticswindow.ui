@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BookStatisticsWindow</class>
+ <widget class="QMainWindow" name="BookStatisticsWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Book Statistics - Publisher Panel</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/white.png);</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="mainFrame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1500</width>
+      <height>800</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <widget class="QPushButton" name="backButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>211</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton#backButton { font: 700 9pt &quot;Script MT Bold&quot;; font-size: 40px; color: rgb(0,0,0); background-color: rgb(255,255,255); border: 3px solid black; border-radius: 12px; }</string>
+     </property>
+     <property name="text">
+      <string>← Back</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="titleLabel">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>15</y>
+       <width>700</width>
+       <height>60</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel#titleLabel {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 50px;
+	color: rgb(0,0,0);
+	background: transparent;
+}</string>
+     </property>
+     <property name="text">
+      <string>Book Statistics</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QFrame" name="totalBooksCard">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>130</y>
+       <width>420</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QFrame#totalBooksCard { background-color: #E3F2FD; border: 3px solid black; border-radius: 12px; }</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <widget class="QLabel" name="totalBooksValueLabel">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>0</y>
+        <width>191</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 35px;
+color: black;
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string>24</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="totalBooksValueLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>250</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 40px;
+color: black;
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string>Total Books:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QFrame" name="totalSalesCard">
+     <property name="geometry">
+      <rect>
+       <x>1030</x>
+       <y>130</y>
+       <width>420</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QFrame#totalSalesCard { background-color: #E8F5E9; border: 3px solid black; border-radius: 12px; }</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <widget class="QLabel" name="totalSalesValueLabel">
+      <property name="geometry">
+       <rect>
+        <x>230</x>
+        <y>0</y>
+        <width>171</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 35px;
+color: black;
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string>$12,450</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="totalSalesValueLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>0</y>
+        <width>201</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 40px;
+color: black;
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string>Total Sales:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="topBooksGroup">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>235</y>
+       <width>711</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 30px;
+	color: rgb(0,0,0);
+	border: 3px solid black;
+	border-radius: 12px;
+	margin-top: 10px;
+	padding-top: 25px;
+}</string>
+     </property>
+     <property name="title">
+      <string>Top Performing Books</string>
+     </property>
+     <widget class="QScrollArea" name="topBooksScrollArea">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>50</y>
+        <width>671</width>
+        <height>461</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QScrollArea#topBooksScrollArea { border: 2px solid black; border-radius: 10px; background-color: white; }</string>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="topBooksContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>667</width>
+         <height>457</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="topBooksLayout"/>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="salesByGenreGroup">
+     <property name="geometry">
+      <rect>
+       <x>750</x>
+       <y>235</y>
+       <width>711</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 30px;
+	color: rgb(0,0,0);
+	border: 3px solid black;
+	border-radius: 12px;
+	margin-top: 10px;
+	padding-top: 25px;
+}</string>
+     </property>
+     <property name="title">
+      <string>Sales by Genre</string>
+     </property>
+     <widget class="QScrollArea" name="genreStatsScrollArea">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>50</y>
+        <width>671</width>
+        <height>461</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QScrollArea#genreStatsScrollArea { border: 2px solid black; border-radius: 10px; background-color: white; }</string>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="genreStatsContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>667</width>
+         <height>457</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="genreStatsLayout"/>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
