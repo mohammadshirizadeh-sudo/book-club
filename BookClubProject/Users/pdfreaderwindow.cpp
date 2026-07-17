@@ -4,8 +4,13 @@
 #include "pdfreaderwindow.h"
 #include "Users/ui_pdfreaderwindow.h"
 
+
 // #include <QPdfDocument>
 // #include <QPdfView>
+
+#include <QPdfDocument>
+#include <QtPdfWidgets/QPdfView>
+>>>>>>> develop
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QKeyEvent>

@@ -5,8 +5,13 @@
 #define PDFREADERWINDOW_H
 
 #include <QWidget>
+
 // #include <QPdfDocument>
 // #include <QPdfView>
+
+#include <QPdfDocument>
+#include <QtPdfWidgets/QPdfView>
+
 
 namespace Ui {
 class PdfReaderWindow;

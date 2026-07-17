@@ -224,7 +224,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:45px;
+	font-size:35px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;</string>
@@ -244,7 +244,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:45px;
+	font-size:35px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;</string>
@@ -303,7 +303,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:45px;
+	font-size:35px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;</string>

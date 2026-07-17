@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(BookClubProject LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets Network Sql Concurrent Charts)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Network Sql Concurrent Charts Pdf)
 
 qt_standard_project_setup()
 
@@ -68,9 +68,6 @@ qt_add_executable(BookClubProject
     appWindow/SessionManager.h appWindow/SessionManager.cpp
     Publishers/publisherprofilewindow.h Publishers/publisherprofilewindow.cpp Publishers/publisherprofilewindow.ui
     Publishers/mybooks.h Publishers/mybooks.cpp Publishers/mybooks.ui
-    Publishers/bookstatics.h Publishers/bookstatics.cpp Publishers/bookstatics.ui
-
-
 
 
     Mutual/infodialog.h Mutual/infodialog.cpp Mutual/infodialog.ui
@@ -78,8 +75,7 @@ qt_add_executable(BookClubProject
     Mutual/changepassworddialog.h Mutual/changepassworddialog.cpp Mutual/changepassworddialog.ui
     Users/shoppinghistorywindow.h Users/shoppinghistorywindow.cpp Users/shoppinghistorywindow.ui
 
-    Users/BookDetailDialog.h Users/BookDetailDialog.cpp Users/BookDetailDialog.ui
-    Users/allgenreswindow.h Users/allgenreswindow.cpp Users/allgenreswindow.ui
+
     Users/cartwindow.h Users/cartwindow.cpp Users/cartwindow.ui
 
     Users/BookDetailDialog.h Users/BookDetailDialog.cpp Users/BookDetailDialog.ui
@@ -87,7 +83,6 @@ qt_add_executable(BookClubProject
     Users/AuthorDetailDialog.h Users/AuthorDetailDialog.cpp Users/AuthorDetailDialog.ui
 
 
-    Publishers/PublisherInfoDialog.h Publishers/PublisherInfoDialog.cpp Publishers/PublisherInfoDialog.ui
 
     Mutual/notificationwidget.h Mutual/notificationwidget.cpp Mutual/notificationwidget.ui
     Users/pdfreaderwindow.h Users/pdfreaderwindow.cpp Users/pdfreaderwindow.ui
@@ -95,6 +90,13 @@ qt_add_executable(BookClubProject
     Server/serverdashboardwindow.h Server/serverdashboardwindow.cpp Server/serverdashboardwindow.ui
     Users/shelfmanagementdialog.h Users/shelfmanagementdialog.cpp Users/shelfmanagementdialog.ui
     Services/LibraryService.h Services/LibraryService.cpp
+
+    appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
+    Publishers/bookstatisticswindow.h Publishers/bookstatisticswindow.cpp Publishers/bookstatisticswindow.ui
+    Users/favoritebookswindow.h Users/favoritebookswindow.cpp Users/favoritebookswindow.ui
+    Users/genrebrowserwindow.h Users/genrebrowserwindow.cpp Users/genrebrowserwindow.ui
+    Users/mylibrarywindow.h Users/mylibrarywindow.cpp Users/mylibrarywindow.ui
+
 
 
 
@@ -108,7 +110,9 @@ target_link_libraries(BookClubProject
         Qt6::Sql
         Qt::Concurrent
         Qt6::Charts
+
         # Qt6::Pdf
+
 )
 
 install(TARGETS BookClubProject

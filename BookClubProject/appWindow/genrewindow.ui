@@ -38,9 +38,9 @@
    <widget class="QLabel" name="chooseGenre">
     <property name="geometry">
      <rect>
-      <x>310</x>
+      <x>260</x>
       <y>10</y>
-      <width>711</width>
+      <width>791</width>
       <height>61</height>
      </rect>
     </property>
@@ -52,7 +52,7 @@
 </string>
     </property>
     <property name="text">
-     <string> Choose 1 - 3 genres for book suggesting.</string>
+     <string>📖 Choose 1 - 3 genres for book suggesting.</string>
     </property>
    </widget>
    <widget class="QLabel" name="changeGenre">
@@ -784,7 +784,7 @@
      <rect>
       <x>1190</x>
       <y>30</y>
-      <width>151</width>
+      <width>191</width>
       <height>71</height>
      </rect>
     </property>
@@ -798,7 +798,7 @@
 </string>
     </property>
     <property name="text">
-     <string>Enter</string>
+     <string>Enter →</string>
     </property>
    </widget>
   </widget>

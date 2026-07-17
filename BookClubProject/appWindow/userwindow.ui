@@ -52,14 +52,14 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>Home Page</string>
+     <string>🏠 Home Page</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_2">
@@ -74,14 +74,14 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>Profile</string>
+     <string>👤 Profile</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_3">
@@ -96,14 +96,14 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>My Library</string>
+     <string>🔖 My Library</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_4">
@@ -118,14 +118,14 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>Cart</string>
+     <string>🛒 Cart</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_5">
@@ -140,14 +140,14 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>Search</string>
+     <string>🔎 Search</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_6">
@@ -162,7 +162,7 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
@@ -184,22 +184,22 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>Book Genres</string>
+     <string>📚 Book Genres</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>250</x>
       <y>20</y>
-      <width>421</width>
+      <width>431</width>
       <height>311</height>
      </rect>
     </property>
@@ -222,9 +222,9 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>280</x>
       <y>340</y>
-      <width>271</width>
+      <width>291</width>
       <height>51</height>
      </rect>
     </property>
@@ -232,12 +232,12 @@
      <string notr="true">QLabel {
 	background: transparent;
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
+	font-size: 35px;
 	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>Recently Added</string>
+     <string>🗃 Recently Added</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
@@ -245,7 +245,7 @@
      <rect>
       <x>750</x>
       <y>340</y>
-      <width>181</width>
+      <width>211</width>
       <height>51</height>
      </rect>
     </property>
@@ -253,12 +253,12 @@
      <string notr="true">QLabel {
 	background: transparent;
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
+	font-size: 35px;
 	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>Free Books</string>
+     <string>📓 Free Books</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
@@ -266,7 +266,7 @@
      <rect>
       <x>1180</x>
       <y>340</y>
-      <width>191</width>
+      <width>221</width>
       <height>51</height>
      </rect>
     </property>
@@ -274,33 +274,33 @@
      <string notr="true">QLabel {
 	background: transparent;
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
+	font-size: 35px;
 	color: rgb(0, 0, 0);
 }</string>
     </property>
     <property name="text">
-     <string>Best Sellers</string>
+     <string>💸 Best Sellers</string>
     </property>
    </widget>
    <widget class="QPushButton" name="nextPushButton">
     <property name="geometry">
      <rect>
-      <x>960</x>
+      <x>980</x>
       <y>540</y>
-      <width>61</width>
+      <width>41</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 25px;
+font-size: 35px;
 border: 3px solid black;
 border-radius: 12px;
 </string>
     </property>
     <property name="text">
-     <string>next</string>
+     <string>↪️</string>
     </property>
    </widget>
    <widget class="QPushButton" name="prevPushButton">
@@ -308,40 +308,40 @@ border-radius: 12px;
      <rect>
       <x>670</x>
       <y>540</y>
-      <width>61</width>
+      <width>41</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 25px;
+font-size: 35px;
 border: 3px solid black;
 border-radius: 12px;
 </string>
     </property>
     <property name="text">
-     <string>prev</string>
+     <string>↩️</string>
     </property>
    </widget>
    <widget class="QPushButton" name="nextRecPushButton">
     <property name="geometry">
      <rect>
-      <x>1380</x>
+      <x>1400</x>
       <y>160</y>
-      <width>71</width>
+      <width>51</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 30px;
+font-size: 45px;
 border: 3px solid black;
 border-radius: 12px;</string>
     </property>
     <property name="text">
-     <string>next</string>
+     <string>↪️</string>
     </property>
    </widget>
    <widget class="QPushButton" name="prevRecPushButton">
@@ -349,19 +349,19 @@ border-radius: 12px;</string>
      <rect>
       <x>670</x>
       <y>160</y>
-      <width>71</width>
+      <width>51</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 30px;
+font-size: 45px;
 border: 3px solid black;
 border-radius: 12px;</string>
     </property>
     <property name="text">
-     <string>prev</string>
+     <string>↩️</string>
     </property>
    </widget>
    <widget class="QPushButton" name="prevNewPushButton">
@@ -369,41 +369,41 @@ border-radius: 12px;</string>
      <rect>
       <x>250</x>
       <y>540</y>
-      <width>61</width>
+      <width>41</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 25px;
+font-size: 35px;
 border: 3px solid black;
 border-radius: 12px;
 </string>
     </property>
     <property name="text">
-     <string>prev</string>
+     <string>↩️</string>
     </property>
    </widget>
    <widget class="QPushButton" name="nextNewPushButton">
     <property name="geometry">
      <rect>
-      <x>540</x>
+      <x>560</x>
       <y>540</y>
-      <width>61</width>
+      <width>41</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 25px;
+font-size: 35px;
 border: 3px solid black;
 border-radius: 12px;
 </string>
     </property>
     <property name="text">
-     <string>next</string>
+     <string>↪️</string>
     </property>
    </widget>
    <widget class="QPushButton" name="prevBestPushButton">
@@ -411,39 +411,39 @@ border-radius: 12px;
      <rect>
       <x>1110</x>
       <y>540</y>
-      <width>61</width>
+      <width>41</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 25px;
+font-size: 35px;
 border: 3px solid black;
 border-radius: 12px;</string>
     </property>
     <property name="text">
-     <string>prev</string>
+     <string>↩️</string>
     </property>
    </widget>
    <widget class="QPushButton" name="nextBestPushButton">
     <property name="geometry">
      <rect>
-      <x>1400</x>
+      <x>1420</x>
       <y>540</y>
-      <width>61</width>
+      <width>41</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT Bold&quot;;
-font-size: 25px;
+font-size: 35px;
 border: 3px solid black;
 border-radius: 12px;</string>
     </property>
     <property name="text">
-     <string>next</string>
+     <string>↪️</string>
     </property>
    </widget>
    <widget class="QLabel" name="newBooksLabel">
@@ -507,7 +507,8 @@ border-radius: 12px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">background: transparent;
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -523,7 +524,8 @@ border-radius: 12px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">background: transparent;
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -539,7 +541,8 @@ border-radius: 12px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">background: transparent;
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -555,7 +558,8 @@ border-radius: 12px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">background: transparent;
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -620,7 +624,8 @@ border-radius: 12px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color: rgb(0, 0, 0);</string>
+     <string notr="true">background: transparent;
+color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>

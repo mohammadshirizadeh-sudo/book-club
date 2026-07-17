@@ -52,14 +52,15 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
-	border: 5px solid black;
+	border: 3px solid black;
 	border-radius: 12px;
-}</string>
+}
+</string>
     </property>
     <property name="text">
-     <string>Home Page</string>
+     <string>🏠 Home Page</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pubProfilePushButton">
@@ -74,14 +75,14 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
-	border: 5px solid black;
+	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>Profile</string>
+     <string>👤 Profile</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pubBooksPushButton">
@@ -96,14 +97,14 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
-	border: 5px solid black;
+	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>My Books</string>
+     <string>📚 My Books</string>
     </property>
    </widget>
    <widget class="QPushButton" name="quitPushButton">
@@ -118,9 +119,9 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
+	font-size:30px;
 	color: rgb(0, 0, 0);
-	border: 5px solid black;
+	border: 3px solid black;
 	border-radius: 12px;
 }</string>
     </property>
