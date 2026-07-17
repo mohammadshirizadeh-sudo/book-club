@@ -951,6 +951,8 @@ Response GetPublisherBooksCommand::execute(const QVariantMap& params)
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["salesCount"] = book->getSalesCount();
+        bookData["coverPath"] = book->getCoverPath();
+
         bookList.append(bookData);
     }
 

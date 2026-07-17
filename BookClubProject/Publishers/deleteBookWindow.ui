@@ -37,7 +37,7 @@
    <property name="frameShadow">
     <enum>QFrame::Shadow::Raised</enum>
    </property>
-   <widget class="QListWidget" name="listWidget">
+   <widget class="QListWidget" name="booksListWidget">
     <property name="geometry">
      <rect>
       <x>230</x>

@@ -7,7 +7,7 @@
 #include "appWindow/userwindow.h"
 #include "appWindow/publisherwindow.h"
 #include "Publishers/publisherprofilewindow.h"
-#include "appWindow/adminwindow.h"
+// #include "../appWindow/adminwindow.h"
 #include "appWindow/SessionManager.h"
 #include "appWindow/userwindow.h"
 #include "Users/searchwindow.h"
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     GenreWindow* genreWindow = new GenreWindow(networkManager);
     UserWindow* userWindow = new UserWindow(networkManager);
     PublisherWindow* publisherWindow = new PublisherWindow(networkManager);
-    AdminWindow* adminWindow = new AdminWindow();
+    // AdminWindow* adminWindow = new AdminWindow();
     UserProfileWindow* profileWindow = new UserProfileWindow(networkManager);
     SearchWindow* searchWindow = new SearchWindow(networkManager);
     PublisherProfileWindow* publisherProfileWindow =  new PublisherProfileWindow(networkManager);
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     int genreIndex = stackedWidget.addWidget(genreWindow);
     int userIndex = stackedWidget.addWidget(userWindow);
     int publisherIndex = stackedWidget.addWidget(publisherWindow);
-    int adminIndex = stackedWidget.addWidget(adminWindow);
+    // int adminIndex = stackedWidget.addWidget(adminWindow);
     int profileIndex = stackedWidget.addWidget(profileWindow);
     int searchIndex = stackedWidget.addWidget(searchWindow);
     int publisherProfileindex = stackedWidget.addWidget(publisherProfileWindow);
@@ -183,6 +183,8 @@ int main(int argc, char *argv[])
     // Network Responses
     //-------------------------------------------------
 
+
+    /*
     QObject::connect(networkManager,
                      &NetworkManager::successReceived,
                      [&](const QVariantMap& data)
@@ -215,6 +217,9 @@ int main(int argc, char *argv[])
                              stackedWidget.setCurrentIndex(adminIndex);
                          }
                      });
+
+
+*/
 
     QObject::connect(networkManager,
                      &NetworkManager::errorReceived,
