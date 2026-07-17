@@ -18,9 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
-	background-image: url(:/resources/skyblueBack.jpg);
-}</string>
+   <string notr="true">background-image: url(:/resources/white.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -66,7 +64,7 @@
 }</string>
     </property>
     <property name="text">
-     <string>&lt;-- Back</string>
+     <string>← Back</string>
     </property>
    </widget>
   </widget>

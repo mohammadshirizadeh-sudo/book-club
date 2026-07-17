@@ -62,7 +62,7 @@
 </string>
     </property>
     <property name="text">
-     <string>Book</string>
+     <string>📚 Book</string>
     </property>
    </widget>
    <widget class="QPushButton" name="searchAuthorPushButton">
@@ -86,7 +86,7 @@
 </string>
     </property>
     <property name="text">
-     <string>Author</string>
+     <string>🖋️ Author</string>
     </property>
    </widget>
    <widget class="QPushButton" name="searchPublisherPushButton">
@@ -110,7 +110,7 @@
 </string>
     </property>
     <property name="text">
-     <string>Publisher</string>
+     <string>📑 Publisher</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="searchLineEdit">
@@ -130,6 +130,9 @@ border: 3px solid black;
 border-radius: 12px;
 }</string>
     </property>
+    <property name="text">
+     <string>  What are you looking for?</string>
+    </property>
     <property name="placeholderText">
      <string notr="true"/>
     </property>
@@ -137,10 +140,10 @@ border-radius: 12px;
    <widget class="QPushButton" name="showSearchPushButton">
     <property name="geometry">
      <rect>
-      <x>1330</x>
-      <y>60</y>
-      <width>121</width>
-      <height>51</height>
+      <x>1264</x>
+      <y>56</y>
+      <width>191</width>
+      <height>57</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -150,12 +153,11 @@ border-radius: 12px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
-	padding: 8px;
 }
 </string>
     </property>
     <property name="text">
-     <string>Search</string>
+     <string>🔎 Search</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -199,7 +201,7 @@ border-radius: 12px;
 </string>
     </property>
     <property name="text">
-     <string>&lt;-- Back</string>
+     <string>← Back</string>
     </property>
    </widget>
    <widget class="QListWidget" name="searchResultsListWidget">

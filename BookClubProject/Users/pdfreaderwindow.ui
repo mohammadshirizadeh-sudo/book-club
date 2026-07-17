@@ -1,0 +1,873 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PdfReaderWindow</class>
+ <widget class="QWidget" name="PdfReaderWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>700</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>PDF Reader - Book Club</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/white.png);</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1500</width>
+     <height>800</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+    background-color: rgba(255,255,255,10);
+}</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QFrame" name="toolbarFrame">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>5</y>
+      <width>1490</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame#toolbarFrame {
+    background-color: rgba(70, 130, 180, 220);
+    border: 3px solid black;
+    border-radius: 12px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="backButton">
+     <property name="geometry">
+      <rect>
+       <x>8</x>
+       <y>8</y>
+       <width>211</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Return to library (Backspace)</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(200, 220, 255);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(150, 190, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>← Back to Library</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="bookTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>235</x>
+       <y>18</y>
+       <width>561</width>
+       <height>36</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 45px;
+    color: black;
+}</string>
+     </property>
+     <property name="text">
+      <string>Book Title</string>
+     </property>
+    </widget>
+    <widget class="QWidget" name="pageNavigationWidget" native="true">
+     <property name="geometry">
+      <rect>
+       <x>790</x>
+       <y>7</y>
+       <width>371</width>
+       <height>56</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">    background: transparent;</string>
+     </property>
+     <widget class="QPushButton" name="firstPageButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>0</y>
+        <width>50</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Go to first page (Home)</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 40px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(240, 240, 240);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(210, 210, 210);
+}</string>
+      </property>
+      <property name="text">
+       <string>⏪</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="prevPageButton">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>0</y>
+        <width>50</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Previous page (Left Arrow)</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 40px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(240, 240, 240);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(210, 210, 210);
+}</string>
+      </property>
+      <property name="text">
+       <string>◀️</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="pageEdit">
+      <property name="geometry">
+       <rect>
+        <x>116</x>
+        <y>2</y>
+        <width>91</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Enter page number and press Enter</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLineEdit {
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+    background-color: white;
+}</string>
+      </property>
+      <property name="maxLength">
+       <number>6</number>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+      <property name="placeholderText">
+       <string>Page</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pageJumpButton">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>0</y>
+        <width>55</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Jump to page</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 40px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(240, 240, 240);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(210, 210, 210);
+}</string>
+      </property>
+      <property name="text">
+       <string>🆗</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="nextPageButton">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>0</y>
+        <width>50</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Next page (Right Arrow)</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 40px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(240, 240, 240);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(210, 210, 210);
+}</string>
+      </property>
+      <property name="text">
+       <string>▶️</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="lastPageButton">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>0</y>
+        <width>50</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Go to last page (End)</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 40px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(240, 240, 240);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(210, 210, 210);
+}</string>
+      </property>
+      <property name="text">
+       <string>⏩</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="zoomControlWidget" native="true">
+     <property name="geometry">
+      <rect>
+       <x>1190</x>
+       <y>7</y>
+       <width>301</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">    background: transparent;</string>
+     </property>
+     <widget class="QPushButton" name="zoomOutButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>44</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Script MT Bold</family>
+        <pointsize>-1</pointsize>
+        <italic>false</italic>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>Zoom out (-)</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    font: 700 16pt &quot;Script MT Bold&quot;;
+    font-size: 24px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(240, 240, 240);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(210, 210, 210);
+}</string>
+      </property>
+      <property name="text">
+       <string>➖</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="zoomCombo">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>0</y>
+        <width>95</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Select zoom level</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QComboBox {
+    font-size: 18px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+    background-color: white;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 30px;
+}
+
+QComboBox::down-arrow {
+    width: 16px;
+    height: 16px;
+}
+
+QComboBox QAbstractItemView {
+    border: 2px solid black;
+    border-radius: 8px;
+    background-color: white;
+    selection-background-color: rgb(70, 130, 180);
+}</string>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string>50%</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>75%</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>100%</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>125%</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>150%</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>200%</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>300%</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>400%</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QPushButton" name="zoomInButton">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>0</y>
+        <width>44</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>Script MT Bold</family>
+        <pointsize>-1</pointsize>
+        <italic>false</italic>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="toolTip">
+       <string>Zoom in (+)</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    font: 700 16pt &quot;Script MT Bold&quot;;
+    font-size: 24px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(240, 240, 240);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(210, 210, 210);
+}</string>
+      </property>
+      <property name="text">
+       <string>➕</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="fullscreenButton">
+      <property name="geometry">
+       <rect>
+        <x>207</x>
+        <y>0</y>
+        <width>81</width>
+        <height>55</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Toggle fullscreen mode (F or F11)</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 30px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(200, 220, 255);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(150, 190, 255);
+}</string>
+      </property>
+      <property name="text">
+       <string>⛶ FS</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="pdfViewContainer">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>85</y>
+      <width>1490</width>
+      <height>650</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame#pdfViewContainer {
+    background-color: white;
+    border: 3px solid black;
+    border-radius: 12px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Sunken</enum>
+    </property>
+    <property name="lineWidth">
+     <number>1</number>
+    </property>
+    <widget class="QLabel" name="placeholderLabel">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>275</y>
+       <width>490</width>
+       <height>100</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 14pt &quot;Script MT Bold&quot;;
+    font-size: 30px;
+    color: gray;
+}</string>
+     </property>
+     <property name="text">
+      <string>Loading PDF viewer...</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="statusBarFrame">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>745</y>
+      <width>1490</width>
+      <height>48</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame#statusBarFrame {
+    background-color: rgba(70, 130, 180, 180);
+    border: 3px solid black;
+    border-radius: 12px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QLabel" name="statusLabel">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>10</y>
+       <width>450</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: black;
+}</string>
+     </property>
+     <property name="text">
+      <string>Ready</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="pageInfoLabel">
+     <property name="geometry">
+      <rect>
+       <x>899</x>
+       <y>10</y>
+       <width>181</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: black;
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;No document loaded&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="zoomStatusLabel">
+     <property name="geometry">
+      <rect>
+       <x>1100</x>
+       <y>10</y>
+       <width>120</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: black;
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Zoom: 100%&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="positionLabel">
+     <property name="geometry">
+      <rect>
+       <x>1240</x>
+       <y>10</y>
+       <width>140</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: black;
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Progress: 0.0%&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>backButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_backButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>36</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>firstPageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_firstPageButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>755</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>prevPageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_prevPageButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>823</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>nextPageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_nextPageButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1031</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lastPageButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_lastPageButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1099</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pageEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_pageEdit_returnPressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>931</x>
+     <y>35</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pageJumpButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_pageJumpButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>996</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomOutButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_zoomOutButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1142</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomInButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_zoomInButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1297</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fullscreenButton</sender>
+   <signal>clicked()</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_fullscreenButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1391</x>
+     <y>33</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zoomCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>PdfReaderWindow</receiver>
+   <slot>on_zoomCombo_currentIndexChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1220</x>
+     <y>35</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>on_backButton_clicked()</slot>
+  <slot>on_firstPageButton_clicked()</slot>
+  <slot>on_prevPageButton_clicked()</slot>
+  <slot>on_nextPageButton_clicked()</slot>
+  <slot>on_lastPageButton_clicked()</slot>
+  <slot>on_pageEdit_returnPressed()</slot>
+  <slot>on_pageJumpButton_clicked()</slot>
+  <slot>on_zoomOutButton_clicked()</slot>
+  <slot>on_zoomInButton_clicked()</slot>
+  <slot>on_fullscreenButton_clicked()</slot>
+  <slot>on_zoomCombo_currentIndexChanged(int)</slot>
+ </slots>
+</ui>

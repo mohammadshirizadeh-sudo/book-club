@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShelfManagementDialog</class>
+ <widget class="QDialog" name="ShelfManagementDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>700</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Shelf Management</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/white.png);</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1500</width>
+     <height>800</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+    background-color: rgba(255,255,255,10);
+}</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QPushButton" name="backButton">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>5</y>
+      <width>211</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size:35px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 6px;
+}</string>
+    </property>
+    <property name="text">
+     <string>← Back</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="titleLabel">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>10</y>
+      <width>400</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 45px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>Shelf Management</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="shelfGroup">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>90</y>
+      <width>311</width>
+      <height>691</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>📁 My Shelves</string>
+    </property>
+    <widget class="QPushButton" name="addShelfButton">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>38</y>
+       <width>260</width>
+       <height>45</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(200, 255, 200);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 6px;
+}
+QPushButton:hover {
+    background-color: rgb(150, 255, 150);
+}</string>
+     </property>
+     <property name="text">
+      <string>+ Add New Shelf</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="deleteShelfButton">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>93</y>
+       <width>125</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 200, 200);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(255, 150, 150);
+}</string>
+     </property>
+     <property name="text">
+      <string>🗑 Delete</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="renameShelfButton">
+     <property name="geometry">
+      <rect>
+       <x>155</x>
+       <y>93</y>
+       <width>125</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(200, 220, 255);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(150, 190, 255);
+}</string>
+     </property>
+     <property name="text">
+      <string>✏ Rename</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="shelfList">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>145</y>
+       <width>281</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListWidget#shelfList {
+    font-size: 18px;
+    border: 3px solid black;
+    border-radius: 12px;
+    background-color: white;
+}
+
+QListWidget#shelfList::item {
+    padding: 12px;
+    margin: 2px;
+    border-radius: 8px;
+    color: rgb(0, 0, 0);
+}
+
+QListWidget#shelfList::item:selected {
+    background-color: rgb(70, 130, 180);
+    color: white;
+}
+
+QListWidget#shelfList::item:hover:!selected {
+    background-color: rgb(230, 240, 250);
+}</string>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="booksGroup">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>94</y>
+      <width>811</width>
+      <height>691</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>📖 Books in Shelf</string>
+    </property>
+    <widget class="QPushButton" name="removeBookButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>38</y>
+       <width>180</width>
+       <height>42</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 230, 200);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(255, 200, 150);
+}
+QPushButton:disabled {
+    background-color: rgb(220, 220, 220);
+}</string>
+     </property>
+     <property name="text">
+      <string>- Remove Book</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="moveBookButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>215</x>
+       <y>38</y>
+       <width>190</width>
+       <height>42</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(200, 230, 255);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(150, 200, 255);
+}
+QPushButton:disabled {
+    background-color: rgb(220, 220, 220);
+}</string>
+     </property>
+     <property name="text">
+      <string>→ Move to...</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="bookList">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>92</y>
+       <width>781</width>
+       <height>581</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListWidget#bookList {
+    font-size: 14px;
+    border: 3px solid black;
+    border-radius: 12px;
+    background-color: white;
+}
+
+QListWidget#bookList::item {
+    padding: 8px;
+    border-radius: 8px;
+    color: rgb(0, 0, 0);
+}
+
+QListWidget#bookList::item:selected {
+    background-color: rgb(70, 130, 180);
+    color: white;
+}
+
+QListWidget#bookList::item:hover:!selected {
+    background-color: rgb(245, 248, 255);
+}</string>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>80</width>
+       <height>110</height>
+      </size>
+     </property>
+     <property name="resizeMode">
+      <enum>QListView::ResizeMode::Adjust</enum>
+     </property>
+     <property name="spacing">
+      <number>10</number>
+     </property>
+     <property name="gridSize">
+      <size>
+       <width>110</width>
+       <height>160</height>
+      </size>
+     </property>
+     <property name="viewMode">
+      <enum>QListView::ViewMode::IconMode</enum>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="detailsGroup">
+    <property name="geometry">
+     <rect>
+      <x>1150</x>
+      <y>100</y>
+      <width>340</width>
+      <height>681</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>📋 Book Details</string>
+    </property>
+    <widget class="QLabel" name="coverPreviewLabel">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>40</y>
+       <width>200</width>
+       <height>280</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel#coverPreviewLabel {
+    background-color: rgb(248, 249, 250);
+    border: 3px solid black;
+    border-radius: 12px;
+    font-size: 16px;
+    color: gray;
+}</string>
+     </property>
+     <property name="text">
+      <string>No book selected</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="bookTitleValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>320</y>
+       <width>271</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string>Select a book to view details</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="authorValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>370</y>
+       <width>300</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="genreValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>410</y>
+       <width>300</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="priceValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>430</y>
+       <width>300</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="descriptionTextEdit">
+     <property name="geometry">
+      <rect>
+       <x>14</x>
+       <y>465</y>
+       <width>311</width>
+       <height>140</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTextEdit {
+    font-size: 16px;
+    color: rgb(60, 60, 60);
+    border: 3px solid black;
+    border-radius: 12px;
+    background-color: rgb(250, 250, 250);
+    padding: 8px;
+}</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="acceptRichText">
+      <bool>false</bool>
+     </property>
+     <property name="placeholderText">
+      <string>Book description will appear here...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="readPdfButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>14</x>
+       <y>615</y>
+       <width>311</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(100, 180, 255);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(50, 140, 235);
+}
+QPushButton:disabled {
+    background-color: rgb(200, 200, 200);
+}</string>
+     </property>
+     <property name="text">
+      <string>📄 Read PDF / View Details</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>backButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>35</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>addShelfButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>on_addShelfButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>60</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>deleteShelfButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>on_deleteShelfButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>82</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>renameShelfButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>on_renameShelfButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>217</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>removeBookButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>on_removeBookButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moveBookButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>on_moveBookButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>310</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>readPdfButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>on_readPdfButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>167</x>
+     <y>629</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shelfList</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>on_shelfList_currentRowChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bookList</sender>
+   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
+   <receiver>ShelfManagementDialog</receiver>
+   <slot>on_bookList_currentItemChanged(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>580</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>on_addShelfButton_clicked()</slot>
+  <slot>on_deleteShelfButton_clicked()</slot>
+  <slot>on_renameShelfButton_clicked()</slot>
+  <slot>on_removeBookButton_clicked()</slot>
+  <slot>on_moveBookButton_clicked()</slot>
+  <slot>on_readPdfButton_clicked()</slot>
+  <slot>on_shelfList_currentRowChanged(int)</slot>
+  <slot>on_bookList_currentItemChanged(QListWidgetItem*)</slot>
+ </slots>
+</ui>
