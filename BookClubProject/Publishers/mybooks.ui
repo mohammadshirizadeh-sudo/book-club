@@ -191,7 +191,7 @@
 }</string>
     </property>
     <property name="text">
-     <string>&lt;-- Back</string>
+     <string>← Back</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">

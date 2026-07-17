@@ -1,0 +1,1080 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddBookDialog</class>
+ <widget class="QDialog" name="AddBookDialog">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1100</width>
+    <height>700</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Add New Book</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/white.png);</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1200</width>
+     <height>700</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+    background-color: rgba(255,255,255,10);
+}</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QLabel" name="titleLabel">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>0</y>
+      <width>500</width>
+      <height>55</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 14pt &quot;Script MT Bold&quot;;
+    font-size: 40px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>Add New Book</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="leftSectionLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>60</y>
+      <width>450</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 30px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>📝 Book Information</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="bookNameLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>110</y>
+      <width>141</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>* Book Name:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="bookNameLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>140</y>
+      <width>520</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit {
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 8px;
+    background-color: white;
+}
+QLineEdit:focus {
+    border-color: rgb(0, 100, 200);
+}</string>
+    </property>
+    <property name="maxLength">
+     <number>255</number>
+    </property>
+    <property name="placeholderText">
+     <string>Enter book title...</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="authorNameLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>190</y>
+      <width>151</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>* Author Name:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="authorNameLineEdit">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>220</y>
+      <width>520</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit {
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 8px;
+    background-color: white;
+}
+QLineEdit:focus {
+    border-color: rgb(0, 100, 200);
+}</string>
+    </property>
+    <property name="maxLength">
+     <number>255</number>
+    </property>
+    <property name="placeholderText">
+     <string>Enter author name...</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="genreLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>270</y>
+      <width>81</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>* Genre:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="genreComboBox">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>300</y>
+      <width>520</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QComboBox {
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 8px;
+    background-color: white;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 35px;
+}
+
+QComboBox::down-arrow {
+    width: 18px;
+    height: 18px;
+}
+
+QComboBox QAbstractItemView {
+    border: 2px solid black;
+    border-radius: 8px;
+    background-color: white;
+    selection-background-color: rgb(70, 130, 180);
+    font-size: 18px;
+}</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>Select Genre...</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Fiction</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Non-Fiction</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Mystery</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Romance</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Science Fiction</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Fantasy</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Biography</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>History</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Self-Help</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Technology</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="priceLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>350</y>
+      <width>111</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>* Price ($):</string>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="priceSpinBox">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>380</y>
+      <width>250</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QDoubleSpinBox {
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+    background-color: white;
+}
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+    width: 35px;
+    border-left: 2px solid black;
+    background-color: rgb(240, 240, 240);
+}</string>
+    </property>
+    <property name="prefix">
+     <string>$ </string>
+    </property>
+    <property name="decimals">
+     <number>2</number>
+    </property>
+    <property name="minimum">
+     <double>0.010000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>99999.990000000005239</double>
+    </property>
+    <property name="value">
+     <double>9.990000000000000</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="discountLabel">
+    <property name="geometry">
+     <rect>
+      <x>419</x>
+      <y>350</y>
+      <width>131</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>Discount (%):</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="discountSpinBox">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>380</y>
+      <width>250</width>
+      <height>45</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QSpinBox {
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+    background-color: white;
+}
+QSpinBox::up-button, QSpinBox::down-button {
+    width: 35px;
+    border-left: 2px solid black;
+    background-color: rgb(240, 240, 240);
+}</string>
+    </property>
+    <property name="suffix">
+     <string> %</string>
+    </property>
+    <property name="minimum">
+     <number>0</number>
+    </property>
+    <property name="maximum">
+     <number>100</number>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="descriptionLabel">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>430</y>
+      <width>150</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>Description:</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="descriptionTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>459</y>
+      <width>520</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QTextEdit {
+    font-size: 18px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    background-color: white;
+    padding: 8px;
+}
+QTextEdit:focus {
+    border-color: rgb(0, 100, 200);
+}</string>
+    </property>
+    <property name="acceptRichText">
+     <bool>false</bool>
+    </property>
+    <property name="placeholderText">
+     <string>Enter book description here...</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="charCountLabel">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>440</y>
+      <width>95</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 18px;
+    color: black;
+}</string>
+    </property>
+    <property name="text">
+     <string>0 chars</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="rightSectionLabel">
+    <property name="geometry">
+     <rect>
+      <x>599</x>
+      <y>60</y>
+      <width>401</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 30px;
+    color: rgb(0, 0, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>📁 File Uploads</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="coverPreviewFrame">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>110</y>
+      <width>550</width>
+      <height>291</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame#coverPreviewFrame {
+    background-color: rgba(248, 249, 250, 230);
+    border: 3px solid black;
+    border-radius: 12px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QLabel" name="coverTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>8</y>
+       <width>520</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string>* 🖼️ Cover Image (JPG, PNG, WEBP - Max 5MB)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="browseCoverButton">
+     <property name="geometry">
+      <rect>
+       <x>179</x>
+       <y>230</y>
+       <width>191</width>
+       <height>48</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(23, 162, 184);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 8px;
+}
+QPushButton:hover {
+    background-color: rgb(19, 132, 150);
+}</string>
+     </property>
+     <property name="text">
+      <string>📂 Browse Cover</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="coverPreviewLabel">
+     <property name="geometry">
+      <rect>
+       <x>94</x>
+       <y>42</y>
+       <width>361</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel#coverPreviewLabel {
+    background-color: rgb(248, 249, 250);
+    border: 3px dashed black;
+    border-radius: 12px;
+    font-size: 18px;
+    color: gray;
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Cover Preview&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;(JPG, PNG, WEBP)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;Max: 5MB&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="coverFileSizeLabel">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>290</y>
+       <width>120</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 16px;
+    color: gray;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="coverStatusLabel">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>332</y>
+       <width>520</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 14px;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="pdfSelectorFrame">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>410</y>
+      <width>550</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QFrame#pdfSelectorFrame {
+    background-color: rgba(248, 249, 250, 230);
+    border: 3px solid black;
+    border-radius: 12px;
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+    <widget class="QLabel" name="pdfTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>15</x>
+       <y>8</y>
+       <width>520</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string>* 📄 PDF File (Max 50MB)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="browsePdfButton">
+     <property name="geometry">
+      <rect>
+       <x>179</x>
+       <y>140</y>
+       <width>191</width>
+       <height>44</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(23, 162, 184);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 8px;
+}
+QPushButton:hover {
+    background-color: rgb(19, 132, 150);
+}</string>
+     </property>
+     <property name="text">
+      <string>📂 Browse PDF</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="pdfFileNameLabel">
+     <property name="geometry">
+      <rect>
+       <x>25</x>
+       <y>48</y>
+       <width>500</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel#pdfFileNameLabel {
+    background-color: rgb(248, 249, 250);
+    border: 2px dashed black;
+    border-radius: 10px;
+    font-size: 16px;
+    color: gray;
+}</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;No file selected&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;(Max: 50MB)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="pdfFileSizeLabel">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>148</y>
+       <width>120</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 16px;
+    color: gray;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="pdfStatusLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>185</y>
+       <width>511</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 15px;
+	color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="submitButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>630</y>
+      <width>180</width>
+      <height>58</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Please fill all required fields first</string>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: black;
+    background-color: rgb(40, 167, 69);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(33, 136, 56);
+}
+QPushButton:disabled {
+    background-color: rgb(200, 200, 200);
+    color: gray;
+}</string>
+    </property>
+    <property name="text">
+     <string>✓ Submit</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="clearButton">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>630</y>
+      <width>180</width>
+      <height>58</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 193, 7);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(224, 160, 0);
+}</string>
+    </property>
+    <property name="text">
+     <string>🗑 Clear All</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="cancelButton">
+    <property name="geometry">
+     <rect>
+      <x>730</x>
+      <y>630</y>
+      <width>180</width>
+      <height>58</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: black;
+    background-color: rgb(220, 53, 69);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(200, 35, 51);
+}</string>
+    </property>
+    <property name="text">
+     <string>✗ Cancel</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="requiredNoteLabel">
+    <property name="geometry">
+     <rect>
+      <x>920</x>
+      <y>650</y>
+      <width>121</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 15px;
+    color: red;
+}</string>
+    </property>
+    <property name="text">
+     <string>* Required fields</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>810</x>
+     <y>789</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browseCoverButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>on_browseCoverButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>275</x>
+     <y>304</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>browsePdfButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>on_browsePdfButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>275</x>
+     <y>591</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>clearButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>on_clearButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>600</x>
+     <y>789</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>submitButton</sender>
+   <signal>clicked()</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>on_submitButton_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>390</x>
+     <y>789</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bookNameLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>validateForm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>174</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>authorNameLineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>validateForm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>261</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>genreComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>validateForm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>348</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>descriptionTextEdit</sender>
+   <signal>textChanged()</signal>
+   <receiver>AddBookDialog</receiver>
+   <slot>updateCharCount()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>583</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>on_browseCoverButton_clicked()</slot>
+  <slot>on_browsePdfButton_clicked()</slot>
+  <slot>on_clearButton_clicked()</slot>
+  <slot>on_submitButton_clicked()</slot>
+  <slot>validateForm()</slot>
+  <slot>updateCharCount()</slot>
+ </slots>
+</ui>
