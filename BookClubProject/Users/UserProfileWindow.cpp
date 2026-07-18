@@ -5,51 +5,105 @@
 #include "../Network-Manger/NetworkManager.h"
 #include "../Server/Request.h"
 #include "../Server/Response.h"
+#include "../Mutual/infodialog.h"
+#include "../Mutual/changepassworddialog.h"
+#include "../Mutual/editinfodialog.h"
+#include <QMessageBox>
 
-Form::Form(QWidget *parent)
+UserProfileWindow::UserProfileWindow(NetworkManager* networkManager, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::UserProfileWindow)
+        , m_networkManager(networkManager)
 {
     ui->setupUi(this);
+
+    connect(m_networkManager, &NetworkManager::responseReceived,
+            this, &UserProfileWindow::handleResponse);
 }
 
-Form::~Form()
+UserProfileWindow::~UserProfileWindow()
 {
     delete ui;
 }
 
-void Form::on_favGenresPushButton_clicked()
+void UserProfileWindow::on_favGenresPushButton_clicked()
 {
     emit openGenreWindow();
 }
 
 
-void Form::on_UserInfPushButton_clicked()
+void UserProfileWindow::on_UserInfPushButton_clicked()
 {
-    emit openUserInfoDialog();
+    InfoDialog* dialog = new InfoDialog(m_networkManager, this);
+
+    // ✅ اتصال به سیگنال accepted دیالوگ
+    connect(dialog, &QDialog::accepted, this, [this]() {
+        qDebug() << "📢 Dialog accepted! Reloading user profile...";
+        loadprof();
+    });
+
+    dialog->exec();
 }
 
 
-void Form::on_editUserInfPushButton_clicked()
+void UserProfileWindow::on_editUserInfPushButton_clicked()
 {
-    emit openEditUserInfoDialog();
+    EditInfoDialog dialog(m_networkManager , this);
+    dialog.exec();
+
 }
 
 
-void Form::on_changePassPushButton_clicked()
+void UserProfileWindow::on_changePassPushButton_clicked()
 {
-    emit openChangeUserPassDialog();
+    ChangePasswordDialog dialog(m_networkManager , this);
+    dialog.exec();
 }
 
 
-void Form::on_shoppingHistoryPushButton_clicked()
+void UserProfileWindow::on_shoppingHistoryPushButton_clicked()
 {
     emit openShoppingHistoryDialog();
 }
 
 
-void Form::on_favBooksPushButton_clicked()
+void UserProfileWindow::on_favBooksPushButton_clicked()
 {
-    emit openFavBooksDialog();
+
+    emit openFavBooksWindow();
+}
+
+
+void UserProfileWindow::loadprof()
+{
+    // درخواست کتاب‌های رایگان
+
+    int userId = SessionManager::instance()->getUserId();
+
+    QVariantMap params;
+    params["userId"] = userId;
+
+    qDebug() << "📚 [Client] Sending GetProdile request to server...";
+    Request request(CommandType::GetProfile, params);
+    m_networkManager->sendRequest(request);
+}
+
+
+void UserProfileWindow::handleResponse(const Response& response)
+{
+    if (response.getCommandType() == CommandType::GetProfile) {
+        if (!response.isSuccess()) {
+            QMessageBox::critical(this, "خطا", "خطا در دریافت اطلاعات: " + response.getMessage());
+            return;
+        }
+
+        // دیتای دریافتی را مستقیماً روی UI همین دیالوگ می‌نشانیم
+        QVariantMap data = response.getData();
+
+        ui->usernameLabel->setText(data["username"].toString());
+        ui->purchasedBooksLabel->setText(data["purchaseCount"].toString());
+
+        qDebug() << "✅ [InfoDialog] UI successfully updated with profile data.";
+    }
 }
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1500</width>
+    <width>800</width>
     <height>800</height>
    </rect>
   </property>
@@ -18,18 +18,21 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
-	background-image: url(:/resources/blueBack.png);
-}</string>
+   <string notr="true">background-image: url(:/resources/blue.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1501</width>
-     <height>900</height>
+     <width>800</width>
+     <height>800</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Shape::StyledPanel</enum>
@@ -40,40 +43,40 @@
    <widget class="QLabel" name="welcomeNewLabel">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>30</y>
-      <width>1161</width>
-      <height>61</height>
+      <x>10</x>
+      <y>10</y>
+      <width>781</width>
+      <height>91</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 34px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:45px;
+	color: rgb(0, 0, 0);
+	background: transparent;</string>
     </property>
     <property name="text">
-     <string>Welcome to our BOOK CLUB! Discover, read, and share your favorite books with us.</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:21pt;&quot;&gt;Welcome to Book Club! Discover, read, and share your favorite books with us!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="fullnameNewLabel">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>130</y>
-      <width>171</width>
+      <x>110</x>
+      <y>120</y>
+      <width>161</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 30px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string> Full Name:</string>
@@ -82,19 +85,17 @@
    <widget class="QLabel" name="usernameNewLabel">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>120</x>
       <y>220</y>
-      <width>151</width>
+      <width>141</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 30px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	background: transparent;</string>
     </property>
     <property name="text">
      <string> Username:</string>
@@ -103,19 +104,17 @@
    <widget class="QLabel" name="passwordLabel">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>120</x>
       <y>310</y>
-      <width>151</width>
+      <width>141</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 30px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	background: transparent;</string>
     </property>
     <property name="text">
      <string> Password:</string>
@@ -124,35 +123,35 @@
    <widget class="QLineEdit" name="fullnameNewLineEdit">
     <property name="geometry">
      <rect>
-      <x>710</x>
+      <x>280</x>
       <y>130</y>
       <width>431</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLineEdit{
-	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 28px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="userNewLineEdit">
     <property name="geometry">
      <rect>
-      <x>710</x>
+      <x>280</x>
       <y>220</y>
       <width>431</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLineEdit{
-	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 28px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;</string>
     </property>
     <property name="echoMode">
      <enum>QLineEdit::EchoMode::Normal</enum>
@@ -161,18 +160,18 @@
    <widget class="QLineEdit" name="passwordNewLineEdit">
     <property name="geometry">
      <rect>
-      <x>710</x>
+      <x>280</x>
       <y>310</y>
       <width>431</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLineEdit{
-	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 28px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;</string>
     </property>
     <property name="echoMode">
      <enum>QLineEdit::EchoMode::PasswordEchoOnEdit</enum>
@@ -181,19 +180,17 @@
    <widget class="QLabel" name="emailNewLabel">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>490</y>
-      <width>111</width>
+      <x>160</x>
+      <y>500</y>
+      <width>101</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 30px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	background: transparent;</string>
     </property>
     <property name="text">
      <string> E-mail:</string>
@@ -202,37 +199,35 @@
    <widget class="QLineEdit" name="emailNewLineEdit">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>490</y>
+      <x>280</x>
+      <y>500</y>
       <width>431</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLineEdit{
-	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 28px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="userSignupPushButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>20</x>
       <y>590</y>
-      <width>371</width>
-      <height>61</height>
+      <width>321</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QPushButton {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(28, 20, 18);
-}
-</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:35px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;</string>
     </property>
     <property name="text">
      <string>Sign up as User</string>
@@ -241,20 +236,18 @@
    <widget class="QPushButton" name="backToSigninPushButton">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>70</x>
       <y>690</y>
-      <width>571</width>
+      <width>631</width>
       <height>81</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QPushButton {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(28, 20, 18);
-}
-</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:35px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;</string>
     </property>
     <property name="text">
      <string>Already have an account? Sign in!</string>
@@ -263,19 +256,17 @@
    <widget class="QLabel" name="passwordLabel_2">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>400</y>
-      <width>241</width>
+      <x>30</x>
+      <y>410</y>
+      <width>231</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 30px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	background: transparent;</string>
     </property>
     <property name="text">
      <string> Repeat Password:</string>
@@ -284,18 +275,18 @@
    <widget class="QLineEdit" name="passwordNewLineEdit_2">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>400</y>
+      <x>280</x>
+      <y>410</y>
       <width>431</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLineEdit{
-	background-image: url(:/resources/whiteWood.jpg);
-	font-size: 28px;
-	color: rgb(28, 20, 18);
-}</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;</string>
     </property>
     <property name="echoMode">
      <enum>QLineEdit::EchoMode::PasswordEchoOnEdit</enum>
@@ -304,20 +295,18 @@
    <widget class="QPushButton" name="publisherSignupPushButton">
     <property name="geometry">
      <rect>
-      <x>770</x>
+      <x>370</x>
       <y>590</y>
-      <width>371</width>
-      <height>61</height>
+      <width>411</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QPushButton {
-	background-image: url(:/resources/whiteWood.jpg);
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(28, 20, 18);
-}
-</string>
+     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:35px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;</string>
     </property>
     <property name="text">
      <string>Sign up as Publisher</string>

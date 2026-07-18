@@ -3,17 +3,24 @@
 
 #include <QWidget>
 
+#include "../Network-Manger/NetworkManager.h"
+
+
 namespace Ui {
 class UserProfileWindow;
 }
 
-class Form : public QWidget
+class UserProfileWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Form(QWidget *parent = nullptr);
-    ~Form();
+    explicit UserProfileWindow(NetworkManager* networkManager  ,QWidget *parent = nullptr);
+    ~UserProfileWindow();
+
+
+    void loadprof();
+
 
 signals:
     void openGenreWindow();
@@ -21,7 +28,7 @@ signals:
     void openEditUserInfoDialog();
     void openChangeUserPassDialog();
     void openShoppingHistoryDialog();
-    void openFavBooksDialog();
+    void openFavBooksWindow();
 
 private slots:
     void on_favGenresPushButton_clicked();
@@ -31,8 +38,12 @@ private slots:
     void on_shoppingHistoryPushButton_clicked();
     void on_favBooksPushButton_clicked();
 
+
+    void handleResponse(const Response& response);
+
 private:
     Ui::UserProfileWindow *ui;
+    NetworkManager* m_networkManager;
 };
 
 #endif // USERPROFILEWINDOW_H

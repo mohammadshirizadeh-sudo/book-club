@@ -32,6 +32,8 @@ ClientHandler::ClientHandler(qintptr socketDescriptor,
     , m_publisherService(publisherService)
     , m_adminService(adminService)
 {
+
+    qDebug() << "[5] ClientHandler created";
     m_socket = new QTcpSocket(this);
 
     if (!m_socket->setSocketDescriptor(socketDescriptor)) {
@@ -70,12 +72,16 @@ void ClientHandler::onSocketError(QAbstractSocket::SocketError socketError)
     qWarning() << "⚠️ Socket error:" << m_socket->errorString()
         << "(Code:" << socketError << ")";
 
+    emit clientError(m_socket->errorString());
+
     m_socket->close();
     onDisconnected();
 }
 
+/*
 void ClientHandler::onReadyRead() {
     QByteArray data = m_socket->readAll();
+    qDebug() << "📥 Server received:" << data;
     QString requestData = QString::fromUtf8(data).trimmed();
     if (requestData.isEmpty()) return;
 
@@ -87,6 +93,55 @@ void ClientHandler::onReadyRead() {
         }
         m_pendingTasks.fetchAndSubOrdered(1);
     });
+}
+*/
+
+
+
+void ClientHandler::onReadyRead()
+{
+
+
+    QByteArray newData = m_socket->readAll();
+    qDebug() << "[SERVER IN] Triggered onReadyRead. Bytes read:" << newData.size();
+    qDebug() << "[SERVER IN] Raw data:" << newData.left(100)<<"...";
+
+    m_recvBuffer += newData;
+
+    while (true) {
+
+        int idx = m_recvBuffer.indexOf('\n');
+
+        if (idx == -1)
+            break;
+
+
+        QByteArray messageData =
+            m_recvBuffer.left(idx);
+
+        m_recvBuffer.remove(0, idx + 1);
+
+
+        QString requestData =
+            QString::fromUtf8(messageData).trimmed();
+
+
+        if (requestData.isEmpty())
+            continue;
+
+
+        m_pendingTasks.fetchAndAddOrdered(1);
+
+
+        QtConcurrent::run([this, requestData]() {
+
+            if (!m_isDestroying.loadAcquire()) {
+                processRequest(requestData);
+            }
+
+            m_pendingTasks.fetchAndSubOrdered(1);
+        });
+    }
 }
 
 void ClientHandler::onDisconnected() {
@@ -106,7 +161,7 @@ void ClientHandler::handleRequest(const QString& requestData)
     // 1. Parse request
     Request request = m_parser->parse(requestData);
     if (!request.isValid()) {
-        sendResponse(Response::error("Invalid request format"));
+        sendResponse( Response::error(request.getCommandType(),"Invalid request format"));
         return;
     }
 
@@ -120,11 +175,12 @@ void ClientHandler::handleRequest(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,this
+        m_adminService,m_notificationService,m_libraryService,this
+
         ));
 
     if (!command) {
-        sendResponse(Response::error("Unknown command: " + request.getCommandTypeString()));
+        sendResponse(Response::error(request.getCommandType() , "Unknown command: " + request.getCommandTypeString()));
         return;
     }
 
@@ -136,12 +192,12 @@ void ClientHandler::handleRequest(const QString& requestData)
     catch (const std::exception& e) {
 
         qCritical() << "❌ Command execution failed:" << e.what();
-        sendResponse(Response::error("Internal error: " + QString(e.what())));
+        sendResponse(Response::error(request.getCommandType(), "Internal error: " + QString(e.what())));
     }
     catch (...) {
 
         qCritical() << "❌ Unknown command execution error!";
-        sendResponse(Response::error("Internal server error"));
+        sendResponse(Response::error(request.getCommandType(),"Internal server error"));
     }
 }
 
@@ -151,7 +207,7 @@ void ClientHandler::handleRequestSync(const QString& requestData)
     // 1. Parse request
     Request request = m_parser->parse(requestData);
     if (!request.isValid()) {
-        sendResponseSync(Response::error("Invalid request format"));
+        sendResponseSync(Response::error(request.getCommandType(),"Invalid request format"));
         return;
     }
 
@@ -165,10 +221,10 @@ void ClientHandler::handleRequestSync(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,this
+        m_adminService,m_notificationService ,m_libraryService,  this
         ));
     if (!command) {
-        sendResponseSync(Response::error("Unknown command"));
+        sendResponseSync(Response::error(request.getCommandType(),"Unknown command"));
         return;
     }
 
@@ -176,7 +232,7 @@ void ClientHandler::handleRequestSync(const QString& requestData)
         Response response = command->execute(request.getParams());
         sendResponseSync(response);
     } catch (const std::exception& e) {
-        sendResponseSync(Response::error("Internal error: " + QString(e.what())));
+        sendResponseSync(Response::error(request.getCommandType(),"Internal error: " + QString(e.what())));
     }
 }
 
@@ -192,10 +248,14 @@ void ClientHandler::sendResponseSync(const Response& response)
 void ClientHandler::sendResponse(const QString& response)
 {
     if (m_socket && m_socket->state() == QTcpSocket::ConnectedState) {
-        QByteArray data = response.toUtf8();
-        m_socket->write(data);
+        QByteArray data = response.toUtf8() + "\n";
+        qint64 bytesWritten = m_socket->write(data);
         m_socket->flush();
-        qDebug() << "Response sent to client:" << response.left(100) << "...";
+
+        qDebug() << "[SERVER OUT] Bytes written:" << bytesWritten;
+        qDebug() << "[SERVER OUT] Raw payload:" << data.left(100)<<"...";
+    } else {
+        qWarning() << "[SERVER OUT ERROR] Socket is not connected! State:" << (m_socket ? m_socket->state() : -1);
     }
 }
 
@@ -203,6 +263,8 @@ void ClientHandler::sendResponse(const QString& response)
 void ClientHandler::sendResponse(const Response& response)
 {
     sendResponse(response.toJsonString());
+    emit responseSent(response.toJsonString());
+
 }
 
 
@@ -218,11 +280,19 @@ void ClientHandler::setSession(int userId, UserRole role)
 
 void ClientHandler::processRequest(const QString& requestData)
 {
+
+
+    qDebug() << "[SERVER PROCESS] Attempting to parse extracted string:" << requestData.left(100)<<"...";
     Request request = m_parser->parse(requestData);
+    qDebug() << "[SERVER PROCESS] Parsed successfully? Valid:" << request.isValid() << "Command:" << request.getCommandTypeString();
     if (!request.isValid()) {
-        emit responseReady(Response::error("Invalid request format"));
+        emit responseReady(Response::error(request.getCommandType(),"Invalid request format"));
         return;
     }
+
+    emit requestReceived(requestData);
+
+
     std::unique_ptr<Command> command(CommandFactory::create(
         request.getCommandType(),
         m_authService,
@@ -232,10 +302,11 @@ void ClientHandler::processRequest(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,this
+        m_adminService,m_notificationService,m_libraryService, this
+
         ));
     if (!command) {
-        emit responseReady(Response::error("Unknown command"));
+        emit responseReady(Response::error(request.getCommandType(),"Unknown command"));
         return;
     }
 
@@ -244,9 +315,9 @@ void ClientHandler::processRequest(const QString& requestData)
         Response response = command->execute(request.getParams());
         emit responseReady(response);
     } catch (const std::exception& e) {
-        emit responseReady(Response::error("Internal error: " + QString(e.what())));
+        emit responseReady(Response::error(request.getCommandType(),"Internal error: " + QString(e.what())));
     } catch (...) {
-        emit responseReady(Response::error("Internal server error"));
+        emit responseReady(Response::error(request.getCommandType(),"Internal server error"));
     }
 }
 

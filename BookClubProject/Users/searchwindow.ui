@@ -18,9 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
-	background-image: url(:/resources/skyblueBack.jpg);
-}</string>
+   <string notr="true">background-image: url(:/resources/white.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -30,6 +28,12 @@
      <width>1500</width>
      <height>800</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}
+</string>
    </property>
    <property name="frameShape">
     <enum>QFrame::Shape::StyledPanel</enum>
@@ -41,7 +45,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>40</y>
+      <y>160</y>
       <width>241</width>
       <height>71</height>
      </rect>
@@ -51,18 +55,21 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+	padding: 8px;
 }
 </string>
     </property>
     <property name="text">
-     <string>Book</string>
+     <string>📚 Book</string>
     </property>
    </widget>
    <widget class="QPushButton" name="searchAuthorPushButton">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>180</y>
+      <y>290</y>
       <width>241</width>
       <height>71</height>
      </rect>
@@ -72,18 +79,21 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+	padding: 8px;
 }
 </string>
     </property>
     <property name="text">
-     <string>Author</string>
+     <string>🖋️ Author</string>
     </property>
    </widget>
    <widget class="QPushButton" name="searchPublisherPushButton">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>320</y>
+      <y>420</y>
       <width>241</width>
       <height>71</height>
      </rect>
@@ -93,18 +103,21 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+	padding: 8px;
 }
 </string>
     </property>
     <property name="text">
-     <string>Publisher</string>
+     <string>📑 Publisher</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="searchLineEdit">
     <property name="geometry">
      <rect>
       <x>300</x>
-      <y>40</y>
+      <y>50</y>
       <width>1161</width>
       <height>71</height>
      </rect>
@@ -113,7 +126,12 @@
      <string notr="true">QLineEdit {
 	font-size:27px;
 	color: rgb(0, 0, 0);
+border: 3px solid black;
+border-radius: 12px;
 }</string>
+    </property>
+    <property name="text">
+     <string>  What are you looking for?</string>
     </property>
     <property name="placeholderText">
      <string notr="true"/>
@@ -122,10 +140,10 @@
    <widget class="QPushButton" name="showSearchPushButton">
     <property name="geometry">
      <rect>
-      <x>1330</x>
-      <y>50</y>
-      <width>121</width>
-      <height>51</height>
+      <x>1264</x>
+      <y>56</y>
+      <width>191</width>
+      <height>57</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -133,18 +151,20 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }
 </string>
     </property>
     <property name="text">
-     <string>Search</string>
+     <string>🔎 Search</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>430</y>
+      <y>540</y>
       <width>241</width>
       <height>231</height>
      </rect>
@@ -164,9 +184,9 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>750</y>
+      <y>0</y>
       <width>211</width>
-      <height>51</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -174,11 +194,28 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+	padding: 8px;
 }
 </string>
     </property>
     <property name="text">
-     <string>&lt;-- Back</string>
+     <string>← Back</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="searchResultsListWidget">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>160</y>
+      <width>1161</width>
+      <height>601</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 3px solid black;
+border-radius: 12px;</string>
     </property>
    </widget>
   </widget>

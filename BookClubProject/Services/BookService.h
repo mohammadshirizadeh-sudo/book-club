@@ -7,6 +7,7 @@
 #include "../Shared/Book.h"
 #include "../Repositories/BookRepository.h"
 #include "../Repositories/ReviewRepository.h"
+#include "../Repositories/UserRepository.h"
 #include "../Shared/Genre.h"
 
 class BookService : public QObject {
@@ -14,6 +15,7 @@ class BookService : public QObject {
 private:
     BookRepository* bookRepo;
     ReviewRepository* reviewRepo;
+    UserRepository userRepo;
 
 
     bool areGenresRelated(Genre genre1, Genre genre2) const;
@@ -40,6 +42,11 @@ public:
     // ===== Search & Filter =====
 
     QVector<QSharedPointer<Book>> searchBooks(const QString& keyword) const;
+
+
+    QVector<QSharedPointer<Book>> searchBooksByAuthor(const QString& keyword) const;
+
+    QVector<QSharedPointer<Book>> searchBooksByPublisher(const QString& keyword) const;
 
     QVector<QSharedPointer<Book>> filterByGenre(const QString& genre) const;
 
@@ -76,6 +83,10 @@ public:
     bool deleteBook(int bookId);
 
     int calculateGenreMatchScore(const QSharedPointer<Book> book, const QVector<Genre>& favoriteGenres) const;
+
+
+     QMap<QString, QVector<QSharedPointer<Book>>> searchAuthorsWithBooks(const QString& keyword) const;
+
 };
 
 #endif // BOOKSERVICE_H

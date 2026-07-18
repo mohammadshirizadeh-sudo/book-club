@@ -28,52 +28,46 @@ User* UserService::getProfile(int userId) const {
 
 }
 
-bool UserService::updateProfile(int userId, const QString& newEmail,
+ValidationResult UserService::updateProfile(int userId, const QString& newEmail,
                                 const QString& newFullName,
-                                const QVector<Genre>& newGenres) {
+                                const QString& newUserName) {
+
     // 1. Find user
     User* user = userRepo->findById(userId);
     QString oldUserName =  user->getUsername();
     QString oldEmail = user->getEmail();
     if (!user) {
-        qWarning() << "User not found with ID:" << userId;
-        return false;
+        return ValidationResult::failure("User not found");
     }
 
     // 2. Validate email
     ValidationResult email = EmailValidator::isValid(newEmail);
     if (!email.isValid) {
-        qWarning() << "Invalid email:" << email.errorMessage;
-        return false;
+        return email;
     }
 
     // 3. Check if email is taken by another user
     User* userWithEmail = userRepo->findByEmail(newEmail);
     if (userWithEmail && userWithEmail->getId() != userId) {
-        qWarning() << "Email" << newEmail << "is already taken by another user";
-        return false;
+        return ValidationResult::failure("This email is already taken by another user");
     }
 
-    // 4. Validate genres (1-3 genres)
-    if (newGenres.isEmpty() || newGenres.size() > 3) {
-        qWarning() << "Invalid number of genres. Must be 1-3.";
-        return false;
-    }
 
     // 5. Update user data
     user->setEmail(newEmail);
     user->setFullname(newFullName);
-    user->setFavouriteGenre(newGenres);
+    user->setUsername(newUserName);
     user->setUpdatedAt(QDateTime::currentDateTime());
 
     // 6. Save to repository
     if (!userRepo->updateUser(user , oldUserName , oldEmail)) {
-        qWarning() << "Failed to update user in repository";
-        return false;
+
+        return ValidationResult::failure("Failed to update user in repository");
+
     }
 
     qDebug() << "Profile updated for user:" << user->getUsername();
-    return true;
+    return ValidationResult::success();
 }
 
 bool UserService::updateFavoriteGenres(int userId, const QVector<Genre>& newGenres) {
@@ -120,7 +114,7 @@ bool UserService::changePassword(int userId, const QString& oldPassword, const Q
 
     // 4. Validate new password
 
-    ValidationResult pass = EmailValidator::isValid(newPassword);
+    ValidationResult pass = PasswordValidator::isValid(newPassword);
     if (!pass.isValid) {
         qWarning() << "Invalid new password:" << pass.errorMessage;
         return false;
@@ -273,4 +267,109 @@ bool UserService::isUsernameAvailable(const QString& username) const {
 
 bool UserService::isEmailAvailable(const QString& email) const {
     return !userRepo->isEmailTaken(email);
+}
+
+
+// UserService.cpp
+QString UserService::getStringStatus(AccountStatus status)
+{
+    switch(status) {
+    case AccountStatus::Active:   return "Active";
+    case AccountStatus::Blocked:  return "Blocked";
+    case AccountStatus::Inactive: return "Inactive";
+    case AccountStatus::Suspended:return "Suspended";
+    case AccountStatus::Pending:  return "Pending";
+    default: return "Unknown";
+    }
+}
+
+
+// UserService.cpp
+
+// =============================================
+// ===== Favorite Books Management =====
+// =============================================
+
+bool UserService::addFavoriteBook(int userId, int bookId)
+{
+    // 1. پیدا کردن کاربر
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return false;
+    }
+
+    // 2. بررسی اینکه کتاب قبلاً به علاقه‌مندی‌ها اضافه نشده باشد
+    if (user->isFavoriteBook(bookId)) {
+        qWarning() << "Book" << bookId << "is already in favorites for user" << userId;
+        return false;
+    }
+
+    // 3. اضافه کردن به لیست علاقه‌مندی‌ها
+    if (!user->addFavoriteBook(bookId)) {
+        qWarning() << "Failed to add book" << bookId << "to favorites for user" << userId;
+        return false;
+    }
+
+    // 4. ذخیره در دیتابیس (با username و email برای به‌روزرسانی)
+    if (!userRepo->updateUser(user, user->getUsername(), user->getEmail())) {
+        qWarning() << "Failed to save user after adding favorite book";
+        return false;
+    }
+
+    qDebug() << "Book" << bookId << "added to favorites for user" << userId;
+    return true;
+}
+
+bool UserService::removeFavoriteBook(int userId, int bookId)
+{
+    // 1. پیدا کردن کاربر
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return false;
+    }
+
+    // 2. بررسی اینکه کتاب در علاقه‌مندی‌ها وجود دارد
+    if (!user->isFavoriteBook(bookId)) {
+        qWarning() << "Book" << bookId << "is not in favorites for user" << userId;
+        return false;
+    }
+
+    // 3. حذف از لیست علاقه‌مندی‌ها
+    if (!user->removeFavoriteBook(bookId)) {
+        qWarning() << "Failed to remove book" << bookId << "from favorites for user" << userId;
+        return false;
+    }
+
+    // 4. ذخیره در دیتابیس
+    if (!userRepo->updateUser(user, user->getUsername(), user->getEmail())) {
+        qWarning() << "Failed to save user after removing favorite book";
+        return false;
+    }
+
+    qDebug() << "Book" << bookId << "removed from favorites for user" << userId;
+    return true;
+}
+
+bool UserService::isFavoriteBook(int userId, int bookId) const
+{
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return false;
+    }
+
+    return user->isFavoriteBook(bookId);
+}
+
+QVector<int> UserService::getFavoriteBooks(int userId) const
+{
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return QVector<int>();
+    }
+
+    return user->getFavoriteBooks();
 }

@@ -70,7 +70,34 @@ enum class CommandType {
     GetBlockedUsers,
     DeleteBook,
 
-    GetSystemStats
+    GetSystemStats,
+
+
+
+
+    SearchUsers,
+    GetNotifications,
+
+     MarkNotificationRead,
+    MarkAllNotificationsRead,
+    ClearAllNotifications,
+
+
+    GetUserShelves,
+    GetBooksInShelf,
+
+    CreateShelf,
+
+    DeleteShelf,
+    RenameShelf,
+    RemoveBookFromShelf,
+    MoveBookBetweenShelves,
+     GetBestSellers,
+
+    GetBookCover,
+    AddFavoriteBook,
+
+    SearchAuthors
 };
 
 

@@ -15,7 +15,13 @@ Command* CommandFactory::create(
     CartService* cartService,
     PublisherService* publisherService,
     AdminService* adminService,
-    ClientHandler* clientHandler)
+    NotificationService* notificationService,
+    LibraryService* libraryService,
+    ClientHandler* clientHandler
+    )
+
+
+
 {
     switch (type) {
     // =============================================
@@ -37,7 +43,7 @@ Command* CommandFactory::create(
     // ===== User Commands =====
     // =============================================
     case CommandType::GetProfile:
-        return new GetProfileCommand(userService);
+        return new GetProfileCommand(userService , purchaseService);
 
     case CommandType::UpdateProfile:
         return new UpdateProfileCommand(userService);
@@ -177,6 +183,67 @@ Command* CommandFactory::create(
     case CommandType::ResetPasswordWithToken:
         return new ResetPasswordWithTokenCommand(authService);
 
+    case CommandType::SearchUsers:
+        return new SearchUserCommand(userService , bookService);
+
+
+
+    case CommandType::SearchAuthors:
+        return new SearchAuthorCommand(bookService);
+
+
+
+
+    case CommandType::GetNotifications:
+        return new GetNotificationsCommand(notificationService);
+
+
+
+    case CommandType::MarkNotificationRead:
+        return new MarkNotificationReadCommand(notificationService);
+
+
+    case CommandType::MarkAllNotificationsRead:
+        return new MarkAllNotificationsReadCommand(notificationService);
+
+
+    case CommandType::ClearAllNotifications:
+        return new ClearAllNotificationsCommand(notificationService);
+
+
+    case CommandType::GetUserShelves:
+        return new GetUserShelvesCommand(userService, libraryService);
+
+
+    case CommandType::GetBooksInShelf:
+        return new GetBooksInShelfCommand(libraryService, bookService);
+
+
+    case CommandType::CreateShelf:
+        return new CreateShelfCommand(libraryService);
+
+    case CommandType::DeleteShelf:
+        return new DeleteShelfCommand(libraryService);
+
+    case CommandType::RenameShelf:
+        return new RenameShelfCommand(libraryService);
+
+    case CommandType::RemoveBookFromShelf:
+        return new RemoveBookFromShelfCommand(libraryService);
+
+
+    case CommandType::MoveBookBetweenShelves:
+        return new MoveBookBetweenShelvesCommand(libraryService);
+
+    case CommandType::GetBestSellers:
+        return new GetBestSellersCommand(bookService);
+
+
+    case CommandType::GetBookCover:
+        return new GetBookCoverCommand(bookService);
+
+    case CommandType::AddFavoriteBook:
+        return new AddFavoriteBookCommand(userService);
 
 
     // =============================================

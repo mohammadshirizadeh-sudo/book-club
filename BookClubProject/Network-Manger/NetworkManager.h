@@ -4,6 +4,7 @@
 
 #include <QTcpSocket>
 #include <QObject>
+#include <QQueue>
 #include "../Server/Request.h"
 #include "../Server/Response.h"
 
@@ -26,6 +27,8 @@ public:
     // ===== Send Request =====
     void sendRequest(const Request& request);
     void sendRequest(const QString& command, const QVariantMap& params = QVariantMap());
+
+    void requestBookCover(int bookId);
 
 signals:
     void connected();
@@ -51,6 +54,12 @@ private:
 
     void handleResponse(const Response& response);
     void emitSignals(const Response& response);
+
+
+    QByteArray m_recvBuffer;
+
+    QQueue<Request> m_pendingRequests;
+    void flushPendingRequests();
 };
 
 #endif

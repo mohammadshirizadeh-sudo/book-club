@@ -36,6 +36,7 @@ private:
     AccountStatus status;
     QDateTime createdAt;
     QVector<Genre> favouriteGenre;
+    QVector<int> favoriteBooks;
     QDateTime lastLogin;
     QDateTime updatedAt;
     QString salt;
@@ -104,6 +105,19 @@ public:
     QString getPasswordResetToken() const { return passwordResetToken; }
     QDateTime getResetTokenExpiry() const { return resetTokenExpiry; }
     QString getRoleString() const;
+
+
+
+    //favoriteBooks
+    QVector<int> getFavoriteBooks() const { return favoriteBooks; }
+
+
+    void setFavoriteBooks(const QVector<int>& books) { favoriteBooks = books; }
+
+
+    bool addFavoriteBook(int bookId);
+    bool removeFavoriteBook(int bookId);
+    bool isFavoriteBook(int bookId) const;
 
 
 

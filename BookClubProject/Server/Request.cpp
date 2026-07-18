@@ -144,7 +144,45 @@ CommandType Request::stringToCommandType(const QString& str)
 
         {"RequestPasswordReset", CommandType::RequestPasswordReset},
         {"ResetPasswordWithToken", CommandType::ResetPasswordWithToken},
-        {"ConfirmResetPassword", CommandType::ConfirmResetPassword},
+
+
+        {"SearchUsers", CommandType::SearchUsers},
+        {"GetNotifications" , CommandType ::GetNotifications},
+        {"MarkNotificationRead" , CommandType ::MarkNotificationRead},
+        {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
+
+        {"GetUserShelves" , CommandType ::GetUserShelves},
+
+        {"CreateShelf" , CommandType ::CreateShelf},
+        {"DeleteShelf" , CommandType ::DeleteShelf},
+        {"RenameShelf" , CommandType ::RenameShelf},
+
+        {"RemoveBookFromShelf" , CommandType ::RemoveBookFromShelf},
+
+
+        {"MoveBookBetweenShelves" , CommandType ::MoveBookBetweenShelves},
+
+         {"GetBestSellers" , CommandType ::GetBestSellers},
+
+        {"GetBookCover" , CommandType ::GetBookCover},
+
+         {"AddFavoriteBook" , CommandType ::AddFavoriteBook},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     };
@@ -224,6 +262,36 @@ QString Request::CommandTypeToString(CommandType cmd)
 
     case CommandType::DeleteOwnReview: return "DeleteOwnReview";
 
+
+    case CommandType::SearchUsers: return "SearchUsers";
+    case CommandType::SearchAuthors : return "SearchAuthors";
+    case CommandType::GetNotifications: return "GetNotifications";
+    case CommandType::MarkAllNotificationsRead: return "MarkAllNotificationsRead";
+
+    case CommandType::ClearAllNotifications: return "ClearAllNotifications";
+    case CommandType::GetUserShelves: return "GetUserShelves";
+    case CommandType::DeleteShelf: return "DeleteShelf";
+
+
+    case CommandType::RenameShelf: return "RenameShelf";
+
+    case CommandType::RemoveBookFromShelf: return "RemoveBookFromShelf";
+
+
+    case CommandType::MoveBookBetweenShelves: return "MoveBookBetweenShelves";
+
+
+
+    case CommandType::GetBestSellers: return "GetBestSellers";
+
+
+    case CommandType::GetBookCover: return "GetBookCover";
+
+    case CommandType::AddFavoriteBook: return "AddFavoriteBook";
+
+
+
+
     default: return "Unknown";
     }
 }
@@ -262,7 +330,7 @@ Request Request::fromJson(const QJsonObject& json)
 {
     Request request;
 
-    QString commandstr = json["commandstr"].toString();
+    QString commandstr = json["command"].toString();
     request.setCommandType(stringToCommandType(commandstr));
 
     if (json.contains("params") && json["params"].isObject()) {

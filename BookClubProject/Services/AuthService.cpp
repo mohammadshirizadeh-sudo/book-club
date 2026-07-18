@@ -61,10 +61,14 @@ ValidationResult AuthService::registerUser(const QString& username, const QStrin
 
 */
 
-ValidationResult AuthService::registerUser(const QString& username, const QString& email,
+ValidationResult AuthService::registerUser(const QString& Fullname , const QString& username, const QString& email,
                                            const QString& password, UserRole role)
 {
     // 1. Validate username
+
+    if (Fullname.isEmpty()) {
+        return ValidationResult::failure("Fullname is Empty");
+    }
     if (username.isEmpty() || username.length() < 3) {
         return ValidationResult::failure("Username must be at least 3 characters");
     }
@@ -94,6 +98,7 @@ ValidationResult AuthService::registerUser(const QString& username, const QStrin
     if (!newUser) {
         return ValidationResult::failure("Failed to create user");
     }
+    newUser->setFullname(Fullname);
 
     // 5. Save to repository
     if (!userRepo->addUser(newUser)) {
@@ -242,11 +247,14 @@ ValidationResult AuthService::resetPasswordWithToken(const QString& token, const
         return ValidationResult::failure("❌ Failed to reset password");
     }
 
-    // 3. Save changes
     userRepo->updateUser(user , user->getUsername(), user->getEmail());
-
+    QVariantMap data;
+    data["userId"] = user->getId();
+    data["username"] = user->getUsername();
+    data["role"] = user->getRoleString();
     qDebug() << "✅ Password reset successfully for user:" << user->getUsername();
-    return ValidationResult::success();
+    return ValidationResult::success(data);
+
 }
 
 User* AuthService::getUserByUsername(const QString& username) const
@@ -259,3 +267,23 @@ User* AuthService::getUserByUsername(const QString& username) const
     return userRepo->findByUsername(username);
 }
 
+User* AuthService::getUserByEmail(const QString& email) const
+{
+    if (email.isEmpty()) {
+        qWarning() << "❌ Email is empty!";
+        return nullptr;
+    }
+
+    return userRepo->findByEmail(email);
+}
+
+
+
+QVector<User*> AuthService::searchUsers(const QString& keyword) const
+{
+    if (keyword.isEmpty()) {
+        return QVector<User*>();
+    }
+
+    return userRepo->searchUsers(keyword);
+}

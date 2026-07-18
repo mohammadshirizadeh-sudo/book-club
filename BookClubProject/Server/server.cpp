@@ -45,7 +45,7 @@ Server::~Server()
 
 void Server::initServices()
 {
-    // ===== Repositories =====
+
     m_userRepo = new UserRepository(this);
     m_bookRepo = new BookRepository(this);
     m_reviewRepo = new ReviewRepository(this);
@@ -76,7 +76,7 @@ void Server::cleanupServices()
 
 bool Server::start(quint16 port)
 {
-    if (!listen(QHostAddress::Any, port)) {
+    if (!listen(QHostAddress::LocalHost, port)) {
         qCritical() << "❌ Server could not start on port" << port << ":" << errorString();
         return false;
     }
@@ -97,10 +97,21 @@ void Server::stop()
     qDebug() << "🛑 Server stopped";
 }
 
-
+/*
 void Server::incomingConnection(qintptr socketDescriptor)
 {
-    qDebug() << "📡 New client connected:" << socketDescriptor;
+
+    qDebug() << "[4] incomingConnection";
+    qDebug() << "[4] descriptor =" << socketDescriptor;
+
+
+    QString ipAddress = peerAddress(socketDescriptor).toString();
+
+
+    emit clientConnected(socketDescriptor, ipAddress);
+
+
+
 
     ClientHandler* handler = new ClientHandler(
         socketDescriptor,
@@ -115,14 +126,70 @@ void Server::incomingConnection(qintptr socketDescriptor)
         this
         );
 
-    connect(handler, &ClientHandler::disconnected, this, [this, socketDescriptor, handler]() {
-        if (m_clients.value(socketDescriptor) == handler) {
-            m_clients.remove(socketDescriptor);
-            qDebug() << "✅ Client removed:" << socketDescriptor;
-        } else {
-            qDebug() << "⚠️ Skipped removal for old descriptor:" << socketDescriptor;
-        }
-    });
+    connectToClientSignals(handler);
 
     m_clients[socketDescriptor] = handler;
 }
+
+*/
+
+
+void Server::incomingConnection(qintptr socketDescriptor)
+{
+    ClientHandler* handler = new ClientHandler(
+        socketDescriptor,
+        m_authService, m_bookService, m_userService, m_purchaseService,
+        m_reviewService, m_cartService, m_publisherService, m_adminService,
+        this
+        );
+
+    if (!handler || !handler->isValidSocket()) {
+        return;
+    }
+
+    connectToClientSignals(handler);
+    m_clients[socketDescriptor] = handler;
+
+    emit clientConnected(socketDescriptor, handler->peerAddress());
+}
+
+void Server::connectToClientSignals(ClientHandler* handler)
+{
+    if (!handler) return;
+
+    // اتصال سیگنال‌های ClientHandler به سیگنال‌های Server
+    connect(handler, &ClientHandler::requestReceived,
+            this, [this](const QString& request) {
+                emit requestReceived(request);
+
+            });
+
+    connect(handler, &ClientHandler::responseSent,
+            this, [this](const QString& response) {
+                emit responseSent(response);
+            });
+
+    connect(handler, &ClientHandler::clientError,
+            this, [this](const QString& error) {
+                emit errorOccurred(error);
+            });
+
+    connect(handler, &ClientHandler::disconnected,
+            this, [this, handler]() {
+                emit clientDisconnected(handler->m_socketDescriptor);
+                emit systemEvent("Client disconnected");
+            });
+}
+
+bool Server::startServer(quint16 port)
+{
+    return start(port);  // ← همان start موجود را صدا می‌زند
+}
+
+
+void Server::stopServer()
+{
+    stop();  // ← همان stop موجود را صدا می‌زند
+}
+
+

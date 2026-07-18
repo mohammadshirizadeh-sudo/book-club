@@ -28,8 +28,7 @@ signals:
     void openAdminWindow();
 
 public slots:
-    // اسلات‌های جدید برای دریافت پاسخ سرور
-    void handleLoginResponse(const QVariantMap& data);
+    void handleLoginResponse(const Response& response);
     void handleError(const QString& message);
 
 private slots:

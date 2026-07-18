@@ -1,6 +1,8 @@
 // bookservice.cpp
 #include "BookService.h"
 
+#include "../Shared/Publisher.h"
+
 #include <QDebug>
 #include <algorithm>
 
@@ -31,9 +33,9 @@ bool BookService::deleteBook(int bookId)
 }
 
 
-BookService::BookService(BookRepository* repo, ReviewRepository* reviewRepo , QObject* parent)
+BookService::BookService(BookRepository* repo, ReviewRepository* reviewRepo ,  QObject* parent)
 
-    : bookRepo(repo), reviewRepo(reviewRepo) ,QObject(parent) {
+    : bookRepo(repo), reviewRepo(reviewRepo) , QObject(parent) {
 
 }
 
@@ -176,20 +178,66 @@ QVector<QSharedPointer<Book>> BookService::searchBooks(const QString& keyword) c
     for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
         if (!book->getIsActive()) continue;
 
-
-        QString genreOf = GenreHelper::toString(book->getGenre());
-
         // Search by title, author, genre, or description
-        if (book->getTitle().toLower().contains(lowerKeyword) ||
-            book->getAuthor().toLower().contains(lowerKeyword) ||
-            genreOf.toLower().contains(lowerKeyword) ||
-            book->getDescription().toLower().contains(lowerKeyword)) {
+        if (book->getTitle().toLower().contains(lowerKeyword)) {
             results.append(book);
         }
     }
 
     return results;
 }
+
+
+QVector<QSharedPointer<Book>> BookService::searchBooksByAuthor(const QString& keyword) const {
+    if (keyword.isEmpty()) {
+        return QVector<QSharedPointer<Book>>();
+    }
+
+    QVector<QSharedPointer<Book>> results;
+    QString lowerKeyword = keyword.toLower();
+
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
+        if (!book->getIsActive()) continue;
+
+        // Search by title, author, genre, or description
+        if (book->getAuthor().toLower().contains(lowerKeyword)) {
+            results.append(book);
+        }
+    }
+
+    return results;
+}
+
+
+
+QVector<QSharedPointer<Book>> BookService::searchBooksByPublisher(const QString& keyword) const {
+    if (keyword.isEmpty()) {
+        return QVector<QSharedPointer<Book>>();
+    }
+
+    QVector<QSharedPointer<Book>> results;
+    QString lowerKeyword = keyword.toLower();
+
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
+        if (!book->getIsActive()) continue;
+
+
+        // Publisher* publisher = static_cast<Publisher*>(userRepo->findById(book->getPublisherId()));
+        qDebug()<<"we are go to cast";
+        int publisherid = book->getPublisherId();
+        qDebug()<<"we got id :  "<<publisherid;
+
+
+        User* publisher = userRepo.findById(publisherid);
+        qDebug()<<"we can cast";
+        if (publisher->getFullname().toLower().contains(lowerKeyword)) {
+            results.append(book);
+        }
+    }
+
+    return results;
+}
+
 
 QVector<QSharedPointer<Book>> BookService::filterByGenre(const QString& genre) const {
     QVector<QSharedPointer<Book>> results;
@@ -431,6 +479,13 @@ QVector<QSharedPointer<Book>> BookService::getFreeBooks() const {
     QVector<QSharedPointer<Book>> freeBooks;
 
     for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
+
+
+        qDebug()
+        << "Title:" << book->getTitle()
+        << "Price:" << book->getPrice()
+        << "Active:" << book->getIsActive()
+        << "isFree:" << book->isFree();
         if (book->getIsActive() && book->isFree()) {
             freeBooks.append(book);
         }
@@ -676,4 +731,32 @@ bool BookService::areGenresRelated(Genre genre1, Genre genre2) const
     default:
         return false;
     }
+}
+
+
+
+// BookService.cpp
+QMap<QString, QVector<QSharedPointer<Book>>> BookService::searchAuthorsWithBooks(const QString& keyword) const
+{
+    QMap<QString, QVector<QSharedPointer<Book>>> result;
+
+    if (keyword.isEmpty()) {
+        return result;
+    }
+
+    QString lowerKeyword = keyword.toLower();
+
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
+        if (!book->getIsActive()) continue;
+
+        QString author = book->getAuthor();
+        if (author.toLower().contains(lowerKeyword)) {
+            if (!result.contains(author)) {
+                result[author] = QVector<QSharedPointer<Book>>();
+            }
+            result[author].append(book);
+        }
+    }
+
+    return result;
 }

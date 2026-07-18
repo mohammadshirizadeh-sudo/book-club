@@ -32,7 +32,13 @@ private:
     bool createShelfTable();
     bool createShelfBookTable();
 
+
+
+
     QString m_databasePath;
+
+public:
+    bool insertDefaultBooks();
 };
 
 #endif // DATABASEINITIALIZER_H

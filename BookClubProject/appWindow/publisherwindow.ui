@@ -18,9 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget {
-	background-image: url(:/resources/skyblueBack.jpg);
-}</string>
+   <string notr="true">background-image: url(:/resources/white.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -31,6 +29,11 @@
      <height>800</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}</string>
+   </property>
    <property name="frameShape">
     <enum>QFrame::Shape::StyledPanel</enum>
    </property>
@@ -40,10 +43,10 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
+      <x>10</x>
+      <y>10</y>
       <width>211</width>
-      <height>50</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -51,19 +54,22 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
-}</string>
+	border: 3px solid black;
+	border-radius: 12px;
+}
+</string>
     </property>
     <property name="text">
-     <string>Home Page</string>
+     <string>🏠 Home Page</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pubProfilePushButton">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>50</y>
+      <x>10</x>
+      <y>220</y>
       <width>211</width>
-      <height>50</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -71,19 +77,21 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>Profile</string>
+     <string>👤 Profile</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pubBooksPushButton">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>100</y>
+      <x>10</x>
+      <y>480</y>
       <width>211</width>
-      <height>50</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -91,19 +99,21 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>My Books</string>
+     <string>📚 My Books</string>
     </property>
    </widget>
    <widget class="QPushButton" name="quitPushButton">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>150</y>
+      <x>10</x>
+      <y>710</y>
       <width>211</width>
-      <height>50</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -111,10 +121,12 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>&lt;-- Quit</string>
+     <string>← Quit</string>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -140,26 +152,6 @@
     </property>
     <property name="wordWrap">
      <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>10</y>
-      <width>221</width>
-      <height>251</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QLabel {
-	image: url(:/resources/welcome.png);
-	background: transparent;
-	border: none;
-}</string>
-    </property>
-    <property name="text">
-     <string/>
     </property>
    </widget>
   </widget>

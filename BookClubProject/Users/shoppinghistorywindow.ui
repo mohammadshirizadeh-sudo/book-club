@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShoppingHistoryWindow</class>
+ <widget class="QMainWindow" name="ShoppingHistoryWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Shopping History - Book Club</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/white.png);</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="mainFrame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1500</width>
+      <height>800</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <widget class="QPushButton" name="backButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>211</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton#backButton { font: 700 9pt &quot;Script MT Bold&quot;; font-size: 40px; color: rgb(0,0,0); background-color: rgb(255,255,255); border: 3px solid black; border-radius: 12px; }</string>
+     </property>
+     <property name="text">
+      <string>← Back</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="titleLabel">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>5</y>
+       <width>600</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 50px;
+	color: rgb(0,0,0);
+	background: transparent;
+}</string>
+     </property>
+     <property name="text">
+      <string>📋 Shopping History</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QFrame" name="totalSpentCard">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>110</y>
+       <width>771</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QFrame#totalSpentCard { background-color: #E3F2FD; border: 3px solid black; border-radius: 12px; }</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <widget class="QLabel" name="totalSpentValueLabel">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>10</y>
+        <width>201</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 40px;
+color: black;
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:24pt;&quot;&gt;$247.45&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="totalSpentValueLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>10</y>
+        <width>321</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+font-size: 40px;
+color: black;
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string>Total Spent Value:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="ordersGroup">
+     <property name="geometry">
+      <rect>
+       <x>49</x>
+       <y>210</y>
+       <width>1391</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 30px;
+	color: rgb(0,0,0);
+	border: 3px solid black;
+	border-radius: 12px; 
+	margin-top: 10px;
+	padding-top: 25px;
+}</string>
+     </property>
+     <property name="title">
+      <string>Order History</string>
+     </property>
+     <widget class="QScrollArea" name="ordersScrollArea">
+      <property name="geometry">
+       <rect>
+        <x>24</x>
+        <y>44</y>
+        <width>1341</width>
+        <height>461</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QScrollArea#ordersScrollArea { border: 2px solid black; border-radius: 10px; background-color: white; }</string>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="ordersContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1337</width>
+         <height>457</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="ordersLayout"/>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

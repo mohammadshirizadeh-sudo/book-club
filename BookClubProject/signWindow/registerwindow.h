@@ -28,6 +28,9 @@ private slots:
     void on_publisherSignupPushButton_clicked();
     void on_backToSigninPushButton_clicked();
 
+public slots:
+    void handleRegisterResponse(const Response& response);
+
 
 private:
     Ui::RegisterWindow *ui;

@@ -10,41 +10,43 @@ Response::Response()
 {
 }
 
-Response::Response(bool success, const QString& message, const QVariantMap& data)
+Response::Response(CommandType type , bool success, const QString& message, const QVariantMap& data)
     : m_success(success)
     , m_message(message)
     , m_data(data)
     , m_errorCode(0)
+    ,m_commandType(type)
 {
 }
 
 // ===== Static factory methods =====
 
-Response Response::success(const QString& message)
+Response Response::success(CommandType type,const QString& message)
 {
-    return Response(true, message, QVariantMap());
+    return Response(type , true, message, QVariantMap());
 }
 
-Response Response::success(const QVariantMap& data)
+
+Response Response::success(CommandType type,const QVariantMap& data)
 {
-    return Response(true, "", data);
+    return Response(type ,true, "", data);
 }
 
-Response Response::success(const QString& message, const QVariantMap& data)
+Response Response::success(CommandType type,const QString& message, const QVariantMap& data)
 {
-    return Response(true, message, data);
+    return Response(type ,true, message, data);
 }
 
-Response Response::error(const QString& message)
+Response Response::error(CommandType type,const QString& message)
 {
-    Response resp(false, message, QVariantMap());
+    Response resp(type ,false, message, QVariantMap());
     resp.setErrorCode(400);
     return resp;
 }
 
-Response Response::error(int code, const QString& message)
+Response Response::error(CommandType type,int code, const QString& message)
 {
-    Response resp(false, message, QVariantMap());
+    Response resp(type ,false, message, QVariantMap());
     resp.setErrorCode(code);
     return resp;
 }
@@ -57,6 +59,7 @@ QJsonObject Response::toJson() const
     obj["success"] = m_success;
     obj["message"] = m_message;
     obj["errorCode"] = m_errorCode;
+    obj["command"] = Request::CommandTypeToString(m_commandType);
 
     // Convert QVariantMap to QJsonObject
     if (!m_data.isEmpty()) {
@@ -88,6 +91,7 @@ Response Response::fromJson(const QJsonObject& json)
     resp.setSuccess(json["success"].toBool(false));
     resp.setMessage(json["message"].toString(""));
     resp.setErrorCode(json["errorCode"].toInt(0));
+    resp.setCommandType(Request::stringToCommandType(json["command"].toString()));
 
     if (json.contains("data") && json["data"].isObject()) {
         QJsonObject dataObj = json["data"].toObject();

@@ -18,10 +18,17 @@ public:
 
     // ===== Profile Management =====
     User* getProfile(int userId) const;
+    QString getStringStatus(int userId)const;
+    QString getStringStatus(AccountStatus status);
 
-    bool updateProfile(int userId, const QString& newEmail,
-                       const QString& newFullName,
-                       const QVector<Genre>& newGenres);
+
+    // bool updateProfile(int userId, const QString& newEmail,
+    //                    const QString& newFullName,
+    //                    const QVector<Genre>& newGenres);
+
+    ValidationResult updateProfile(int userId, const QString& newEmail,
+                                    const QString& newFullName,
+                       const QString& newUserName);
 
     bool updateFavoriteGenres(int userId, const QVector<Genre>& newGenres);
 
@@ -39,6 +46,11 @@ public:
     QVector<User*> searchUsers(const QString& keyword) const;
     bool isUsernameAvailable(const QString& username) const;
     bool isEmailAvailable(const QString& email) const;
+    bool addFavoriteBook(int userId, int bookId);
+    bool removeFavoriteBook(int userId, int bookId);
+    bool isFavoriteBook(int userId, int bookId) const;
+
+    QVector<int> getFavoriteBooks(int userId) const;
 };
 
 #endif // USERSERVICE_H

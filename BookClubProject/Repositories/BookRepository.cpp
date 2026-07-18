@@ -123,7 +123,13 @@ bool BookRepository::loadAllFromDatabase() {
     }
 
     int count = 0;
+    int maxId = 999;
     while (sqlQuery.next()) {
+
+        int id = sqlQuery.value("id").toInt();
+
+        if (id > maxId)
+            maxId = id;
         QSharedPointer<Book> book = QSharedPointer<Book>::create(sqlQuery.value("id").toInt(),
             sqlQuery.value("title").toString(),
             sqlQuery.value("author").toString(),
@@ -140,11 +146,20 @@ bool BookRepository::loadAllFromDatabase() {
             QDateTime::fromString(sqlQuery.value("created_at").toString(), Qt::ISODate),
             QDateTime::fromString(sqlQuery.value("updated_at").toString(), Qt::ISODate));
 
+
+
         addToCache(book);
         count++;
     }
 
-    qDebug() << "✅ Loaded" << count << "books from SQLite";
+
+    nextId.storeRelaxed(maxId + 1);
+
+    qDebug()
+        << "Loaded"
+        << count
+        << "books. nextId="
+        << nextId.loadRelaxed();
     return true;
 }
 

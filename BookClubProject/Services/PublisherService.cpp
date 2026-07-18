@@ -69,6 +69,9 @@ QVector<QSharedPointer<Book>> PublisherService::getBooksByPublisher(int publishe
 
 
 
+
+
+
 bool PublisherService::addBook(int publisherId, const QString& title, const QString& author,
                                const Genre& genre, const QString& description, double price,
                                double discountPercent, const QString& coverPath,
@@ -113,11 +116,13 @@ bool PublisherService::addBook(int publisherId, const QString& title, const QStr
     book->setCreatedAt(QDateTime::currentDateTime());
     book->setUpdatedAt(QDateTime::currentDateTime());
 
-    // 4. Add book using BookService
-    if (!bookService->addBook(book)) {
+    int newId = bookService->addBook(book);
+
+    if (newId == -1) {
         qWarning() << "Failed to add book:" << title;
         return false;
     }
+
 
     qDebug() << "✅ Book added by publisher" << publisher->getUsername()
              << ":" << title << "(" << GenreHelper::toString(genre) << ")";

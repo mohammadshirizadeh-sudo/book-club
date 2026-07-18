@@ -11,10 +11,9 @@ LoginWindow::LoginWindow(NetworkManager* networkManager,QWidget *parent)
     , m_networkManager(networkManager)
 {
     ui->setupUi(this);
-    /*
+    qDebug() << "🔗 Connecting responseReceived to handleLoginResponse";
     connect(m_networkManager, &NetworkManager::responseReceived,
-            this, &LoginWindow::onResponseReceived);
-*/
+            this, &LoginWindow::handleLoginResponse);
 }
 
 LoginWindow::~LoginWindow()
@@ -47,25 +46,35 @@ void LoginWindow::on_signinPushButton_clicked()
     params["password"] = password;
 
     Request request(CommandType::Login, params);
+    qDebug()<<"We are in the onsignin button";
 
-    // ارسال درخواست لاگین
     m_networkManager->sendRequest(request);
 }
-
-// ===== دریافت پاسخ موفقیت‌آمیز از سرور =====
-void LoginWindow::handleLoginResponse(const QVariantMap& data)
+void LoginWindow::handleLoginResponse(const Response& response)
 {
-    // استخراج اطلاعات کاربر
+
+
+    if (response.getCommandType() != CommandType::Login) {
+        return;
+    }
+
+
+    if (!response.isSuccess()) {
+        QMessageBox::critical(this, "Login Error", response.getMessage());
+        return;
+    }
+
+
+    QVariantMap data = response.getData();
+
     int userId = data.value("userId").toInt();
     QString username = data.value("username").toString();
     QString role = data.value("role").toString();
 
-    // ذخیره در SessionManager
     SessionManager::instance()->setCurrentUser(userId, username, role);
 
     QMessageBox::information(this, "Success", "Welcome " + username + "!");
 
-    // هدایت بر اساس نقش کاربر
     if (role == "User") {
         emit openUserWindow();
     }
@@ -80,7 +89,6 @@ void LoginWindow::handleLoginResponse(const QVariantMap& data)
     }
 }
 
-// ===== دریافت خطا از سرور =====
 void LoginWindow::handleError(const QString& message)
 {
     QMessageBox::critical(this, "Login error", message);

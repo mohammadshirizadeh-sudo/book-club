@@ -17,7 +17,7 @@ public:
 
 
 
-    ValidationResult registerUser(const QString& username, const QString& email, const QString& password , UserRole role);
+    ValidationResult registerUser(const QString& Fullname , const QString& username, const QString& email, const QString& password , UserRole role);
 
 
     ValidationResult login(const QString& usernameOrEmail, const QString& password);
@@ -34,6 +34,11 @@ public:
     ValidationResult resetPasswordWithToken(const QString& token, const QString& newPassword);
 
     User* getUserByUsername(const QString& username) const;
+    User* getUserByEmail(const QString& email) const;
+
+
+
+    QVector<User*> searchUsers(const QString& keyword) const;
 
 };
 
