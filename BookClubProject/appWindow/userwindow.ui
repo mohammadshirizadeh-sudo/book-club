@@ -66,7 +66,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>240</y>
+      <y>410</y>
       <width>211</width>
       <height>71</height>
      </rect>
@@ -88,7 +88,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>360</y>
+      <y>250</y>
       <width>211</width>
       <height>71</height>
      </rect>
@@ -110,7 +110,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
+      <y>490</y>
       <width>211</width>
       <height>71</height>
      </rect>
@@ -132,7 +132,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>600</y>
+      <y>90</y>
       <width>211</width>
       <height>71</height>
      </rect>
@@ -154,9 +154,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>720</y>
+      <y>730</y>
       <width>211</width>
-      <height>71</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -169,14 +169,14 @@
 }</string>
     </property>
     <property name="text">
-     <string>← Quit</string>
+     <string>← Sign Out</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_7">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>130</y>
+      <y>170</y>
       <width>211</width>
       <height>71</height>
      </rect>
@@ -197,9 +197,9 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>280</x>
       <y>20</y>
-      <width>431</width>
+      <width>481</width>
       <height>311</height>
      </rect>
     </property>
@@ -222,8 +222,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>280</x>
-      <y>340</y>
+      <x>340</x>
+      <y>350</y>
       <width>291</width>
       <height>51</height>
      </rect>
@@ -243,8 +243,8 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>750</x>
-      <y>340</y>
+      <x>790</x>
+      <y>350</y>
       <width>211</width>
       <height>51</height>
      </rect>
@@ -265,7 +265,7 @@
     <property name="geometry">
      <rect>
       <x>1180</x>
-      <y>340</y>
+      <y>350</y>
       <width>221</width>
       <height>51</height>
      </rect>
@@ -285,8 +285,8 @@
    <widget class="QPushButton" name="nextPushButton">
     <property name="geometry">
      <rect>
-      <x>980</x>
-      <y>540</y>
+      <x>1030</x>
+      <y>570</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -306,8 +306,8 @@ border-radius: 12px;
    <widget class="QPushButton" name="prevPushButton">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>540</y>
+      <x>720</x>
+      <y>570</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -327,7 +327,7 @@ border-radius: 12px;
    <widget class="QPushButton" name="nextRecPushButton">
     <property name="geometry">
      <rect>
-      <x>1400</x>
+      <x>1420</x>
       <y>160</y>
       <width>51</width>
       <height>51</height>
@@ -347,7 +347,7 @@ border-radius: 12px;</string>
    <widget class="QPushButton" name="prevRecPushButton">
     <property name="geometry">
      <rect>
-      <x>670</x>
+      <x>780</x>
       <y>160</y>
       <width>51</width>
       <height>51</height>
@@ -367,8 +367,8 @@ border-radius: 12px;</string>
    <widget class="QPushButton" name="prevNewPushButton">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>540</y>
+      <x>320</x>
+      <y>570</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -388,8 +388,8 @@ border-radius: 12px;
    <widget class="QPushButton" name="nextNewPushButton">
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>540</y>
+      <x>630</x>
+      <y>570</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -409,8 +409,8 @@ border-radius: 12px;
    <widget class="QPushButton" name="prevBestSellerPushButton">
     <property name="geometry">
      <rect>
-      <x>1110</x>
-      <y>540</y>
+      <x>1120</x>
+      <y>570</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -429,8 +429,8 @@ border-radius: 12px;</string>
    <widget class="QPushButton" name="nextBestSellerPushButton">
     <property name="geometry">
      <rect>
-      <x>1420</x>
-      <y>540</y>
+      <x>1430</x>
+      <y>570</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -449,10 +449,10 @@ border-radius: 12px;</string>
    <widget class="QLabel" name="newBooksLabel">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>390</y>
+      <x>330</x>
+      <y>400</y>
       <width>331</width>
-      <height>351</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -466,10 +466,10 @@ border-radius: 12px;</string>
    <widget class="QLabel" name="freeBooksLabel">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>390</y>
+      <x>730</x>
+      <y>400</y>
       <width>331</width>
-      <height>351</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -483,9 +483,9 @@ border-radius: 12px;</string>
    <widget class="QLabel" name="recommendedBooksLabel">
     <property name="geometry">
      <rect>
-      <x>680</x>
+      <x>810</x>
       <y>0</y>
-      <width>761</width>
+      <width>651</width>
       <height>341</height>
      </rect>
     </property>
@@ -500,15 +500,16 @@ border-radius: 12px;</string>
    <widget class="QLabel" name="recommendedBooksTitleLabel1">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>300</y>
-      <width>231</width>
+      <x>840</x>
+      <y>310</y>
+      <width>261</width>
       <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">background: transparent;
-color: rgb(0, 0, 0);</string>
+color: rgb(0, 0, 0);
+font-size: 20px;</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -517,14 +518,15 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="freeBooksTitleLabel">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>740</x>
       <y>750</y>
-      <width>271</width>
+      <width>311</width>
       <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background: transparent;
+     <string notr="true">font-size: 20px; 
+background: transparent;
 color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
@@ -534,14 +536,15 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="newBooksTitleLabel">
     <property name="geometry">
      <rect>
-      <x>300</x>
+      <x>340</x>
       <y>750</y>
-      <width>241</width>
+      <width>311</width>
       <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background: transparent;
+     <string notr="true">font-size: 20px;
+background: transparent;
 color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
@@ -551,15 +554,16 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="recommendedBooksTitleLabel2">
     <property name="geometry">
      <rect>
-      <x>1070</x>
-      <y>300</y>
-      <width>231</width>
+      <x>1150</x>
+      <y>310</y>
+      <width>261</width>
       <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">background: transparent;
-color: rgb(0, 0, 0);</string>
+color: rgb(0, 0, 0);
+font-size: 20px;</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
@@ -568,9 +572,9 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="recommendedBooksLabel1">
     <property name="geometry">
      <rect>
-      <x>770</x>
-      <y>10</y>
-      <width>261</width>
+      <x>840</x>
+      <y>20</y>
+      <width>281</width>
       <height>291</height>
      </rect>
     </property>
@@ -584,8 +588,8 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="recommendedBooksLabel2">
     <property name="geometry">
      <rect>
-      <x>1050</x>
-      <y>10</y>
+      <x>1150</x>
+      <y>20</y>
       <width>261</width>
       <height>291</height>
      </rect>
@@ -600,10 +604,10 @@ color: rgb(0, 0, 0);</string>
    <widget class="QLabel" name="bestSellersLabel">
     <property name="geometry">
      <rect>
-      <x>1120</x>
-      <y>390</y>
+      <x>1130</x>
+      <y>400</y>
       <width>331</width>
-      <height>351</height>
+      <height>391</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -617,18 +621,85 @@ border-radius: 12px;</string>
    <widget class="QLabel" name="bestSellersTitleLabel">
     <property name="geometry">
      <rect>
-      <x>1150</x>
+      <x>1140</x>
       <y>750</y>
-      <width>271</width>
+      <width>311</width>
       <height>31</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background: transparent;
+     <string notr="true">font-size: 20px;
+background: transparent;
 color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
      <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_8">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>330</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>📦 My Shelves</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_9">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>650</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>🔔 Notifications</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_10">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>570</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:26px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>👥 Group Redeing</string>
     </property>
    </widget>
    <zorder>bestSellersLabel</zorder>
@@ -661,6 +732,9 @@ color: rgb(0, 0, 0);</string>
    <zorder>recommendedBooksLabel1</zorder>
    <zorder>recommendedBooksLabel2</zorder>
    <zorder>bestSellersTitleLabel</zorder>
+   <zorder>pushButton_8</zorder>
+   <zorder>pushButton_9</zorder>
+   <zorder>pushButton_10</zorder>
   </widget>
  </widget>
  <resources>
