@@ -40,33 +40,11 @@
    <property name="frameShadow">
     <enum>QFrame::Shadow::Raised</enum>
    </property>
-   <widget class="QPushButton" name="addBookPushButton">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>270</y>
-      <width>311</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(0, 0, 0);
-	border: 3px solid black;
-	border-radius: 12px;
-}</string>
-    </property>
-    <property name="text">
-     <string>Add a New Book</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="manageBookLabel">
     <property name="geometry">
      <rect>
       <x>520</x>
-      <y>30</y>
+      <y>10</y>
       <width>461</width>
       <height>101</height>
      </rect>
@@ -82,94 +60,6 @@
     </property>
     <property name="text">
      <string> Manage My Books</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="editBookPushButton">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>270</y>
-      <width>211</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(0, 0, 0);
-	border: 3px solid black;
-	border-radius: 12px;
-}</string>
-    </property>
-    <property name="text">
-     <string>Edit Books</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="applyDiscountPushButton">
-    <property name="geometry">
-     <rect>
-      <x>170</x>
-      <y>600</y>
-      <width>461</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(0, 0, 0);
-	border: 3px solid black;
-	border-radius: 12px;
-}</string>
-    </property>
-    <property name="text">
-     <string>Apply discounts On Books</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="deleteDeactivatePushButton">
-    <property name="geometry">
-     <rect>
-      <x>840</x>
-      <y>600</y>
-      <width>471</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(0, 0, 0);
-	border: 3px solid black;
-	border-radius: 12px;
-}</string>
-    </property>
-    <property name="text">
-     <string>Delete Or Deactivate Books</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="staticsPushButton">
-    <property name="geometry">
-     <rect>
-      <x>1090</x>
-      <y>270</y>
-      <width>241</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QPushButton {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:40px;
-	color: rgb(0, 0, 0);
-	border: 3px solid black;
-	border-radius: 12px;
-}</string>
-    </property>
-    <property name="text">
-     <string>Book Statics</string>
     </property>
    </widget>
    <widget class="QPushButton" name="backPushButton">
@@ -194,25 +84,145 @@
      <string>← Back</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
-      <x>1090</x>
-      <y>50</y>
-      <width>241</width>
-      <height>241</height>
+      <x>370</x>
+      <y>130</y>
+      <width>751</width>
+      <height>641</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	image: url(:/resources/ignore.png);
-	background: transparent;
-	border: none;
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
 }</string>
     </property>
-    <property name="text">
+    <property name="title">
      <string/>
     </property>
+    <widget class="QPushButton" name="addBookPushButton">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>40</y>
+       <width>311</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:40px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Add a New Book</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="editBookPushButton">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>160</y>
+       <width>211</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:40px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Edit Books</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="staticsPushButton">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>280</y>
+       <width>251</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:40px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Book Statics</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="applyDiscountPushButton">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>400</y>
+       <width>461</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:40px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Apply discounts On Books</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="deleteDeactivatePushButton">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>520</y>
+       <width>481</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:40px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Delete Or Deactivate Books</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>
