@@ -1,13 +1,13 @@
 #ifndef ADMINWINDOW_H
 #define ADMINWINDOW_H
 
-#include <QWidget>
+#include <QMainWindow>
 
 namespace Ui {
 class AdminWindow;
 }
 
-class AdminWindow : public QWidget
+class AdminWindow : public QMainWindow
 {
     Q_OBJECT
 

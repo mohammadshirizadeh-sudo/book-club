@@ -89,11 +89,13 @@ qt_add_executable(BookClubProject
     Publishers/addbookdialog.h Publishers/addbookdialog.cpp Publishers/addbookdialog.ui
     Server/serverdashboardwindow.h Server/serverdashboardwindow.cpp Server/serverdashboardwindow.ui
     Users/shelfmanagementdialog.h Users/shelfmanagementdialog.cpp Users/shelfmanagementdialog.ui
-    appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
+
     Publishers/bookstatisticswindow.h Publishers/bookstatisticswindow.cpp Publishers/bookstatisticswindow.ui
     Users/favoritebookswindow.h Users/favoritebookswindow.cpp Users/favoritebookswindow.ui
     Users/genrebrowserwindow.h Users/genrebrowserwindow.cpp Users/genrebrowserwindow.ui
     Users/mylibrarywindow.h Users/mylibrarywindow.cpp Users/mylibrarywindow.ui
+    appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
+    Users/reviewbookdialog.h Users/reviewbookdialog.cpp Users/reviewbookdialog.ui
 
 
 
