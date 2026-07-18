@@ -123,6 +123,7 @@ bool DatabaseInitializer::createUserTable()
             role TEXT NOT NULL DEFAULT 'User',
             status TEXT NOT NULL DEFAULT 'Active',
             favorite_genres TEXT,
+            favorite_books TEXT,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
             last_login TEXT,

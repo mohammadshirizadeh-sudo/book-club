@@ -282,3 +282,94 @@ QString UserService::getStringStatus(AccountStatus status)
     default: return "Unknown";
     }
 }
+
+
+// UserService.cpp
+
+// =============================================
+// ===== Favorite Books Management =====
+// =============================================
+
+bool UserService::addFavoriteBook(int userId, int bookId)
+{
+    // 1. پیدا کردن کاربر
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return false;
+    }
+
+    // 2. بررسی اینکه کتاب قبلاً به علاقه‌مندی‌ها اضافه نشده باشد
+    if (user->isFavoriteBook(bookId)) {
+        qWarning() << "Book" << bookId << "is already in favorites for user" << userId;
+        return false;
+    }
+
+    // 3. اضافه کردن به لیست علاقه‌مندی‌ها
+    if (!user->addFavoriteBook(bookId)) {
+        qWarning() << "Failed to add book" << bookId << "to favorites for user" << userId;
+        return false;
+    }
+
+    // 4. ذخیره در دیتابیس (با username و email برای به‌روزرسانی)
+    if (!userRepo->updateUser(user, user->getUsername(), user->getEmail())) {
+        qWarning() << "Failed to save user after adding favorite book";
+        return false;
+    }
+
+    qDebug() << "Book" << bookId << "added to favorites for user" << userId;
+    return true;
+}
+
+bool UserService::removeFavoriteBook(int userId, int bookId)
+{
+    // 1. پیدا کردن کاربر
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return false;
+    }
+
+    // 2. بررسی اینکه کتاب در علاقه‌مندی‌ها وجود دارد
+    if (!user->isFavoriteBook(bookId)) {
+        qWarning() << "Book" << bookId << "is not in favorites for user" << userId;
+        return false;
+    }
+
+    // 3. حذف از لیست علاقه‌مندی‌ها
+    if (!user->removeFavoriteBook(bookId)) {
+        qWarning() << "Failed to remove book" << bookId << "from favorites for user" << userId;
+        return false;
+    }
+
+    // 4. ذخیره در دیتابیس
+    if (!userRepo->updateUser(user, user->getUsername(), user->getEmail())) {
+        qWarning() << "Failed to save user after removing favorite book";
+        return false;
+    }
+
+    qDebug() << "Book" << bookId << "removed from favorites for user" << userId;
+    return true;
+}
+
+bool UserService::isFavoriteBook(int userId, int bookId) const
+{
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return false;
+    }
+
+    return user->isFavoriteBook(bookId);
+}
+
+QVector<int> UserService::getFavoriteBooks(int userId) const
+{
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return QVector<int>();
+    }
+
+    return user->getFavoriteBooks();
+}

@@ -39,6 +39,7 @@ public:
     bool addUser(User* user);
 
     User* findById(int id) const;
+    User* findById_noLock(int id) const;
 
     User* findByUsername(const QString& username) const;
 
@@ -86,6 +87,9 @@ public:
 
 
     QVector<User*> searchUsers(const QString& keyword) const;
+    QVector<int> stringToIntList(const QString& str) const;
+
+    QString intListToString(const QVector<int>& list) const;
 
 };
 

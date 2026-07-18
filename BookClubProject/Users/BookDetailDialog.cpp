@@ -1,15 +1,22 @@
 
 #include"BookDetailDialog.h"
 #include "Users/ui_BookDetailDialog.h"
+#include "../Server/Request.h"
+#include "../Server/Response.h"
 #include <QPixmap>
 
-BookDetailDialog::BookDetailDialog(const QVariantMap& bookData, QWidget *parent) :
+BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVariantMap& bookData, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::BookDetailDialog)
+    ui(new Ui::BookDetailDialog),
+    m_networkManager(networkManager),
+    m_bookData(bookData)
 {
     ui->setupUi(this);
 
-    // نمایش اطلاعات کتاب به محض باز شدن دیالوگ
+    connect(m_networkManager, &NetworkManager::responseReceived,
+            this, &BookDetailDialog::onResponseReceived);
+
+
     displayBookInfo(bookData);
 }
 
@@ -29,19 +36,52 @@ void BookDetailDialog::displayBookInfo(const QVariantMap& bookData)
     ui->finalPriceLabel->setText(bookData["finalPrice"].toString() + " Tooman");
     ui->ratingLabel->setText(bookData["averageRating"].toString());
 
-    // نمایش تصویر جلد کتاب در ابعاد بزرگتر در دیالوگ
+    int bookId = bookData["bookId"].toInt();
     QString coverPath = bookData["coverPath"].toString();
-    if (!coverPath.isEmpty()) {
-        QPixmap pixmap(coverPath);
-        if (!pixmap.isNull()) {
-            ui->coverLable->setAlignment(Qt::AlignCenter);
+    if (!coverPath.isEmpty() && bookId > 0) {
+        ui->coverLable->setAlignment(Qt::AlignCenter);
+        ui->coverLable->setText("Loading Cover..."); // نمایش وضعیت بارگذاری به کاربر
 
-            // ۲. اسکیل کردن عکس دقیقاً به اندازه خودِ لیبل در محیط گرافیکی
-            QPixmap scaledPixmap = pixmap.scaled(ui->coverLable->size(),
-                                                 Qt::KeepAspectRatio,
-                                                 Qt::SmoothTransformation);
+        // 🟢 ارسال درخواست دریافت عکس به سرور (دقیقاً مشابه متد درون UserWindow)
+        m_networkManager->requestBookCover(bookId);
+    } else {
+        ui->coverLable->setText("No Cover Image");
+    }
+}
 
-            ui->coverLable->setPixmap(scaledPixmap);
+
+
+
+void BookDetailDialog::onResponseReceived(const Response& response)
+{
+    // 🔴 توجه: نام Enum کامند دریافت عکس را بر اساس پروژه خود تنظیم کنید (مثلاً GetBookCover)
+    if (response.getCommandType() == CommandType::GetBookCover) {
+        if (response.isSuccess()) {
+            QVariantMap resData = response.getData();
+            int responseBookId = resData["bookId"].toInt();
+            int currentBookId = m_bookData["bookId"].toInt();
+
+            // بررسی اینکه عکس دریافت شده دقیقاً متعلق به همین کتابِ باز شده باشد
+            if (responseBookId == currentBookId) {
+                // استخراج رشته متنی Base64 و تبدیل مجدد آن به دیتای باینری
+                QString base64Data = resData["coverData"].toString();
+                QByteArray imageData = QByteArray::fromBase64(base64Data.toUtf8());
+
+                QPixmap pixmap;
+                // لود کردن عکس از دیتای باینری دریافتی
+                if (pixmap.loadFromData(imageData)) {
+                    // اسکیل کردن عکس دقیقاً به اندازه خودِ لیبل با کیفیت بالا
+                    QPixmap scaledPixmap = pixmap.scaled(ui->coverLable->size(),
+                                                         Qt::KeepAspectRatio,
+                                                         Qt::SmoothTransformation);
+                    ui->coverLable->setPixmap(scaledPixmap);
+                    ui->coverLable->setText(""); // حذف متن Loading پس از موفقیت
+                } else {
+                    ui->coverLable->setText("Failed to process image data");
+                }
+            }
+        } else {
+            ui->coverLable->setText("Failed to download cover");
         }
     }
 }

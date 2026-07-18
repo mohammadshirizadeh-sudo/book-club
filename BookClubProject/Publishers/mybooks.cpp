@@ -1,11 +1,10 @@
 
 #include "mybooks.h"
 #include "Publishers/ui_mybooks.h"
-<<<<<<< HEAD
+
 // #include "../Publishers/addnewbookdialog.h"
 
-=======
->>>>>>> develop
+
 #include "../Publishers/addbookdialog.h"
 
 #include "../appWindow/SessionManager.h"
@@ -31,6 +30,10 @@ MyBooks::~MyBooks()
 void MyBooks::on_addBookPushButton_clicked()
 {
 
+
+    int publisherId = SessionManager::instance()->getUserId();
+    AddBookDialog dialog(m_networkManager ,publisherId );
+    dialog.exec();
     // AddNewBookDialog dialog(m_networkManager , this);
 
     // AddBookDialog dialog(m_networkManager , this);

@@ -28,6 +28,8 @@ public:
     void sendRequest(const Request& request);
     void sendRequest(const QString& command, const QVariantMap& params = QVariantMap());
 
+    void requestBookCover(int bookId);
+
 signals:
     void connected();
     void disconnected();

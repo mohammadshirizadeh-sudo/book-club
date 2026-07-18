@@ -860,6 +860,56 @@ private:
     LibraryService* m_libraryService;
 };
 
+class GetBestSellersCommand : public Command
+{
+public:
+    explicit GetBestSellersCommand(BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetBestSellers; }
+    QString getName() const override { return "GetBestSellers"; }
+    bool requiresAuth() const override { return false; }
+
+private:
+    BookService* m_bookService;
+};
+
+
+
+class GetBookCoverCommand : public Command
+{
+public:
+
+    explicit GetBookCoverCommand(BookService* bookService);
+
+    Response execute(
+        const QVariantMap& params
+        ) override;
+
+
+    CommandType getType() const override { return CommandType::GetBookCover; }
+    QString getName() const override { return "GetBookCoverCommand"; }
+    bool requiresAuth() const override { return false; }
+
+
+private:
+
+    BookService* m_bookService;
+};
+
+
+class AddFavoriteBookCommand : public Command
+{
+public:
+    explicit AddFavoriteBookCommand(UserService* userService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::AddFavoriteBook; }
+    QString getName() const override { return "AddFavoriteBook"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    UserService* m_userService;
+};
+
 
 
 #endif // COMMANDS_H

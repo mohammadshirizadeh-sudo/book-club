@@ -1,5 +1,6 @@
 #include "publisherprofilewindow.h"
-#include "PublisherInfoDialog.h"
+// #include "PublisherInfoDialog.h"
+#include "../Mutual/infodialog.h"
 #include "Publishers/ui_publisherprofilewindow.h"
 #include "../Mutual/changepassworddialog.h"
 #include "../Mutual/editinfodialog.h"
@@ -40,8 +41,7 @@ void PublisherProfileWindow::on_changePubPassPushButton_clicked()
 
 void PublisherProfileWindow::on_publisherInfoPushButton_clicked()
 {
-    qDebug()<<"i'm here mamad";
-    PublisherInfoDialog dialog(m_networkManager , this);
+    InfoDialog dialog(m_networkManager , this);
     dialog.exec();
 }
 

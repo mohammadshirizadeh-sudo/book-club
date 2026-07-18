@@ -9,6 +9,7 @@ UserDetailDialog::UserDetailDialog(const QVariantMap& userData, QWidget *parent)
 {
     ui->setupUi(this);
     displayUserInfo(userData);
+    m_networkManager = new NetworkManager();
 }
 
 UserDetailDialog::~UserDetailDialog()
@@ -68,7 +69,8 @@ void UserDetailDialog::on_booksListWidget_itemClicked(QListWidgetItem *item)
     if (m_publisherBooksCache.contains(bookId)) {
         QVariantMap selectedBookData = m_publisherBooksCache[bookId];
         qDebug() << "📖 Opening BookDetailDialog from publisher profile for:" << selectedBookData["title"].toString();
-        BookDetailDialog dialog(selectedBookData, this);
+
+        BookDetailDialog dialog(m_networkManager ,selectedBookData, this);
         dialog.exec();
     }
 }

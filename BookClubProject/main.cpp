@@ -12,6 +12,7 @@
 #include "appWindow/userwindow.h"
 #include "Users/searchwindow.h"
 #include "Users/UserProfileWindow.h"
+#include "Users/favoritebookswindow.h"
 #include "Server/server.h"
 #include "Database/DatabaseInitializer.h"
 
@@ -63,6 +64,7 @@ int main(int argc, char *argv[])
     SearchWindow* searchWindow = new SearchWindow(networkManager);
     PublisherProfileWindow* publisherProfileWindow =  new PublisherProfileWindow(networkManager);
     MyBooks* mybooks = new MyBooks(networkManager);
+    FavoriteBooksWindow* favoriteBooks = new FavoriteBooksWindow();
 
 
 
@@ -81,6 +83,7 @@ int main(int argc, char *argv[])
     int searchIndex = stackedWidget.addWidget(searchWindow);
     int publisherProfileindex = stackedWidget.addWidget(publisherProfileWindow);
     int mybooksIndex = stackedWidget.addWidget(mybooks);
+    int favBooksIndex = stackedWidget.addWidget(favoriteBooks);
 
 
     //-------------------------------------------------
@@ -114,6 +117,13 @@ int main(int argc, char *argv[])
                          stackedWidget.setCurrentIndex(profileIndex);
                          profileWindow->loadprof();
                      });
+
+    QObject::connect(profileWindow,
+                     &UserProfileWindow::openFavBooksWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(favBooksIndex);
+                     });
     QObject::connect(publisherWindow,
                      &PublisherWindow::publisherProfileWindow,
                      [&]()
@@ -128,6 +138,23 @@ int main(int argc, char *argv[])
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(forgotIndex);
+                     });
+    QObject::connect(loginWindow,
+                     &LoginWindow::openUserWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(userIndex);
+                         userWindow->loadFreeBooks();
+                         userWindow->loadNewBooks();
+                         userWindow->loadRecommendedBooks();
+                         userWindow->loadBestSellers();
+                     });
+    QObject::connect(loginWindow,
+                     &LoginWindow::openPublisherWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(publisherIndex);
+
                      });
 
     QObject::connect(forgotWindow,
@@ -174,6 +201,8 @@ int main(int argc, char *argv[])
 
                          // 🔑 بعد از اینکه ثبت‌نام کامل شد و کاربر ژانرها را انتخاب کرد، کتاب‌ها اینجا لود می‌شوند:
                          userWindow->loadFreeBooks();
+                         userWindow->loadNewBooks();
+                         userWindow->loadRecommendedBooks();
                      });
 
 

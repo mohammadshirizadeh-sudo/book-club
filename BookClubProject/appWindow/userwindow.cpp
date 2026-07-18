@@ -5,6 +5,7 @@
 #include <QPixmap>
 #include <QIcon>
 #include <QMessageBox>
+#include <QPointer>
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -42,6 +43,12 @@ UserWindow::UserWindow(NetworkManager* networkManager, QWidget *parent)
     ui->recommendedBooksLabel->setAlignment(Qt::AlignCenter);
     ui->newBooksTitleLabel->setAlignment(Qt::AlignCenter);
 
+
+    ui->bestSellersLabel->installEventFilter(this);
+    ui->bestSellersLabel->setCursor(Qt::PointingHandCursor);
+    ui->bestSellersLabel->setAlignment(Qt::AlignCenter);
+    ui->bestSellersTitleLabel->setAlignment(Qt::AlignCenter);
+
     // اتصال به پاسخ سرور
     connect(m_networkManager, &NetworkManager::responseReceived,
             this, &UserWindow::handleResponse);
@@ -52,6 +59,9 @@ UserWindow::~UserWindow()
 {
     delete ui;
 }
+
+
+
 
 void UserWindow::loadFreeBooks()
 {
@@ -145,6 +155,32 @@ void UserWindow::handleResponse(const Response& response)
         updateNewBooksDisplay();
         return;
     }
+    if (response.getCommandType() == CommandType::GetBestSellers) {
+        m_allBestSellers = response.getData()["books"].toList();
+        m_currentBestSellerPage = 0; // ریست به صفحه اول
+        updateBestSellersDisplay();
+        return;
+    }
+
+    if (response.getCommandType() == CommandType::GetBookCover)
+    {
+        if (!response.isSuccess())
+            return;
+        int bookId =response.getData()["bookId"].toInt();
+        QByteArray raw = QByteArray::fromBase64(response.getData()["coverData"].toByteArray());
+        QPixmap pixmap;
+        pixmap.loadFromData(raw);
+        if (pixmap.isNull())return;
+        m_coverCache[bookId] = pixmap;
+        for (QPointer<QLabel> label : m_pendingCoverLabels.values(bookId))
+        {
+            if (label){
+                label->setPixmap(pixmap.scaled(label->size(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+            }
+        }
+        m_pendingCoverLabels.remove(bookId);
+        return;
+    }
 }
 void UserWindow::updateBooksDisplay()
 {
@@ -166,24 +202,17 @@ void UserWindow::updateBooksDisplay()
 
     // تنظیم عکس روی لیبل
     if (!coverPath.isEmpty()) {
-        QPixmap pixmap(coverPath);
-        if (!pixmap.isNull()) {
-            // اسکیل کردن متناسب با ابعاد دلخواه (مثلاً ۲۴۰ در ۳۶۰) بدون دفرمه شدن
-            QPixmap scaled = pixmap.scaled(240, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            ui->freeBooksLabel->setPixmap(scaled);
-        } else {
-            ui->freeBooksLabel->setText("No Cover");
-        }
+        int bookId =book["bookId"].toInt();
+        loadCoverInto(ui->freeBooksLabel,bookId,QSize(240,360));
     } else {
         ui->freeBooksLabel->setText("No Cover");
     }
-
     // مدیریت فعال/غیرفعال بودن دکمه‌ها
     ui->nextPushButton->setEnabled(m_currentPage < m_allFreeBooks.size() - 1);
     ui->prevPushButton->setEnabled(m_currentPage > 0);
 }
 
-
+/*
 void UserWindow::on_freeBooksListWidget_itemClicked(QListWidgetItem *item)
 {
     if (!item) return;
@@ -192,8 +221,6 @@ void UserWindow::on_freeBooksListWidget_itemClicked(QListWidgetItem *item)
 
     if (m_booksCache.contains(bookId)) {
         QVariantMap book = m_booksCache[bookId];
-
-        // نمایش اطلاعات کتاب (می‌توانید در یک Label یا پنجره جدا)
         QString info = QString(
                            "Title: %1\n"
                            "Author: %2\n"
@@ -209,6 +236,7 @@ void UserWindow::on_freeBooksListWidget_itemClicked(QListWidgetItem *item)
         QMessageBox::information(this, "Book Details", info);
     }
 }
+*/
 void UserWindow::on_nextPushButton_clicked()
 {
 
@@ -242,8 +270,6 @@ void UserWindow::loadRecommendedBooks()
     m_networkManager->sendRequest(request);
 }
 
-
-
 void UserWindow::updateRecommendedBooksDisplay()
 {
     if (m_allRecBooks.isEmpty()) {
@@ -256,7 +282,7 @@ void UserWindow::updateRecommendedBooksDisplay()
         return;
     }
 
-    int booksPerPage = 2; // تعداد کتاب‌ها در هر صفحه
+    int booksPerPage = 2;
     int startIndex = m_currentRecPage * booksPerPage;
 
     // ---------------- کتاب اول (سمت چپ) ----------------
@@ -271,13 +297,13 @@ void UserWindow::updateRecommendedBooksDisplay()
         ui->recommendedBooksLabel1->setVisible(true);
 
         if (!coverPath1.isEmpty()) {
-            QPixmap pixmap(coverPath1);
-            if (!pixmap.isNull()) {
-                QPixmap scaled = pixmap.scaled(180, 270, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                ui->recommendedBooksLabel1->setPixmap(scaled);
-            } else {
-                ui->recommendedBooksLabel1->setText("No Cover");
-            }
+            int bookId = book1["bookId"].toInt();
+
+            loadCoverInto(
+                ui->recommendedBooksLabel1, // 🟢 اصلاح شد: از Label1 استفاده کنید
+                bookId,
+                QSize(240,360)
+                );
         } else {
             ui->recommendedBooksLabel1->setText("No Cover");
         }
@@ -295,30 +321,27 @@ void UserWindow::updateRecommendedBooksDisplay()
         ui->recommendedBooksLabel2->setVisible(true);
 
         if (!coverPath2.isEmpty()) {
-            QPixmap pixmap(coverPath2);
-            if (!pixmap.isNull()) {
-                QPixmap scaled = pixmap.scaled(180, 270, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                ui->recommendedBooksLabel2->setPixmap(scaled);
+            int bookId = book2["bookId"].toInt();
 
-
-            } else {
-                ui->recommendedBooksLabel2->setText("No Cover");
-            }
+            loadCoverInto(
+                ui->recommendedBooksLabel2, // 🟢 اصلاح شد: از Label2 استفاده کنید
+                bookId,
+                QSize(240,360)
+                );
         } else {
             ui->recommendedBooksLabel2->setText("No Cover");
         }
     } else {
-        // اگر کتاب دومی در این صفحه وجود نداشت، لیبل‌های سمت راست را پاک و مخفی کن
         ui->recommendedBooksLabel2->clear();
         ui->recommendedBooksTitleLabel2->clear();
         ui->recommendedBooksLabel2->setVisible(false);
         ui->recommendedBooksTitleLabel2->setVisible(false);
     }
 
-    // ناوبری صفحات بر اساس پله‌های دوتایی
     ui->nextRecPushButton->setEnabled((m_currentRecPage + 1) * booksPerPage < m_allRecBooks.size());
     ui->prevRecPushButton->setEnabled(m_currentRecPage > 0);
 }
+
 void UserWindow::on_nextRecPushButton_clicked()
 {
     m_currentRecPage++;
@@ -333,6 +356,7 @@ void UserWindow::on_prevRecPushButton_clicked()
     }
 }
 
+/*
 void UserWindow::on_recommendedBooksListWidget_itemClicked(QListWidgetItem *item)
 {
     if (!item) return;
@@ -357,6 +381,7 @@ void UserWindow::on_recommendedBooksListWidget_itemClicked(QListWidgetItem *item
         QMessageBox::information(this, "Recommended Book Details", info);
     }
 }
+*/
 
 
 //for recently added books
@@ -444,13 +469,15 @@ void UserWindow::updateNewBooksDisplay()
     ui->newBooksTitleLabel->setText(title + "\n" + author);
 
     if (!coverPath.isEmpty()) {
-        QPixmap pixmap(coverPath);
-        if (!pixmap.isNull()) {
-            QPixmap scaled = pixmap.scaled(240, 360, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            ui->newBooksLabel->setPixmap(scaled);
-        } else {
-            ui->newBooksLabel->setText("No Cover");
-        }
+        int bookId =
+            book["bookId"].toInt();
+
+
+        loadCoverInto(
+            ui->newBooksLabel,
+            bookId,
+            QSize(240,360)
+            );
     } else {
         ui->newBooksLabel->setText("No Cover");
     }
@@ -471,7 +498,7 @@ void UserWindow::on_prevNewPushButton_clicked()
         updateNewBooksDisplay();
     }
 }
-
+/*
 void UserWindow::on_newBooksListWidget_itemClicked(QListWidgetItem *item)
 {
     if (!item) return;
@@ -496,6 +523,7 @@ void UserWindow::on_newBooksListWidget_itemClicked(QListWidgetItem *item)
         QMessageBox::information(this, "Book Details", info);
     }
 }
+*/
 
 
 
@@ -518,6 +546,10 @@ bool UserWindow::eventFilter(QObject *watched, QEvent *event)
             onNewBookClicked();
             return true;
         }
+        else if (watched == ui->bestSellersLabel) {
+            onBestSellerClicked();
+            return true;
+        }
     }
     return QWidget::eventFilter(watched, event);
 }
@@ -528,7 +560,7 @@ void UserWindow::onFreeBookClicked()
 {
     if (m_currentPage >= 0 && m_currentPage < m_allFreeBooks.size()) {
         QVariantMap book = m_allFreeBooks[m_currentPage].toMap();
-        BookDetailDialog dialog(book, this);
+        BookDetailDialog dialog(m_networkManager , book, this);
         dialog.exec();
     }
 }
@@ -540,7 +572,7 @@ void UserWindow::onRecommendedBookClicked(int offset)
 
     if (targetIndex >= 0 && targetIndex < m_allRecBooks.size()) {
         QVariantMap book = m_allRecBooks[targetIndex].toMap();
-        BookDetailDialog dialog(book, this);
+        BookDetailDialog dialog(m_networkManager ,book, this);
         dialog.exec();
     }
 }
@@ -549,7 +581,7 @@ void UserWindow::onNewBookClicked()
 {
     if (m_currentNewPage >= 0 && m_currentNewPage < m_allNewBooks.size()) {
         QVariantMap book = m_allNewBooks[m_currentNewPage].toMap();
-        BookDetailDialog dialog(book, this);
+        BookDetailDialog dialog(m_networkManager ,book, this);
         dialog.exec();
     }
 }
@@ -565,5 +597,127 @@ void UserWindow::on_pushButton_5_clicked()
 {
     emit searchWindow();
 
+}
+
+
+void UserWindow::loadBestSellers()
+{
+    qDebug() << "📚 [Client] Sending GetBestSellers request to server...";
+
+    QVariantMap params;
+    params["limit"] = 20; // تعداد کتاب‌های پرفروشی که سرور بازمی‌گرداند
+
+    Request request(CommandType::GetBestSellers, params);
+    m_networkManager->sendRequest(request);
+}
+
+void UserWindow::updateBestSellersDisplay()
+{
+    if (m_allBestSellers.isEmpty() || m_currentBestSellerPage < 0 || m_currentBestSellerPage >= m_allBestSellers.size()) {
+        ui->bestSellersLabel->clear();
+        ui->bestSellersTitleLabel->setText("No Best Sellers Available");
+        return;
+    }
+
+    QVariantMap book = m_allBestSellers[m_currentBestSellerPage].toMap();
+    QString title = book["title"].toString();
+    QString author = book["author"].toString();
+    QString coverPath = book["coverPath"].toString();
+
+    // تنظیم متن عنوان و نویسنده
+    ui->bestSellersTitleLabel->setText(title + "\n" + author);
+
+    // تنظیم عکس روی لیبل
+    if (!coverPath.isEmpty()) {
+        int bookId =
+            book["bookId"].toInt();
+
+
+        loadCoverInto(
+            ui->bestSellersLabel,
+            bookId,
+            QSize(240,360)
+            );
+    } else {
+        ui->bestSellersLabel->setText("No Cover");
+    }
+
+    // مدیریت فعال/غیرفعال بودن دکمه‌ها
+    ui->nextBestSellerPushButton->setEnabled(m_currentBestSellerPage < m_allBestSellers.size() - 1);
+    ui->prevBestSellerPushButton->setEnabled(m_currentBestSellerPage > 0);
+}
+
+
+void UserWindow::on_nextBestSellerPushButton_clicked()
+{
+    m_currentBestSellerPage++;
+    updateBestSellersDisplay();
+}
+
+void UserWindow::on_prevBestSellerPushButton_clicked()
+{
+    if (m_currentBestSellerPage > 0) {
+        m_currentBestSellerPage--;
+        updateBestSellersDisplay();
+    }
+}
+
+
+void UserWindow::onBestSellerClicked()
+{
+    if (m_currentBestSellerPage >= 0 && m_currentBestSellerPage < m_allBestSellers.size()) {
+        QVariantMap book = m_allBestSellers[m_currentBestSellerPage].toMap();
+        BookDetailDialog dialog(m_networkManager ,book, this);
+        dialog.exec();
+    }
+}
+
+
+/*
+void UserWindow::on_bestSellersListWidget_itemClicked(QListWidgetItem *item)
+{
+
+    int index = ui->bestSellersListWidget->row(item);
+
+    if (index >= 0 && index < m_allBestSellers.size()) {
+        QVariantMap book = m_allBestSellers[index].toMap();
+
+        // باز کردن پنجره جزئیات کتاب
+        BookDetailDialog dialog(book, this);
+        dialog.exec();
+    }
+}
+*/
+
+
+
+
+void UserWindow::loadCoverInto(
+    QLabel* label,
+    int bookId,
+    QSize targetSize)
+{
+    if (m_coverCache.contains(bookId))
+    {
+        label->setPixmap(
+            m_coverCache[bookId]
+                .scaled(
+                    targetSize,
+                    Qt::KeepAspectRatio,
+                    Qt::SmoothTransformation
+                    )
+            );
+
+        return;
+    }
+
+
+    label->setText("Loading...");
+
+
+    m_pendingCoverLabels.insert(bookId,label);
+
+
+    m_networkManager->requestBookCover(bookId);
 }
 

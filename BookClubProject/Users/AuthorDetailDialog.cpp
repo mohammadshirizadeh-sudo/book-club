@@ -3,12 +3,17 @@
 #include "BookDetailDialog.h"
 #include <QPixmap>
 #include <QDebug>
+#include "../Server/Request.h"
+#include "../Server/Response.h"
 
-AuthorDetailDialog::AuthorDetailDialog(const QVariantMap& authorData, QWidget *parent) :
+AuthorDetailDialog::AuthorDetailDialog(const QVariantMap& authorData,NetworkManager* networkManager, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::AuthorDetailDialog)
+    ui(new Ui::AuthorDetailDialog),
+    m_networkManager(networkManager)
 {
     ui->setupUi(this);
+    connect(m_networkManager, &NetworkManager::responseReceived,
+            this, &AuthorDetailDialog::onResponseReceived);
     displayAuthorInfo(authorData);
 }
 
@@ -45,15 +50,43 @@ void AuthorDetailDialog::displayAuthorInfo(const QVariantMap& authorData)
         item->setText(title + "\n" + author);
         item->setTextAlignment(Qt::AlignCenter);
 
-        // 🖼️ لود و تنظیم عکس جلد کتاب با ابعاد مناسب (۸۰ در ۱۲۰) مطابق با سلیقه شما
-        if (!coverPath.isEmpty()) {
-            QPixmap pixmap(coverPath);
-            if (!pixmap.isNull()) {
+        ui->booksListWidget->addItem(item);
+        if (!coverPath.isEmpty() && bookId > 0) {
+            m_networkManager->requestBookCover(bookId);
+        }
+    }
+}
+
+
+void AuthorDetailDialog::onResponseReceived(const Response& response)
+{
+    if (response.getCommandType() == CommandType::GetBookCover) {
+        if (response.isSuccess()) {
+            QVariantMap resData = response.getData(); // اصلاح شده بر اساس پچ قبلی (بدون .toMap)
+            int responseBookId = resData["bookId"].toInt();
+            QString base64Data = resData["coverData"].toString();
+            QByteArray imageData = QByteArray::fromBase64(base64Data.toUtf8());
+
+            QPixmap pixmap;
+            if (pixmap.loadFromData(imageData)) {
                 QPixmap scaled = pixmap.scaled(80, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                item->setIcon(QIcon(scaled));
+
+                // 🟢 پیدا کردن آیتم متناظر با این عکس در QListWidget و اعمال آیکون روی آن
+                for (int i = 0; i < ui->booksListWidget->count(); ++i) {
+                    QListWidgetItem* item = ui->booksListWidget->item(i);
+                    if (item && item->data(Qt::UserRole).toInt() == responseBookId) {
+                        item->setIcon(QIcon(scaled));
+
+                        // بازگرداندن متن به حالت اولیه و حذف کلمه Loading
+                        if (m_authorBooksCache.contains(responseBookId)) {
+                            QVariantMap b = m_authorBooksCache[responseBookId];
+                            item->setText(b["title"].toString() + "\n" + b["author"].toString());
+                        }
+                        break;
+                    }
+                }
             }
         }
-        ui->booksListWidget->addItem(item);
     }
 }
 
@@ -70,7 +103,7 @@ void AuthorDetailDialog::on_booksListWidget_itemClicked(QListWidgetItem *item)
         qDebug() << "📖 Opening BookDetailDialog from author profile for:" << selectedBookData["title"].toString();
 
         // باز کردن دیالوگ جزئیات کتاب به صورت مودال (Modal) روی همین صفحه اطلاعات نویسنده
-        BookDetailDialog dialog(selectedBookData, this);
+        BookDetailDialog dialog( m_networkManager ,selectedBookData, this);
         dialog.exec();
     }
 }

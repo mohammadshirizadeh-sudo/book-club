@@ -286,7 +286,7 @@ void AddBookDialog::on_clearButton_clicked()
         clearForm();
     }
 }
-
+/*
 void AddBookDialog::on_submitButton_clicked()
 {
     if (!isFormValid()) {
@@ -315,6 +315,52 @@ void AddBookDialog::on_submitButton_clicked()
         params["coverImage"] = m_coverImageData.toBase64();
         params["coverFileName"] = m_coverFileName;
         params["pdfData"] = m_pdfData.toBase64();
+        params["pdfFileName"] = m_pdfFileName;
+
+        Request request(CommandType::AddBook, params);
+        m_networkManager->sendRequest(request);
+
+        // Disable submit button while processing
+        ui->submitButton->setEnabled(false);
+        ui->submitButton->setText("Submitting...");
+    }
+}
+*/
+
+
+void AddBookDialog::on_submitButton_clicked()
+{
+    if (!isFormValid()) {
+        QMessageBox::warning(this, "Incomplete Form",
+                             "Please fill in all required fields before submitting.");
+        return;
+    }
+
+    // Confirm submission
+    QMessageBox::StandardButton reply = QMessageBox::question(
+        this, "Confirm Submission",
+        "Are you sure you want to submit this book?\n\nTitle: " + ui->bookNameLineEdit->text() +
+            "\nAuthor: " + ui->authorNameLineEdit->text(),
+        QMessageBox::Yes | QMessageBox::No
+        );
+
+    if (reply == QMessageBox::Yes) {
+        QVariantMap params;
+        params["publisherId"] = m_publisherId;
+        params["title"] = ui->bookNameLineEdit->text().trimmed();
+        params["author"] = ui->authorNameLineEdit->text().trimmed();
+        params["genre"] = ui->genreComboBox->currentText();
+        params["price"] = ui->priceSpinBox->value();
+        params["discount"] = ui->discountSpinBox->value();
+        params["description"] = ui->descriptionTextEdit->toPlainText();
+
+        // 🟢 تغییر اول: تغییر کلید "coverImage" به "coverData" برای هماهنگی کامل با پروتکل سرور و ساختار UserWindow
+        // 🟢 تغییر دوم: استفاده از QString::fromUtf8 برای تبدیل آرایه باینری Base64 به متن استاندارد جهت ارسال بدون مشکل در پروتکل JSON
+        params["coverData"] = QString::fromUtf8(m_coverImageData.toBase64());
+        params["coverFileName"] = m_coverFileName;
+
+        // 🟢 تغییر سوم: تبدیل داده باینری PDF به متن Base64 با ساختار QString برای جلوگیری از خراب شدن فایل در طول مسیر شبکه
+        params["pdfData"] = QString::fromUtf8(m_pdfData.toBase64());
         params["pdfFileName"] = m_pdfFileName;
 
         Request request(CommandType::AddBook, params);

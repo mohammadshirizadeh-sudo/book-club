@@ -5,6 +5,7 @@
 
 #include "../Network-Manger/NetworkManager.h"
 
+
 namespace Ui {
 class UserProfileWindow;
 }
@@ -27,7 +28,7 @@ signals:
     void openEditUserInfoDialog();
     void openChangeUserPassDialog();
     void openShoppingHistoryDialog();
-    void openFavBooksDialog();
+    void openFavBooksWindow();
 
 private slots:
     void on_favGenresPushButton_clicked();

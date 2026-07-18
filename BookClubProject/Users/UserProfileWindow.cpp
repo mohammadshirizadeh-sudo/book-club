@@ -34,7 +34,7 @@ void UserProfileWindow::on_favGenresPushButton_clicked()
 
 void UserProfileWindow::on_UserInfPushButton_clicked()
 {
-    EditInfoDialog* dialog = new EditInfoDialog(m_networkManager, this);
+    InfoDialog* dialog = new InfoDialog(m_networkManager, this);
 
     // ✅ اتصال به سیگنال accepted دیالوگ
     connect(dialog, &QDialog::accepted, this, [this]() {
@@ -69,7 +69,8 @@ void UserProfileWindow::on_shoppingHistoryPushButton_clicked()
 
 void UserProfileWindow::on_favBooksPushButton_clicked()
 {
-    emit openFavBooksDialog();
+
+    emit openFavBooksWindow();
 }
 
 

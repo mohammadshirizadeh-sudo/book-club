@@ -7,6 +7,7 @@
 #include "../Server/Request.h"
 #include "../Server/Response.h"
 #include "../Shared/Book.h"
+#include <QLabel>
 
 namespace Ui {
 class UserWindow;
@@ -28,9 +29,11 @@ public:
     void loadRecommendedBooks();
 
     void loadNewBooks();
+    void loadBestSellers();
+    void loadCoverInto(QLabel* label,int bookId,QSize targetSize);
 
 private slots:
-    void on_freeBooksListWidget_itemClicked(QListWidgetItem *item);
+    // void on_freeBooksListWidget_itemClicked(QListWidgetItem *item);
     void handleResponse(const Response& response);
 
     void on_nextPushButton_clicked();
@@ -39,14 +42,14 @@ private slots:
 
 
 
-    void on_recommendedBooksListWidget_itemClicked(QListWidgetItem *item);
+    // void on_recommendedBooksListWidget_itemClicked(QListWidgetItem *item);
     void on_nextRecPushButton_clicked();
     void on_prevRecPushButton_clicked();
 
 
     //for recently books added
 
-    void on_newBooksListWidget_itemClicked(QListWidgetItem *item);
+    // void on_newBooksListWidget_itemClicked(QListWidgetItem *item);
     void on_nextNewPushButton_clicked();
     void on_prevNewPushButton_clicked();
 
@@ -57,6 +60,13 @@ private slots:
 
 
     void on_pushButton_5_clicked();
+
+
+
+    // void on_bestSellersListWidget_itemClicked(QListWidgetItem *item);
+
+    void on_nextBestSellerPushButton_clicked();
+    void on_prevBestSellerPushButton_clicked();
 
 signals:
     void userProfileWindow();
@@ -78,6 +88,13 @@ private:
     QMap<int, QVariantMap> m_recBooksCache;
 
 
+    QVariantList m_allBestSellers;
+    int m_currentBestSellerPage = 0;
+    int m_bestSellersPerPage = 1;
+    QMap<int, QVariantMap> m_bestSellersCache;
+    void updateBestSellersDisplay();
+
+
     void updateBooksDisplay();
 
     void updateRecommendedBooksDisplay();
@@ -95,6 +112,14 @@ private:
     void onFreeBookClicked();
     void onRecommendedBookClicked(int offset);
     void onNewBookClicked();
+
+    void onBestSellerClicked();
+
+
+
+    QMap<int, QPixmap> m_coverCache;
+
+    QMultiMap<int, QPointer<QLabel>> m_pendingCoverLabels;
 };
 
 #endif // USERWINDOW_H

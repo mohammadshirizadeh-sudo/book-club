@@ -235,6 +235,16 @@ Command* CommandFactory::create(
     case CommandType::MoveBookBetweenShelves:
         return new MoveBookBetweenShelvesCommand(libraryService);
 
+    case CommandType::GetBestSellers:
+        return new GetBestSellersCommand(bookService);
+
+
+    case CommandType::GetBookCover:
+        return new GetBookCoverCommand(bookService);
+
+    case CommandType::AddFavoriteBook:
+        return new AddFavoriteBookCommand(userService);
+
 
     // =============================================
     // ===== Unknown Command =====

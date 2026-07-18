@@ -1,6 +1,7 @@
 #include "searchwindow.h"
 #include "Users/ui_searchwindow.h"
 #include "../Server/Request.h"
+#include "../Server/Response.h" // 🟢 اضافه شده برای پردازش ساختار پاسخ سرور
 #include "BookDetailDialog.h"
 #include "UserDetailDialog.h"
 #include "AuthorDetailDialog.h"
@@ -17,9 +18,6 @@ SearchWindow::SearchWindow(NetworkManager* networkManager , QWidget *parent)
     , m_networkManager(networkManager)
 {
     ui->setupUi(this);
-
-
-
 
     ui->searchBookPushButton->setCheckable(true);
     ui->searchAuthorPushButton->setCheckable(true);
@@ -46,9 +44,6 @@ SearchWindow::~SearchWindow()
     delete ui;
 }
 
-
-
-
 void SearchWindow:: on_showSearchPushButton_clicked()
 {
     QString keyword = ui->searchLineEdit->text().trimmed();
@@ -59,19 +54,17 @@ void SearchWindow:: on_showSearchPushButton_clicked()
 
     QVariantMap params;
     params["keyword"] = keyword;
-
-    if (ui->searchBookPushButton->isChecked()) {
-        Request request(CommandType::SearchBooks, params);
-        m_networkManager->sendRequest(request);
+    if (ui->searchBookPushButton->isChecked()){
+        params["status"] = "book";
+    }else if(ui->searchPublisherPushButton->isChecked()){
+        qDebug()<<"we are in onshow clicked";
+        params["status"] = "publisher";
+    }else if(ui->searchAuthorPushButton->isChecked()){
+        params["status"] = "author";
     }
 
-    else if (ui->searchPublisherPushButton->isChecked()) {
-        Request request(CommandType::SearchUsers, params);
-        m_networkManager->sendRequest(request);
-    }else if (ui->searchAuthorPushButton->isChecked()) {
-        Request request(CommandType::SearchAuthors, params);
-        m_networkManager->sendRequest(request);
-    }
+    Request request(CommandType::SearchBooks, params);
+    m_networkManager->sendRequest(request);
 }
 
 void SearchWindow::handleResponse(const Response& response)
@@ -109,137 +102,63 @@ void SearchWindow::handleResponse(const Response& response)
             QListWidgetItem* item = new QListWidgetItem();
             item->setData(Qt::UserRole, bookId);
 
-            // تنظیم متن (عنوان + نویسنده)
-            item->setText(title + "\n" + author);
+            // 🟢 تغییر اول: تنظیم متن موقت در وضعیت Loading تا زمان لود آنلاین دیتای عکس از سرور
+            item->setText("⏳ Loading...\n" + title + "\n" + author);
             item->setTextAlignment(Qt::AlignCenter);
 
-            // تنظیم تصویر جلد کتاب (در صورت وجود)
-            if (!coverPath.isEmpty()) {
-                QPixmap pixmap(coverPath);
-                if (!pixmap.isNull()) {
-                    QPixmap scaled = pixmap.scaled(120, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                    item->setIcon(QIcon(scaled));
-                }
-            }
-
             ui->searchResultsListWidget->addItem(item);
+
+            // 🟢 تغییر دوم: حذف متد لود مستقیم فایل از هارد دیسک و ارسال درخواست آنلاین کاور به سرور بر اساس آیدی کتاب
+            if (!coverPath.isEmpty() && bookId > 0) {
+                m_networkManager->requestBookCover(bookId);
+            } else {
+                // اگر کتاب فاقد عکس بود، متن عادی بدون پیشوند لودینگ ست می‌شود
+                item->setText(title + "\n" + author);
+            }
         }
 
         qDebug() << "✅ Successfully loaded" << count << "search results.";
     }
+    // 🟢 تغییر سوم: اضافه کردن پردازش پاسخ کامند GetBookCover جهت دریافت تصاویر جلدها به صورت ناهمگام
+    else if (response.getCommandType() == CommandType::GetBookCover) {
+        if (response.isSuccess()) {
+            QVariantMap resData = response.getData();
+            int responseBookId = resData["bookId"].toInt();
+            QString base64Data = resData["coverData"].toString();
+            QByteArray imageData = QByteArray::fromBase64(base64Data.toUtf8());
 
+            QPixmap pixmap;
+            if (pixmap.loadFromData(imageData)) {
+                QPixmap scaled = pixmap.scaled(120, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-
-    if (response.getCommandType() == CommandType::SearchUsers) {
-        if (!response.isSuccess()) {
-            QMessageBox::critical(this, "خطا", "خطا در جستجو: " + response.getMessage());
-            return;
-        }
-
-        QVariantList users = response.getData()["users"].toList();
-        int count = response.getData()["count"].toInt();
-
-        ui->searchResultsListWidget->clear();
-        m_searchUsersCache.clear();
-
-        if (users.isEmpty()) {
-            QMessageBox::information(this, "نتیجه", "هیچ کاربری پیدا نشد.");
-            return;
-        }
-
-        for (const QVariant& userVar : users) {
-            QVariantMap user = userVar.toMap();
-            int userId = user["id"].toInt();
-            QString role = user["role"].toString();
-            if(!user.contains("publisherName")) continue;
-            // if(role != "publisher") continue;
-
-            // اگر ناشر بود نام انتشارات وگرنه نام کاربری را نشان می‌دهیم
-            QString displayName = user.contains("publisherName") ? user["publisherName"].toString() : user["username"].toString();
-
-            // ذخیره در کش کاربران
-            m_searchUsersCache[userId] = user;
-
-            QListWidgetItem* item = new QListWidgetItem();
-            item->setData(Qt::UserRole, userId);
-            item->setText(displayName + "\n" + "نقش: " + role);
-            item->setTextAlignment(Qt::AlignCenter);
-
-            ui->searchResultsListWidget->addItem(item);
-        }
-        qDebug() << "✅ Loaded" << count << "users/publishers.";
-    }
-
-
-    if (response.getCommandType() == CommandType::SearchAuthors) {
-        if (!response.isSuccess()) {
-            QMessageBox::critical(this, "خطا", "مشکلی در جستجو به وجود آمد: " + response.getMessage());
-            return;
-        }
-
-        QVariantList authors = response.getData()["authors"].toList();
-        int count = response.getData()["count"].toInt();
-
-        ui->searchResultsListWidget->clear();
-        m_searchAuthorsCache.clear();
-
-        if (authors.isEmpty()) {
-            QMessageBox::information(this, "نتیجه", "هیچ نویسنده‌ای با این مشخصات پیدا نشد.");
-            return;
-        }
-
-        int fakeId = 0; // استفاده از اندکس به عنوان آیدی یکتا در کش محلی
-        for (const QVariant& authorVar : authors) {
-            QVariantMap authorData = authorVar.toMap();
-            QString authorName = authorData["author"].toString();
-            int bookCount = authorData["bookCount"].toInt();
-
-            // ذخیره در کش نویسندگان
-            m_searchAuthorsCache[fakeId] = authorData;
-
-            QListWidgetItem* item = new QListWidgetItem();
-            item->setData(Qt::UserRole, fakeId);
-            item->setText(authorName + "\n" + QString::number(bookCount) + " کتاب");
-            item->setTextAlignment(Qt::AlignCenter);
-
-            // 🎨 شیک‌سازی: لود کاور اولین کتاب به عنوان تصویر آیکون نویسنده
-            QVariantList books = authorData["books"].toList();
-            if (!books.isEmpty()) {
-                QVariantMap firstBook = books.first().toMap();
-                QString coverPath = firstBook["coverPath"].toString();
-                if (!coverPath.isEmpty()) {
-                    QPixmap pixmap(coverPath);
-                    if (!pixmap.isNull()) {
-                        QPixmap scaled = pixmap.scaled(120, 180, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                // پیدا کردن آیتم متناظر با عکس دریافتی در لیست گرافیکی و اعمال تغییرات روی آن
+                for (int i = 0; i < ui->searchResultsListWidget->count(); ++i) {
+                    QListWidgetItem* item = ui->searchResultsListWidget->item(i);
+                    if (item && item->data(Qt::UserRole).toInt() == responseBookId) {
                         item->setIcon(QIcon(scaled));
+
+                        // بازگرداندن متن آیتم به حالت اصلی و حذف کلمه Loading
+                        if (m_searchBooksCache.contains(responseBookId)) {
+                            QVariantMap b = m_searchBooksCache[responseBookId];
+                            item->setText(b["title"].toString() + "\n" + b["author"].toString());
+                        }
+                        break;
                     }
                 }
             }
-            ui->searchResultsListWidget->addItem(item);
-            fakeId++;
         }
-        qDebug() << "✅ Successfully loaded" << count << "authors.";
     }
 }
-
-
 
 void SearchWindow::on_searchResultsListWidget_itemClicked(QListWidgetItem *item)
 {
     if (!item) return;
 
     int id = item->data(Qt::UserRole).toInt();
-    if (ui->searchBookPushButton->isChecked() && m_searchBooksCache.contains(id)) {
-        BookDetailDialog dialog(m_searchBooksCache[id], this);
-        dialog.exec();
-    }
-    else if ((ui->searchPublisherPushButton->isChecked())
-             && m_searchUsersCache.contains(id)) {
-
-        UserDetailDialog dialog(m_searchUsersCache[id], this);
-        dialog.exec();
-    }else if (ui->searchAuthorPushButton->isChecked() && m_searchAuthorsCache.contains(id)) {
-        AuthorDetailDialog dialog(m_searchAuthorsCache[id], this);
+    if (m_searchBooksCache.contains(id)) {
+        // 🟢 تغییر چهارم: اصلاح ترتیب آرگومان‌ها مطابق با پیاده‌سازی گام قبلی کلاس BookDetailDialog
+        // ابتدا دیتای کتاب (آرگومان اول)، سپس پوینتر شبکه (آرگومان دوم)
+        BookDetailDialog dialog(m_networkManager ,m_searchBooksCache[id], this);
         dialog.exec();
     }
 }

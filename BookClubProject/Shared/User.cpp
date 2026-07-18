@@ -45,7 +45,9 @@ User::User()
     , role(UserRole::User)
     , status(AccountStatus::Active)
     , createdAt(QDateTime::currentDateTime())
+
     , favouriteGenre(QVector<Genre>())
+    , favoriteBooks(QVector<int>())
     , lastLogin(QDateTime())
     , updatedAt(QDateTime::currentDateTime())
     ,salt(PasswordHelper::generateSalt())
@@ -63,7 +65,9 @@ User::User(int id, const QString& username, const QString& email, const QString&
     , status(AccountStatus::Active)
 
     , createdAt(QDateTime::currentDateTime())
+
     , favouriteGenre(QVector<Genre>())
+    , favoriteBooks(QVector<int>())
     , lastLogin(QDateTime())
     ,updatedAt(QDateTime::currentDateTime())
     ,salt(PasswordHelper::generateSalt())
@@ -85,7 +89,7 @@ User::User(int id, const QString& username, const QString& email, const QString&
 
 User :: User(int id, const QString &fullName, const QString& username, const QString& email,UserRole role, AccountStatus status,
             const QDateTime& createdAt, const QDateTime & lastLogin ,const QString& plainPassword): id(id), Fullname(fullName), username(username), email(email)
-    , role(role), status(status), createdAt(createdAt) , lastLogin(lastLogin), updatedAt(QDateTime::currentDateTime())
+    , role(role), status(status), createdAt(createdAt) , favoriteBooks(QVector<int>()) ,lastLogin(lastLogin), updatedAt(QDateTime::currentDateTime())
     , passwordResetToken("")
     , resetTokenExpiry(QDateTime())
 {
@@ -117,7 +121,7 @@ User :: User(int id,const QString &fullName, const QString& username, const QStr
             const QDateTime& createdAt,const QDateTime &lastLogin ,const QString& passwordHash , QVector<Genre> favouriteGenre , const QDateTime& updatedAt , QString salt)
     : id(id)
     ,Fullname(fullName) , username(username) , passwordHash(passwordHash), email(_email)
-    , role(role), status(status), createdAt(createdAt),favouriteGenre(favouriteGenre) ,lastLogin(lastLogin),  updatedAt(updatedAt) , salt(salt)
+    , role(role), status(status), createdAt(createdAt),favouriteGenre(favouriteGenre) , favoriteBooks(QVector<int>()),lastLogin(lastLogin),  updatedAt(updatedAt) , salt(salt)
 {
 
     if (passwordHash.isEmpty()) {
@@ -372,6 +376,32 @@ QString User::getRoleString() const
 
 
 
+
+
+// User.cpp
+bool User::addFavoriteBook(int bookId)
+{
+    if (bookId <= 0) return false;
+    if (favoriteBooks.contains(bookId)) return false;
+
+    favoriteBooks.append(bookId);
+    updatedAt = QDateTime::currentDateTime();
+    return true;
+}
+
+bool User::removeFavoriteBook(int bookId)
+{
+    if (favoriteBooks.removeOne(bookId)) {
+        updatedAt = QDateTime::currentDateTime();
+        return true;
+    }
+    return false;
+}
+
+bool User::isFavoriteBook(int bookId) const
+{
+    return favoriteBooks.contains(bookId);
+}
 
 
 

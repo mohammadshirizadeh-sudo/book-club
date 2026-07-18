@@ -8,11 +8,15 @@
 #include "../Services/ReviewService.h"
 #include "../Services/PublisherService.h"
 #include "../Services/LibraryService.h"
+#include <QFileInfo>
+#include <QDir>
+#include <QUuid>
 
 #include "../Repositories/UserRepository.h"
 #include "ClientHandler.h"
 #include "Request.h"
 #include <QDebug>
+
 
 
 // =============================================
@@ -273,7 +277,18 @@ SearchBooksCommand::SearchBooksCommand(BookService* bookService)
 Response SearchBooksCommand::execute(const QVariantMap& params)
 {
     QString keyword = params["keyword"].toString();
-    QVector<QSharedPointer<Book>> books = m_bookService->searchBooks(keyword);
+    QString status = params["status"].toString();
+    QVector<QSharedPointer<Book>> books;
+    if(status == "publisher") {
+        qDebug()<<"we are in command";
+        books = m_bookService->searchBooksByPublisher(keyword);
+        qDebug()<< "we are out of search publisher";
+    }else if(status == "author"){
+        books = m_bookService->searchBooksByAuthor(keyword);
+    }else{
+        books = m_bookService->searchBooks(keyword);
+    }
+
 
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
@@ -824,6 +839,37 @@ AddBookCommand::AddBookCommand(PublisherService* publisherService)
     : m_publisherService(publisherService)
 {
 }
+/*
+Response AddBookCommand::execute(const QVariantMap& params)
+{
+    int publisherId = params["publisherId"].toInt();
+    QString title = params["title"].toString();
+    QString author = params["author"].toString();
+    Genre genre = GenreHelper::fromString(params["genre"].toString());
+    QString description = params["description"].toString();
+    double price = params["price"].toDouble();
+    double discountPercent = params.value("discount", 0.0).toDouble();
+
+    // ۱. دریافت آدرس کاور از پارامترها
+    QString coverPath = params["coverImage"].toString();
+    QString pdfFile= params["pdfFileName"].toString();
+
+
+
+
+    // ۲. ارسال پارامتر جدید به متد سرویس (باید این متد را هم در سرویس خود آپدیت کنی)
+
+    if (m_publisherService->addBook(publisherId, title, author, genre, description, price , 0, coverPath,pdfFile)) {
+        QVariantMap data;
+        data["title"] = title;
+        data["author"] = author;
+        data["coverPath"] = coverPath;
+        return Response::success(CommandType::AddBook , "Book added successfully", data);
+    }
+    return Response::error(CommandType::AddBook ,"Failed to add book");
+}
+*/
+
 
 Response AddBookCommand::execute(const QVariantMap& params)
 {
@@ -833,21 +879,106 @@ Response AddBookCommand::execute(const QVariantMap& params)
     Genre genre = GenreHelper::fromString(params["genre"].toString());
     QString description = params["description"].toString();
     double price = params["price"].toDouble();
-    double discountPercent = params.value("discountPercent", 0.0).toDouble();
 
-    // ۱. دریافت آدرس کاور از پارامترها
-    QString coverPath = params["coverPath"].toString();
+    double discountPercent =
+        params.value("discount", 0.0).toDouble();
 
-    // ۲. ارسال پارامتر جدید به متد سرویس (باید این متد را هم در سرویس خود آپدیت کنی)
 
-    if (m_publisherService->addBook(publisherId, title, author, genre, description, price , 0, coverPath,"hello")) {
+    QByteArray coverBytes =
+        QByteArray::fromBase64(
+            params["coverImage"].toByteArray()
+            );
+
+    QByteArray pdfBytes =
+        QByteArray::fromBase64(
+            params["pdfData"].toByteArray()
+            );
+
+
+    QString coverExt =
+        QFileInfo(params["coverFileName"].toString())
+            .suffix();
+
+
+    if (coverExt.isEmpty())
+        coverExt = "png";
+
+
+    QDir().mkpath("covers");
+    QDir().mkpath("pdfs");
+
+
+    QString fileBase =
+        QUuid::createUuid()
+            .toString(QUuid::WithoutBraces);
+
+
+    QString coverPath =
+        "covers/" + fileBase + "." + coverExt;
+
+
+    QString pdfPath =
+        "pdfs/" + fileBase + ".pdf";
+
+
+    QFile coverFile(coverPath);
+
+    if (!coverBytes.isEmpty() &&
+        coverFile.open(QIODevice::WriteOnly))
+    {
+        coverFile.write(coverBytes);
+        coverFile.close();
+    }
+    else
+    {
+        coverPath.clear();
+    }
+
+
+    QFile pdfFile(pdfPath);
+
+    if (!pdfBytes.isEmpty() &&
+        pdfFile.open(QIODevice::WriteOnly))
+    {
+        pdfFile.write(pdfBytes);
+        pdfFile.close();
+    }
+    else
+    {
+        pdfPath.clear();
+    }
+
+
+    if (m_publisherService->addBook(
+            publisherId,
+            title,
+            author,
+            genre,
+            description,
+            price,
+            discountPercent,
+            coverPath,
+            pdfPath))
+    {
         QVariantMap data;
+
         data["title"] = title;
         data["author"] = author;
         data["coverPath"] = coverPath;
-        return Response::success(CommandType::AddBook , "Book added successfully", data);
+
+
+        return Response::success(
+            CommandType::AddBook,
+            "Book added successfully",
+            data
+            );
     }
-    return Response::error(CommandType::AddBook ,"Failed to add book");
+
+
+    return Response::error(
+        CommandType::AddBook,
+        "Failed to add book"
+        );
 }
 
 
@@ -1098,6 +1229,8 @@ AdminDeleteBookCommand::AdminDeleteBookCommand(UserService* adminService , BookS
     : m_adminService(adminService) , m_bookService(bookService)
 {
 }
+
+//فقط اگر بعداً حذف کتاب اضافه کردی، باید هنگام حذف کتاب، فایل کاور و PDF مربوطه را هم پاک کنی.
 
 Response AdminDeleteBookCommand::execute(const QVariantMap& params)
 {
@@ -2048,6 +2181,157 @@ Response MoveBookBetweenShelvesCommand::execute(const QVariantMap& params)
     data["count"] = shelfList.size();
 
     return Response::success(CommandType::MoveBookBetweenShelves, "Book moved successfully", data);
+}
+
+
+
+// Commands.cpp
+GetBestSellersCommand::GetBestSellersCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response GetBestSellersCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت تعداد (limit) از پارامترها (پیش‌فرض 10)
+    int limit = params.value("limit", 10).toInt();
+
+    if (limit <= 0) {
+        limit = 10;
+    }
+
+    // 2. دریافت کتاب‌های پرفروش از BookService
+    QVector<QSharedPointer<Book>> books = m_bookService->getPopularBooks(limit);
+
+    // 3. ساخت لیست کتاب‌ها برای پاسخ
+    QVariantList bookList;
+    for (QSharedPointer<Book> book : books) {
+        QVariantMap bookData;
+        bookData["bookId"] = book->getBookId();
+        bookData["title"] = book->getTitle();
+        bookData["author"] = book->getAuthor();
+        bookData["genre"] = GenreHelper::toString(book->getGenre());
+        bookData["description"] = book->getDescription();
+        bookData["price"] = book->getPrice();
+        bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["finalPrice"] = book->getFinalPrice();
+        bookData["averageRating"] = book->getAverageRating();
+        bookData["salesCount"] = book->getSalesCount();
+        bookData["coverPath"] = book->getCoverPath();
+        bookData["pdfPath"] = book->getPdfPath();
+        bookData["isActive"] = book->getIsActive();
+
+        // اطلاعات ناشر (اختیاری)
+        // int publisherId = book->getPublisherId();
+        // Publisher* publisher = m_userService->getPublisherById(publisherId);
+        // if (publisher) {
+        //     bookData["publisherName"] = publisher->getPublisherName();
+        // }
+
+        bookList.append(bookData);
+    }
+
+    QVariantMap data;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+
+    return Response::success(CommandType::GetBestSellers, "Best sellers loaded", data);
+
+}
+
+
+
+
+GetBookCoverCommand::GetBookCoverCommand(
+    BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+
+Response GetBookCoverCommand::execute(
+    const QVariantMap& params)
+{
+    int bookId =
+        params["bookId"].toInt();
+
+
+    QSharedPointer<Book> book =
+        m_bookService->getBookById(bookId);
+
+
+    if (!book)
+    {
+        return Response::error(
+            CommandType::GetBookCover,
+            "Book not found"
+            );
+    }
+
+
+    QString path =
+        book->getCoverPath();
+
+
+    if (path.isEmpty())
+    {
+        return Response::error(
+            CommandType::GetBookCover,
+            "No cover available"
+            );
+    }
+
+
+    QFile file(path);
+
+
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        return Response::error(CommandType::GetBookCover,"Cover file missing on server");
+    }
+
+
+    QVariantMap data;
+
+    data["bookId"] = bookId;
+
+    data["coverData"] =
+        QString::fromLatin1(
+            file.readAll().toBase64()
+            );
+
+
+    return Response::success(
+        CommandType::GetBookCover,
+        data
+        );
+}
+
+
+AddFavoriteBookCommand::AddFavoriteBookCommand(UserService* userService)
+    : m_userService(userService)
+{
+}
+
+
+Response AddFavoriteBookCommand::execute(const QVariantMap& params)
+{
+    int userId = params.value("userId").toInt();
+    int bookId = params.value("bookId").toInt();
+
+    if (userId <= 0 || bookId <= 0) {
+        return Response::error(CommandType::AddFavoriteBook, "Invalid user ID or book ID");
+    }
+
+    bool success = m_userService->addFavoriteBook(userId, bookId);
+
+    if (success) {
+        QVariantMap data;
+        data["userId"] = userId;
+        data["bookId"] = bookId;
+        return Response::success(CommandType::AddFavoriteBook, "Book added to favorites", data);
+    }
+    return Response::error(CommandType::AddFavoriteBook, "Failed to add book to favorites");
 }
 
 

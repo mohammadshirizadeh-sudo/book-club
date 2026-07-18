@@ -92,6 +92,10 @@ enum class CommandType {
     RenameShelf,
     RemoveBookFromShelf,
     MoveBookBetweenShelves,
+     GetBestSellers,
+
+    GetBookCover,
+    AddFavoriteBook,
 
     SearchAuthors
 };

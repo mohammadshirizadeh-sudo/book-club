@@ -97,7 +97,12 @@ bool UserRepository::addUser(User* user) {
 }
 
 User* UserRepository::findById(int id) const {
+    qDebug()<<"before locker";
     QMutexLocker locker(&m_mutex);
+    qDebug()<<"after locker";
+    return usersById.value(id, nullptr);
+}
+User* UserRepository::findById_noLock(int id) const {
     return usersById.value(id, nullptr);
 }
 
@@ -315,7 +320,7 @@ bool UserRepository::loadAllFromDatabase() {
 
     QString query = R"(
         SELECT id, username, email, password_hash, salt, full_name,
-               role, status, favorite_genres, created_at, updated_at,
+               role, status, favorite_genres,favorite_books, created_at, updated_at,
                last_login, reset_token, reset_token_expiry
         FROM user
     )";
@@ -344,6 +349,10 @@ bool UserRepository::loadAllFromDatabase() {
         QString passwordHash = sqlQuery.value("password_hash").toString();
         QVector<Genre> genres = stringToGenres(
             sqlQuery.value("favorite_genres").toString()
+            );
+
+        QVector<int> favoriteBooks = stringToIntList(
+            sqlQuery.value("favorite_books").toString()
             );
         QDateTime updatedAt = QDateTime::fromString(
             sqlQuery.value("updated_at").toString(), Qt::ISODate
@@ -429,11 +438,11 @@ bool UserRepository::saveToDatabase(User* user)
     QString query = R"(
         INSERT OR REPLACE INTO user (
             id, username, email, password_hash, salt, full_name,
-            role, status, favorite_genres, created_at, updated_at,
+            role, status, favorite_genres,favorite_books, created_at, updated_at,
             last_login, reset_token, reset_token_expiry
         ) VALUES (
             :id, :username, :email, :password_hash, :salt, :full_name,
-            :role, :status, :favorite_genres, :created_at, :updated_at,
+            :role, :status, :favorite_genres,:favorite_books, :created_at, :updated_at,
             :last_login, :reset_token, :reset_token_expiry
         )
     )";
@@ -448,6 +457,7 @@ bool UserRepository::saveToDatabase(User* user)
     params["role"] = user->getRoleString();
     params["status"] = statusToString(user->getStatus());
     params["favorite_genres"] = genresToString(user->getFavouriteGenre());
+    params["favorite_books"] = intListToString(user->getFavoriteBooks());
     params["created_at"] = user->getCreatedAt().toString(Qt::ISODate);
     params["updated_at"] = user->getUpdatedAt().toString(Qt::ISODate);
     params["last_login"] = user->getLastLogin().toString(Qt::ISODate);
@@ -835,6 +845,46 @@ QVector<User*> UserRepository::searchUsers(const QString& keyword) const
     }
 
     return results;
+}
+
+
+// UserRepository.cpp
+QVector<int> UserRepository::stringToIntList(const QString& str) const
+{
+    QVector<int> result;
+
+    if (str.isEmpty()) {
+        return result;
+    }
+
+    // جدا کردن بر اساس کاما
+    QStringList parts = str.split(",", Qt::SkipEmptyParts);
+
+    for (const QString& part : parts) {
+        bool ok;
+        int value = part.trimmed().toInt(&ok);
+        if (ok) {
+            result.append(value);
+        }
+    }
+
+    return result;
+}
+
+
+
+QString UserRepository::intListToString(const QVector<int>& list) const
+{
+    if (list.isEmpty()) {
+        return QString();
+    }
+
+    QStringList strList;
+    for (int value : list) {
+        strList.append(QString::number(value));
+    }
+
+    return strList.join(",");
 }
 
 

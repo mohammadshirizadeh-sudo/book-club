@@ -104,7 +104,7 @@ void ClientHandler::onReadyRead()
 
     QByteArray newData = m_socket->readAll();
     qDebug() << "[SERVER IN] Triggered onReadyRead. Bytes read:" << newData.size();
-    qDebug() << "[SERVER IN] Raw data:" << newData;
+    qDebug() << "[SERVER IN] Raw data:" << newData.left(100)<<"...";
 
     m_recvBuffer += newData;
 
@@ -253,7 +253,7 @@ void ClientHandler::sendResponse(const QString& response)
         m_socket->flush();
 
         qDebug() << "[SERVER OUT] Bytes written:" << bytesWritten;
-        qDebug() << "[SERVER OUT] Raw payload:" << data;
+        qDebug() << "[SERVER OUT] Raw payload:" << data.left(100)<<"...";
     } else {
         qWarning() << "[SERVER OUT ERROR] Socket is not connected! State:" << (m_socket ? m_socket->state() : -1);
     }
@@ -282,7 +282,7 @@ void ClientHandler::processRequest(const QString& requestData)
 {
 
 
-    qDebug() << "[SERVER PROCESS] Attempting to parse extracted string:" << requestData;
+    qDebug() << "[SERVER PROCESS] Attempting to parse extracted string:" << requestData.left(100)<<"...";
     Request request = m_parser->parse(requestData);
     qDebug() << "[SERVER PROCESS] Parsed successfully? Valid:" << request.isValid() << "Command:" << request.getCommandTypeString();
     if (!request.isValid()) {

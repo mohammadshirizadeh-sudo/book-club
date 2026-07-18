@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QVariantMap>
 #include<QListWidgetItem>
+#include "../Network-Manger/NetworkManager.h"
 
 namespace Ui {
 class UserDetailDialog;
@@ -25,5 +26,6 @@ private:
     void displayUserInfo(const QVariantMap& userData);
 
     QMap<int, QVariantMap> m_publisherBooksCache;
+    NetworkManager* m_networkManager;
 };
 #endif

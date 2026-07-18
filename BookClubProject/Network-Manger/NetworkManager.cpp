@@ -150,7 +150,7 @@ void NetworkManager::onReadyRead()
 
     QByteArray newData = m_socket->readAll();
     qDebug() << "[CLIENT IN] Triggered onReadyRead. Bytes read:" << newData.size();
-    qDebug() << "[CLIENT IN] Raw data:" << newData;
+    qDebug() << "[CLIENT IN] Raw data:" << newData.left(100)<<"...";
 
     m_recvBuffer += newData;
 
@@ -170,8 +170,6 @@ void NetworkManager::onReadyRead()
 
         if (!doc.isObject()) {
 
-            qWarning() << "❌ Invalid JSON response!" << messageData;
-
             emit errorReceived("Invalid JSON response");
 
             continue;
@@ -180,6 +178,8 @@ void NetworkManager::onReadyRead()
 
         Response response = Response::fromJson(doc.object());
         qDebug()<<"we send this to handleresponse";
+
+        qWarning() << "❌ Invalid JSON response!" << messageData.left(100) << "...";
 
         handleResponse(response);
     }
@@ -209,4 +209,11 @@ void NetworkManager::emitSignals(const Response& response)
     } else {
         emit errorReceived(response.getMessage());
     }
+}
+
+
+
+void NetworkManager::requestBookCover(int bookId)
+{
+    sendRequest("GetBookCover",{{"bookId", bookId}});
 }

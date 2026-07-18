@@ -46,6 +46,11 @@ public:
     QVector<User*> searchUsers(const QString& keyword) const;
     bool isUsernameAvailable(const QString& username) const;
     bool isEmailAvailable(const QString& email) const;
+    bool addFavoriteBook(int userId, int bookId);
+    bool removeFavoriteBook(int userId, int bookId);
+    bool isFavoriteBook(int userId, int bookId) const;
+
+    QVector<int> getFavoriteBooks(int userId) const;
 };
 
 #endif // USERSERVICE_H

@@ -406,7 +406,7 @@ border-radius: 12px;
      <string>↪️</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="prevBestPushButton">
+   <widget class="QPushButton" name="prevBestSellerPushButton">
     <property name="geometry">
      <rect>
       <x>1110</x>
@@ -426,7 +426,7 @@ border-radius: 12px;</string>
      <string>↩️</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="nextBestPushButton">
+   <widget class="QPushButton" name="nextBestSellerPushButton">
     <property name="geometry">
      <rect>
       <x>1420</x>
@@ -597,7 +597,7 @@ color: rgb(0, 0, 0);</string>
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="freeBooksLabel_2">
+   <widget class="QLabel" name="bestSellersLabel">
     <property name="geometry">
      <rect>
       <x>1120</x>
@@ -614,7 +614,7 @@ border-radius: 12px;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="freeBooksTitleLabel_2">
+   <widget class="QLabel" name="bestSellersTitleLabel">
     <property name="geometry">
      <rect>
       <x>1150</x>
@@ -631,7 +631,7 @@ color: rgb(0, 0, 0);</string>
      <string>TextLabel</string>
     </property>
    </widget>
-   <zorder>freeBooksLabel_2</zorder>
+   <zorder>bestSellersLabel</zorder>
    <zorder>recommendedBooksLabel</zorder>
    <zorder>freeBooksLabel</zorder>
    <zorder>newBooksLabel</zorder>
@@ -652,15 +652,15 @@ color: rgb(0, 0, 0);</string>
    <zorder>prevRecPushButton</zorder>
    <zorder>prevNewPushButton</zorder>
    <zorder>nextNewPushButton</zorder>
-   <zorder>prevBestPushButton</zorder>
-   <zorder>nextBestPushButton</zorder>
+   <zorder>prevBestSellerPushButton</zorder>
+   <zorder>nextBestSellerPushButton</zorder>
    <zorder>recommendedBooksTitleLabel1</zorder>
    <zorder>freeBooksTitleLabel</zorder>
    <zorder>newBooksTitleLabel</zorder>
    <zorder>recommendedBooksTitleLabel2</zorder>
    <zorder>recommendedBooksLabel1</zorder>
    <zorder>recommendedBooksLabel2</zorder>
-   <zorder>freeBooksTitleLabel_2</zorder>
+   <zorder>bestSellersTitleLabel</zorder>
   </widget>
  </widget>
  <resources>
