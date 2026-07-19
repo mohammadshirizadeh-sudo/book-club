@@ -206,73 +206,89 @@ private:
 class SearchBooksCommand : public Command
 {
 public:
-    explicit SearchBooksCommand(BookService* bookService);
+    explicit SearchBooksCommand(BookService* bookService  , UserService* userService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::SearchBooks; }
     QString getName() const override { return "SearchBooks"; }
 
 private:
     BookService* m_bookService;
+    UserService* m_userService;
 };
 
 class GetBookByIdCommand : public Command
 {
 public:
-    explicit GetBookByIdCommand(BookService* bookService);
+    explicit GetBookByIdCommand(BookService* bookService , UserService* userService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetBookById; }
     QString getName() const override { return "GetBookById"; }
 
 private:
     BookService* m_bookService;
+    UserService* m_userService;
 };
 
 class GetBooksByGenreCommand : public Command
 {
 public:
-    explicit GetBooksByGenreCommand(BookService* bookService);
+    explicit GetBooksByGenreCommand(BookService* bookService , UserService* userServie);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetBooksByGenre; }
     QString getName() const override { return "GetBooksByGenre"; }
 
 private:
     BookService* m_bookService;
+    UserService* m_userService;
+};
+
+class GetAllGenresCommand : public Command
+{
+public:
+    explicit GetAllGenresCommand();
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetAllGenres; }
+    QString getName() const override { return "GetAllGenres"; }
+    bool requiresAuth() const override { return false; }
 };
 
 class GetPopularBooksCommand : public Command
 {
 public:
-    explicit GetPopularBooksCommand(BookService* bookService);
+    explicit GetPopularBooksCommand(BookService* bookService , UserService* userService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetPopularBooks; }
     QString getName() const override { return "GetPopularBooks"; }
 
 private:
     BookService* m_bookService;
+    UserService* m_userService;
 };
 
 class GetNewBooksCommand : public Command
 {
 public:
-    explicit GetNewBooksCommand(BookService* bookService);
+    explicit GetNewBooksCommand(BookService* bookService ,  UserService* userService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetNewBooks; }
     QString getName() const override { return "GetNewBooks"; }
 
 private:
     BookService* m_bookService;
+     UserService* m_userService;
 };
 
 class GetFreeBooksCommand : public Command
 {
 public:
-    explicit GetFreeBooksCommand(BookService* bookService);
+    explicit GetFreeBooksCommand(BookService* bookService , UserService* userService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetFreeBooks; }
     QString getName() const override { return "GetFreeBooks"; }
 
 private:
     BookService* m_bookService;
+    UserService* m_userService;
 
 };
 
@@ -863,7 +879,7 @@ private:
 class GetBestSellersCommand : public Command
 {
 public:
-    explicit GetBestSellersCommand(BookService* bookService);
+    explicit GetBestSellersCommand(BookService* bookService , UserService* userService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetBestSellers; }
     QString getName() const override { return "GetBestSellers"; }
@@ -871,6 +887,7 @@ public:
 
 private:
     BookService* m_bookService;
+    UserService* m_userService;
 };
 
 
@@ -904,6 +921,36 @@ public:
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::AddFavoriteBook; }
     QString getName() const override { return "AddFavoriteBook"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    UserService* m_userService;
+};
+
+// Commands.h
+class GetFavoriteBooksCommand : public Command
+{
+public:
+    explicit GetFavoriteBooksCommand(UserService* userService, BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetFavoriteBooks; }
+    QString getName() const override { return "GetFavoriteBooks"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    UserService* m_userService;
+    BookService* m_bookService;
+};
+
+
+// Commands.h
+class RemoveFavoriteBookCommand : public Command
+{
+public:
+    explicit RemoveFavoriteBookCommand(UserService* userService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::RemoveFavoriteBook; }
+    QString getName() const override { return "RemoveFavoriteBook"; }
     bool requiresAuth() const override { return true; }
 
 private:

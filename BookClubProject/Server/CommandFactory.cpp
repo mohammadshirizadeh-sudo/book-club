@@ -58,22 +58,22 @@ Command* CommandFactory::create(
     // ===== Book Commands =====
     // =============================================
     case CommandType::SearchBooks:
-        return new SearchBooksCommand(bookService);
+        return new SearchBooksCommand(bookService, userService);
 
     case CommandType::GetBookById:
-        return new GetBookByIdCommand(bookService);
+        return new GetBookByIdCommand(bookService ,userService);
 
     case CommandType::GetBooksByGenre:
-        return new GetBooksByGenreCommand(bookService);
+        return new GetBooksByGenreCommand(bookService , userService);
 
     case CommandType::GetPopularBooks:
-        return new GetPopularBooksCommand(bookService);
+        return new GetPopularBooksCommand(bookService , userService);
 
     case CommandType::GetNewBooks:
-        return new GetNewBooksCommand(bookService);
+        return new GetNewBooksCommand(bookService, userService);
 
     case CommandType::GetFreeBooks:
-        return new GetFreeBooksCommand(bookService);
+        return new GetFreeBooksCommand(bookService, userService);
 
     case CommandType::GetRecommendedBooks:
         return new GetRecommendedBooksCommand(bookService ,userService);
@@ -236,7 +236,7 @@ Command* CommandFactory::create(
         return new MoveBookBetweenShelvesCommand(libraryService);
 
     case CommandType::GetBestSellers:
-        return new GetBestSellersCommand(bookService);
+        return new GetBestSellersCommand(bookService, userService);
 
 
     case CommandType::GetBookCover:
@@ -244,6 +244,22 @@ Command* CommandFactory::create(
 
     case CommandType::AddFavoriteBook:
         return new AddFavoriteBookCommand(userService);
+
+    case CommandType::GetFavoriteBooks:
+        return new GetFavoriteBooksCommand(userService ,bookService);
+    case CommandType::RemoveFavoriteBook:
+        return new RemoveFavoriteBookCommand(userService);
+    case CommandType::GetAllGenres:
+        return new GetAllGenresCommand();
+
+
+
+
+
+
+
+
+
 
 
     // =============================================

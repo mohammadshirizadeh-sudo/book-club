@@ -12,9 +12,12 @@
 #include "appWindow/userwindow.h"
 #include "Users/searchwindow.h"
 #include "Users/UserProfileWindow.h"
+#include "Users/genrebrowserwindow.h"
 #include "Users/favoritebookswindow.h"
 #include "Server/server.h"
 #include "Database/DatabaseInitializer.h"
+#include "Users/cartwindow.h"
+
 
 #include "Publishers/mybooks.h"
 
@@ -64,8 +67,10 @@ int main(int argc, char *argv[])
     SearchWindow* searchWindow = new SearchWindow(networkManager);
     PublisherProfileWindow* publisherProfileWindow =  new PublisherProfileWindow(networkManager);
     MyBooks* mybooks = new MyBooks(networkManager);
-    FavoriteBooksWindow* favoriteBooks = new FavoriteBooksWindow();
+    FavoriteBooksWindow* favoriteBooks = new FavoriteBooksWindow(networkManager);
 
+    GenreBrowserWindow* genreBrowsWindow = new GenreBrowserWindow(networkManager);
+    CartWindow* cartWindow = new CartWindow(networkManager);
 
 
 
@@ -84,6 +89,8 @@ int main(int argc, char *argv[])
     int publisherProfileindex = stackedWidget.addWidget(publisherProfileWindow);
     int mybooksIndex = stackedWidget.addWidget(mybooks);
     int favBooksIndex = stackedWidget.addWidget(favoriteBooks);
+    int genreBrowsWindowIndex = stackedWidget.addWidget(genreBrowsWindow);
+    int cartWindowIndex = stackedWidget.addWidget(cartWindow);
 
 
     //-------------------------------------------------
@@ -91,13 +98,29 @@ int main(int argc, char *argv[])
     //-------------------------------------------------
 
 
+
+
+
+
+    QObject::connect(userWindow,
+                     &UserWindow::genrebrowsWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(genreBrowsWindowIndex);
+                     });
+    QObject::connect(userWindow,
+                     &UserWindow::cartWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(cartWindowIndex);
+                     });
+
     QObject::connect(userWindow,
                      &UserWindow::searchWindow,
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(searchIndex);
                      });
-
 
 
 

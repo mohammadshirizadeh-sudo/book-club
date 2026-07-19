@@ -9,12 +9,11 @@
 class Library {
 private:
     int userId;
-    QVector<int> ownedBooks;     // Books purchased by user
-    QVector<int> savedBooks;     // Books saved for later
-    QVector<Shelf> shelves;      // Custom shelves created by user
+    QVector<int> ownedBooks;
+    QVector<int> savedBooks;
+    QVector<Shelf> shelves;
 
 public:
-    // ===== Constructors =====
     Library();
     explicit Library(int userId);
     Library(int userId, const QVector<int>& ownedBooks, const QVector<int>& savedBooks,

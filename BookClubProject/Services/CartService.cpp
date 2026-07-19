@@ -95,7 +95,7 @@ bool CartService::removeFromCart(int userId, int bookId) {
 */
 }
 bool CartService::removeFromCartInternal(int userId, int bookId) {
-    QSharedPointer<Cart> cart = carts[userId];
+    QSharedPointer<Cart> cart = carts.value(userId);
     if (!cart) return false;
 
     bool success = cart->removeItem(bookId);

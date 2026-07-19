@@ -22,11 +22,15 @@ private slots:
     void on_addFavoritePushButton_clicked();
     void onResponseReceived(const Response& response);
 
+    void on_addCartPushButton_clicked();
+
 private:
     Ui::BookDetailDialog *ui;
     void displayBookInfo(const QVariantMap& bookData);
     NetworkManager* m_networkManager;
     QVariantMap m_bookData;
+    bool m_isFavorite;
+    void updateFavoriteButtonAppearance();
 };
 
 #endif // BOOKDETAILDIALOG_H

@@ -68,9 +68,15 @@ private slots:
     void on_nextBestSellerPushButton_clicked();
     void on_prevBestSellerPushButton_clicked();
 
+    void on_pushButton_7_clicked();
+
+    void on_pushButton_4_clicked();
+
 signals:
     void userProfileWindow();
     void searchWindow();
+    void genrebrowsWindow();
+    void cartWindow();
 
 private:
     Ui::UserWindow *ui;
