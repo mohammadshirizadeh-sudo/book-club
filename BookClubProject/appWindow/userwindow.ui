@@ -658,7 +658,7 @@ color: rgb(0, 0, 0);</string>
      <string>📦 My Shelves</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_9">
+   <widget class="QPushButton" name="notificationPushButton">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -680,7 +680,7 @@ color: rgb(0, 0, 0);</string>
      <string>🔔 Notifications</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_10">
+   <widget class="QPushButton" name="groupPushButton">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -733,8 +733,8 @@ color: rgb(0, 0, 0);</string>
    <zorder>recommendedBooksLabel2</zorder>
    <zorder>bestSellersTitleLabel</zorder>
    <zorder>pushButton_8</zorder>
-   <zorder>pushButton_9</zorder>
-   <zorder>pushButton_10</zorder>
+   <zorder>notificationPushButton</zorder>
+   <zorder>groupPushButton</zorder>
   </widget>
  </widget>
  <resources>

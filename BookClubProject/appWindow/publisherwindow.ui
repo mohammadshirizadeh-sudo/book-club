@@ -46,7 +46,7 @@
       <x>10</x>
       <y>10</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -67,9 +67,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>220</y>
+      <y>90</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -89,9 +89,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
+      <y>170</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -111,9 +111,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>710</y>
+      <y>730</y>
       <width>211</width>
-      <height>81</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -126,36 +126,144 @@
 }</string>
     </property>
     <property name="text">
-     <string>← Quit</string>
+     <string>← Sign Out</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QPushButton" name="newBooksPushButton">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>20</y>
-      <width>411</width>
-      <height>221</height>
+      <x>10</x>
+      <y>250</y>
+      <width>211</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QLabel {
-	background: transparent;
-	border: none;
+     <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 40px;
+	font-size:25px;
 	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
 }</string>
     </property>
     <property name="text">
-     <string>Welcome to your personal library, where every page tells a new story...</string>
+     <string>➕ Add New Book</string>
     </property>
-    <property name="wordWrap">
-     <bool>true</bool>
+   </widget>
+   <widget class="QPushButton" name="editBooksPushButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>330</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>🖊️ Edit Books</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="bookStatsPushButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>410</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>📊 Book Statics</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="discountPushButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>490</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:26px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>💲 Apply Discount</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="deactivatePushButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>570</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:25px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>🚫Deactivate Book</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="notifPushButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>650</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>🔔 Notifications</string>
     </property>
    </widget>
   </widget>
  </widget>
+ <layoutdefault spacing="6" margin="11"/>
  <resources>
   <include location="../resources.qrc"/>
  </resources>

@@ -28,8 +28,53 @@ void PublisherWindow::handleResponse(const Response& response)
 
 }
 
+
 void PublisherWindow::on_pubBooksPushButton_clicked()
 {
-    emit myBooksWindow();
+
+}
+
+
+void PublisherWindow::on_newBooksPushButton_clicked()
+{
+    int publisherId = SessionManager::instance()->getUserId();
+    AddBookDialog dialog(m_networkManager ,publisherId );
+    dialog.exec();
+    // AddNewBookDialog dialog(m_networkManager , this);
+
+    // AddBookDialog dialog(m_networkManager , this);
+
+    // EditInfoDialog dialog(m_networkManager , this);
+    // dialog.exec();
+}
+
+
+void PublisherWindow::on_editBooksPushButton_clicked()
+{
+
+}
+
+
+void PublisherWindow::on_bookStatsPushButton_clicked()
+{
+
+}
+
+
+void PublisherWindow::on_discountPushButton_clicked()
+{
+
+}
+
+
+void PublisherWindow::on_deactivatePushButton_clicked()
+{
+
+}
+
+
+void PublisherWindow::on_notifPushButton_clicked()
+{
+
 }
 

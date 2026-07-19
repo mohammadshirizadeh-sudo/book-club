@@ -30,6 +30,8 @@ private slots:
     void updateCharCount();
     void onResponseReceived(const Response& response);
 
+    void on_pdfStatusLabel_linkActivated(const QString &link);
+
 private:
     Ui::AddBookDialog *ui;
     NetworkManager* m_networkManager;
