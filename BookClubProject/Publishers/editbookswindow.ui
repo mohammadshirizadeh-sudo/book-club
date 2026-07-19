@@ -1,0 +1,901 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditBooksWindow</class>
+ <widget class="QWidget" name="EditBooksWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Book Club - Edit Books</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/white.png);</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1500</width>
+     <height>800</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QPushButton" name="quitPushButton">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:40px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>← Back</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="titleLabel">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>-1</y>
+      <width>341</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:50px;
+background: transparent;</string>
+    </property>
+    <property name="text">
+     <string>Edit Your Books</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>511</width>
+      <height>711</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>📚 Select a Book to Edit</string>
+    </property>
+    <widget class="QLineEdit" name="searchBookLineEdit">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>50</y>
+       <width>351</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+	font: 600 13pt &quot;Segoe UI&quot;;
+	border: 2px solid rgb(0, 0, 0);
+	border-radius: 8px;
+	padding: 6px 12px;
+	background-color: white;
+}
+QLineEdit:focus {
+	border: 2px solid rgb(0, 0, 0);
+}</string>
+     </property>
+     <property name="placeholderText">
+      <string>🔍 Search books...</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="refreshListBtn">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>50</y>
+       <width>111</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:20px;
+	color: rgb(0, 0, 0);
+	border: 2px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>🔄 Refresh</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="booksListWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>120</y>
+       <width>471</width>
+       <height>541</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListWidget {
+	font: 11pt &quot;Segoe UI&quot;;
+	border: 1px solid rgb(0, 0, 0);
+	border-radius: 8px;
+	background-color: white;
+	selection-background-color: rgba(33, 150, 243, 20);
+	selection-color: rgb(33, 150, 243);
+}
+QListWidget::item {
+	padding: 12px;
+	border-bottom: 1px solid rgb(0, 0, 0);
+}
+QListWidget::item:selected {
+	background-color: rgba(33, 150, 243, 20);
+	border-left: 4px solid rgb(33, 150, 243);
+}
+QListWidget::item:hover {
+	background-color: rgb(248, 249, 250);
+}</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="statusLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>660</y>
+       <width>471</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:27px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Select a book from the list to begin editing...</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>80</y>
+      <width>961</width>
+      <height>711</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>✏️ Edit Book Information</string>
+    </property>
+    <widget class="QLabel" name="titleLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>60</y>
+       <width>131</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:27px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Book Title:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="authorLabel">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>127</y>
+       <width>161</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:27px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Author Name:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="genreLabel">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>201</y>
+       <width>71</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:27px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Genre:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="descriptionLabel">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>280</y>
+       <width>131</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:27px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Description:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="titleLineEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>60</y>
+       <width>501</width>
+       <height>46</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+	font: 600 11pt &quot;Segoe UI&quot;;
+	color: black;
+	border: 2px solid rgb(0, 0, 0);
+	border-radius: 8px;
+	padding: 6px 12px;
+	background-color: white;
+}</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="authorLineEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>130</y>
+       <width>501</width>
+       <height>46</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+	font: 600 11pt &quot;Segoe UI&quot;;
+	color: black;
+	border: 2px solid rgb(0, 0, 0);
+	border-radius: 8px;
+	padding: 6px 12px;
+	background-color: white;
+}</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="genreComboBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>200</y>
+       <width>501</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QComboBox {
+	font: 600 11pt &quot;Segoe UI&quot;;
+	border: 2px solid rgb(0, 0, 0);
+	border-radius: 8px;
+	padding: 6px;
+	background-color: white;
+}
+QComboBox:focus {
+	border: 2px solid rgb(76, 175, 80);
+}
+QComboBox::drop-down {
+	border: none;
+	width: 35px;
+}
+QComboBox QAbstractItemView {
+	font: 600 11pt &quot;Segoe UI&quot;;
+	selection-background-color: rgb(76, 175, 80);
+}</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>Select Genre...</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Adventure</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Art</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Biography</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Comedy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Comics</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Cooking</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Documantation</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Drama</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Education</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Fantacy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Fiction</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Health</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>History</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Horror</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Language Learning</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>LGBTQ+</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Manga</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Music</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Mystery and Crime</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Personal Development</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Philosophy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Poetry</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Politics and Society</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Psychology</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Refrence</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Romance</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Science</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Science Fiction</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Technology</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Thriller</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Other</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QTextEdit" name="descriptionTextEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>280</y>
+       <width>501</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">	font: 600 11pt &quot;Segoe UI&quot;;
+	color: black;
+	border: 2px solid rgb(0, 0, 0);
+	border-radius: 8px;
+	padding: 6px 12px;
+	background-color: white;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="priceLabel">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>477</y>
+       <width>111</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:27px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Price($):</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="priceSpinBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>480</y>
+       <width>191</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QDoubleSpinBox {
+	font: 600 12pt &quot;Segoe UI&quot;;
+	border: 2px solid black;
+	border-radius: 8px;
+	color: black;
+}
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+	width: 30px;
+	color: white;
+}</string>
+     </property>
+     <property name="prefix">
+      <string>$</string>
+     </property>
+     <property name="minimum">
+      <double>0.990000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>999.990000000000009</double>
+     </property>
+     <property name="singleStep">
+      <double>0.990000000000000</double>
+     </property>
+     <property name="value">
+      <double>19.989999999999998</double>
+     </property>
+    </widget>
+    <widget class="QLabel" name="coverImageLabel">
+     <property name="geometry">
+      <rect>
+       <x>400</x>
+       <y>480</y>
+       <width>151</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:27px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Cover Image:</string>
+     </property>
+    </widget>
+    <widget class="QFrame" name="coverPreviewFrame">
+     <property name="geometry">
+      <rect>
+       <x>720</x>
+       <y>60</y>
+       <width>221</width>
+       <height>351</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QFrame {
+	border: 2px solid rgb(0, 0, 0);
+	border-radius: 10px;
+	background-color: rgb(250, 250, 250);
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
+     <widget class="QLabel" name="coverPlaceholderLabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>200</width>
+        <height>300</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 50pt;
+background: transparent;
+border: 2px solid rgb(0, 0, 0);</string>
+      </property>
+      <property name="text">
+       <string>📖</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="coverTextLabel">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>310</y>
+        <width>171</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Segoe UI&quot;;
+color: rgb(0, 0, 0);
+border: none;
+background: transparent;</string>
+      </property>
+      <property name="text">
+       <string>No image selected</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="uploadCoverButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>480</y>
+       <width>191</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:23px;
+	color: rgb(0, 0, 0);
+	border: 2px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>📷 Upload Image</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="removeCoverButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>750</x>
+       <y>480</y>
+       <width>191</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:25px;
+	color: rgb(0, 0, 0);
+	border: 2px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>🗑️ Remove</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="pdfFileLabel">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>560</y>
+       <width>121</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:27px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>PDF File:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="pdfPathLineEdit">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>560</y>
+       <width>551</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+	font: 600 11pt &quot;Segoe UI&quot;;
+	color: black;
+	border: 2px solid rgb(0, 0, 0);
+	border-radius: 8px;
+	padding: 6px 12px;
+	background-color: white;
+}</string>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="placeholderText">
+      <string>No PDF selected</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="uploadPdfButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>750</x>
+       <y>560</y>
+       <width>191</width>
+       <height>71</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:25px;
+	color: rgb(0, 0, 0);
+	border: 2px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>📄 Upload</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="saveChangesButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>650</y>
+       <width>235</width>
+       <height>48</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 2px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>💾 Save Changes</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="resetFormButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>650</y>
+       <width>245</width>
+       <height>48</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 2px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="text">
+      <string>🔄 Reset Form</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

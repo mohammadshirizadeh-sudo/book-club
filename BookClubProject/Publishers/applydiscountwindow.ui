@@ -1,0 +1,758 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ApplyDiscountWindow</class>
+ <widget class="QWidget" name="ApplyDiscountWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1500</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Book Club - Apply Discount</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources.qrc">
+    <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-image: url(:/resources/white.png);</string>
+  </property>
+  <widget class="QFrame" name="frame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1500</width>
+     <height>800</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Shape::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Shadow::Raised</enum>
+   </property>
+   <widget class="QPushButton" name="quitPushButton">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:40px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>← Back</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="titleLabel">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>10</y>
+      <width>511</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT Bold&quot;;
+font-size:50px;
+background: transparent;</string>
+    </property>
+    <property name="text">
+     <string>Apply Discount to Books</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="applyDiscountButton">
+    <property name="geometry">
+     <rect>
+      <x>1270</x>
+      <y>320</y>
+      <width>201</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:35px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>✅ Apply
+Discount</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="removeDiscountButton">
+    <property name="geometry">
+     <rect>
+      <x>1270</x>
+      <y>434</y>
+      <width>201</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:35px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>❌ Remove
+Discount</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>80</y>
+      <width>1441</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>📖 Select a Book</string>
+    </property>
+    <widget class="QComboBox" name="bookComboBox">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>40</y>
+       <width>681</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QComboBox {
+	font: 600 12pt &quot;Segoe UI&quot;;
+	border: 2px solid rgb(0, 0, 0);
+	border-radius: 8px;
+	color: rgb(0, 0, 0);
+}
+QComboBox::drop-down {
+	border: none;
+	width: 35px;
+}
+QComboBox QAbstractItemView {
+	font: 600 11pt &quot;Segoe UI&quot;;
+	selection-background-color: rgb(0, 0, 0);
+}</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>-- Select a Book --</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="bookCoverPreviewLabel">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>100</y>
+       <width>141</width>
+       <height>101</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border: 2px dashed rgb(0, 0, 0);
+border-radius: 8px;
+background-color: rgb(248, 248, 248);</string>
+     </property>
+     <property name="text">
+      <string>Cover</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="bookInfoLabel">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>120</y>
+       <width>921</width>
+       <height>70</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+color: rgb(0, 0, 0);
+font-size:30px;
+background: transparent;
+</string>
+     </property>
+     <property name="text">
+      <string>Select a book from the dropdown above to view its details and apply discount.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="currentDiscountLabel">
+     <property name="geometry">
+      <rect>
+       <x>1120</x>
+       <y>40</y>
+       <width>311</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+color: rgb(0, 0, 0);
+font-size:30px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Current Discount: None</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="currentPriceLabel">
+     <property name="geometry">
+      <rect>
+       <x>750</x>
+       <y>40</y>
+       <width>311</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+color: rgb(0, 0, 0);
+font-size:30px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Current Price: $0.00</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="clearFormButton">
+     <property name="geometry">
+      <rect>
+       <x>1170</x>
+       <y>130</y>
+       <width>200</width>
+       <height>55</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}
+QPushButton:hover {
+	background-color: rgb(200, 200, 200);
+}</string>
+     </property>
+     <property name="text">
+      <string>🔄 Clear Form</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>300</y>
+      <width>611</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>💰 Discount Type</string>
+    </property>
+    <widget class="QRadioButton" name="percentageRadio">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>50</y>
+       <width>250</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QRadioButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	color: rgb(0, 0, 0);
+	spacing: 10px;
+	font-size: 30px;
+	background: transparent;
+}
+QRadioButton::indicator {
+	width: 25px;
+	height: 25px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Percentage (%)</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="fixedAmountRadio">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>100</y>
+       <width>271</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QRadioButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	color: rgb(0, 0, 0);
+	spacing: 10px;
+	font-size: 30px;
+	background: transparent;
+}
+QRadioButton::indicator {
+	width: 25px;
+	height: 25px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Fixed Amount ($)</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="percentageSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>70</y>
+       <width>211</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QSpinBox {
+	font: 600 14pt &quot;Segoe UI&quot;;
+	border: 2px solid black;
+	border-radius: 8px;
+	padding: 8px;
+	color: black;
+}
+QSpinBox::up-button, QSpinBox::down-button {
+	width: 30px;
+	color: white;
+}</string>
+     </property>
+     <property name="suffix">
+      <string>%</string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>99</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="fixedAmountSpinBox">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>70</y>
+       <width>211</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QDoubleSpinBox {
+	font: 600 14pt &quot;Segoe UI&quot;;
+	border: 2px solid black;
+	border-radius: 8px;
+	padding: 8px;
+	color: black;
+}
+QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
+	width: 30px;
+	color: black;
+}</string>
+     </property>
+     <property name="prefix">
+      <string>$</string>
+     </property>
+     <property name="minimum">
+      <double>0.500000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>999.990000000000009</double>
+     </property>
+     <property name="singleStep">
+      <double>0.500000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QLabel" name="newPricePreviewLabel">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>170</y>
+       <width>530</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: rgb(0, 0, 0);
+font: 700 9pt &quot;Script MT&quot;;
+background: transparent;
+border-radius: 6px;
+font-size: 35px;</string>
+     </property>
+     <property name="text">
+      <string>New Price: $0.00 (Save: $0.00)</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>300</y>
+      <width>601</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>⏰ Timed Discount (Optional)</string>
+    </property>
+    <widget class="QCheckBox" name="timedDiscountCheck">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>50</y>
+       <width>350</width>
+       <height>35</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QCheckBox {
+	font: 700 9pt &quot;Script MT&quot;;
+	color: black;
+	spacing: 10px;
+	font-size: 30px;
+	background: transparent;
+}
+QCheckBox::indicator {
+	width: 25px;
+	height: 25px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Enable Timed Discount</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="timeInfoLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>200</y>
+       <width>591</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">	font: 700 9pt &quot;Script MT&quot;;
+	color: black;
+	font-size: 25px;
+	background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>(After end date, price will automatically return to normal.)</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="startDateLabel">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>100</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+color: rgb(0, 0, 0);
+font-size:30px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>Start Date:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="endDateLabel">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>150</y>
+       <width>130</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 700 9pt &quot;Script MT Bold&quot;;
+color: rgb(0, 0, 0);
+font-size:30px;
+background: transparent;</string>
+     </property>
+     <property name="text">
+      <string>End Date:</string>
+     </property>
+    </widget>
+    <widget class="QDateTimeEdit" name="startDateEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>100</y>
+       <width>231</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QDateTimeEdit {
+	font: 600 11pt &quot;Segoe UI&quot;;
+	border: 2px solid black;
+	border-radius: 8px;
+	padding: 6px;
+}
+QDateTimeEdit::drop-down {
+	width: 30px;
+	border: none;
+}</string>
+     </property>
+     <property name="displayFormat">
+      <string>yyyy-MM-dd HH:mm</string>
+     </property>
+     <property name="calendarPopup">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QDateTimeEdit" name="endDateEdit">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>150</y>
+       <width>231</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QDateTimeEdit {
+	font: 600 11pt &quot;Segoe UI&quot;;
+	border: 2px solid black;
+	border-radius: 8px;
+	padding: 6px;
+}
+QDateTimeEdit::drop-down {
+	width: 30px;
+	border: none;
+}</string>
+     </property>
+     <property name="displayFormat">
+      <string>yyyy-MM-dd HH:mm</string>
+     </property>
+     <property name="calendarPopup">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>549</y>
+      <width>1441</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>🏷️ Active Discounts on Your Books</string>
+    </property>
+    <widget class="QTableWidget" name="activeDiscountsTable">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>50</y>
+       <width>1401</width>
+       <height>181</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTableWidget {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	gridline-color: black;
+	border: none;
+}
+QTableWidget::item {
+	padding: 6px;
+}
+QHeaderView::section {
+	font: 700 9pt &quot;Script MT&quot;;
+	background-color: rgb(255, 243, 224);
+	color: black;
+	font-size: 20px;
+	padding: 8px;
+	border-bottom: 2px solid rgb(0, 0, 0);
+}</string>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Book Title</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Original Price</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Discount</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>New Price</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Type</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Valid Until</string>
+      </property>
+     </column>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

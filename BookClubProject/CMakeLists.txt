@@ -67,7 +67,7 @@ qt_add_executable(BookClubProject
     Server/Response.h Server/Response.cpp
     appWindow/SessionManager.h appWindow/SessionManager.cpp
     Publishers/publisherprofilewindow.h Publishers/publisherprofilewindow.cpp Publishers/publisherprofilewindow.ui
-    Publishers/mybooks.h Publishers/mybooks.cpp Publishers/mybooks.ui
+
 
 
     Mutual/infodialog.h Mutual/infodialog.cpp Mutual/infodialog.ui
@@ -96,6 +96,9 @@ qt_add_executable(BookClubProject
     Users/favoritebookswindow.h Users/favoritebookswindow.cpp Users/favoritebookswindow.ui
     Users/genrebrowserwindow.h Users/genrebrowserwindow.cpp Users/genrebrowserwindow.ui
     Users/mylibrarywindow.h Users/mylibrarywindow.cpp Users/mylibrarywindow.ui
+    Publishers/applydiscountwindow.h Publishers/applydiscountwindow.cpp Publishers/applydiscountwindow.ui
+    Publishers/deactivatebookwindow.h Publishers/deactivatebookwindow.cpp Publishers/deactivatebookwindow.ui
+    Publishers/editbookswindow.h Publishers/editbookswindow.cpp Publishers/editbookswindow.ui
 
 
 

@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include "../Network-Manger/NetworkManager.h"
+#include <QtCharts/QChartView>
+#include <QtCharts/QPieSeries>
 
 namespace Ui {
 class PublisherWindow;
@@ -22,6 +24,18 @@ private slots:
     void handleResponse(const Response& response);
 
     void on_pubBooksPushButton_clicked();
+
+    void on_newBooksPushButton_clicked();
+
+    void on_editBooksPushButton_clicked();
+
+    void on_bookStatsPushButton_clicked();
+
+    void on_discountPushButton_clicked();
+
+    void on_deactivatePushButton_clicked();
+
+    void on_notifPushButton_clicked();
 
 signals:
     void publisherProfileWindow();

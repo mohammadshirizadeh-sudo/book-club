@@ -395,3 +395,9 @@ void AddBookDialog::onResponseReceived(const Response& response)
         break;
     }
 }
+
+void AddBookDialog::on_pdfStatusLabel_linkActivated(const QString &link)
+{
+
+}
+
