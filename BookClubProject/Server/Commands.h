@@ -242,6 +242,16 @@ private:
     UserService* m_userService;
 };
 
+class GetAllGenresCommand : public Command
+{
+public:
+    explicit GetAllGenresCommand();
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetAllGenres; }
+    QString getName() const override { return "GetAllGenres"; }
+    bool requiresAuth() const override { return false; }
+};
+
 class GetPopularBooksCommand : public Command
 {
 public:

@@ -372,12 +372,19 @@ Response GetBooksByGenreCommand::execute(const QVariantMap& params)
     for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
         int bookId = book->getBookId();
-        bookData["bookId"] = bookId;
+        bookData["bookId"] = book->getBookId();
         bookData["title"] = book->getTitle();
         bookData["author"] = book->getAuthor();
+        bookData["genre"] = GenreHelper::toString(book->getGenre());
+        bookData["description"] = book->getDescription();
         bookData["price"] = book->getPrice();
+        bookData["discountPercent"] = book->getDiscountPercent();
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
+        bookData["salesCount"] = book->getSalesCount();
+        bookData["isActive"] = book->getIsActive();
+        bookData["coverPath"] = book->getCoverPath();
+        bookData["pdfPath"] = book->getPdfPath();
         if (userId > 0) {
             bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
             bookData["isFavorite"] = isFavorite;
@@ -390,6 +397,32 @@ Response GetBooksByGenreCommand::execute(const QVariantMap& params)
     data["count"] = bookList.size();
     return Response::success(CommandType::GetBooksByGenre , data);
 }
+
+
+// Commands.cpp
+GetAllGenresCommand::GetAllGenresCommand()
+{
+}
+Response GetAllGenresCommand::execute(const QVariantMap& params)
+{
+    // دریافت لیست همه ژانرها از GenreHelper
+    QVector<QString> genres = GenreHelper::getAllGenres();
+
+    // تبدیل به QVariantList برای پاسخ
+    QVariantList genreList;
+    for (const QString& genre : genres) {
+        genreList.append(genre);
+    }
+
+    QVariantMap data;
+    data["genres"] = genreList;
+    data["count"] = genreList.size();
+
+    return Response::success(CommandType::GetAllGenres, "Genres loaded successfully", data);
+}
+
+
+
 
 // ----- GetPopularBooksCommand -----
 GetPopularBooksCommand::GetPopularBooksCommand(BookService* bookService , UserService* userService)

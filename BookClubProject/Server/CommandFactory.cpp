@@ -249,6 +249,12 @@ Command* CommandFactory::create(
         return new GetFavoriteBooksCommand(userService ,bookService);
     case CommandType::RemoveFavoriteBook:
         return new RemoveFavoriteBookCommand(userService);
+    case CommandType::GetAllGenres:
+        return new GetAllGenresCommand();
+
+
+
+
 
 
 

@@ -727,3 +727,10 @@ void UserWindow::loadCoverInto(
     m_networkManager->requestBookCover(bookId);
 }
 
+
+void UserWindow::on_pushButton_7_clicked()
+{
+    emit genrebrowsWindow();
+
+}
+
