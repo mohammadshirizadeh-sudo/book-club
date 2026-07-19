@@ -27,6 +27,8 @@ private:
     void displayBookInfo(const QVariantMap& bookData);
     NetworkManager* m_networkManager;
     QVariantMap m_bookData;
+    bool m_isFavorite;
+    void updateFavoriteButtonAppearance();
 };
 
 #endif // BOOKDETAILDIALOG_H

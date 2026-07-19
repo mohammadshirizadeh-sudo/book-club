@@ -406,6 +406,8 @@ bool UserRepository::loadAllFromDatabase() {
         }
         }
 
+        user->setFavoriteBooks(favoriteBooks);
+
         QString resetToken = sqlQuery.value("reset_token").toString();
         if (!resetToken.isEmpty()) {
             user->setPasswordResetToken(resetToken);
