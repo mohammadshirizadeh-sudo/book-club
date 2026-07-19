@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     SearchWindow* searchWindow = new SearchWindow(networkManager);
     PublisherProfileWindow* publisherProfileWindow =  new PublisherProfileWindow(networkManager);
     MyBooks* mybooks = new MyBooks(networkManager);
-    FavoriteBooksWindow* favoriteBooks = new FavoriteBooksWindow();
+    FavoriteBooksWindow* favoriteBooks = new FavoriteBooksWindow(networkManager);
 
 
 

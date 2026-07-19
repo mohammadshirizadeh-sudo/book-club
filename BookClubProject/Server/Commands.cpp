@@ -269,8 +269,9 @@ Response UpdateFavoriteGenresCommand::execute(const QVariantMap& params)
 // =============================================
 
 // ----- SearchBooksCommand -----
-SearchBooksCommand::SearchBooksCommand(BookService* bookService)
-    : m_bookService(bookService)
+SearchBooksCommand::SearchBooksCommand(BookService* bookService , UserService* userService)
+    : m_bookService(bookService) , m_userService(userService)
+
 {
 }
 
@@ -278,6 +279,7 @@ Response SearchBooksCommand::execute(const QVariantMap& params)
 {
     QString keyword = params["keyword"].toString();
     QString status = params["status"].toString();
+    int userId = params["userId"].toInt();
     QVector<QSharedPointer<Book>> books;
     if(status == "publisher") {
         qDebug()<<"we are in command";
@@ -293,7 +295,8 @@ Response SearchBooksCommand::execute(const QVariantMap& params)
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
-        bookData["bookId"] = book->getBookId();
+        int bookId = book->getBookId();
+        bookData["bookId"] = bookId;
         bookData["title"] = book->getTitle();
         bookData["author"] = book->getAuthor();
         bookData["genre"] = GenreHelper::toString(book->getGenre());
@@ -302,6 +305,10 @@ Response SearchBooksCommand::execute(const QVariantMap& params)
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["coverPath"] = book->getCoverPath();
+        if (userId > 0) {
+            bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
+            bookData["isFavorite"] = isFavorite;
+        }
         bookList.append(bookData);
     }
 
@@ -312,14 +319,15 @@ Response SearchBooksCommand::execute(const QVariantMap& params)
 }
 
 // ----- GetBookByIdCommand -----
-GetBookByIdCommand::GetBookByIdCommand(BookService* bookService)
-    : m_bookService(bookService)
+GetBookByIdCommand::GetBookByIdCommand(BookService* bookService , UserService* userService)
+    : m_bookService(bookService) , m_userService(userService)
 {
 }
 
 Response GetBookByIdCommand::execute(const QVariantMap& params)
 {
     int bookId = params["bookId"].toInt();
+    int userId = params["userId"].toInt();
     QSharedPointer<Book> book = m_bookService->getBookById(bookId);
 
     if (book) {
@@ -337,31 +345,43 @@ Response GetBookByIdCommand::execute(const QVariantMap& params)
         data["isActive"] = book->getIsActive();
         data["coverPath"] = book->getCoverPath();
         data["pdfPath"] = book->getPdfPath();
+
+
+        if (userId > 0) {
+            bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
+            data["isFavorite"] = isFavorite;
+        }
         return Response::success(CommandType::GetBookById , data);
     }
     return Response::error(CommandType::GetBookById ,"Book not found");
 }
 
 // ----- GetBooksByGenreCommand -----
-GetBooksByGenreCommand::GetBooksByGenreCommand(BookService* bookService)
-    : m_bookService(bookService)
+GetBooksByGenreCommand::GetBooksByGenreCommand(BookService* bookService , UserService* userService)
+    : m_bookService(bookService), m_userService(userService)
 {
 }
 
 Response GetBooksByGenreCommand::execute(const QVariantMap& params)
 {
     QString genre = params["genre"].toString();
+    int userId = params["userId"].toInt();
     QVector<QSharedPointer<Book>> books = m_bookService->getBooksByGenre(genre);
 
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
-        bookData["bookId"] = book->getBookId();
+        int bookId = book->getBookId();
+        bookData["bookId"] = bookId;
         bookData["title"] = book->getTitle();
         bookData["author"] = book->getAuthor();
         bookData["price"] = book->getPrice();
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
+        if (userId > 0) {
+            bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
+            bookData["isFavorite"] = isFavorite;
+        }
         bookList.append(bookData);
     }
 
@@ -372,8 +392,8 @@ Response GetBooksByGenreCommand::execute(const QVariantMap& params)
 }
 
 // ----- GetPopularBooksCommand -----
-GetPopularBooksCommand::GetPopularBooksCommand(BookService* bookService)
-    : m_bookService(bookService)
+GetPopularBooksCommand::GetPopularBooksCommand(BookService* bookService , UserService* userService)
+    : m_bookService(bookService) , m_userService(userService)
 {
 }
 
@@ -381,18 +401,27 @@ Response GetPopularBooksCommand::execute(const QVariantMap& params)
 {
 
     int limit = params.value("limit", 10).toInt();
+    int userId = params["userId"].toInt();
     QVector<QSharedPointer<Book>> books = m_bookService->getPopularBooks(limit);
 
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
+
         QVariantMap bookData;
-        bookData["bookId"] = book->getBookId();
+        int bookId = book->getBookId();
+        bookData["bookId"] = bookId;
         bookData["title"] = book->getTitle();
         bookData["author"] = book->getAuthor();
         bookData["price"] = book->getPrice();
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["salesCount"] = book->getSalesCount();
+        if (userId > 0) {
+            bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
+            bookData["isFavorite"] = isFavorite;
+            qDebug()<<"the bool in command from book " << book->getTitle() << "is " << isFavorite;
+        }
+
         bookList.append(bookData);
     }
 
@@ -403,26 +432,32 @@ Response GetPopularBooksCommand::execute(const QVariantMap& params)
 }
 
 // ----- GetNewBooksCommand -----
-GetNewBooksCommand::GetNewBooksCommand(BookService* bookService)
-    : m_bookService(bookService)
+GetNewBooksCommand::GetNewBooksCommand(BookService* bookService , UserService* userService)
+    : m_bookService(bookService) , m_userService(userService)
 {
 }
 
 Response GetNewBooksCommand::execute(const QVariantMap& params)
 {
     int limit = params.value("limit", 10).toInt();
+    int userId = params["userId"].toInt();
     QVector<QSharedPointer<Book>> books = m_bookService->getNewBooks(limit);
 
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
-        bookData["bookId"] = book->getBookId();
+        int bookId = book->getBookId();
+        bookData["bookId"] = bookId;
         bookData["title"] = book->getTitle();
         bookData["author"] = book->getAuthor();
         bookData["price"] = book->getPrice();
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["coverPath"] = book->getCoverPath();
+        if (userId > 0) {
+            bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
+            bookData["isFavorite"] = isFavorite;
+        }
         bookList.append(bookData);
     }
 
@@ -433,8 +468,8 @@ Response GetNewBooksCommand::execute(const QVariantMap& params)
 }
 
 // ----- GetFreeBooksCommand -----
-GetFreeBooksCommand::GetFreeBooksCommand(BookService* bookService)
-    : m_bookService(bookService)
+GetFreeBooksCommand::GetFreeBooksCommand(BookService* bookService , UserService* userService)
+    : m_bookService(bookService) , m_userService(userService)
 {
 }
 
@@ -444,10 +479,13 @@ Response GetFreeBooksCommand::execute(const QVariantMap& params)
     qDebug() << "🔍 [Server DB] Executing Free Books SQL Query...";
     QVector<QSharedPointer<Book>> books = m_bookService->getFreeBooks();
 
+    int userId = params["userId"].toInt();
+
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
-        bookData["bookId"] = book->getBookId();
+        int bookId = book->getBookId();
+        bookData["bookId"] = bookId;
         bookData["title"] = book->getTitle();
         bookData["author"] = book->getAuthor();
         bookData["genre"] = GenreHelper::toString(book->getGenre());//this
@@ -455,6 +493,10 @@ Response GetFreeBooksCommand::execute(const QVariantMap& params)
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["coverPath"] = book->getCoverPath();
+        if (userId > 0) {
+            bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
+            bookData["isFavorite"] = isFavorite;
+        }
         bookList.append(bookData);
     }
     qDebug() << "📦 [Server DB] Successfully pulled"
@@ -2186,8 +2228,8 @@ Response MoveBookBetweenShelvesCommand::execute(const QVariantMap& params)
 
 
 // Commands.cpp
-GetBestSellersCommand::GetBestSellersCommand(BookService* bookService)
-    : m_bookService(bookService)
+GetBestSellersCommand::GetBestSellersCommand(BookService* bookService , UserService* userService)
+    : m_bookService(bookService) , m_userService(userService)
 {
 }
 
@@ -2195,6 +2237,7 @@ Response GetBestSellersCommand::execute(const QVariantMap& params)
 {
     // 1. دریافت تعداد (limit) از پارامترها (پیش‌فرض 10)
     int limit = params.value("limit", 10).toInt();
+    int userId = params["userId"].toInt();
 
     if (limit <= 0) {
         limit = 10;
@@ -2207,7 +2250,8 @@ Response GetBestSellersCommand::execute(const QVariantMap& params)
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
         QVariantMap bookData;
-        bookData["bookId"] = book->getBookId();
+        int bookId = book->getBookId();
+        bookData["bookId"] = bookId;
         bookData["title"] = book->getTitle();
         bookData["author"] = book->getAuthor();
         bookData["genre"] = GenreHelper::toString(book->getGenre());
@@ -2227,6 +2271,10 @@ Response GetBestSellersCommand::execute(const QVariantMap& params)
         // if (publisher) {
         //     bookData["publisherName"] = publisher->getPublisherName();
         // }
+        if (userId > 0) {
+            bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
+            bookData["isFavorite"] = isFavorite;
+        }
 
         bookList.append(bookData);
     }
@@ -2334,5 +2382,106 @@ Response AddFavoriteBookCommand::execute(const QVariantMap& params)
     return Response::error(CommandType::AddFavoriteBook, "Failed to add book to favorites");
 }
 
+
+
+// Commands.cpp
+GetFavoriteBooksCommand::GetFavoriteBooksCommand(UserService* userService, BookService* bookService)
+    : m_userService(userService)
+    , m_bookService(bookService)
+{
+}
+
+Response GetFavoriteBooksCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت userId از پارامترها
+    int userId = params.value("userId").toInt();
+
+    if (userId <= 0) {
+        return Response::error(CommandType::GetFavoriteBooks, "Invalid user ID");
+    }
+
+    // 2. دریافت لیست کتاب‌های علاقه‌مندی کاربر
+    QVector<int> favoriteBookIds = m_userService->getFavoriteBooks(userId);
+
+    if (favoriteBookIds.isEmpty()) {
+        QVariantMap data;
+        data["books"] = QVariantList();
+        data["count"] = 0;
+        return Response::success(CommandType::GetFavoriteBooks, "No favorite books found", data);
+    }
+
+    // 3. دریافت اطلاعات کامل کتاب‌ها
+    QVariantList bookList;
+    for (int bookId : favoriteBookIds) {
+        QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+        if (book) {
+            QVariantMap bookData;
+            bookData["bookId"] = book->getBookId();
+            bookData["title"] = book->getTitle();
+            bookData["author"] = book->getAuthor();
+            bookData["genre"] = GenreHelper::toString(book->getGenre());
+            bookData["description"] = book->getDescription();
+            bookData["price"] = book->getPrice();
+            bookData["discountPercent"] = book->getDiscountPercent();
+            bookData["finalPrice"] = book->getFinalPrice();
+            bookData["averageRating"] = book->getAverageRating();
+            bookData["coverPath"] = book->getCoverPath();
+            bookData["pdfPath"] = book->getPdfPath();
+            bookData["isActive"] = book->getIsActive();
+            if (userId > 0) {
+                bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
+                bookData["isFavorite"] = isFavorite;
+            }
+            bookList.append(bookData);
+        }
+    }
+
+    QVariantMap data;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+
+    return Response::success(CommandType::GetFavoriteBooks, "Favorite books loaded", data);
+}
+
+
+// Commands.cpp
+RemoveFavoriteBookCommand::RemoveFavoriteBookCommand(UserService* userService)
+    : m_userService(userService)
+{
+}
+
+Response RemoveFavoriteBookCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int userId = params.value("userId").toInt();
+    int bookId = params.value("bookId").toInt();
+
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::RemoveFavoriteBook, "Invalid user ID");
+    }
+
+    if (bookId <= 0) {
+        return Response::error(CommandType::RemoveFavoriteBook, "Invalid book ID");
+    }
+
+    // 3. حذف کتاب از علاقه‌مندی‌ها
+    bool success = m_userService->removeFavoriteBook(userId, bookId);
+
+    if (!success) {
+        return Response::error(CommandType::RemoveFavoriteBook, "Failed to remove book from favorites");
+    }
+
+    // 4. دریافت لیست به‌روز شده (اختیاری)
+    QVector<int> updatedFavorites = m_userService->getFavoriteBooks(userId);
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["bookId"] = bookId;
+    data["favoriteBooks"] = QVariant::fromValue(updatedFavorites);
+    data["count"] = updatedFavorites.size();
+
+    return Response::success(CommandType::RemoveFavoriteBook, "Book removed from favorites", data);
+}
 
 

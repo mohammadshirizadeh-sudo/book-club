@@ -5,6 +5,7 @@
 #include "../Server/Response.h"
 #include "../Shared/Book.h"
 #include "../Shared/Shelf.h"
+#include "../appWindow/SessionManager.h"
 
 #include <QMessageBox>
 #include <QListWidgetItem>
@@ -68,6 +69,7 @@ void ShelfManagementDialog::updateBookDetails(int bookId)
 
     QVariantMap params;
     params["bookId"] = bookId;
+    params["userId"] = SessionManager::instance()->getUserId();
 
     Request request(CommandType::GetBookById, params);
     m_networkManager->sendRequest(request);

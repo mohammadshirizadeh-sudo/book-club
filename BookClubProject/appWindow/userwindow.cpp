@@ -68,7 +68,11 @@ void UserWindow::loadFreeBooks()
     // درخواست کتاب‌های رایگان
 
     qDebug() << "📚 [Client] Sending GetFreeBooks request to server...";
-    Request request(CommandType::GetFreeBooks, {});
+    QVariantMap data;
+    data["userId"] = SessionManager::instance()->getUserId();
+    Request request(CommandType::GetFreeBooks, data);
+
+
     m_networkManager->sendRequest(request);
 }
 
@@ -391,6 +395,7 @@ void UserWindow::loadNewBooks()
 
     QVariantMap params;
     params["limit"] = 20; // تعداد کل کتاب‌های جدیدی که سرور بازمی‌گرداند
+    params["userId"] = SessionManager::instance()->getUserId();
 
     Request request(CommandType::GetNewBooks, params);
     m_networkManager->sendRequest(request);
@@ -606,6 +611,7 @@ void UserWindow::loadBestSellers()
 
     QVariantMap params;
     params["limit"] = 20; // تعداد کتاب‌های پرفروشی که سرور بازمی‌گرداند
+    params["userId"] = SessionManager::instance()->getUserId();
 
     Request request(CommandType::GetBestSellers, params);
     m_networkManager->sendRequest(request);

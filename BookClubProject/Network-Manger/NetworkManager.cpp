@@ -179,8 +179,6 @@ void NetworkManager::onReadyRead()
         Response response = Response::fromJson(doc.object());
         qDebug()<<"we send this to handleresponse";
 
-        qWarning() << "❌ Invalid JSON response!" << messageData.left(100) << "...";
-
         handleResponse(response);
     }
 }
