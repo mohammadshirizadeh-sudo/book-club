@@ -97,9 +97,7 @@ bool UserRepository::addUser(User* user) {
 }
 
 User* UserRepository::findById(int id) const {
-    qDebug()<<"before locker";
     QMutexLocker locker(&m_mutex);
-    qDebug()<<"after locker";
     return usersById.value(id, nullptr);
 }
 User* UserRepository::findById_noLock(int id) const {

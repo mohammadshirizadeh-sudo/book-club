@@ -75,9 +75,9 @@
     <widget class="QFrame" name="statsBar">
      <property name="geometry">
       <rect>
-       <x>50</x>
-       <y>100</y>
-       <width>1411</width>
+       <x>60</x>
+       <y>110</y>
+       <width>301</width>
        <height>71</height>
       </rect>
      </property>
@@ -133,6 +133,29 @@ background: transparent;</string>
       </property>
       <layout class="QVBoxLayout" name="booksLayout"/>
      </widget>
+    </widget>
+    <widget class="QLineEdit" name="searchInput">
+     <property name="geometry">
+      <rect>
+       <x>420</x>
+       <y>110</y>
+       <width>701</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 25px;
+	color: rgb(0,0,0);
+	background: transparent;
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+     </property>
+     <property name="placeholderText">
+      <string>Search genres...</string>
+     </property>
     </widget>
    </widget>
   </widget>

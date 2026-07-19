@@ -122,6 +122,31 @@ void BookDetailDialog::onResponseReceived(const Response& response)
         } else {
             QMessageBox::warning(this, "Error", "Could not remove from favorites: " + response.getMessage());
         }
+    }else if (response.getCommandType() == CommandType::AddToCart) {
+        // فعال کردن مجدد دکمه
+        ui->addCartPushButton->setEnabled(true);
+        ui->addCartPushButton->setText("🛒 Add to Cart");
+
+        if (response.isSuccess()) {
+            QVariantMap data = response.getData();
+            int totalItems = data.value("totalItems", 0).toInt();
+            double finalPrice = data.value("finalPrice", 0.0).toDouble();
+
+            QMessageBox::information(
+                this,
+                "Cart",
+                QString("Book added to cart!\n\nTotal items: %1\nFinal price: $%2")
+                    .arg(totalItems)
+                    .arg(finalPrice, 0, 'f', 2)
+                );
+        } else {
+            QMessageBox::warning(
+                this,
+                "Error",
+                "Could not add to cart: " + response.getMessage()
+                );
+        }
+        return;
     }
 }
 
@@ -151,5 +176,35 @@ void BookDetailDialog::on_addFavoritePushButton_clicked()
         Request request(CommandType::AddFavoriteBook, params);
         m_networkManager->sendRequest(request);
     }
+}
+
+
+void BookDetailDialog::on_addCartPushButton_clicked()
+{
+    // 1. دریافت userId از SessionManager
+    int userId = SessionManager::instance()->getUserId();
+
+    // 2. دریافت bookId از اطلاعات کتاب
+    int bookId = m_bookData["bookId"].toInt();
+
+    // 3. اعتبارسنجی
+    if (userId <= 0 || bookId <= 0) {
+        QMessageBox::warning(this, "Warning", "Invalid User or Book data.");
+        return;
+    }
+
+    // 4. غیرفعال کردن دکمه تا پاسخ بیاید
+    ui->addCartPushButton->setEnabled(false);
+    ui->addCartPushButton->setText("Adding...");
+
+    // 5. ساخت پارامترها
+    QVariantMap params;
+    params["userId"] = userId;
+    params["bookId"] = bookId;
+    params["quantity"] = 1;  // تعداد پیش‌فرض 1
+
+    // 6. ارسال درخواست به سرور
+    Request request(CommandType::AddToCart, params);
+    m_networkManager->sendRequest(request);
 }
 

@@ -40,7 +40,9 @@ Cart::Cart(int userId)
     : userId(userId)
     , totalPrice(0.0)
     , totalDiscount(0.0)
-    , finalPrice(0.0) {
+    , finalPrice(0.0)
+    , createdAt(QDateTime::currentDateTime())
+    , updatedAt(QDateTime::currentDateTime()){
 }
 
 // ===== Getters =====

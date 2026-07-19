@@ -734,3 +734,10 @@ void UserWindow::on_pushButton_7_clicked()
 
 }
 
+
+void UserWindow::on_pushButton_4_clicked()
+{
+    emit cartWindow();
+
+}
+

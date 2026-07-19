@@ -16,6 +16,7 @@
 #include "Users/favoritebookswindow.h"
 #include "Server/server.h"
 #include "Database/DatabaseInitializer.h"
+#include "Users/cartwindow.h"
 
 
 #include "Publishers/mybooks.h"
@@ -69,6 +70,7 @@ int main(int argc, char *argv[])
     FavoriteBooksWindow* favoriteBooks = new FavoriteBooksWindow(networkManager);
 
     GenreBrowserWindow* genreBrowsWindow = new GenreBrowserWindow(networkManager);
+    CartWindow* cartWindow = new CartWindow(networkManager);
 
 
 
@@ -88,6 +90,7 @@ int main(int argc, char *argv[])
     int mybooksIndex = stackedWidget.addWidget(mybooks);
     int favBooksIndex = stackedWidget.addWidget(favoriteBooks);
     int genreBrowsWindowIndex = stackedWidget.addWidget(genreBrowsWindow);
+    int cartWindowIndex = stackedWidget.addWidget(cartWindow);
 
 
     //-------------------------------------------------
@@ -95,12 +98,8 @@ int main(int argc, char *argv[])
     //-------------------------------------------------
 
 
-    QObject::connect(userWindow,
-                     &UserWindow::searchWindow,
-                     [&]()
-                     {
-                         stackedWidget.setCurrentIndex(searchIndex);
-                     });
+
+
 
 
     QObject::connect(userWindow,
@@ -109,10 +108,19 @@ int main(int argc, char *argv[])
                      {
                          stackedWidget.setCurrentIndex(genreBrowsWindowIndex);
                      });
+    QObject::connect(userWindow,
+                     &UserWindow::cartWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(cartWindowIndex);
+                     });
 
-
-
-
+    QObject::connect(userWindow,
+                     &UserWindow::searchWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(searchIndex);
+                     });
 
 
 
