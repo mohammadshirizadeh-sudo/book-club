@@ -49,6 +49,7 @@ public:
     static PurchaseStatus stringToStatus(const QString& statusStr);
 
     static QString statusToString(PurchaseStatus status);
+    int getMaxPurchaseId() const;
 };
 
 #endif // PURCHASEREPOSITORY_H

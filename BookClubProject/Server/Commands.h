@@ -400,13 +400,14 @@ private:
 class GetPurchaseByIdCommand : public Command
 {
 public:
-    explicit GetPurchaseByIdCommand(PurchaseService* purchaseService);
+    explicit GetPurchaseByIdCommand(PurchaseService* purchaseService , BookService* bookService);
     Response execute(const QVariantMap& params) override;
     CommandType getType() const override { return CommandType::GetPurchaseById; }
     QString getName() const override { return "GetPurchaseById"; }
 
 private:
     PurchaseService* m_purchaseService;
+    BookService* m_bookService;
 };
 
 // =============================================
@@ -956,6 +957,27 @@ public:
 private:
     UserService* m_userService;
 };
+
+
+// Commands.h
+class GetUserLibraryCommand : public Command
+{
+public:
+    explicit GetUserLibraryCommand(LibraryService* libraryService, BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetUserLibrary; }
+    QString getName() const override { return "GetUserLibrary"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+    BookService* m_bookService;
+};
+
+
+
+
+
 
 
 

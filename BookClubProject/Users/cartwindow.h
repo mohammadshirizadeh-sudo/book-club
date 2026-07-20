@@ -28,8 +28,10 @@ protected:
 private slots:
     void on_backButton_clicked();
     void on_checkoutButton_clicked();
+    void onDecreaseButtonClicked();
+    void onIncreaseButtonClicked();
     void handleResponse(const Response& response);
-    void onDeleteButtonClicked();
+    // void onDeleteButtonClicked();
 
 private:
     void loadCart(); // ارسال درخواست به سرور

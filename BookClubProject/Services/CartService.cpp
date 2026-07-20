@@ -78,21 +78,6 @@ bool CartService::removeFromCart(int userId, int bookId) {
     QMutexLocker locker(&m_mutex);
     return removeFromCartInternal(userId, bookId);
 
-    /*
-    QMutexLocker locker(&m_mutex);
-    if (!carts.contains(userId)) {
-        qWarning() << "No cart found for user:" << userId;
-        return false;
-    }
-
-    QSharedPointer<Cart> cart = carts[userId];
-    bool success = cart->removeItem(bookId);
-    if (success) {
-        cart->calculateTotals();
-        saveCartItemsToDatabase(userId, cart->getItems());
-    }
-    return success;
-*/
 }
 bool CartService::removeFromCartInternal(int userId, int bookId) {
     QSharedPointer<Cart> cart = carts.value(userId);

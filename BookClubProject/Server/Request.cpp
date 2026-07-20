@@ -173,26 +173,7 @@ CommandType Request::stringToCommandType(const QString& str)
         {"GetFavoriteBooks" , CommandType ::GetFavoriteBooks},
         {"RemoveFavoriteBook" , CommandType ::RemoveFavoriteBook},
         {"GetAllGenres" , CommandType ::GetAllGenres},
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        {"GetUserLibrary" , CommandType ::GetUserLibrary},
 
     };
 
@@ -301,6 +282,7 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::RemoveFavoriteBook: return "RemoveFavoriteBook";
 
     case CommandType::GetAllGenres: return "GetAllGenres";
+    case CommandType::GetUserLibrary: return "GetUserLibrary";
 
 
 

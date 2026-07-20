@@ -55,7 +55,9 @@ bool DatabaseInitializer::createTables()
            createShelfTable() &&
            createShelfBookTable()&&
            createPublisherInfoTable() &&
-           createAdminInfoTable();
+           createAdminInfoTable()&&
+           createLibraryOwnedBookTable() &&
+           createLibrarySavedBookTable(); ;
 }
 
 bool DatabaseInitializer::dropTables()
@@ -597,4 +599,33 @@ bool DatabaseInitializer::insertDefaultBooks()
 
     qDebug() << "✅ Default books inserted successfully!";
     return true;
+}
+
+
+bool DatabaseInitializer::createLibraryOwnedBookTable()
+{
+    QString query = R"(
+        CREATE TABLE IF NOT EXISTS library_owned_book (
+            library_id INTEGER NOT NULL,
+            book_id INTEGER NOT NULL,
+            added_at TEXT NOT NULL,
+            PRIMARY KEY (library_id, book_id),
+            FOREIGN KEY (library_id) REFERENCES library(id) ON DELETE CASCADE
+        )
+    )";
+    return DatabaseManager::instance()->executeQuery(query);
+}
+
+bool DatabaseInitializer::createLibrarySavedBookTable()
+{
+    QString query = R"(
+        CREATE TABLE IF NOT EXISTS library_saved_book (
+            library_id INTEGER NOT NULL,
+            book_id INTEGER NOT NULL,
+            saved_at TEXT NOT NULL,
+            PRIMARY KEY (library_id, book_id),
+            FOREIGN KEY (library_id) REFERENCES library(id) ON DELETE CASCADE
+        )
+    )";
+    return DatabaseManager::instance()->executeQuery(query);
 }

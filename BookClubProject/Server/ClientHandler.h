@@ -55,6 +55,7 @@ public:
                            CartService* cartService,
                            PublisherService* publisherService,
                            AdminService* adminService,
+                           LibraryService* libraryService,
                            QObject *parent = nullptr);
     ~ClientHandler();
 

@@ -31,6 +31,9 @@ private:
     bool createLibraryTable();
     bool createShelfTable();
     bool createShelfBookTable();
+    bool createLibraryOwnedBookTable();
+
+    bool createLibrarySavedBookTable();
 
 
 

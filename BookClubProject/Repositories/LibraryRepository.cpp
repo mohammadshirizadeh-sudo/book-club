@@ -48,6 +48,24 @@ bool LibraryRepository::addLibrary(QSharedPointer<Library> library) {
         qWarning() << "Failed to save shelves, rolled back library";
         return false;
     }
+    int libraryId = getLibraryDbId(userId);
+
+    if (libraryId <= 0 ||
+        !saveOwnedBooks(libraryId, library->getOwnedBooks()) ||
+        !saveSavedBooks(libraryId, library->getSavedBooks()))
+    {
+
+        QMutexLocker locker(&m_mutex);
+
+        removeFromCache(userId);
+        deleteFromDatabase(userId);
+
+
+        qWarning()
+            << "Failed to save owned/saved books, rolled back library";
+
+        return false;
+    }
 
     qDebug() << "Library added for user:" << userId;
     return true;
@@ -64,17 +82,18 @@ QVector<QSharedPointer<Library>> LibraryRepository::getAllLibraries() const {
 }
 
 bool LibraryRepository::updateLibrary(QSharedPointer<Library> library) {
-
     if (!library) {
         qWarning() << "Library is null!";
         return false;
     }
 
-
     int userId = library->getUserId();
+
     QSharedPointer<Library> oldLibrary = nullptr;
+
     {
         QMutexLocker locker(&m_mutex);
+
         if (!librariesByUserId.contains(userId)) {
             qWarning() << "Library for user" << userId << "not found!";
             return false;
@@ -82,28 +101,81 @@ bool LibraryRepository::updateLibrary(QSharedPointer<Library> library) {
 
         oldLibrary = librariesByUserId[userId];
         librariesByUserId[userId] = library;
-
-
     }
+
 
     if (!saveToDatabase(library)) {
         QMutexLocker locker(&m_mutex);
-
         librariesByUserId[userId] = oldLibrary;
-
         return false;
     }
 
-    // 3. Update shelves
+
+    // گرفتن id جدول library
+    int libraryId = getLibraryDbId(userId);
+
+    if (libraryId <= 0) {
+        QMutexLocker locker(&m_mutex);
+        librariesByUserId[userId] = oldLibrary;
+
+        qWarning() << "Could not resolve library DB id for user:" << userId;
+        return false;
+    }
+
+
     if (!saveShelves(userId, library->getShelves())) {
         QMutexLocker locker(&m_mutex);
         librariesByUserId[userId] = oldLibrary;
         return false;
     }
+
+
+    if (!saveOwnedBooks(libraryId, library->getOwnedBooks())) {
+        QMutexLocker locker(&m_mutex);
+        librariesByUserId[userId] = oldLibrary;
+
+        qWarning() << "Failed to save owned books, rolled back";
+        return false;
+    }
+
+
+    if (!saveSavedBooks(libraryId, library->getSavedBooks())) {
+        QMutexLocker locker(&m_mutex);
+        librariesByUserId[userId] = oldLibrary;
+
+        qWarning() << "Failed to save saved books, rolled back";
+        return false;
+    }
+
+
     qDebug() << "Library updated for user:" << userId;
     return true;
 }
 
+
+
+int LibraryRepository::getLibraryDbId(int userId) const {
+
+    DatabaseManager* db = DatabaseManager::instance();
+
+    QString query =
+        "SELECT id FROM library WHERE user_id = :user_id";
+
+
+    QVariantMap params;
+    params["user_id"] = userId;
+
+
+    QSqlQuery sqlQuery =
+        db->executeSelect(query, params);
+
+
+    if (!sqlQuery.next())
+        return -1;
+
+
+    return sqlQuery.value("id").toInt();
+}
 bool LibraryRepository::deleteLibrary(int userId) {
     QMutexLocker locker(&m_mutex);
     QSharedPointer<Library> library = librariesByUserId.value(userId, nullptr);
@@ -130,6 +202,61 @@ bool LibraryRepository::exists(int userId) const {
 }
 
 
+bool LibraryRepository::loadAllFromDatabase()
+{
+    QMutexLocker locker(&m_mutex);
+    clearCache();
+
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    // Load libraries
+    QString query = R"(
+        SELECT id, user_id, created_at, updated_at
+        FROM library
+    )";
+
+    QSqlQuery sqlQuery = db->executeSelect(query);
+
+    if (sqlQuery.lastError().isValid()) {
+        qCritical() << "Failed to load libraries:" << sqlQuery.lastError().text();
+        return false;
+    }
+
+    int count = 0;
+    while (sqlQuery.next()) {
+        int libraryId = sqlQuery.value("id").toInt();
+        int userId = sqlQuery.value("user_id").toInt();
+
+        QSharedPointer<Library> library = QSharedPointer<Library>::create(
+            userId,
+            QVector<int>(),
+            QVector<int>(),
+            QVector<Shelf>(),
+            QDateTime::fromString(sqlQuery.value("created_at").toString(), Qt::ISODate),
+            QDateTime::fromString(sqlQuery.value("updated_at").toString(), Qt::ISODate)
+            );
+
+        // ✅ بارگذاری ownedBooks و savedBooks
+        loadOwnedBooks(library, libraryId);
+        loadSavedBooks(library, libraryId);
+
+        // بارگذاری shelves
+        loadShelves(library);
+
+        addToCache(library);
+        count++;
+    }
+
+    qDebug() << "✅ Loaded" << count << "libraries from SQLite";
+    return true;
+}
+
+
+/*
 bool LibraryRepository::loadAllFromDatabase() {
     QMutexLocker locker(&m_mutex);
     clearCache();
@@ -162,7 +289,7 @@ bool LibraryRepository::loadAllFromDatabase() {
             QVector<Shelf>()
             );
 
-        // Load shelves
+
         loadShelves(library);
 
         addToCache(library);
@@ -171,7 +298,8 @@ bool LibraryRepository::loadAllFromDatabase() {
     qDebug() << "✅ Loaded" << count << "libraries from SQLite";
     return true;
 }
-
+*/
+/*
 bool LibraryRepository::saveToDatabase(QSharedPointer<Library> library) {
     if (!library) return false;
 
@@ -196,6 +324,35 @@ bool LibraryRepository::saveToDatabase(QSharedPointer<Library> library) {
     QVariantMap params;
     params["id"] = libId;
     params["user_id"] = userId;
+
+    return db->executeQuery(query, params);
+}
+*/
+bool LibraryRepository::saveToDatabase(QSharedPointer<Library> library) {
+    if (!library) return false;
+
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    QString query = R"(
+        INSERT OR REPLACE INTO library (
+            id, user_id, created_at, updated_at
+        ) VALUES (
+            :id, :user_id, :created_at, :updated_at
+        )
+    )";
+
+    int libId = library->getUserId();
+    int userId = library->getUserId();
+
+    QVariantMap params;
+    params["id"] = libId;
+    params["user_id"] = userId;
+    params["created_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+    params["updated_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     return db->executeQuery(query, params);
 }
@@ -392,4 +549,173 @@ void LibraryRepository::removeFromCache(int userId) {
 
 void LibraryRepository::clearCache() {
     librariesByUserId.clear();
+}
+
+
+// LibraryRepository.cpp
+
+// =============================================
+// ===== Owned Books =====
+// =============================================
+
+bool LibraryRepository::saveOwnedBooks(int libraryId, const QVector<int>& ownedBooks)
+{
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    // 1. حذف رکوردهای قبلی
+    QString deleteQuery = "DELETE FROM library_owned_book WHERE library_id = :library_id";
+    QVariantMap deleteParams;
+    deleteParams["library_id"] = libraryId;
+    if (!db->executeQuery(deleteQuery, deleteParams)) {
+        qWarning() << "Failed to delete existing owned books";
+        return false;
+    }
+
+    // 2. درج رکوردهای جدید
+    if (ownedBooks.isEmpty()) {
+        return true;
+    }
+
+    QString insertQuery = R"(
+        INSERT INTO library_owned_book (library_id, book_id, added_at)
+        VALUES (:library_id, :book_id, :added_at)
+    )";
+
+    for (int bookId : ownedBooks) {
+        QVariantMap params;
+        params["library_id"] = libraryId;
+        params["book_id"] = bookId;
+        params["added_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+        if (!db->executeQuery(insertQuery, params)) {
+            qWarning() << "Failed to insert owned book:" << bookId;
+            return false;
+        }
+    }
+
+    qDebug() << "✅ Saved" << ownedBooks.size() << "owned books for library" << libraryId;
+    return true;
+}
+
+bool LibraryRepository::loadOwnedBooks(QSharedPointer<Library> library, int libraryId)
+{
+    if (!library) return false;
+
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    QString query = R"(
+        SELECT book_id FROM library_owned_book
+        WHERE library_id = :library_id
+        ORDER BY added_at DESC
+    )";
+
+    QVariantMap params;
+    params["library_id"] = libraryId;
+
+    QSqlQuery sqlQuery = db->executeSelect(query, params);
+
+    if (sqlQuery.lastError().isValid()) {
+        qCritical() << "Failed to load owned books:" << sqlQuery.lastError().text();
+        return false;
+    }
+
+    QVector<int> ownedBooks;
+    while (sqlQuery.next()) {
+        ownedBooks.append(sqlQuery.value("book_id").toInt());
+    }
+
+    library->setOwnedBooks(ownedBooks);
+    qDebug() << "✅ Loaded" << ownedBooks.size() << "owned books for library" << libraryId;
+    return true;
+}
+
+// =============================================
+// ===== Saved Books =====
+// =============================================
+
+bool LibraryRepository::saveSavedBooks(int libraryId, const QVector<int>& savedBooks)
+{
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    // 1. حذف رکوردهای قبلی
+    QString deleteQuery = "DELETE FROM library_saved_book WHERE library_id = :library_id";
+    QVariantMap deleteParams;
+    deleteParams["library_id"] = libraryId;
+    if (!db->executeQuery(deleteQuery, deleteParams)) {
+        qWarning() << "Failed to delete existing saved books";
+        return false;
+    }
+
+    // 2. درج رکوردهای جدید
+    if (savedBooks.isEmpty()) {
+        return true;
+    }
+
+    QString insertQuery = R"(
+        INSERT INTO library_saved_book (library_id, book_id, saved_at)
+        VALUES (:library_id, :book_id, :saved_at)
+    )";
+
+    for (int bookId : savedBooks) {
+        QVariantMap params;
+        params["library_id"] = libraryId;
+        params["book_id"] = bookId;
+        params["saved_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+        if (!db->executeQuery(insertQuery, params)) {
+            qWarning() << "Failed to insert saved book:" << bookId;
+            return false;
+        }
+    }
+
+    qDebug() << "✅ Saved" << savedBooks.size() << "saved books for library" << libraryId;
+    return true;
+}
+
+bool LibraryRepository::loadSavedBooks(QSharedPointer<Library> library, int libraryId)
+{
+    if (!library) return false;
+
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    QString query = R"(
+        SELECT book_id FROM library_saved_book
+        WHERE library_id = :library_id
+        ORDER BY saved_at DESC
+    )";
+
+    QVariantMap params;
+    params["library_id"] = libraryId;
+
+    QSqlQuery sqlQuery = db->executeSelect(query, params);
+
+    if (sqlQuery.lastError().isValid()) {
+        qCritical() << "Failed to load saved books:" << sqlQuery.lastError().text();
+        return false;
+    }
+
+    QVector<int> savedBooks;
+    while (sqlQuery.next()) {
+        savedBooks.append(sqlQuery.value("book_id").toInt());
+    }
+
+    library->setSavedBooks(savedBooks);
+    qDebug() << "✅ Loaded" << savedBooks.size() << "saved books for library" << libraryId;
+    return true;
 }
