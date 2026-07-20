@@ -97,9 +97,9 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>90</y>
+      <y>85</y>
       <width>311</width>
-      <height>691</height>
+      <height>701</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -207,7 +207,7 @@ QPushButton:hover {
        <x>15</x>
        <y>145</y>
        <width>281</width>
-       <height>531</height>
+       <height>541</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -246,9 +246,9 @@ QListWidget#shelfList::item:hover:!selected {
     <property name="geometry">
      <rect>
       <x>330</x>
-      <y>94</y>
+      <y>85</y>
       <width>811</width>
-      <height>691</height>
+      <height>701</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -341,7 +341,7 @@ QPushButton:disabled {
        <x>15</x>
        <y>92</y>
        <width>781</width>
-       <height>581</height>
+       <height>591</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -400,9 +400,9 @@ QListWidget#bookList::item:hover:!selected {
     <property name="geometry">
      <rect>
       <x>1150</x>
-      <y>100</y>
+      <y>85</y>
       <width>340</width>
-      <height>681</height>
+      <height>701</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -492,7 +492,7 @@ QGroupBox::title {
 }</string>
      </property>
      <property name="text">
-      <string/>
+      <string>loading...</string>
      </property>
     </widget>
     <widget class="QLabel" name="genreValueLabel">
@@ -513,14 +513,14 @@ QGroupBox::title {
 }</string>
      </property>
      <property name="text">
-      <string/>
+      <string>loading...</string>
      </property>
     </widget>
     <widget class="QLabel" name="priceValueLabel">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>430</y>
+       <y>450</y>
        <width>300</width>
        <height>31</height>
       </rect>
@@ -534,16 +534,16 @@ QGroupBox::title {
 }</string>
      </property>
      <property name="text">
-      <string/>
+      <string>loading...</string>
      </property>
     </widget>
     <widget class="QTextEdit" name="descriptionTextEdit">
      <property name="geometry">
       <rect>
-       <x>14</x>
-       <y>465</y>
+       <x>10</x>
+       <y>490</y>
        <width>311</width>
-       <height>140</height>
+       <height>141</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -572,9 +572,9 @@ QGroupBox::title {
      </property>
      <property name="geometry">
       <rect>
-       <x>14</x>
-       <y>615</y>
-       <width>311</width>
+       <x>10</x>
+       <y>640</y>
+       <width>321</width>
        <height>51</height>
       </rect>
      </property>

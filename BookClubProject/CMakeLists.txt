@@ -92,13 +92,15 @@ qt_add_executable(BookClubProject
     Services/LibraryService.h Services/LibraryService.cpp
 
     appWindow/adminwindow.h appWindow/adminwindow.cpp appWindow/adminwindow.ui
-    Publishers/bookstatisticswindow.h Publishers/bookstatisticswindow.cpp Publishers/bookstatisticswindow.ui
+
     Users/favoritebookswindow.h Users/favoritebookswindow.cpp Users/favoritebookswindow.ui
     Users/genrebrowserwindow.h Users/genrebrowserwindow.cpp Users/genrebrowserwindow.ui
     Users/mylibrarywindow.h Users/mylibrarywindow.cpp Users/mylibrarywindow.ui
     Publishers/applydiscountwindow.h Publishers/applydiscountwindow.cpp Publishers/applydiscountwindow.ui
     Publishers/deactivatebookwindow.h Publishers/deactivatebookwindow.cpp Publishers/deactivatebookwindow.ui
     Publishers/editbookswindow.h Publishers/editbookswindow.cpp Publishers/editbookswindow.ui
+    Publishers/bookstaticswindow.h Publishers/bookstaticswindow.cpp Publishers/bookstaticswindow.ui
+    Users/bookreviewdialog.h Users/bookreviewdialog.cpp Users/bookreviewdialog.ui
 
 
 
