@@ -72,11 +72,14 @@ private slots:
 
     void on_pushButton_4_clicked();
 
+    void on_pushButton_3_clicked();
+
 signals:
     void userProfileWindow();
     void searchWindow();
     void genrebrowsWindow();
     void cartWindow();
+    void libraryWindow();
 
 private:
     Ui::UserWindow *ui;

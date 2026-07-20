@@ -106,7 +106,7 @@ Command* CommandFactory::create(
         return new GetPurchaseHistoryCommand(purchaseService);
 
     case CommandType::GetPurchaseById:
-        return new GetPurchaseByIdCommand(purchaseService);
+        return new GetPurchaseByIdCommand(purchaseService , bookService);
 
     // =============================================
     // ===== Review Commands =====
@@ -251,6 +251,14 @@ Command* CommandFactory::create(
         return new RemoveFavoriteBookCommand(userService);
     case CommandType::GetAllGenres:
         return new GetAllGenresCommand();
+
+    case CommandType::GetUserLibrary:
+        return new GetUserLibraryCommand(libraryService , bookService);
+
+
+
+
+
 
 
 

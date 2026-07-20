@@ -752,8 +752,8 @@ Response GetPurchaseHistoryCommand::execute(const QVariantMap& params)
 }
 
 // ----- GetPurchaseByIdCommand -----
-GetPurchaseByIdCommand::GetPurchaseByIdCommand(PurchaseService* purchaseService)
-    : m_purchaseService(purchaseService)
+GetPurchaseByIdCommand::GetPurchaseByIdCommand(PurchaseService* purchaseService , BookService* bookService)
+    : m_purchaseService(purchaseService) , m_bookService(bookService)
 {
 }
 
@@ -771,9 +771,24 @@ Response GetPurchaseByIdCommand::execute(const QVariantMap& params)
         data["finalPrice"] = purchase->getFinalPrice();
         data["status"] = purchase->getStatusString();
         data["purchasedAt"] = purchase->getPurchasedAt().toString(Qt::ISODate);
-        return Response::success(CommandType::GetPurchaseById,  data);
+
+        // 🟢 اضافه کردن اقلام/کتاب‌های درون این فاکتور
+        QVariantList itemsList;
+        for (const auto& item : purchase->getItems()) { // متد دریافت اقلام در کلاس Purchase
+            QVariantMap itemMap;
+            int bookId = item.getBookId();
+            itemMap["bookId"] = bookId;
+            QString title = m_bookService->getBookById(bookId)->getTitle();
+            itemMap["title"] = title;       // عنوان کتاب
+            itemMap["quantity"] = item.getQuantity(); // تعداد
+            itemMap["price"] = item.getTotalPrice();       // قیمت
+            itemsList.append(itemMap);
+        }
+        data["items"] = itemsList;
+
+        return Response::success(CommandType::GetPurchaseById, data);
     }
-    return Response::error(CommandType::GetPurchaseById ,"Purchase not found");
+    return Response::error(CommandType::GetPurchaseById, "Purchase not found");
 }
 
 // =============================================
@@ -2515,6 +2530,68 @@ Response RemoveFavoriteBookCommand::execute(const QVariantMap& params)
     data["count"] = updatedFavorites.size();
 
     return Response::success(CommandType::RemoveFavoriteBook, "Book removed from favorites", data);
+}
+
+
+
+GetUserLibraryCommand::GetUserLibraryCommand(LibraryService* libraryService, BookService* bookService)
+    : m_libraryService(libraryService)
+    , m_bookService(bookService)
+{
+}
+
+Response GetUserLibraryCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت userId از پارامترها
+    int userId = params.value("userId").toInt();
+
+    if (userId <= 0) {
+        return Response::error(CommandType::GetUserLibrary, "Invalid user ID");
+    }
+
+    // 2. دریافت کتابخانه کاربر
+    QSharedPointer<Library> library = m_libraryService->getLibraryByUserId(userId);
+    if (!library) {
+        return Response::error(CommandType::GetUserLibrary, "Library not found for this user");
+    }
+
+    // 3. دریافت لیست کتاب‌های خریداری‌شده
+    QVector<int> ownedBookIds = library->getOwnedBooks();
+
+    if (ownedBookIds.isEmpty()) {
+        QVariantMap data;
+        data["books"] = QVariantList();
+        data["count"] = 0;
+        return Response::success(CommandType::GetUserLibrary, "No books in library", data);
+    }
+
+    // 4. دریافت اطلاعات کامل کتاب‌ها
+    QVariantList bookList;
+    for (int bookId : ownedBookIds) {
+        QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+        if (book) {
+            QVariantMap bookData;
+            bookData["bookId"] = book->getBookId();
+            bookData["title"] = book->getTitle();
+            bookData["author"] = book->getAuthor();
+            bookData["genre"] = GenreHelper::toString(book->getGenre());
+            bookData["description"] = book->getDescription();
+            bookData["price"] = book->getPrice();
+            bookData["discountPercent"] = book->getDiscountPercent();
+            bookData["finalPrice"] = book->getFinalPrice();
+            bookData["averageRating"] = book->getAverageRating();
+            bookData["coverPath"] = book->getCoverPath();
+            bookData["pdfPath"] = book->getPdfPath();
+            bookData["isActive"] = book->getIsActive();
+            bookList.append(bookData);
+        }
+    }
+
+    QVariantMap data;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+
+    return Response::success(CommandType::GetUserLibrary, "Library loaded", data);
 }
 
 

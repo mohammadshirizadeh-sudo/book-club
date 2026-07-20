@@ -20,6 +20,7 @@ ClientHandler::ClientHandler(qintptr socketDescriptor,
                              CartService* cartService,
                              PublisherService* publisherService,
                              AdminService* adminService,
+                             LibraryService*libraryService,
                              QObject *parent)
     : QObject(parent)
     , m_socketDescriptor(socketDescriptor)
@@ -31,6 +32,7 @@ ClientHandler::ClientHandler(qintptr socketDescriptor,
     , m_cartService(cartService)
     , m_publisherService(publisherService)
     , m_adminService(adminService)
+    ,m_libraryService(libraryService)
 {
 
     qDebug() << "[5] ClientHandler created";

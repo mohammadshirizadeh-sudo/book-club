@@ -14,6 +14,10 @@ PurchaseService::PurchaseService(PurchaseRepository* purchaseRepo,
     , libraryRepo(libraryRepo)
     , cartService(cartService)
     , notifService(notifService) , QObject(parent) {
+
+
+    int maxExistingId = purchaseRepo->getMaxPurchaseId();
+    nextPurchaseId = qMax(nextPurchaseId, maxExistingId + 1);
 }
 
 

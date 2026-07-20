@@ -21,6 +21,7 @@ class ReviewService;
 class PublisherService;
 class AdminService;
 class NotificationService;
+class LibraryService;
 
 class Server : public QTcpServer
 {
@@ -78,6 +79,7 @@ private:
     PublisherService* m_publisherService;
     AdminService* m_adminService;
     NotificationService* m_notifService;
+    LibraryService* m_libraryService;
 
     void initServices();
     void cleanupServices();

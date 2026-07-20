@@ -171,7 +171,7 @@ bool LibraryRepository::loadAllFromDatabase() {
     qDebug() << "✅ Loaded" << count << "libraries from SQLite";
     return true;
 }
-
+/*
 bool LibraryRepository::saveToDatabase(QSharedPointer<Library> library) {
     if (!library) return false;
 
@@ -196,6 +196,35 @@ bool LibraryRepository::saveToDatabase(QSharedPointer<Library> library) {
     QVariantMap params;
     params["id"] = libId;
     params["user_id"] = userId;
+
+    return db->executeQuery(query, params);
+}
+*/
+bool LibraryRepository::saveToDatabase(QSharedPointer<Library> library) {
+    if (!library) return false;
+
+    DatabaseManager* db = DatabaseManager::instance();
+    if (!db->isOpen()) {
+        qWarning() << "Database is not open!";
+        return false;
+    }
+
+    QString query = R"(
+        INSERT OR REPLACE INTO library (
+            id, user_id, created_at, updated_at
+        ) VALUES (
+            :id, :user_id, :created_at, :updated_at
+        )
+    )";
+
+    int libId = library->getUserId();
+    int userId = library->getUserId();
+
+    QVariantMap params;
+    params["id"] = libId;
+    params["user_id"] = userId;
+    params["created_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+    params["updated_at"] = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     return db->executeQuery(query, params);
 }

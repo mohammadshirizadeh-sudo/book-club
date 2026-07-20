@@ -330,3 +330,16 @@ QString PurchaseRepository::statusToString(PurchaseStatus status)
     default: return "Pending";
     }
 }
+
+
+int PurchaseRepository::getMaxPurchaseId() const {
+    QMutexLocker locker(&m_mutex);
+
+    int maxId = 0;
+    for (auto it = purchasesById.constBegin();
+         it != purchasesById.constEnd(); ++it) {
+        maxId = qMax(maxId, it.key());
+    }
+
+    return maxId;
+}

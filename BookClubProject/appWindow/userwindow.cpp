@@ -741,3 +741,9 @@ void UserWindow::on_pushButton_4_clicked()
 
 }
 
+
+void UserWindow::on_pushButton_3_clicked()
+{
+    emit libraryWindow();
+}
+

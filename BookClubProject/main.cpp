@@ -14,6 +14,8 @@
 #include "Users/UserProfileWindow.h"
 #include "Users/genrebrowserwindow.h"
 #include "Users/favoritebookswindow.h"
+#include "Users/mylibrarywindow.h"
+#include "Users/shoppinghistorywindow.h"
 #include "Server/server.h"
 #include "Database/DatabaseInitializer.h"
 #include "Users/cartwindow.h"
@@ -71,8 +73,9 @@ int main(int argc, char *argv[])
 
     GenreBrowserWindow* genreBrowsWindow = new GenreBrowserWindow(networkManager);
     CartWindow* cartWindow = new CartWindow(networkManager);
+    ShoppingHistoryWindow* shoppingWindow =new ShoppingHistoryWindow(networkManager);
 
-
+    MyLibraryWindow* libraryWindow = new MyLibraryWindow(networkManager);
 
 
 
@@ -91,6 +94,8 @@ int main(int argc, char *argv[])
     int favBooksIndex = stackedWidget.addWidget(favoriteBooks);
     int genreBrowsWindowIndex = stackedWidget.addWidget(genreBrowsWindow);
     int cartWindowIndex = stackedWidget.addWidget(cartWindow);
+    int shoppingWindowIndex  = stackedWidget.addWidget(shoppingWindow);
+    int libraryWindowIndex = stackedWidget.addWidget(libraryWindow);
 
 
     //-------------------------------------------------
@@ -113,6 +118,12 @@ int main(int argc, char *argv[])
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(cartWindowIndex);
+                     });
+    QObject::connect(userWindow,
+                     &UserWindow::libraryWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(libraryWindowIndex);
                      });
 
     QObject::connect(userWindow,
@@ -146,6 +157,12 @@ int main(int argc, char *argv[])
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(favBooksIndex);
+                     });
+    QObject::connect(profileWindow,
+                     &UserProfileWindow::openShoppingHistoryDialog,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(shoppingWindowIndex);
                      });
     QObject::connect(publisherWindow,
                      &PublisherWindow::publisherProfileWindow,
