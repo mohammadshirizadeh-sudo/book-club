@@ -38,6 +38,8 @@ private:
     void displayBooks(const QVariantList& books);
     void filterBooks(const QString& query);
     void clearLayout();
+    bool m_isFetchingBook = false;
+
 };
 
 #endif // MYLIBRARYWINDOW_H

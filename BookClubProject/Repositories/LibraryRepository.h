@@ -40,6 +40,14 @@ public:
     bool deleteFromDatabase(int userId);
     bool saveShelves(int userId, const QVector<Shelf>& shelves);
     bool loadShelves(QSharedPointer<Library> library);
+
+    bool saveOwnedBooks(int libraryId, const QVector<int>& ownedBooks);
+    bool loadOwnedBooks(QSharedPointer<Library> library, int libraryId);
+
+    // ===== Saved Books =====
+    bool saveSavedBooks(int libraryId, const QVector<int>& savedBooks);
+    bool loadSavedBooks(QSharedPointer<Library> library, int libraryId);
+    int getLibraryDbId(int userId) const;
 };
 
 #endif // LIBRARYREPOSITORY_H

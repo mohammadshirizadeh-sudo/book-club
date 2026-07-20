@@ -16,13 +16,16 @@ MyLibraryWindow::MyLibraryWindow(NetworkManager* networkManager, QWidget *parent
     m_networkManager(networkManager)
 {
     ui->setupUi(this);
+    qDebug() << "MyLibraryWindow constructed:" << this;
 
     // تنظیمات جایگاه لیبل تعداد کتاب‌ها
     ui->totalBooksLabel->setGeometry(10, 5, 280, 61);
 
-    // اتصال سیگنال دریافت پاسخ از شبکه
-    connect(m_networkManager, &NetworkManager::responseReceived,
-            this, &MyLibraryWindow::handleResponse);
+    connect(m_networkManager,
+            &NetworkManager::responseReceived,
+            this,
+            &MyLibraryWindow::handleResponse,
+            Qt::UniqueConnection);
 
     // اتصال جستجوی زنده
     connect(ui->searchInput, &QLineEdit::textChanged,
@@ -59,6 +62,8 @@ void MyLibraryWindow::loadLibrary()
 void MyLibraryWindow::handleResponse(const Response& response)
 {
     // ۱. دریافت لیست کتاب‌های کاربر
+
+    qDebug() << "handleResponse called on MyLibraryWindow instance:" << this;
     if (response.getCommandType() == CommandType::GetUserLibrary) {
         if (response.isSuccess()) {
             QVariantMap data = response.getData();
@@ -70,6 +75,10 @@ void MyLibraryWindow::handleResponse(const Response& response)
     }
     // ۲. دریافت اطلاعات یک کتاب برای نمایش در دیالوگ
     else if (response.getCommandType() == CommandType::GetBookById) {
+        if (!m_isFetchingBook)
+            return;
+        m_isFetchingBook = false;
+
         if (response.isSuccess()) {
             QVariantMap resData = response.getData();
             QVariantMap bookData = resData.contains("book") ? resData["book"].toMap() : resData;
@@ -78,6 +87,7 @@ void MyLibraryWindow::handleResponse(const Response& response)
             QTimer::singleShot(0, this, [this, bookData]() {
                 BookDetailDialog dialog(m_networkManager, bookData, this);
                 dialog.exec();
+                m_isFetchingBook =false;
             });
         } else {
             QMessageBox::warning(this, "Error", "Failed to fetch book details: " + response.getMessage());
@@ -182,12 +192,18 @@ void MyLibraryWindow::filterBooks(const QString& query)
 }
 
 // 🟢 مدیریت کلیک روی کارت کتاب برای باز کردن دیالوگ جزئیات
+/*
 bool MyLibraryWindow::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::MouseButtonPress) {
+        // 🟢 اگر در حال دریافت اطلاعات هستی یا دیالوگ باز است، کلیک جدید را رد کن
+        if (m_isFetchingBook) return true;
+
         QFrame* frame = qobject_cast<QFrame*>(watched);
         if (frame && frame->property("bookId").isValid()) {
             int bookId = frame->property("bookId").toInt();
+
+            m_isFetchingBook = true; // 🔒 قفل کردن کلیک‌ها
 
             QVariantMap params;
             params["bookId"] = bookId;
@@ -200,7 +216,36 @@ bool MyLibraryWindow::eventFilter(QObject *watched, QEvent *event)
     }
     return QMainWindow::eventFilter(watched, event);
 }
+*/
+bool MyLibraryWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::MouseButtonPress) {
+        // اگر در حال دریافت اطلاعات هستیم، کلیک جدید را رد کن
+        if (m_isFetchingBook) return true;
 
+        // پیدا کردن QFrame از هر شیء که کلیک شده (حتی اگر فرزند باشد)
+        QWidget* widget = qobject_cast<QWidget*>(watched);
+        while (widget && !qobject_cast<QFrame*>(widget)) {
+            widget = widget->parentWidget();
+        }
+        QFrame* frame = qobject_cast<QFrame*>(widget);
+
+        if (frame && frame->property("bookId").isValid()) {
+            int bookId = frame->property("bookId").toInt();
+
+            m_isFetchingBook = true; // قفل کردن کلیک‌ها
+
+            QVariantMap params;
+            params["bookId"] = bookId;
+            params["userId"] = SessionManager::instance()->getUserId();
+
+            Request request(CommandType::GetBookById, params);
+            m_networkManager->sendRequest(request);
+            return true; // رویداد مصرف شد
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
 void MyLibraryWindow::clearLayout()
 {
     QLayoutItem *item;

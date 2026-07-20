@@ -12,12 +12,13 @@ Library::Library(int userId)
 }
 
 Library::Library(int userId, const QVector<int>& ownedBooks, const QVector<int>& savedBooks,
-                 const QVector<Shelf>& shelves)
+                 const QVector<Shelf>& shelves , QDateTime createdAt , QDateTime updatedAt)
     : userId(userId)
     , ownedBooks(ownedBooks)
     , savedBooks(savedBooks)
     , shelves(shelves)
-
+    ,createdAt(createdAt)
+    ,updatedAt(updatedAt)
 {
 }
 
