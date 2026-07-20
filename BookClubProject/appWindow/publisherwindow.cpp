@@ -1,6 +1,9 @@
 #include "publisherwindow.h"
 #include "appWindow/ui_publisherwindow.h"
 
+#include "SessionManager.h"
+#include "Publishers/ui_addbookdialog.h"
+
 PublisherWindow::PublisherWindow(NetworkManager* networkManager,QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::PublisherWindow)
