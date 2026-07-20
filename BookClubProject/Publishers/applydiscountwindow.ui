@@ -85,9 +85,9 @@ background: transparent;</string>
     <property name="geometry">
      <rect>
       <x>1270</x>
-      <y>320</y>
+      <y>315</y>
       <width>201</width>
-      <height>101</height>
+      <height>106</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -110,7 +110,7 @@ Discount</string>
       <x>1270</x>
       <y>434</y>
       <width>201</width>
-      <height>101</height>
+      <height>106</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -690,9 +690,9 @@ QGroupBox::title {
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>50</y>
+       <y>40</y>
        <width>1401</width>
-       <height>181</height>
+       <height>191</height>
       </rect>
      </property>
      <property name="styleSheet">
