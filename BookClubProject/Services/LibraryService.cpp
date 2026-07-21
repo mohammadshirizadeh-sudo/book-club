@@ -186,18 +186,19 @@ bool LibraryService::createShelf(int userId, const QString& shelfName)
         return false;
     }
 
-    // بررسی وجود قفسه با همین نام
     if (getShelfByName(userId, shelfName)) {
         qWarning() << "Shelf with name" << shelfName << "already exists";
         return false;
     }
 
+    int newShelfId = m_libraryRepo->insertShelf(userId, shelfName);
+    if (newShelfId <= 0) {
+        qWarning() << "Failed to insert shelf into database";
+        return false;
+    }
 
-
-
-    library->createShelf(shelfName);
-
-    return m_libraryRepo->updateLibrary(library);
+    // Use the DB-assigned id, not Library's own local-only id generator.
+    return library->createShelf(newShelfId, shelfName);
 }
 
 bool LibraryService::deleteShelf(int userId, int shelfId)
@@ -208,12 +209,17 @@ bool LibraryService::deleteShelf(int userId, int shelfId)
         return false;
     }
 
-    if (!library->deleteShelf(shelfId)) {
+    if (!library->getShelf(shelfId)) {
         qWarning() << "Shelf not found:" << shelfId;
         return false;
     }
 
-    return m_libraryRepo->updateLibrary(library);
+    if (!m_libraryRepo->deleteShelfFromDb(shelfId)) {
+        qWarning() << "Failed to delete shelf from database";
+        return false;
+    }
+
+    return library->deleteShelf(shelfId);
 }
 
 bool LibraryService::renameShelf(int userId, int shelfId, const QString& newName)
@@ -229,19 +235,18 @@ bool LibraryService::renameShelf(int userId, int shelfId, const QString& newName
         return false;
     }
 
-    // بررسی اینکه نام جدید توسط قفسه دیگری استفاده نشده باشد
     QSharedPointer<Shelf> existing = getShelfByName(userId, newName);
     if (existing && existing->getShelfId() != shelfId) {
         qWarning() << "Shelf with name" << newName << "already exists";
         return false;
     }
 
-    if (!library->renameShelf(shelfId, newName)) {
-        qWarning() << "Shelf not found:" << shelfId;
+    if (!m_libraryRepo->renameShelfInDb(shelfId, newName)) {
+        qWarning() << "Failed to rename shelf in database";
         return false;
     }
 
-    return m_libraryRepo->updateLibrary(library);
+    return library->renameShelf(shelfId, newName);
 }
 
 bool LibraryService::addBookToShelf(int userId, int shelfId, int bookId)
@@ -252,18 +257,27 @@ bool LibraryService::addBookToShelf(int userId, int shelfId, int bookId)
         return false;
     }
 
-    // بررسی اینکه کاربر کتاب را دارد
     if (!library->ownsBook(bookId)) {
         qWarning() << "User does not own book:" << bookId;
         return false;
     }
 
-    if (!library->addBookToShelf(shelfId, bookId)) {
-        qWarning() << "Failed to add book to shelf";
+    Shelf* shelf = library->getShelf(shelfId);
+    if (!shelf) {
+        qWarning() << "Shelf not found:" << shelfId;
+        return false;
+    }
+    if (shelf->contains(bookId)) {
+        qWarning() << "Book" << bookId << "already in shelf" << shelfId;
         return false;
     }
 
-    return m_libraryRepo->updateLibrary(library);
+    if (!m_libraryRepo->addBookToShelfDb(shelfId, bookId)) {
+        qWarning() << "Failed to add book to shelf in database";
+        return false;
+    }
+
+    return library->addBookToShelf(shelfId, bookId);
 }
 
 bool LibraryService::removeBookFromShelf(int userId, int shelfId, int bookId)
@@ -274,55 +288,13 @@ bool LibraryService::removeBookFromShelf(int userId, int shelfId, int bookId)
         return false;
     }
 
-    if (!library->removeBookFromShelf(shelfId, bookId)) {
-        qWarning() << "Failed to remove book from shelf";
+    if (!m_libraryRepo->removeBookFromShelfDb(shelfId, bookId)) {
+        qWarning() << "Failed to remove book from shelf in database";
         return false;
     }
 
-    return m_libraryRepo->updateLibrary(library);
+    return library->removeBookFromShelf(shelfId, bookId);
 }
-
-QVector<Shelf> LibraryService::getShelves(int userId) const
-{
-    QSharedPointer<Library> library = getLibraryByUserId(userId);
-    if (!library) {
-        return QVector<Shelf>();
-    }
-    return library->getShelves();
-}
-
-QSharedPointer<Shelf> LibraryService::getShelfById(int userId, int shelfId) const
-{
-    QSharedPointer<Library> library = getLibraryByUserId(userId);
-    if (!library) {
-        return nullptr;
-    }
-
-    const QVector<Shelf>& shelves = library->getShelves();
-    for (const Shelf& shelf : shelves) {
-        if (shelf.getShelfId() == shelfId) {
-            return QSharedPointer<Shelf>::create(shelf);
-        }
-    }
-    return nullptr;
-}
-
-QSharedPointer<Shelf> LibraryService::getShelfByName(int userId, const QString& name) const
-{
-    QSharedPointer<Library> library = getLibraryByUserId(userId);
-    if (!library) {
-        return nullptr;
-    }
-
-    const QVector<Shelf>& shelves = library->getShelves();
-    for (const Shelf& shelf : shelves) {
-        if (shelf.getName() == name) {
-            return QSharedPointer<Shelf>::create(shelf);
-        }
-    }
-    return nullptr;
-}
-
 
 bool LibraryService::moveBookBetweenShelves(int userId, int fromShelfId, int toShelfId, int bookId)
 {
@@ -332,25 +304,69 @@ bool LibraryService::moveBookBetweenShelves(int userId, int fromShelfId, int toS
         return false;
     }
 
-    // بررسی اینکه کاربر کتاب را دارد
     if (!library->ownsBook(bookId)) {
         qWarning() << "User does not own book:" << bookId;
         return false;
     }
 
-    // حذف از قفسه مبدا
-    if (!library->removeBookFromShelf(fromShelfId, bookId)) {
-        qWarning() << "Failed to remove book from source shelf";
+    if (!m_libraryRepo->moveBookBetweenShelvesDb(fromShelfId, toShelfId, bookId)) {
+        qWarning() << "Failed to move book between shelves in database";
         return false;
     }
 
-    // اضافه به قفسه مقصد
-    if (!library->addBookToShelf(toShelfId, bookId)) {
-        // Rollback: اگر اضافه نشد، کتاب را به قفسه مبدا برگردان
-        library->addBookToShelf(fromShelfId, bookId);
-        qWarning() << "Failed to add book to destination shelf, rolled back";
+    if (!library->moveBookBetweenShelves(fromShelfId, toShelfId, bookId)) {
+        qWarning() << "DB move succeeded but in-memory move failed — library cache is now stale for user:" << userId;
         return false;
     }
 
-    return m_libraryRepo->updateLibrary(library);
+    return true;
+}
+
+QVector<Shelf> LibraryService::getShelves(int userId) const
+{
+
+    QSharedPointer<Library> library = getLibraryByUserId(userId);
+    if (!library) {
+        qWarning() << "Library not found for user:" << userId;
+        return QVector<Shelf>();
+    }
+
+    return library->getShelves();
+}
+
+
+
+
+// LibraryService.cpp
+QSharedPointer<Shelf> LibraryService::getShelfByName(int userId, const QString& name) const
+{
+    // 1. بررسی ورودی
+    if (userId <= 0) {
+        qWarning() << "Invalid user ID:" << userId;
+        return nullptr;
+    }
+
+    if (name.isEmpty()) {
+        qWarning() << "Shelf name cannot be empty";
+        return nullptr;
+    }
+
+    // 2. دریافت کتابخانه کاربر
+    QSharedPointer<Library> library = getLibraryByUserId(userId);
+    if (!library) {
+        qWarning() << "Library not found for user:" << userId;
+        return nullptr;
+    }
+
+    // 3. جستجوی قفسه با نام
+    const QVector<Shelf>& shelves = library->getShelves();
+    for (const Shelf& shelf : shelves) {
+        if (shelf.getName() == name) {
+            return QSharedPointer<Shelf>::create(shelf);
+        }
+    }
+
+    // 4. قفسه پیدا نشد
+    qDebug() << "Shelf with name" << name << "not found for user" << userId;
+    return nullptr;
 }

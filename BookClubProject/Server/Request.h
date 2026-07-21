@@ -71,28 +71,21 @@ enum class CommandType {
     DeleteBook,
 
     GetSystemStats,
-
-
-
-
     SearchUsers,
     GetNotifications,
 
      MarkNotificationRead,
     MarkAllNotificationsRead,
     ClearAllNotifications,
-
-
     GetUserShelves,
     GetBooksInShelf,
-
     CreateShelf,
-
     DeleteShelf,
     RenameShelf,
     RemoveBookFromShelf,
     MoveBookBetweenShelves,
-     GetBestSellers,
+    AddBookToShelf,
+    GetBestSellers,
 
     GetBookCover,
     AddFavoriteBook,

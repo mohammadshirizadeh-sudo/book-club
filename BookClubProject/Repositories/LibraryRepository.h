@@ -40,6 +40,12 @@ public:
     bool deleteFromDatabase(int userId);
     bool saveShelves(int userId, const QVector<Shelf>& shelves);
     bool loadShelves(QSharedPointer<Library> library);
+    int insertShelf(int userId, const QString& name);
+    bool renameShelfInDb(int shelfId, const QString& newName);
+    bool deleteShelfFromDb(int shelfId);
+    bool addBookToShelfDb(int shelfId, int bookId);
+    bool removeBookFromShelfDb(int shelfId, int bookId);
+    bool moveBookBetweenShelvesDb(int fromShelfId, int toShelfId, int bookId);
 
     bool saveOwnedBooks(int libraryId, const QVector<int>& ownedBooks);
     bool loadOwnedBooks(QSharedPointer<Library> library, int libraryId);

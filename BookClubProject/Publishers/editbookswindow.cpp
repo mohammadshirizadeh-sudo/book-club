@@ -1,3 +1,6 @@
+
+
+/*
 #include "editbookswindow.h"
 #include "Publishers/ui_editbookswindow.h"
 #include <QMessageBox>
@@ -521,3 +524,4 @@ void EditBooksWindow::on_resetFormButton_clicked()
 {
     resetFormToOriginal();
 }
+*/

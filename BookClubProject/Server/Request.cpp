@@ -174,6 +174,12 @@ CommandType Request::stringToCommandType(const QString& str)
         {"RemoveFavoriteBook" , CommandType ::RemoveFavoriteBook},
         {"GetAllGenres" , CommandType ::GetAllGenres},
         {"GetUserLibrary" , CommandType ::GetUserLibrary},
+        {"AddBookToShelf" , CommandType ::AddBookToShelf},
+        {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
+
+
+
+
 
     };
 
@@ -244,15 +250,9 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetBlockedUsers: return "GetBlockedUsers";
     case CommandType::DeleteBook: return "DeleteBook";
     case CommandType::GetSystemStats: return "GetSystemStats";
-
-
-
     case CommandType::RequestPasswordReset: return "RequestPasswordReset";
     case CommandType::ResetPasswordWithToken: return "ResetPasswordWithToken";
-
     case CommandType::DeleteOwnReview: return "DeleteOwnReview";
-
-
     case CommandType::SearchUsers: return "SearchUsers";
     case CommandType::SearchAuthors : return "SearchAuthors";
     case CommandType::GetNotifications: return "GetNotifications";
@@ -261,14 +261,12 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::ClearAllNotifications: return "ClearAllNotifications";
     case CommandType::GetUserShelves: return "GetUserShelves";
     case CommandType::DeleteShelf: return "DeleteShelf";
-
-
     case CommandType::RenameShelf: return "RenameShelf";
-
     case CommandType::RemoveBookFromShelf: return "RemoveBookFromShelf";
-
-
+    case CommandType::CreateShelf : return "CreateShelf";
     case CommandType::MoveBookBetweenShelves: return "MoveBookBetweenShelves";
+    case CommandType::GetBooksInShelf: return "GetBooksInShelf";
+
 
 
 
@@ -283,16 +281,7 @@ QString Request::CommandTypeToString(CommandType cmd)
 
     case CommandType::GetAllGenres: return "GetAllGenres";
     case CommandType::GetUserLibrary: return "GetUserLibrary";
-
-
-
-
-
-
-
-
-
-
+    case CommandType::AddBookToShelf: return "AddBookToShelf";
     default: return "Unknown";
     }
 }

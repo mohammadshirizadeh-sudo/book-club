@@ -123,12 +123,17 @@ void DeactivateBookWindow::loadBooksList(const QString &filter, const QString &s
         else deactivatedCount++;
     }
 
+
+
+    //check this
+    /*
     ui->tableTitleLabel->setText(
         QString("📋 Your Books Inventory | Showing: %1 total (%2 active, %3 deactivated)")
             .arg(filteredBooks.size())
             .arg(activeCount)
             .arg(deactivatedCount)
         );
+*/
 }
 
 void DeactivateBookWindow::updateSelectionState(int row)

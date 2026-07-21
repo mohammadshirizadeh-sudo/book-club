@@ -1,3 +1,6 @@
+
+/*
+
 #ifndef EDITBOOKSWINDOW_H
 #define EDITBOOKSWINDOW_H
 
@@ -23,3 +26,4 @@ private:
 };
 
 #endif // EDITBOOKSWINDOW_H
+*/
