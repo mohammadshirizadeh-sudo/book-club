@@ -862,6 +862,18 @@ public:
 private:
     LibraryService* m_libraryService;
 };
+class AddBookToShelfCommand : public Command
+{
+public:
+    explicit AddBookToShelfCommand(LibraryService* libraryService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::AddBookToShelf; }
+    QString getName() const override { return "AddBookToShelf"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+};
 
 
 class MoveBookBetweenShelvesCommand : public Command

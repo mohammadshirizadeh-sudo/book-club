@@ -3,10 +3,26 @@
 
 #include <QWidget>
 #include <QDateTime>
+#include <QVariantMap>
+#include <QVariantList>
 
 namespace Ui {
 class ApplyDiscountWindow;
 }
+
+// ساختار داده‌ای نمونه برای نگهداری اطلاعات کتاب
+struct BookItem {
+    int id = 0;
+    QString title;
+    double originalPrice = 0.0;
+    double currentDiscount = 0.0;
+    bool isPercentage = true;
+    bool hasDiscount = false;
+    bool isTimed = false;
+    QDateTime startDate;
+    QDateTime endDate;
+    QString coverPath;
+};
 
 class ApplyDiscountWindow : public QWidget
 {
@@ -16,55 +32,30 @@ public:
     explicit ApplyDiscountWindow(QWidget *parent = nullptr);
     ~ApplyDiscountWindow();
 
-signals:
-    void showHomePageRequested();
-    void showProfileRequested();
-    void showMyBooksRequested();
-    void signOutRequested();
-    void showAddNewBookRequested();
-    void showEditBooksRequested();
-    void showBookStaticsRequested();
-    void showDeactivateBookRequested();
-    void showNotificationsRequested();
+    // متدی برای بارگذاری کتاب‌های نویسنده/کاربر در ComboBox
+    void loadBooksData();
 
 private slots:
-    void on_bookComboBox_currentIndexChanged(int index);
-    void on_percentageRadio_toggled(bool checked);
-    void on_fixedAmountRadio_toggled(bool checked);
-    void on_percentageSpinBox_valueChanged(int value);
-    void on_fixedAmountSpinBox_valueChanged(double value);
-    void on_timedDiscountCheck_toggled(bool checked);
+    void on_quitPushButton_clicked();
+    void on_clearFormButton_clicked();
     void on_applyDiscountButton_clicked();
     void on_removeDiscountButton_clicked();
-    void on_clearFormButton_clicked();
+
+    void on_bookComboBox_currentIndexChanged(int index);
+    void on_percentageRadio_toggled(bool checked);
+    void on_timedDiscountCheck_toggled(bool checked);
+
+    // اسلات محاسبه قیمت جدید هنگام تغییر هر یک از مقادیر
+    void updatePricePreview();
 
 private:
     Ui::ApplyDiscountWindow *ui;
+    QList<BookItem> m_books; // لیست کتاب‌های بارگذاری شده
 
-    // Current selected book data
-    int m_currentBookId;
-    double m_currentBookPrice;
-    QString m_currentBookTitle;
-
-    // Data methods
-    void loadBooksList();
-    void updateBookInfo(int bookIndex);
-    void updateNewPricePreview();
-    void applyDiscountToBook();
-    void removeDiscountFromBook();
+    void setupUiDefaults();
+    void setupConnections();
+    void refreshActiveDiscountsTable();
     void clearForm();
-    void loadActiveDiscounts();
-    bool validateInputs();
-
-    // Database methods (to be connected)
-    QStringList getPublisherBooks() const;
-    double getBookPrice(int bookId) const;
-    QString getBookTitle(int bookId) const;
-    bool saveDiscountToDatabase(int bookId, const QString &discountType,
-                                double discountValue,
-                                const QDateTime &startDate,
-                                const QDateTime &endDate);
-    bool removeDiscountFromDatabase(int bookId);
 };
 
 #endif // APPLYDISCOUNTWINDOW_H

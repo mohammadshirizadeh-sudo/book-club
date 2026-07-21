@@ -2,9 +2,11 @@
 #define SHELFMANAGEMENTDIALOG_H
 
 #include <QDialog>
-#include "../NetworkManger/NetworkManager.h"
-#include<QListWidgetItem>
-
+#include <QListWidgetItem>
+#include <QVariantMap>
+#include <QMap>
+#include "../Network-Manger/NetworkManager.h"
+#include "../Server/Response.h"
 
 namespace Ui {
 class ShelfManagementDialog;
@@ -15,16 +17,14 @@ class ShelfManagementDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ShelfManagementDialog(NetworkManager* networkManager, int userId, QWidget *parent = nullptr);
+    explicit ShelfManagementDialog(NetworkManager* networkManager, QWidget *parent = nullptr);
     ~ShelfManagementDialog();
 
-    void loadShelves();
-
-signals:
-    void openPdfReader(int bookId);
-    void openBookDetail(int bookId);
-
 private slots:
+    // مدیریت پاسخ‌های دریافتی از سرور
+    void handleResponse(const Response& response);
+
+    // اسلات‌های مربوط به سیگنال‌های ui
     void on_addShelfButton_clicked();
     void on_deleteShelfButton_clicked();
     void on_renameShelfButton_clicked();
@@ -32,25 +32,27 @@ private slots:
     void on_moveBookButton_clicked();
     void on_readPdfButton_clicked();
     void on_shelfList_currentRowChanged(int currentRow);
-    void on_bookList_currentItemChanged(QListWidgetItem *current);
-    void onResponseReceived(const Response& response);
+    void on_bookList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
-    // void on_backButton_clicked();
 
+
+protected:
+    void showEvent(QShowEvent *event) override;
 private:
     Ui::ShelfManagementDialog *ui;
-    NetworkManager* m_networkManager;
-    int m_userId;
+    NetworkManager *m_networkManager;
 
-    int m_currentShelfId;
-    int m_currentBookId;
+    int m_currentShelfId = -1;
+    QVariantMap m_currentBookData;
 
-    void loadBooksForShelf(int shelfId);
-    void updateBookDetails(int bookId);
+    // نگه‌داری نگاشت نام قفسه به ID برای استفاده در جابه‌جایی (Move)
+    QMap<QString, int> m_shelvesMap;
+
+    // توابع کمکی
+    void loadShelves();
+    void loadBooksInShelf(int shelfId);
+    void updateBookDetails(const QVariantMap& bookData);
     void clearBookDetails();
-
-    int getSelectedShelfId() const;
-    int getSelectedBookId() const;
 };
 
 #endif // SHELFMANAGEMENTDIALOG_H

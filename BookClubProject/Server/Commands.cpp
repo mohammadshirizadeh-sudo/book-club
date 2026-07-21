@@ -1967,6 +1967,7 @@ Response DeleteShelfCommand::execute(const QVariantMap& params)
 
     // 6. دریافت لیست به‌روز شده قفسه‌ها (اختیاری)
     QVector<Shelf> updatedShelves = m_libraryService->getShelves(userId);
+
     QVariantList shelfList;
     for (const Shelf& shelf : updatedShelves) {
         QVariantMap shelfData;
@@ -2163,6 +2164,63 @@ Response RemoveBookFromShelfCommand::execute(const QVariantMap& params)
     data["count"] = shelfList.size();
 
     return Response::success(CommandType::RemoveBookFromShelf, "Book removed from shelf successfully", data);
+}
+// Commands.cpp
+AddBookToShelfCommand::AddBookToShelfCommand(LibraryService* libraryService)
+    : m_libraryService(libraryService)
+{
+}
+
+Response AddBookToShelfCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int userId = params.value("userId").toInt();
+    int shelfId = params.value("shelfId").toInt();
+    int bookId = params.value("bookId").toInt();
+
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::AddBookToShelf, "Invalid user ID");
+    }
+    if (shelfId <= 0) {
+        return Response::error(CommandType::AddBookToShelf, "Invalid shelf ID");
+    }
+    if (bookId <= 0) {
+        return Response::error(CommandType::AddBookToShelf, "Invalid book ID");
+    }
+
+    // 3. افزودن کتاب به قفسه
+    bool success = m_libraryService->addBookToShelf(userId, shelfId, bookId);
+
+    if (!success) {
+        return Response::error(CommandType::AddBookToShelf, "Failed to add book to shelf");
+    }
+
+    // 4. دریافت لیست به‌روز شده قفسه‌ها (اختیاری)
+    QVector<Shelf> shelves = m_libraryService->getShelves(userId);
+    QVariantList shelfList;
+    for (const Shelf& shelf : shelves) {
+        QVariantMap shelfData;
+        shelfData["shelfId"] = shelf.getShelfId();
+        shelfData["name"] = shelf.getName();
+        shelfData["bookCount"] = shelf.getBookCount();
+
+        QVariantList bookIds;
+        for (int id : shelf.getBookIds()) {
+            bookIds.append(id);
+        }
+        shelfData["bookIds"] = bookIds;
+        shelfList.append(shelfData);
+    }
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["shelfId"] = shelfId;
+    data["bookId"] = bookId;
+    data["shelves"] = shelfList;
+    data["count"] = shelfList.size();
+
+    return Response::success(CommandType::AddBookToShelf, "Book added to shelf successfully", data);
 }
 
 

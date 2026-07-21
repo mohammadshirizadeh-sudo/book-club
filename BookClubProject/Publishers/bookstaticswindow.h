@@ -1,3 +1,5 @@
+/*
+
 #ifndef BOOKSTATICSWINDOW_H
 #define BOOKSTATICSWINDOW_H
 
@@ -54,3 +56,4 @@ private:
 };
 
 #endif // BOOKSTATICSWINDOW_H
+*/

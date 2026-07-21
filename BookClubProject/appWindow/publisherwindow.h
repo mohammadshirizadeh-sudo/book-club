@@ -41,6 +41,7 @@ signals:
     void publisherProfileWindow();
 
     void myBooksWindow();
+    void applydiscountWindow();
 
 private:
     Ui::PublisherWindow *ui;

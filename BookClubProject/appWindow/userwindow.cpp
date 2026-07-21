@@ -747,3 +747,9 @@ void UserWindow::on_pushButton_3_clicked()
     emit libraryWindow();
 }
 
+
+void UserWindow::on_pushButton_8_clicked()
+{
+    emit shelfWindow();
+}
+

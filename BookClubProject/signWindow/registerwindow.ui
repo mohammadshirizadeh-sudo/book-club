@@ -18,7 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/blue.png);</string>
+   <string notr="true">background-image: url(:/resources/white.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">

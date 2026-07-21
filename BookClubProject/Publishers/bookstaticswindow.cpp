@@ -1,3 +1,6 @@
+
+
+/*
 #include "bookstaticswindow.h"
 #include "Publishers/ui_bookstaticswindow.h"
 #include <QDebug>
@@ -339,3 +342,4 @@ void BookStaticsWindow::on_chartPeriodCombo_currentIndexChanged(int index)
     QString period = ui->chartPeriodCombo->currentText();
     updateSalesChart(period);
 }
+*/

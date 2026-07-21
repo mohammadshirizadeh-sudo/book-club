@@ -20,8 +20,6 @@ Command* CommandFactory::create(
     ClientHandler* clientHandler
     )
 
-
-
 {
     switch (type) {
     // =============================================
@@ -232,6 +230,9 @@ Command* CommandFactory::create(
         return new RemoveBookFromShelfCommand(libraryService);
 
 
+
+
+
     case CommandType::MoveBookBetweenShelves:
         return new MoveBookBetweenShelvesCommand(libraryService);
 
@@ -255,20 +256,8 @@ Command* CommandFactory::create(
     case CommandType::GetUserLibrary:
         return new GetUserLibraryCommand(libraryService , bookService);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    case CommandType::AddBookToShelf:
+        return new AddBookToShelfCommand(libraryService);
 
     // =============================================
     // ===== Unknown Command =====

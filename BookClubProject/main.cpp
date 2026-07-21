@@ -6,7 +6,9 @@
 #include "appWindow/genrewindow.h"
 #include "appWindow/userwindow.h"
 #include "appWindow/publisherwindow.h"
+
 #include "Publishers/publisherprofilewindow.h"
+#include "Publishers/applydiscountwindow.h"
 // #include "../appWindow/adminwindow.h"
 #include "appWindow/SessionManager.h"
 #include "appWindow/userwindow.h"
@@ -18,6 +20,7 @@
 #include "Users/shoppinghistorywindow.h"
 #include "Server/server.h"
 #include "Database/DatabaseInitializer.h"
+#include "Users/shelfmanagementdialog.h"
 #include "Users/cartwindow.h"
 
 #include <QApplication>
@@ -74,6 +77,8 @@ int main(int argc, char *argv[])
 
     MyLibraryWindow* libraryWindow = new MyLibraryWindow(networkManager);
 
+    ShelfManagementDialog* shelfWindow = new ShelfManagementDialog(networkManager);
+    // ApplyDiscountWindow* applydiscountWindow = new ApplyDiscountWindow(networkManager);
 
 
     // اضافه کردن صفحات
@@ -92,14 +97,12 @@ int main(int argc, char *argv[])
     int cartWindowIndex = stackedWidget.addWidget(cartWindow);
     int shoppingWindowIndex  = stackedWidget.addWidget(shoppingWindow);
     int libraryWindowIndex = stackedWidget.addWidget(libraryWindow);
+    int shelfWindowIndex = stackedWidget.addWidget(shelfWindow);
 
 
     //-------------------------------------------------
     // Navigation
     //-------------------------------------------------
-
-
-
 
 
 
@@ -121,6 +124,13 @@ int main(int argc, char *argv[])
                      {
                          stackedWidget.setCurrentIndex(libraryWindowIndex);
                      });
+    QObject::connect(userWindow,
+                     &UserWindow::shelfWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(shelfWindowIndex);
+                     });
+
 
     QObject::connect(userWindow,
                      &UserWindow::searchWindow,

@@ -2,7 +2,7 @@
 #include "appWindow/ui_publisherwindow.h"
 
 #include "SessionManager.h"
-#include "Publishers/ui_addbookdialog.h"
+#include "../Publishers/addbookdialog.h"
 
 PublisherWindow::PublisherWindow(NetworkManager* networkManager,QWidget *parent)
     : QWidget(parent)
@@ -66,7 +66,7 @@ void PublisherWindow::on_bookStatsPushButton_clicked()
 
 void PublisherWindow::on_discountPushButton_clicked()
 {
-
+    emit applydiscountWindow();
 }
 
 
