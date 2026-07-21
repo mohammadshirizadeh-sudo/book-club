@@ -246,14 +246,14 @@ QPushButton:hover {
    <widget class="QStackedWidget" name="mainStackedWidget">
     <property name="geometry">
      <rect>
-      <x>235</x>
+      <x>230</x>
       <y>0</y>
-      <width>1255</width>
+      <width>1271</width>
       <height>800</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="dashboardPage">
      <property name="styleSheet">
@@ -263,14 +263,19 @@ QPushButton:hover {
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>15</y>
+        <y>-1</y>
         <width>500</width>
-        <height>45</height>
+        <height>61</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 700 26pt &quot;Segoe UI&quot;;
-color: rgb(33, 37, 41);</string>
+       <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 50px;
+	color: rgb(0, 0, 0);
+}</string>
       </property>
       <property name="text">
        <string>📊 Admin Dashboard</string>
@@ -279,17 +284,15 @@ color: rgb(33, 37, 41);</string>
      <widget class="QFrame" name="totalUsersCard">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>70</y>
-        <width>290</width>
-        <height>110</height>
+        <x>14</x>
+        <y>80</y>
+        <width>287</width>
+        <height>111</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgb(52, 152, 219), stop:1 rgb(41, 128, 185));
- border-radius: 14px;
-}</string>
+       <string notr="true"> border: 2px solid rgb(0, 0, 0);
+ border-radius: 14px;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -304,11 +307,16 @@ color: rgb(33, 37, 41);</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 600 13pt &quot;Segoe UI&quot;;
-color: white;</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 35px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
-        <string>Total Users</string>
+        <string>Total Users:</string>
        </property>
       </widget>
       <widget class="QLabel" name="totalUsersValue">
@@ -321,8 +329,13 @@ color: white;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 700 32pt &quot;Segoe UI&quot;;
-color: white;</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 35px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
         <string>--</string>
@@ -333,16 +346,14 @@ color: white;</string>
       <property name="geometry">
        <rect>
         <x>320</x>
-        <y>70</y>
-        <width>290</width>
-        <height>110</height>
+        <y>80</y>
+        <width>281</width>
+        <height>111</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgb(155, 89, 182), stop:1 rgb(142, 68, 173));
- border-radius: 14px;
-}</string>
+       <string notr="true"> border: 2px solid rgb(0, 0, 0);
+ border-radius: 14px;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -357,11 +368,16 @@ color: white;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 600 13pt &quot;Segoe UI&quot;;
-color: white;</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 35px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
-        <string>Publishers</string>
+        <string>Publishers:</string>
        </property>
       </widget>
       <widget class="QLabel" name="totalPublishersValue">
@@ -374,8 +390,13 @@ color: white;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 700 32pt &quot;Segoe UI&quot;;
-color: white;</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 35px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
         <string>--</string>
@@ -386,16 +407,14 @@ color: white;</string>
       <property name="geometry">
        <rect>
         <x>620</x>
-        <y>70</y>
+        <y>80</y>
         <width>290</width>
-        <height>110</height>
+        <height>111</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgb(46, 204, 113), stop:1 rgb(39, 174, 96));
- border-radius: 14px;
-}</string>
+       <string notr="true"> border: 2px solid rgb(0, 0, 0);
+ border-radius: 14px;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -410,11 +429,16 @@ color: white;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 600 13pt &quot;Segoe UI&quot;;
-color: white;</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 35px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
-        <string>Total Books</string>
+        <string>Total Books:</string>
        </property>
       </widget>
       <widget class="QLabel" name="totalBooksValue">
@@ -427,8 +451,13 @@ color: white;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 700 32pt &quot;Segoe UI&quot;;
-color: white;</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 35px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
         <string>--</string>
@@ -438,17 +467,15 @@ color: white;</string>
      <widget class="QFrame" name="totalRevenueCard">
       <property name="geometry">
        <rect>
-        <x>920</x>
-        <y>70</y>
-        <width>315</width>
-        <height>110</height>
+        <x>930</x>
+        <y>80</y>
+        <width>331</width>
+        <height>111</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 rgb(241, 196, 15), stop:1 rgb(243, 156, 18));
- border-radius: 14px;
-}</string>
+       <string notr="true"> border: 2px solid rgb(0, 0, 0);
+ border-radius: 14px;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -463,11 +490,16 @@ color: white;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 600 13pt &quot;Segoe UI&quot;;
-color: white;</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 35px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
-        <string>Total Revenue</string>
+        <string>Total Revenue:</string>
        </property>
       </widget>
       <widget class="QLabel" name="totalRevenueValue">
@@ -480,71 +512,392 @@ color: white;</string>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 700 32pt &quot;Segoe UI&quot;;
-color: white;</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 35px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
         <string>$--</string>
        </property>
       </widget>
      </widget>
-     <widget class="QFrame" name="recentActivityFrame">
+     <widget class="QFrame" name="quickActionsFrame">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>195</y>
-        <width>610</width>
-        <height>340</height>
+        <x>14</x>
+        <y>620</y>
+        <width>1245</width>
+        <height>81</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: white;
- border: 2px solid rgb(222, 226, 230);
- border-radius: 14px;
-}</string>
+       <string notr="true"> border: 2px solid rgb(0, 0, 0);
+ border-radius: 14px;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
-      <widget class="QLabel" name="recentActivityTitle">
+      <widget class="QLabel" name="quickActionsTitle">
        <property name="geometry">
         <rect>
-         <x>15</x>
-         <y>12</y>
-         <width>300</width>
-         <height>30</height>
+         <x>5</x>
+         <y>16</y>
+         <width>191</width>
+         <height>51</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 600 14pt &quot;Segoe UI&quot;;
-color: rgb(73, 80, 87);</string>
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 25px;
+	color: rgb(0, 0, 0);
+}</string>
        </property>
        <property name="text">
-        <string>🕐 Recent Activity (from server)</string>
+        <string>⚡ Quick Actions:</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="refreshDashboardBtn">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>20</y>
+         <width>161</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🔄 Refresh Data</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="exportReportBtn">
+       <property name="geometry">
+        <rect>
+         <x>369</x>
+         <y>20</y>
+         <width>161</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>📥 Export Report</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="backupBtn">
+       <property name="geometry">
+        <rect>
+         <x>540</x>
+         <y>20</y>
+         <width>151</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>💾 Backup DB</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="clearCacheBtn">
+       <property name="geometry">
+        <rect>
+         <x>700</x>
+         <y>20</y>
+         <width>141</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🗑️ Clear Cache</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="broadcastMsgBtn">
+       <property name="geometry">
+        <rect>
+         <x>854</x>
+         <y>20</y>
+         <width>201</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>📢 Broadcast Message</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lastUpdateLabel">
+       <property name="geometry">
+        <rect>
+         <x>1065</x>
+         <y>18</y>
+         <width>171</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 25px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>Last update: --</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QFrame" name="connectionStatusFrame">
+      <property name="geometry">
+       <rect>
+        <x>14</x>
+        <y>718</y>
+        <width>1245</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"> border: 2px solid rgb(0, 0, 0);
+ border-radius: 14px;</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Shape::StyledPanel</enum>
+      </property>
+      <widget class="QLabel" name="serverStatusLabel">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>14</y>
+         <width>291</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 25px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>🖥️ Server Status: Checking...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="connectedUsersLabel">
+       <property name="geometry">
+        <rect>
+         <x>309</x>
+         <y>14</y>
+         <width>241</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+	background: transparent;
+	border: 2px solid black;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 25px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>👥 Online Users: --</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="dbStatusLabel">
+       <property name="geometry">
+        <rect>
+         <x>560</x>
+         <y>14</y>
+         <width>201</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+	background: transparent;
+	border: 2px solid black;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 25px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>💾 Database: --</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="uptimeLabel">
+       <property name="geometry">
+        <rect>
+         <x>770</x>
+         <y>14</y>
+         <width>191</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+	background: transparent;
+	border: 2px solid black;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 25px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>⏱️ Uptime: --</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="checkServerBtn">
+       <property name="geometry">
+        <rect>
+         <x>970</x>
+         <y>14</y>
+         <width>141</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🔄 Check Now</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="restartServerBtn">
+       <property name="geometry">
+        <rect>
+         <x>1120</x>
+         <y>14</y>
+         <width>111</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>♻️ Restart</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="geometry">
+       <rect>
+        <x>14</x>
+        <y>210</y>
+        <width>551</width>
+        <height>391</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>🕐 Recent Activity</string>
+      </property>
       <widget class="QTableWidget" name="recentActivityTable">
        <property name="geometry">
         <rect>
-         <x>15</x>
-         <y>48</y>
-         <width>580</width>
-         <height>280</height>
+         <x>24</x>
+         <y>40</y>
+         <width>505</width>
+         <height>331</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QTableWidget {
- font: 10pt &quot;Segoe UI&quot;;
- gridline-color: rgb(230, 230, 230);
- border: none;
+font: 700 11pt &quot;Script MT Bold&quot;;
+gridline-color: black;
+border: 2px solid black;
 }
 QHeaderView::section {
- font: 600 10pt &quot;Segoe UI&quot;;
- background-color: rgb(248, 249, 250);
- padding: 8px;
- border-bottom: 2px solid rgb(222, 226, 230);
+font: 700 12pt &quot;Script MT&quot;;
+background-color:rgb(190, 195, 205);
+padding: 8px;
+color: black;
 }</string>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
        </property>
        <column>
         <property name="text">
@@ -568,56 +921,51 @@ QHeaderView::section {
        </column>
       </widget>
      </widget>
-     <widget class="QFrame" name="systemAlertsFrame">
+     <widget class="QGroupBox" name="groupBox_7">
       <property name="geometry">
        <rect>
-        <x>645</x>
-        <y>195</y>
-        <width>595</width>
-        <height>340</height>
+        <x>580</x>
+        <y>210</y>
+        <width>681</width>
+        <height>391</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: white;
- border: 2px solid rgb(244, 67, 54);
- border-radius: 14px;
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
 }</string>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
+      <property name="title">
+       <string>⚠️ System Alerts</string>
       </property>
-      <widget class="QLabel" name="systemAlertsTitle">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>12</y>
-         <width>300</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 14pt &quot;Segoe UI&quot;;
-color: rgb(198, 40, 40);</string>
-       </property>
-       <property name="text">
-        <string>⚠️ System Alerts</string>
-       </property>
-      </widget>
       <widget class="QTextBrowser" name="alertsTextBrowser">
        <property name="geometry">
         <rect>
-         <x>15</x>
-         <y>48</y>
-         <width>565</width>
-         <height>280</height>
+         <x>20</x>
+         <y>50</y>
+         <width>641</width>
+         <height>331</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QTextBrowser {
- font: 11pt &quot;Segoe UI&quot;;
+ font: 12pt &quot;Segoe UI&quot;;
  border: none;
- background-color: rgb(255, 245, 245);
+color: rgb(0, 0, 0);
+border: none;
+background: transparent;
 }</string>
        </property>
        <property name="html">
@@ -627,375 +975,8 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#666666;&quot;&gt;Loading alerts from server...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QFrame" name="quickActionsFrame">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>550</y>
-        <width>1220</width>
-        <height>65</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: white;
- border: 2px solid rgb(33, 150, 243);
- border-radius: 14px;
-}</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <widget class="QLabel" name="quickActionsTitle">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>16</y>
-         <width>150</width>
-         <height>32</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 13pt &quot;Segoe UI&quot;;
-color: rgb(33, 150, 243);</string>
-       </property>
-       <property name="text">
-        <string>⚡ Quick Actions:</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="refreshDashboardBtn">
-       <property name="geometry">
-        <rect>
-         <x>175</x>
-         <y>13</y>
-         <width>160</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(33, 150, 243);
- border: none;
- border-radius: 8px;
-}
-QPushButton:hover { background-color: rgb(21, 101, 192); }</string>
-       </property>
-       <property name="text">
-        <string>🔄 Refresh Data</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="exportReportBtn">
-       <property name="geometry">
-        <rect>
-         <x>350</x>
-         <y>13</y>
-         <width>160</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(76, 175, 80);
- border: none;
- border-radius: 8px;
-}
-QPushButton:hover { background-color: rgb(56, 142, 60); }</string>
-       </property>
-       <property name="text">
-        <string>📥 Export Report</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="backupBtn">
-       <property name="geometry">
-        <rect>
-         <x>525</x>
-         <y>13</y>
-         <width>160</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(255, 152, 0);
- border: none;
- border-radius: 8px;
-}
-QPushButton:hover { background-color: rgb(245, 124, 0); }</string>
-       </property>
-       <property name="text">
-        <string>💾 Backup DB</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="clearCacheBtn">
-       <property name="geometry">
-        <rect>
-         <x>700</x>
-         <y>13</y>
-         <width>160</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(156, 39, 176);
- border: none;
- border-radius: 8px;
-}
-QPushButton:hover { background-color: rgb(123, 31, 162); }</string>
-       </property>
-       <property name="text">
-        <string>🗑️ Clear Cache</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="broadcastMsgBtn">
-       <property name="geometry">
-        <rect>
-         <x>875</x>
-         <y>13</y>
-         <width>180</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(233, 30, 99);
- border: none;
- border-radius: 8px;
-}
-QPushButton:hover { background-color: rgb(194, 24, 91); }</string>
-       </property>
-       <property name="text">
-        <string>📢 Broadcast Msg</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="lastUpdateLabel">
-       <property name="geometry">
-        <rect>
-         <x>1075</x>
-         <y>18</y>
-         <width>135</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 9pt &quot;Segoe UI&quot;;
-color: rgb(150, 150, 150);</string>
-       </property>
-       <property name="text">
-        <string>Last update: --</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QFrame" name="connectionStatusFrame">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>628</y>
-        <width>1220</width>
-        <height>55</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: rgb(240, 242, 245);
- border: 2px solid rgb(206, 212, 218);
- border-radius: 12px;
-}</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <widget class="QLabel" name="serverStatusLabel">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>14</y>
-         <width>250</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 12pt &quot;Segoe UI&quot;;
-color: rgb(108, 117, 125);</string>
-       </property>
-       <property name="text">
-        <string>🖥️ Server Status: Checking...</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="connectedUsersLabel">
-       <property name="geometry">
-        <rect>
-         <x>300</x>
-         <y>14</y>
-         <width>200</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 12pt &quot;Segoe UI&quot;;
-color: rgb(108, 117, 125);</string>
-       </property>
-       <property name="text">
-        <string>👥 Online Users: --</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="dbStatusLabel">
-       <property name="geometry">
-        <rect>
-         <x>520</x>
-         <y>14</y>
-         <width>200</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 12pt &quot;Segoe UI&quot;;
-color: rgb(108, 117, 125);</string>
-       </property>
-       <property name="text">
-        <string>💾 Database: --</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="uptimeLabel">
-       <property name="geometry">
-        <rect>
-         <x>740</x>
-         <y>14</y>
-         <width>200</width>
-         <height>28</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 12pt &quot;Segoe UI&quot;;
-color: rgb(108, 117, 125);</string>
-       </property>
-       <property name="text">
-        <string>⏱️ Uptime: --</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="checkServerBtn">
-       <property name="geometry">
-        <rect>
-         <x>960</x>
-         <y>10</y>
-         <width>130</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(233, 30, 99);
- border: none;
- border-radius: 8px;
-}
-QPushButton:hover { background-color: rgb(194, 24, 91); }</string>
-       </property>
-       <property name="text">
-        <string>🔄 Check Now</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="restartServerBtn">
-       <property name="geometry">
-        <rect>
-         <x>1100</x>
-         <y>10</y>
-         <width>105</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(220, 53, 69);
- border: none;
- border-radius: 8px;
-}
-QPushButton:hover { background-color: rgb(198, 40, 40); }</string>
-       </property>
-       <property name="text">
-        <string>♻️ Restart</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QFrame" name="dashboardLoadingOverlay">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>1255</width>
-        <height>800</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: rgba(255,255,255,0.92);
-}</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <widget class="QLabel" name="dashboardLoadingSpinner">
-       <property name="geometry">
-        <rect>
-         <x>550</x>
-         <y>330</y>
-         <width>155</width>
-         <height>100</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">	background: transparent;
-	border: none;
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 70px;
-	color: rgb(0, 0, 0);</string>
-       </property>
-       <property name="text">
-        <string>⏳</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="dashboardLoadingText">
-       <property name="geometry">
-        <rect>
-         <x>362</x>
-         <y>430</y>
-         <width>531</width>
-         <height>91</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">	background: transparent;
-	border: none;
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 50px;
-	color: rgb(0, 0, 0);</string>
-       </property>
-       <property name="text">
-        <string>Loading dashboard data...</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Segoe UI'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; color:#666666;&quot;&gt;Loading alerts from server...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </widget>
@@ -1008,14 +989,19 @@ QPushButton:hover { background-color: rgb(198, 40, 40); }</string>
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>15</y>
+        <y>-5</y>
         <width>500</width>
-        <height>45</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 700 26pt &quot;Segoe UI&quot;;
-color: rgb(52, 152, 219);</string>
+       <string notr="true">QLabel {
+	background: transparent;
+	border: none;
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 50px;
+	color: rgb(0, 0, 0);
+}</string>
       </property>
       <property name="text">
        <string>👥 User Management</string>
@@ -1024,18 +1010,15 @@ color: rgb(52, 152, 219);</string>
      <widget class="QFrame" name="userFilterFrame">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>65</y>
-        <width>1215</width>
-        <height>55</height>
+        <x>10</x>
+        <y>84</y>
+        <width>1251</width>
+        <height>61</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: white;
- border: 2px solid rgb(222, 226, 230);
- border-radius: 12px;
-}</string>
+       <string notr="true"> border: 2px solid rgb(0, 0, 0);
+ border-radius: 14px;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
@@ -1043,18 +1026,23 @@ color: rgb(52, 152, 219);</string>
       <widget class="QRadioButton" name="allUsersRadio">
        <property name="geometry">
         <rect>
-         <x>15</x>
+         <x>5</x>
          <y>14</y>
-         <width>85</width>
+         <width>101</width>
          <height>28</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QRadioButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: rgb(50, 50, 50);
+	font: 700 12pt &quot;Script MT&quot;;
+ 	color: rgb(0, 0, 0);
+	background: transparent;
+	border: none;
 }
-QRadioButton::indicator { width: 18px; height: 18px; }</string>
+QRadioButton::indicator {
+	width:18px;
+	height: 18px;
+}</string>
        </property>
        <property name="text">
         <string>All Users</string>
@@ -1066,80 +1054,96 @@ QRadioButton::indicator { width: 18px; height: 18px; }</string>
       <widget class="QRadioButton" name="regularUsersRadio">
        <property name="geometry">
         <rect>
-         <x>105</x>
+         <x>120</x>
          <y>14</y>
-         <width>120</width>
+         <width>151</width>
          <height>28</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QRadioButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: rgb(52, 152, 219);
+	font: 700 12pt &quot;Script MT&quot;;
+ 	color: rgb(0, 0, 0);
+	background: transparent;
+	border: none;
 }
-QRadioButton::indicator { width: 18px; height: 18px; }</string>
+QRadioButton::indicator {
+	width:18px;
+	height: 18px;
+}</string>
        </property>
        <property name="text">
-        <string>👤 Regular Users</string>
+        <string>Regular Users</string>
        </property>
       </widget>
       <widget class="QRadioButton" name="publishersRadio">
        <property name="geometry">
         <rect>
-         <x>235</x>
+         <x>274</x>
          <y>14</y>
-         <width>120</width>
+         <width>121</width>
          <height>28</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QRadioButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: rgb(155, 89, 182);
+	font: 700 12pt &quot;Script MT&quot;;
+ 	color: rgb(0, 0, 0);
+	background: transparent;
+	border: none;
 }
-QRadioButton::indicator { width: 18px; height: 18px; }</string>
+QRadioButton::indicator {
+	width:18px;
+	height: 18px;
+}</string>
        </property>
        <property name="text">
-        <string>📚 Publishers</string>
+        <string>Publishers</string>
        </property>
       </widget>
       <widget class="QRadioButton" name="blockedUsersRadio">
        <property name="geometry">
         <rect>
-         <x>365</x>
+         <x>395</x>
          <y>14</y>
-         <width>115</width>
+         <width>101</width>
          <height>28</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QRadioButton {
- font: 600 11pt &quot;Segoe UI&quot;;
- color: rgb(220, 53, 69);
+	font: 700 12pt &quot;Script MT&quot;;
+ 	color: rgb(0, 0, 0);
+	background: transparent;
+	border: none;
 }
-QRadioButton::indicator { width: 18px; height: 18px; }</string>
+QRadioButton::indicator {
+	width:18px;
+	height: 18px;
+}</string>
        </property>
        <property name="text">
-        <string>🚫 Blocked</string>
+        <string>Blocked</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="userSearchLineEdit">
        <property name="geometry">
         <rect>
-         <x>495</x>
+         <x>500</x>
          <y>10</y>
-         <width>300</width>
-         <height>34</height>
+         <width>321</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QLineEdit {
  font: 600 11pt &quot;Segoe UI&quot;;
- border: 2px solid rgb(200, 200, 200);
+ border: 2px solid rgb(0, 0, 0);
  border-radius: 8px;
  padding: 6px 12px;
-}
-QLineEdit:focus { border-color: rgb(52, 152, 219); }</string>
+background: transparent;
+color: balck;
+}</string>
        </property>
        <property name="placeholderText">
         <string>🔍 Search by name, email, or ID...</string>
@@ -1148,21 +1152,20 @@ QLineEdit:focus { border-color: rgb(52, 152, 219); }</string>
       <widget class="QPushButton" name="refreshUsersBtn">
        <property name="geometry">
         <rect>
-         <x>805</x>
+         <x>825</x>
          <y>10</y>
-         <width>110</width>
-         <height>34</height>
+         <width>111</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(52, 152, 219);
- border: none;
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
  border-radius: 8px;
 }
-QPushButton:hover { background-color: rgb(41, 128, 185); }</string>
+</string>
        </property>
        <property name="text">
         <string>🔄 Refresh</string>
@@ -1171,21 +1174,20 @@ QPushButton:hover { background-color: rgb(41, 128, 185); }</string>
       <widget class="QPushButton" name="exportUsersBtn">
        <property name="geometry">
         <rect>
-         <x>925</x>
+         <x>940</x>
          <y>10</y>
-         <width>110</width>
-         <height>34</height>
+         <width>141</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(46, 204, 113);
- border: none;
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
  border-radius: 8px;
 }
-QPushButton:hover { background-color: rgb(39, 174, 96); }</string>
+</string>
        </property>
        <property name="text">
         <string>📥 Export CSV</string>
@@ -1194,60 +1196,260 @@ QPushButton:hover { background-color: rgb(39, 174, 96); }</string>
       <widget class="QLabel" name="userCountLabel">
        <property name="geometry">
         <rect>
-         <x>1045</x>
-         <y>14</y>
-         <width>160</width>
+         <x>1085</x>
+         <y>15</y>
+         <width>161</width>
          <height>28</height>
         </rect>
        </property>
        <property name="styleSheet">
-        <string notr="true">font: 600 11pt &quot;Segoe UI&quot;;
-color: rgb(108, 117, 125);</string>
+        <string notr="true">font: 700 15pt &quot;Script MT&quot;;
+color: rgb(0, 0, 0);
+border: none;
+background: transparent;
+</string>
        </property>
        <property name="text">
-        <string>Total: -- users</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Total: -- users&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </widget>
-     <widget class="QFrame" name="usersTableFrame">
+     <widget class="QFrame" name="selectedUserActionsFrame">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>130</y>
-        <width>1215</width>
-        <height>480</height>
+        <x>14</x>
+        <y>720</y>
+        <width>1241</width>
+        <height>61</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: white;
- border: 2px solid rgb(222, 226, 230);
- border-radius: 14px;
-}</string>
+       <string notr="true"> border: 2px solid rgb(0, 0, 0);
+ border-radius: 14px;</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
-      <widget class="QTableWidget" name="usersTable">
+      <widget class="QLabel" name="selectedUserLabel">
        <property name="geometry">
         <rect>
          <x>15</x>
-         <y>42</y>
-         <width>1185</width>
-         <height>420</height>
+         <y>13</y>
+         <width>331</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 700 15pt &quot;Script MT&quot;;
+color: rgb(0, 0, 0);
+border: none;
+background: transparent;
+</string>
+       </property>
+       <property name="text">
+        <string>Selected: No user selected</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="viewUserDetailsBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>350</x>
+         <y>10</y>
+         <width>151</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>👁️ View Details</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="blockUserBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>510</x>
+         <y>10</y>
+         <width>111</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🚫 Block</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="unblockUserBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>630</x>
+         <y>10</y>
+         <width>121</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>✅ Unblock</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="deleteUserBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>760</x>
+         <y>10</y>
+         <width>171</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🗑️ Delete Account</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="toggleActiveBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>940</x>
+         <y>10</y>
+         <width>145</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>⏸️ Deactivate</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="loginAsUserBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>1095</x>
+         <y>10</y>
+         <width>131</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🔑 Login As</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>150</y>
+        <width>1241</width>
+        <height>561</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>👥 Users List</string>
+      </property>
+      <widget class="QTableWidget" name="usersTable">
+       <property name="geometry">
+        <rect>
+         <x>24</x>
+         <y>49</y>
+         <width>1191</width>
+         <height>491</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QTableWidget {
- font: 10pt &quot;Segoe UI&quot;;
- gridline-color: rgb(235, 235, 235);
- selection-background-color: rgba(52, 152, 219, 0.15);
+font: 700 11pt &quot;Script MT Bold&quot;;
+gridline-color: black;
+border: 2px solid black;
 }
 QHeaderView::section {
- font: 600 10pt &quot;Segoe UI&quot;;
- background-color: rgb(248, 249, 250);
- padding: 10px;
- border-bottom: 2px solid rgb(222, 226, 230);
+font: 700 12pt &quot;Script MT&quot;;
+background-color:rgb(190, 195, 205);
+padding: 8px;
+color: black;
 }</string>
        </property>
        <property name="selectionBehavior">
@@ -1297,280 +1499,6 @@ QHeaderView::section {
         </property>
        </column>
       </widget>
-      <widget class="QLabel" name="usersTableTitle">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>10</y>
-         <width>400</width>
-         <height>26</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 13pt &quot;Segoe UI&quot;;
-color: rgb(73, 80, 87);</string>
-       </property>
-       <property name="text">
-        <string>👥 Users List (from server)</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QFrame" name="selectedUserActionsFrame">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>620</y>
-        <width>1215</width>
-        <height>55</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: white;
- border: 2px solid rgb(52, 152, 219);
- border-radius: 12px;
-}</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <widget class="QLabel" name="selectedUserLabel">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>13</y>
-         <width>300</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 600 12pt &quot;Segoe UI&quot;;
-color: rgb(73, 80, 87);</string>
-       </property>
-       <property name="text">
-        <string>Selected: No user selected</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="viewUserDetailsBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>330</x>
-         <y>10</y>
-         <width>140</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(33, 150, 243);
- border: none;
- border-radius: 8px;
-}
-QPushButton:disabled { background-color: rgb(189, 189, 189); }</string>
-       </property>
-       <property name="text">
-        <string>👁️ View Details</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="blockUserBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>480</x>
-         <y>10</y>
-         <width>120</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(244, 67, 54);
- border: none;
- border-radius: 8px;
-}
-QPushButton:disabled { background-color: rgb(189, 189, 189); }</string>
-       </property>
-       <property name="text">
-        <string>🚫 Block</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="unblockUserBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>610</x>
-         <y>10</y>
-         <width>130</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(76, 175, 80);
- border: none;
- border-radius: 8px;
-}
-QPushButton:disabled { background-color: rgb(189, 189, 189); }</string>
-       </property>
-       <property name="text">
-        <string>✅ Unblock</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="deleteUserBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>750</x>
-         <y>10</y>
-         <width>140</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(220, 53, 69);
- border: none;
- border-radius: 8px;
-}
-QPushButton:disabled { background-color: rgb(189, 189, 189); }</string>
-       </property>
-       <property name="text">
-        <string>🗑️ Delete Account</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="toggleActiveBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>900</x>
-         <y>10</y>
-         <width>145</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(255, 152, 0);
- border: none;
- border-radius: 8px;
-}
-QPushButton:disabled { background-color: rgb(189, 189, 189); }</string>
-       </property>
-       <property name="text">
-        <string>⏸️ Deactivate</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="loginAsUserBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>1055</x>
-         <y>10</y>
-         <width>145</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
- font: 600 10pt &quot;Segoe UI&quot;;
- color: white;
- background-color: rgb(156, 39, 176);
- border: none;
- border-radius: 8px;
-}
-QPushButton:disabled { background-color: rgb(189, 189, 189); }</string>
-       </property>
-       <property name="text">
-        <string>🔑 Login As</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QFrame" name="usersLoadingOverlay">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>1255</width>
-        <height>800</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QFrame {
- background-color: rgba(255,255,255,0.92);
-}</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <widget class="QLabel" name="usersLoadingSpinner">
-       <property name="geometry">
-        <rect>
-         <x>550</x>
-         <y>330</y>
-         <width>155</width>
-         <height>100</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">	background: transparent;
-	border: none;
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 70px;
-	color: rgb(0, 0, 0);</string>
-       </property>
-       <property name="text">
-        <string>⏳</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
-       </property>
-      </widget>
-      <widget class="QLabel" name="usersLoadingText">
-       <property name="geometry">
-        <rect>
-         <x>352</x>
-         <y>430</y>
-         <width>551</width>
-         <height>91</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">	background: transparent;
-	border: none;
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 50px;
-	color: rgb(0, 0, 0);</string>
-       </property>
-       <property name="text">
-        <string>Loading users from server...</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignmentFlag::AlignCenter</set>
-       </property>
-      </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="accessControlPage">
@@ -1599,50 +1527,42 @@ QPushButton:disabled { background-color: rgb(189, 189, 189); }</string>
        <string>🔐 Access Control</string>
       </property>
      </widget>
-     <widget class="QFrame" name="blockedUsersFrame">
+     <widget class="QGroupBox" name="groupBox_4">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>79</y>
-        <width>1215</width>
+        <y>80</y>
+        <width>1231</width>
         <height>421</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- border: 2px solid rgb(0, 0, 0);
- border-radius: 14px;
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
 }</string>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
+      <property name="title">
+       <string>🚫 Blocked Users</string>
       </property>
-      <widget class="QLabel" name="blockedUsersTitle">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>0</y>
-         <width>400</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 700 18pt &quot;Script MT&quot;;
-color: rgb(0, 0, 0);
-border:none;
-background: transparent;</string>
-       </property>
-       <property name="text">
-        <string>🚫 Blocked Users</string>
-       </property>
-      </widget>
       <widget class="QTableWidget" name="blockedUsersTable">
        <property name="geometry">
         <rect>
-         <x>15</x>
-         <y>48</y>
-         <width>1185</width>
-         <height>361</height>
+         <x>24</x>
+         <y>50</y>
+         <width>1181</width>
+         <height>351</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -1700,50 +1620,42 @@ color: black;
        </column>
       </widget>
      </widget>
-     <widget class="QFrame" name="accessLogFrame">
+     <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>510</y>
-        <width>1215</width>
+        <width>1231</width>
         <height>281</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame {
- border: 2px solid rgb(0, 0, 0);
- border-radius: 14px;
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
 }</string>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
+      <property name="title">
+       <string>📋 Recent Access Control Actions</string>
       </property>
-      <widget class="QLabel" name="accessLogTitle">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>1</y>
-         <width>400</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 700 18pt &quot;Script MT&quot;;
-color: rgb(0, 0, 0);
-border:none;
-background: transparent;</string>
-       </property>
-       <property name="text">
-        <string>📋 Recent Access Control Actions</string>
-       </property>
-      </widget>
       <widget class="QTableWidget" name="accessLogTable">
        <property name="geometry">
         <rect>
-         <x>15</x>
-         <y>48</y>
-         <width>1185</width>
-         <height>216</height>
+         <x>24</x>
+         <y>50</y>
+         <width>1181</width>
+         <height>211</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -1802,7 +1714,7 @@ color: black;
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>-1</y>
+        <y>-5</y>
         <width>500</width>
         <height>71</height>
        </rect>
@@ -1823,9 +1735,9 @@ color: black;
      <widget class="QFrame" name="booksFilterFrame">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>14</x>
         <y>70</y>
-        <width>1215</width>
+        <width>1241</width>
         <height>55</height>
        </rect>
       </property>
@@ -1965,13 +1877,13 @@ background: transparent;
        </property>
       </widget>
      </widget>
-     <widget class="QFrame" name="booksTableFrame">
+     <widget class="QFrame" name="selectedBookActionsFrame">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>130</y>
-        <width>1215</width>
-        <height>361</height>
+        <x>14</x>
+        <y>495</y>
+        <width>1241</width>
+        <height>55</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -1981,12 +1893,211 @@ background: transparent;
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
-      <widget class="QTableWidget" name="adminBooksTable">
+      <widget class="QLabel" name="selectedBookLabel">
        <property name="geometry">
         <rect>
          <x>15</x>
+         <y>13</y>
+         <width>311</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 700 16pt &quot;Script MT&quot;;
+color: rgb(0, 0, 0);
+border:none;
+background: transparent;</string>
+       </property>
+       <property name="text">
+        <string>Selected: No book selected</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="viewBookDetailsBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>329</x>
+         <y>10</y>
+         <width>151</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>👁️ View Details</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="editBookBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>490</x>
+         <y>10</y>
+         <width>91</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>✏️ Edit</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="flagBookBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>589</x>
+         <y>10</y>
+         <width>111</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>⚠️ Flag</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="deleteBookBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>709</x>
+         <y>10</y>
+         <width>151</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>🗑️ Delete Book</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="viewReviewsBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>870</x>
+         <y>10</y>
+         <width>161</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>💬 View Reviews</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="deactivateBookBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>1040</x>
+         <y>10</y>
+         <width>191</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+font: 700 12pt &quot;Script MT&quot;;
+ color: black;
+ border: 2px solid black;
+ border-radius: 8px;
+}
+</string>
+       </property>
+       <property name="text">
+        <string>⏸️ Deactivate Book</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="geometry">
+       <rect>
+        <x>14</x>
+        <y>130</y>
+        <width>1241</width>
+        <height>361</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>📚 All Books in System</string>
+      </property>
+      <widget class="QTableWidget" name="adminBooksTable">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
          <y>40</y>
-         <width>1141</width>
+         <width>1181</width>
          <height>301</height>
         </rect>
        </property>
@@ -1994,6 +2105,7 @@ background: transparent;
         <string notr="true">QTableWidget {
 font: 700 11pt &quot;Script MT Bold&quot;;
 gridline-color: black;
+border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
@@ -2054,273 +2166,67 @@ color: black;
         </property>
        </column>
       </widget>
-      <widget class="QLabel" name="booksTableTitle">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>-5</y>
-         <width>471</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 700 18pt &quot;Script MT&quot;;
-color: rgb(0, 0, 0);
-border:none;
-background: transparent;</string>
-       </property>
-       <property name="text">
-        <string>📚 All Books in System</string>
-       </property>
-      </widget>
       <widget class="QScrollBar" name="verticalScrollBar_2">
        <property name="geometry">
         <rect>
-         <x>1170</x>
+         <x>1210</x>
          <y>40</y>
-         <width>31</width>
+         <width>21</width>
          <height>301</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(0, 0, 0);
+border: 3px solid black;</string>
        </property>
        <property name="orientation">
         <enum>Qt::Orientation::Vertical</enum>
        </property>
       </widget>
      </widget>
-     <widget class="QFrame" name="selectedBookActionsFrame">
+     <widget class="QGroupBox" name="groupBox_8">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>495</y>
-        <width>1215</width>
-        <height>55</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"> border: 2px solid rgb(0, 0, 0);
- border-radius: 14px;</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <widget class="QLabel" name="selectedBookLabel">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>13</y>
-         <width>300</width>
-         <height>30</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 700 16pt &quot;Script MT&quot;;
-color: rgb(0, 0, 0);
-border:none;
-background: transparent;</string>
-       </property>
-       <property name="text">
-        <string>Selected: No book selected</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="viewBookDetailsBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>319</x>
-         <y>10</y>
-         <width>141</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-font: 700 12pt &quot;Script MT&quot;;
- color: black;
- border: 2px solid black;
- border-radius: 8px;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>👁️ View Details</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="editBookBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>470</x>
-         <y>10</y>
-         <width>91</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-font: 700 12pt &quot;Script MT&quot;;
- color: black;
- border: 2px solid black;
- border-radius: 8px;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>✏️ Edit</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="flagBookBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>569</x>
-         <y>10</y>
-         <width>111</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-font: 700 12pt &quot;Script MT&quot;;
- color: black;
- border: 2px solid black;
- border-radius: 8px;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>⚠️ Flag</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="deleteBookBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>689</x>
-         <y>10</y>
-         <width>151</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-font: 700 12pt &quot;Script MT&quot;;
- color: black;
- border: 2px solid black;
- border-radius: 8px;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>🗑️ Delete Book</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="viewReviewsBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>850</x>
-         <y>10</y>
-         <width>161</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-font: 700 12pt &quot;Script MT&quot;;
- color: black;
- border: 2px solid black;
- border-radius: 8px;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>💬 View Reviews</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="deactivateBookBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>1020</x>
-         <y>10</y>
-         <width>181</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QPushButton {
-font: 700 12pt &quot;Script MT&quot;;
- color: black;
- border: 2px solid black;
- border-radius: 8px;
-}
-</string>
-       </property>
-       <property name="text">
-        <string>⏸️ Deactivate Book</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QFrame" name="reviewsPreviewFrame">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>555</y>
-        <width>1215</width>
+        <x>14</x>
+        <y>550</y>
+        <width>1241</width>
         <height>236</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true"> border: 2px solid rgb(0, 0, 0);
- border-radius: 14px;</string>
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
+      <property name="title">
+       <string>💬 Recent Reviews (monitoring)</string>
       </property>
-      <widget class="QLabel" name="reviewsPreviewTitle">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>-3</y>
-         <width>400</width>
-         <height>41</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 700 18pt &quot;Script MT&quot;;
-color: rgb(0, 0, 0);
-border:none;
-background: transparent;</string>
-       </property>
-       <property name="text">
-        <string>💬 Recent Reviews (monitoring)</string>
-       </property>
-      </widget>
       <widget class="QTableWidget" name="recentReviewsTable">
        <property name="geometry">
         <rect>
-         <x>15</x>
-         <y>43</y>
-         <width>1141</width>
-         <height>176</height>
+         <x>20</x>
+         <y>50</y>
+         <width>1181</width>
+         <height>171</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QTableWidget {
 font: 700 11pt &quot;Script MT Bold&quot;;
 gridline-color: black;
+border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
@@ -2371,11 +2277,15 @@ color: black;
       <widget class="QScrollBar" name="verticalScrollBar_3">
        <property name="geometry">
         <rect>
-         <x>1170</x>
-         <y>40</y>
-         <width>31</width>
-         <height>176</height>
+         <x>1210</x>
+         <y>50</y>
+         <width>21</width>
+         <height>171</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(0, 0, 0);
+border: 3px solid black;</string>
        </property>
        <property name="orientation">
         <enum>Qt::Orientation::Vertical</enum>
@@ -2391,7 +2301,7 @@ color: black;
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>0</y>
+        <y>-5</y>
         <width>500</width>
         <height>71</height>
        </rect>
@@ -2412,9 +2322,9 @@ color: black;
      <widget class="QFrame" name="reviewFiltersFrame">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>14</x>
         <y>70</y>
-        <width>1215</width>
+        <width>1241</width>
         <height>60</height>
        </rect>
       </property>
@@ -2584,129 +2494,12 @@ background: transparent;
        </property>
       </widget>
      </widget>
-     <widget class="QFrame" name="reviewsMonitorTableFrame">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>140</y>
-        <width>1215</width>
-        <height>561</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"> border: 2px solid rgb(0, 0, 0);
- border-radius: 14px;</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
-      </property>
-      <widget class="QTableWidget" name="reviewsMonitorTable">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>52</y>
-         <width>1141</width>
-         <height>491</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QTableWidget {
-font: 700 11pt &quot;Script MT Bold&quot;;
-gridline-color: black;
-}
-QHeaderView::section {
-font: 700 12pt &quot;Script MT&quot;;
-background-color:rgb(190, 195, 205);
-padding: 8px;
-color: black;
-}</string>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-       </property>
-       <attribute name="horizontalHeaderStretchLastSection">
-        <bool>true</bool>
-       </attribute>
-       <column>
-        <property name="text">
-         <string>ID</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Book Title</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Reviewer</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Rating</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Review Text</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Date</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Status</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Actions</string>
-        </property>
-       </column>
-      </widget>
-      <widget class="QLabel" name="reviewsMonitorTableTitle">
-       <property name="geometry">
-        <rect>
-         <x>15</x>
-         <y>0</y>
-         <width>450</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">font: 700 18pt &quot;Script MT&quot;;
-color: rgb(0, 0, 0);
-border:none;
-background: transparent;</string>
-       </property>
-       <property name="text">
-        <string>💬 All Reviews </string>
-       </property>
-      </widget>
-      <widget class="QScrollBar" name="verticalScrollBar">
-       <property name="geometry">
-        <rect>
-         <x>1170</x>
-         <y>50</y>
-         <width>31</width>
-         <height>491</height>
-        </rect>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Orientation::Vertical</enum>
-       </property>
-      </widget>
-     </widget>
      <widget class="QFrame" name="selectedReviewActionsFrame">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>14</x>
         <y>714</y>
-        <width>1215</width>
+        <width>1241</width>
         <height>61</height>
        </rect>
       </property>
@@ -2819,7 +2612,7 @@ font: 700 12pt &quot;Script MT&quot;;
         <rect>
          <x>760</x>
          <y>13</y>
-         <width>121</width>
+         <width>151</width>
          <height>34</height>
         </rect>
        </property>
@@ -2842,9 +2635,9 @@ font: 700 12pt &quot;Script MT&quot;;
        </property>
        <property name="geometry">
         <rect>
-         <x>890</x>
+         <x>910</x>
          <y>13</y>
-         <width>121</width>
+         <width>131</width>
          <height>34</height>
         </rect>
        </property>
@@ -2867,7 +2660,7 @@ font: 700 12pt &quot;Script MT&quot;;
        </property>
        <property name="geometry">
         <rect>
-         <x>1024</x>
+         <x>1054</x>
          <y>13</y>
          <width>171</width>
          <height>34</height>
@@ -2884,6 +2677,122 @@ font: 700 12pt &quot;Script MT&quot;;
        </property>
        <property name="text">
         <string>👤 View Profile</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="geometry">
+       <rect>
+        <x>14</x>
+        <y>130</y>
+        <width>1241</width>
+        <height>561</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>💬 All Reviews </string>
+      </property>
+      <widget class="QTableWidget" name="reviewsMonitorTable">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>50</y>
+         <width>1181</width>
+         <height>491</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTableWidget {
+font: 700 11pt &quot;Script MT Bold&quot;;
+gridline-color: black;
+border: 2px solid black;
+}
+QHeaderView::section {
+font: 700 12pt &quot;Script MT&quot;;
+background-color:rgb(190, 195, 205);
+padding: 8px;
+color: black;
+}</string>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+       </property>
+       <attribute name="horizontalHeaderStretchLastSection">
+        <bool>true</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string>ID</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Book Title</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Reviewer</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Rating</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Review Text</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Date</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Status</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Actions</string>
+        </property>
+       </column>
+      </widget>
+      <widget class="QScrollBar" name="verticalScrollBar">
+       <property name="geometry">
+        <rect>
+         <x>1210</x>
+         <y>50</y>
+         <width>21</width>
+         <height>491</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(0, 0, 0);
+border: 3px solid black;</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Vertical</enum>
        </property>
       </widget>
      </widget>
@@ -2923,31 +2832,940 @@ font: 700 12pt &quot;Script MT&quot;;
      <property name="styleSheet">
       <string notr="true">QWidget { background-color: transparent; }</string>
      </property>
-     <widget class="QLabel" name="serverStatusPlaceholderLabel">
+     <widget class="QLabel" name="titleLabel">
       <property name="geometry">
        <rect>
-        <x>400</x>
-        <y>249</y>
-        <width>455</width>
-        <height>201</height>
+        <x>20</x>
+        <y>9</y>
+        <width>361</width>
+        <height>61</height>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">	background: transparent;
-	border: none;
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size: 50px;
-	color: rgb(0, 0, 0);</string>
+       <string notr="true">QLabel {
+    background: transparent;
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 50px;
+    color: rgb(0, 0, 0);
+}</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:30pt;&quot;&gt;🖥️ Server Status&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:30pt;&quot;&gt;(Coming Soon)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>🖥️ Server Status</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
-      <property name="wordWrap">
-       <bool>true</bool>
+     </widget>
+     <widget class="QGroupBox" name="serverControlsGroup">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>80</y>
+        <width>1251</width>
+        <height>90</height>
+       </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 14pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>⚙️ Server Controls</string>
+      </property>
+      <widget class="QLabel" name="portLabel_title">
+       <property name="geometry">
+        <rect>
+         <x>19</x>
+         <y>45</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>Port:</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="portSpinBox">
+       <property name="geometry">
+        <rect>
+         <x>74</x>
+         <y>42</y>
+         <width>111</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QSpinBox {
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 5px;
+    background-color: white;
+}
+QSpinBox::up-button, QSpinBox::down-button {
+    width: 30px;
+    border-left: 2px solid black;
+    background-color: rgb(240, 240, 240);
+}
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: rgb(220, 220, 220);
+}</string>
+       </property>
+       <property name="minimum">
+        <number>1024</number>
+       </property>
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+       <property name="value">
+        <number>1234</number>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="startServerButton">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>27</y>
+         <width>171</width>
+         <height>50</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 24px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(200, 255, 200);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 8px;
+}
+QPushButton:hover {
+    background-color: rgb(150, 255, 150);
+}
+QPushButton:disabled {
+    background-color: rgb(200, 200, 200);
+}</string>
+       </property>
+       <property name="text">
+        <string>▶ Start Server</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="stopServerButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>450</x>
+         <y>27</y>
+         <width>171</width>
+         <height>50</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 24px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 200, 200);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 8px;
+}
+QPushButton:hover {
+    background-color: rgb(255, 150, 150);
+}
+QPushButton:disabled {
+    background-color: rgb(200, 200, 200);
+}</string>
+       </property>
+       <property name="text">
+        <string>■ Stop Server</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="refreshStatsButton">
+       <property name="geometry">
+        <rect>
+         <x>650</x>
+         <y>27</y>
+         <width>200</width>
+         <height>50</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 24px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(200, 220, 255);
+    border: 3px solid black;
+    border-radius: 12px;
+    padding: 8px;
+}
+QPushButton:hover {
+    background-color: rgb(150, 190, 255);
+}</string>
+       </property>
+       <property name="text">
+        <string>🔄 Refresh Stats</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="statusValueLabel">
+       <property name="geometry">
+        <rect>
+         <x>910</x>
+         <y>27</y>
+         <width>131</width>
+         <height>44</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>STOPPED:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="currentTimeLabel">
+       <property name="geometry">
+        <rect>
+         <x>1040</x>
+         <y>27</y>
+         <width>191</width>
+         <height>44</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>--:--:--</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="eventLogGroup">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>540</y>
+        <width>1251</width>
+        <height>250</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>🔔 System Events &amp; Notifications</string>
+      </property>
+      <widget class="QTextEdit" name="eventLogTextEdit">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>1211</width>
+         <height>191</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTextEdit {
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    background-color: white;
+    padding: 10px;
+	color: black;
+}</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="acceptRichText">
+        <bool>true</bool>
+       </property>
+       <property name="placeholderText">
+        <string>System events will appear here...</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="statsGroup">
+      <property name="geometry">
+       <rect>
+        <x>890</x>
+        <y>180</y>
+        <width>371</width>
+        <height>361</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>📊 System Statistics</string>
+      </property>
+      <widget class="QLabel" name="cpuLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>38</y>
+         <width>170</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>💻 CPU Usage:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="cpuValueLabel">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>36</y>
+         <width>90</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>0.0%</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QProgressBar" name="cpuProgressBar">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>72</y>
+         <width>340</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QProgressBar {
+    border: 3px solid black;
+    border-radius: 12px;
+    text-align: center;
+    background-color: rgb(240, 240, 240);
+    height: 25px;
+}
+
+QProgressBar::chunk {
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgb(100, 180, 255), stop:1 rgb(50, 130, 200));
+    border-radius: 10px;
+}</string>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="textVisible">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="ramLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>108</y>
+         <width>170</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>🧠 RAM Usage:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="ramValueLabel">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>106</y>
+         <width>90</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+	color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>0.0%</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QProgressBar" name="ramProgressBar">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>142</y>
+         <width>340</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QProgressBar {
+    border: 3px solid black;
+    border-radius: 12px;
+    text-align: center;
+    background-color: rgb(240, 240, 240);
+    height: 25px;
+}
+
+QProgressBar::chunk {
+    background-color: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgb(180, 130, 255), stop:1 rgb(130, 80, 200));
+    border-radius: 10px;
+}</string>
+       </property>
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+       <property name="textVisible">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="Line" name="line_separator1">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>180</y>
+         <width>340</width>
+         <height>3</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">Line { color: black; max-height: 3px; }</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Shape::HLine</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Shadow::Sunken</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="totalRequestsTitleLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>190</y>
+         <width>170</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>Total Requests:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="totalRequestsLabel">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>193</y>
+         <width>160</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: black;
+}</string>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="totalResponsesTitleLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>230</y>
+         <width>181</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>Total Responses:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="totalResponsesLabel">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>230</y>
+         <width>160</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color:black;
+}</string>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="activeConnectionsTitleLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>280</y>
+         <width>191</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>Active Connections:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="activeConnectionsLabel">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>280</y>
+         <width>160</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 20px;
+    color: black;
+}</string>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="uptimeTitleLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>320</y>
+         <width>170</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 10pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>Server Uptime:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="uptimeLabel_2">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>320</y>
+         <width>160</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 18px;
+    color: black;
+}</string>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;--:--:--&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="logGroup">
+      <property name="geometry">
+       <rect>
+        <x>435</x>
+        <y>180</y>
+        <width>441</width>
+        <height>361</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>📋 Request / Response Log</string>
+      </property>
+      <widget class="QTextEdit" name="requestLogTextEdit">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>421</width>
+         <height>251</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTextEdit {
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    background-color: white;
+    padding: 10px;
+}</string>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="acceptRichText">
+        <bool>false</bool>
+       </property>
+       <property name="placeholderText">
+        <string>Waiting for requests...</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="clearLogsButton">
+       <property name="geometry">
+        <rect>
+         <x>140</x>
+         <y>40</y>
+         <width>161</width>
+         <height>51</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+    font: 700 9pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 235, 238);
+    border: 3px solid black;
+    border-radius: 12px;
+}
+QPushButton:hover {
+    background-color: rgb(255, 205, 210);
+}</string>
+       </property>
+       <property name="text">
+        <string>🗑️ Clear Logs</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="clientsGroup">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>180</y>
+        <width>411</width>
+        <height>361</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+      </property>
+      <property name="title">
+       <string>👥 Connected Clients</string>
+      </property>
+      <widget class="QLabel" name="onlineUsersTitleLabel">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>35</y>
+         <width>150</width>
+         <height>30</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    background: transparent;
+    font: 700 11pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+}</string>
+       </property>
+       <property name="text">
+        <string>Online Users:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="onlineUsersLabel">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>33</y>
+         <width>111</width>
+         <height>34</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QLabel {
+    border: 3px solid black;
+    border-radius: 12px;
+    font: 700 14pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    padding: 5px;
+	border: none;
+    background: transparent;
+}</string>
+       </property>
+       <property name="text">
+        <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignmentFlag::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QTableWidget" name="clientsTableWidget">
+       <property name="geometry">
+        <rect>
+         <x>15</x>
+         <y>75</y>
+         <width>381</width>
+         <height>271</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTableWidget {
+    font-size: 16px;
+    border: 3px solid black;
+    border-radius: 12px;
+    gridline-color: rgb(0, 0, 0);
+    color: black;
+}
+
+QTableWidget::item {
+    padding: 8px;
+}
+
+QHeaderView::section {
+    font: 700 12pt &quot;Script MT Bold&quot;;
+    font-size: 22px;
+    background-color: rgb(178, 185, 197);
+    color: black;
+    border: 2px solid black;
+    padding: 6px;
+}</string>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+       </property>
+       <property name="showGrid">
+        <bool>true</bool>
+       </property>
+       <column>
+        <property name="text">
+         <string>Socket ID</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>IP Address</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Username</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </column>
+      </widget>
      </widget>
     </widget>
    </widget>
