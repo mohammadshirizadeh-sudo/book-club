@@ -137,6 +137,9 @@ bool BookRepository::loadAllFromDatabase() {
             sqlQuery.value("description").toString(),
             sqlQuery.value("price").toDouble(),
             sqlQuery.value("discount_percent").toDouble(),
+            sqlQuery.value("is_timed_discount").toBool(),
+            QDateTime::fromString(sqlQuery.value("discount_start_date").toString(), Qt::ISODate),
+            QDateTime::fromString(sqlQuery.value("discount_end_date").toString(), Qt::ISODate),
             sqlQuery.value("cover_path").toString(),
             sqlQuery.value("pdf_path").toString(),
             sqlQuery.value("is_active").toBool(),
@@ -164,7 +167,10 @@ bool BookRepository::loadAllFromDatabase() {
 }
 
 bool BookRepository::saveToDatabase(QSharedPointer<Book> book) {
+    qDebug()<<"i enter to the saveto Database";
     if (!book) return false;
+    qDebug()<<"i exit from if !book";
+
 
     DatabaseManager* db = DatabaseManager::instance();
     if (!db->isOpen()) {
@@ -175,12 +181,14 @@ bool BookRepository::saveToDatabase(QSharedPointer<Book> book) {
     QString query = R"(
         INSERT OR REPLACE INTO book (
             id, title, author, genre, description, price,
-            discount_percent, cover_path, pdf_path, is_active,
+            discount_percent,is_timed_discount, discount_start_date, discount_end_date,
+            cover_path, pdf_path, is_active,
             average_rating, sales_count, publisher_id,
             created_at, updated_at
         ) VALUES (
             :id, :title, :author, :genre, :description, :price,
-            :discount_percent, :cover_path, :pdf_path, :is_active,
+            :discount_percent, :is_timed_discount, :discount_start_date, :discount_end_date,
+            :cover_path, :pdf_path, :is_active,
             :average_rating, :sales_count, :publisher_id,
             :created_at, :updated_at
         )
@@ -194,6 +202,9 @@ bool BookRepository::saveToDatabase(QSharedPointer<Book> book) {
     params["description"] = book->getDescription();
     params["price"] = book->getPrice();
     params["discount_percent"] = book->getDiscountPercent();
+    params["is_timed_discount"] = book->getisTimedDiscount() ? 1 : 0;
+    params["discount_start_date"] = book->getDiscountStartDate().toString(Qt::ISODate);
+    params["discount_end_date"] = book->getDiscountEndDate().toString(Qt::ISODate);
     params["cover_path"] = book->getCoverPath();
     params["pdf_path"] = book->getPdfPath();
     params["is_active"] = book->getIsActive() ? 1 : 0;
@@ -202,8 +213,10 @@ bool BookRepository::saveToDatabase(QSharedPointer<Book> book) {
     params["publisher_id"] = book->getPublisherId();
     params["created_at"] = book->getCreatedAt().toString(Qt::ISODate);
     params["updated_at"] = book->getUpdatedAt().toString(Qt::ISODate);
-
-    return db->executeQuery(query, params);
+    qDebug()<<"i'm here babe in the saveto database";
+    bool is = db->executeQuery(query , params);
+    qDebug()<<"the bool is "<<is;
+    return is;
 }
 
 bool BookRepository::deleteFromDatabase(int bookId) {

@@ -54,6 +54,7 @@ void PublisherWindow::on_newBooksPushButton_clicked()
 
 void PublisherWindow::on_editBooksPushButton_clicked()
 {
+    emit editWindow();
 
 }
 
@@ -72,6 +73,7 @@ void PublisherWindow::on_discountPushButton_clicked()
 
 void PublisherWindow::on_deactivatePushButton_clicked()
 {
+    emit deactivateBook();
 
 }
 

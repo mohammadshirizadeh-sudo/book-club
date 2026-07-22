@@ -93,6 +93,9 @@ enum class CommandType {
     RemoveFavoriteBook,
     GetAllGenres,
     GetUserLibrary,
+    RemoveDiscount,
+    ApplyDiscount,
+
     SearchAuthors
 };
 

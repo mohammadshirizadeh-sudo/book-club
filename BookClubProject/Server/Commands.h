@@ -986,6 +986,34 @@ private:
     BookService* m_bookService;
 };
 
+class ApplyDiscountCommand : public Command
+{
+public:
+    explicit ApplyDiscountCommand(BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::ApplyDiscount; }
+    QString getName() const override { return "ApplyDiscount"; }
+    bool requiresAuth() const override { return true; }
+    bool requiresPublisher() const override { return true; }
+
+private:
+    BookService* m_bookService;
+};
+
+class RemoveDiscountCommand : public Command
+{
+public:
+    explicit RemoveDiscountCommand(BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::RemoveDiscount; }
+    QString getName() const override { return "RemoveDiscount"; }
+    bool requiresAuth() const override { return true; }
+    bool requiresPublisher() const override { return true; }
+
+private:
+    BookService* m_bookService;
+};
+
 
 
 

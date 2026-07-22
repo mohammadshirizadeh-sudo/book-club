@@ -976,7 +976,7 @@ Response AddBookCommand::execute(const QVariantMap& params)
 
     QByteArray coverBytes =
         QByteArray::fromBase64(
-            params["coverImage"].toByteArray()
+            params["coverData"].toByteArray()
             );
 
     QByteArray pdfBytes =
@@ -1154,7 +1154,6 @@ Response ReactivateBookCommand::execute(const QVariantMap& params)
     return Response::error(CommandType::ReactivateBook ,"Failed to reactivate book");
 }
 
-// ----- GetPublisherBooksCommand -----
 GetPublisherBooksCommand::GetPublisherBooksCommand(PublisherService* publisherService)
     : m_publisherService(publisherService)
 {
@@ -1163,7 +1162,7 @@ GetPublisherBooksCommand::GetPublisherBooksCommand(PublisherService* publisherSe
 Response GetPublisherBooksCommand::execute(const QVariantMap& params)
 {
     int publisherId = params["publisherId"].toInt();
-    QVector<QSharedPointer<Book>> books = m_publisherService->getBooksByPublisher(publisherId);
+    QVector<QSharedPointer<Book>> books = m_publisherService->getAllBooksByPublisher(publisherId);
 
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
@@ -1176,7 +1175,11 @@ Response GetPublisherBooksCommand::execute(const QVariantMap& params)
         bookData["averageRating"] = book->getAverageRating();
         bookData["salesCount"] = book->getSalesCount();
         bookData["coverPath"] = book->getCoverPath();
-
+        bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["isDiscounted"] = book->getDiscountPercent() > 0;
+        bookData["isTimed"] = book->getisTimedDiscount();
+        bookData["endDate"] = book->getDiscountEndDate().toString(Qt::ISODate);
+        bookData["isActive"] = book->getIsActive();
         bookList.append(bookData);
     }
 
@@ -1184,6 +1187,141 @@ Response GetPublisherBooksCommand::execute(const QVariantMap& params)
     data["books"] = bookList;
     data["count"] = bookList.size();
     return Response::success(CommandType::GetPublisherBooks, data);
+}
+ApplyDiscountCommand::ApplyDiscountCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response ApplyDiscountCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int publisherId = params.value("publisherId").toInt();
+    int bookId = params.value("bookId").toInt();
+    QString discountType = params.value("discountType").toString(); // "percentage" or "fixed"
+    double discountValue = params.value("discountValue").toDouble();
+    bool isTimed = params.value("isTimed").toBool();
+    QDateTime startDate = QDateTime::fromString(params.value("startDate").toString(), Qt::ISODate);
+    QDateTime endDate = QDateTime::fromString(params.value("endDate").toString(), Qt::ISODate);
+
+
+    // 2. اعتبارسنجی
+    if (publisherId <= 0) {
+        return Response::error(CommandType::ApplyDiscount, "Invalid publisher ID");
+    }
+
+    if (bookId <= 0) {
+        return Response::error(CommandType::ApplyDiscount, "Invalid book ID");
+    }
+
+    if (discountValue <= 0) {
+        return Response::error(CommandType::ApplyDiscount, "Discount value must be greater than 0");
+    }
+
+    // 3. بررسی مالکیت کتاب توسط ناشر
+    QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+    if (!book) {
+        return Response::error(CommandType::ApplyDiscount, "Book not found");
+    }
+
+    if (book->getPublisherId() != publisherId) {
+        return Response::error(CommandType::ApplyDiscount, "You don't have permission to modify this book");
+    }
+
+    // 4. اعمال تخفیف
+    double discountPercent = 0.0;
+
+    if (discountType == "percentage") {
+        discountPercent = discountValue;
+    } else if (discountType == "fixed") {
+        double originalPrice = book->getPrice();
+        if (discountValue >= originalPrice) {
+            return Response::error(CommandType::ApplyDiscount, "Discount amount cannot exceed the original price");
+        }
+        discountPercent = (discountValue / originalPrice) * 100.0;
+    } else {
+        return Response::error(CommandType::ApplyDiscount, "Invalid discount type");
+    }
+
+    // 5. محدودیت تخفیف
+    if (discountPercent > 100) {
+        return Response::error(CommandType::ApplyDiscount, "Discount cannot exceed 100%");
+    }
+
+    // 6. اعمال تخفیف روی کتاب
+    book->applyDiscount(discountPercent);
+
+    // 7. اگر تخفیف زمان‌دار است
+    if (isTimed && endDate.isValid()) {
+        // ذخیره زمان شروع و پایان (در Book یا یک جدول جداگانه)
+        // (اگر فیلدهای startDate و endDate در Book دارید)
+        // book->setDiscountStartDate(startDate);
+        // book->setDiscountEndDate(endDate);
+    }
+
+    // 8. ذخیره در دیتابیس
+    if (!m_bookService->updateBook(book)) {
+        return Response::error(CommandType::ApplyDiscount, "Failed to save discount to database");
+    }
+
+    QVariantMap data;
+    data["bookId"] = bookId;
+    data["title"] = book->getTitle();
+    data["discountPercent"] = discountPercent;
+    data["finalPrice"] = book->getFinalPrice();
+
+    return Response::success(CommandType::ApplyDiscount, "Discount applied successfully", data);
+}
+
+RemoveDiscountCommand::RemoveDiscountCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response RemoveDiscountCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int publisherId = params.value("publisherId").toInt();
+    int bookId = params.value("bookId").toInt();
+
+    // 2. اعتبارسنجی
+    if (publisherId <= 0) {
+        return Response::error(CommandType::RemoveDiscount, "Invalid publisher ID");
+    }
+
+    if (bookId <= 0) {
+        return Response::error(CommandType::RemoveDiscount, "Invalid book ID");
+    }
+
+    // 3. بررسی مالکیت کتاب توسط ناشر
+    QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+    if (!book) {
+        return Response::error(CommandType::RemoveDiscount, "Book not found");
+    }
+
+    if (book->getPublisherId() != publisherId) {
+        return Response::error(CommandType::RemoveDiscount, "You don't have permission to modify this book");
+    }
+
+    // 4. بررسی اینکه کتاب تخفیف دارد
+    if (!book->isDiscounted()) {
+        return Response::error(CommandType::RemoveDiscount, "This book does not have any discount");
+    }
+
+    // 5. حذف تخفیف
+    book->removeDiscount();
+
+    // 6. ذخیره در دیتابیس
+    if (!m_bookService->updateBook(book)) {
+        return Response::error(CommandType::RemoveDiscount, "Failed to remove discount from database");
+    }
+
+    QVariantMap data;
+    data["bookId"] = bookId;
+    data["title"] = book->getTitle();
+    data["price"] = book->getPrice();
+
+    return Response::success(CommandType::RemoveDiscount, "Discount removed successfully", data);
 }
 
 // ----- GetPublisherStatsCommand -----
@@ -2651,5 +2789,9 @@ Response GetUserLibraryCommand::execute(const QVariantMap& params)
 
     return Response::success(CommandType::GetUserLibrary, "Library loaded", data);
 }
+
+
+
+
 
 

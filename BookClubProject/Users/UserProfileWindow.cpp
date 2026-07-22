@@ -13,7 +13,7 @@
 UserProfileWindow::UserProfileWindow(NetworkManager* networkManager, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::UserProfileWindow)
-        , m_networkManager(networkManager)
+    , m_networkManager(networkManager)
 {
     ui->setupUi(this);
 
@@ -52,28 +52,20 @@ void UserProfileWindow::on_editUserInfPushButton_clicked()
     dialog.exec();
 
 }
-
-
 void UserProfileWindow::on_changePassPushButton_clicked()
 {
     ChangePasswordDialog dialog(m_networkManager , this);
     dialog.exec();
 }
-
-
 void UserProfileWindow::on_shoppingHistoryPushButton_clicked()
 {
     emit openShoppingHistoryDialog();
 }
-
-
 void UserProfileWindow::on_favBooksPushButton_clicked()
 {
 
     emit openFavBooksWindow();
 }
-
-
 void UserProfileWindow::loadprof()
 {
     // درخواست کتاب‌های رایگان
@@ -87,8 +79,6 @@ void UserProfileWindow::loadprof()
     Request request(CommandType::GetProfile, params);
     m_networkManager->sendRequest(request);
 }
-
-
 void UserProfileWindow::handleResponse(const Response& response)
 {
     if (response.getCommandType() == CommandType::GetProfile) {

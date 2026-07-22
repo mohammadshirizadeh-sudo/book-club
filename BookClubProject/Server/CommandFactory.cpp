@@ -259,6 +259,19 @@ Command* CommandFactory::create(
     case CommandType::AddBookToShelf:
         return new AddBookToShelfCommand(libraryService);
 
+
+    case CommandType::RemoveDiscount:
+        return new RemoveDiscountCommand(bookService);
+    case CommandType::ApplyDiscount:
+        return new ApplyDiscountCommand(bookService);
+
+
+
+
+
+
+
+
     // =============================================
     // ===== Unknown Command =====
     // =============================================

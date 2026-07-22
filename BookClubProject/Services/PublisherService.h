@@ -39,6 +39,9 @@ public:
                   const QString& newDescription, double newPrice,
                   double newDiscountPercent);
 
+
+    QVector<QSharedPointer<Book>> getAllBooksByPublisher(int publisherId) const;
+
 };
 
 

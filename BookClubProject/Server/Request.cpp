@@ -176,6 +176,11 @@ CommandType Request::stringToCommandType(const QString& str)
         {"GetUserLibrary" , CommandType ::GetUserLibrary},
         {"AddBookToShelf" , CommandType ::AddBookToShelf},
         {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
+        {"RemoveDiscount" , CommandType ::RemoveDiscount},
+        {"ApplyDiscount" , CommandType ::ApplyDiscount},
+
+
+
 
 
 
@@ -282,6 +287,16 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetAllGenres: return "GetAllGenres";
     case CommandType::GetUserLibrary: return "GetUserLibrary";
     case CommandType::AddBookToShelf: return "AddBookToShelf";
+    case CommandType::RemoveDiscount: return "RemoveDiscount";
+    case CommandType::ApplyDiscount: return "ApplyDiscount";
+
+
+
+
+
+
+
+
     default: return "Unknown";
     }
 }

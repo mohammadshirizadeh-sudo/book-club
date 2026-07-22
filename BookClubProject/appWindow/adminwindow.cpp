@@ -1,3 +1,6 @@
+
+
+/*
 #include "adminwindow.h"
 #include "appWindow/ui_adminwindow.h"
 #include <QMessageBox>
@@ -1733,7 +1736,8 @@ void AdminWindow::updateReviewSelectionState(int row)
         return;
     }
 
-    QTableWidgetItem *idItem = ui->reviewsMonitorTable->item(row, 0);
+    QTableWidgetItem *idItem = ui->reviewsMonitorTable->item(row, 0);*/
+/*
     if (idItem) {
         m_selectedReviewId = idItem->data(Qt::UserRole).toInt();
         m_selectedReviewData.id = m_selectedReviewId;
@@ -1994,3 +1998,4 @@ void AdminWindow::clearTable(QTableWidget *table)
 {
     table->setRowCount(0);
 }
+*/

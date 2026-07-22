@@ -1,3 +1,6 @@
+
+
+/*
 #ifndef ADMINWINDOW_H
 #define ADMINWINDOW_H
 
@@ -373,3 +376,4 @@ private:
 };
 
 #endif // ADMINWINDOW_H
+*/

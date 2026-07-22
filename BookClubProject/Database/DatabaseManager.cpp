@@ -127,6 +127,7 @@ QSqlQuery DatabaseManager::executeSelect(const QString& query)
         qCritical() << "❌ Select failed:" << sqlQuery.lastError().text();
         qCritical() << "   Query:" << query;
     }
+    qDebug()<<"i'm in excute select";
     return sqlQuery;
 }
 

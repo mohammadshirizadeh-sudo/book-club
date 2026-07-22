@@ -14,15 +14,18 @@ private:
     Genre genre;
     QString description;
     double price;
-    double discountPercent;  // 0.0 to 100.0
+    double discountPercent;
     QString coverPath;
     QString pdfPath;
     bool isActive;
-    double averageRating;    // 0.0 to 5.0
+    double averageRating;
     int salesCount;
     int publisherId;
     QDateTime createdAt;
     QDateTime updatedAt;
+    bool isTimedDiscount;
+    QDateTime discountStartDate;
+    QDateTime discountEndDate;
 
 public:
     // ===== Constructors =====
@@ -32,7 +35,9 @@ public:
 
     Book(int bookId, const QString& title, const QString& author,
          const Genre& genre, const QString& description, double price,
-         double discountPercent, const QString& coverPath, const QString& pdfPath,
+         double discountPercent,bool isTimedDiscount,
+         const QDateTime& discountStartDate, const QDateTime& discountEndDate,
+         const QString& coverPath, const QString& pdfPath,
          bool isActive, double averageRating, int salesCount, int publisherId,
          const QDateTime& createdAt, const QDateTime& updatedAt);
 
@@ -89,6 +94,19 @@ public:
     bool isFree() const;
 
     bool isDiscounted() const;
+    bool getisTimedDiscount() const { return isTimedDiscount; }
+
+
+
+    QDateTime getDiscountStartDate() const { return discountStartDate; }
+    QDateTime getDiscountEndDate() const { return discountEndDate; }
+
+    void setTimedDiscount(bool timed) { isTimedDiscount = timed; }
+    void setDiscountStartDate(const QDateTime& date) { discountStartDate = date; }
+    void setDiscountEndDate(const QDateTime& date) { discountEndDate = date; }
+
+    void applyTimedDiscount(double percent, const QDateTime& startDate, const QDateTime& endDate);
+
 };
 
 #endif // BOOK_H

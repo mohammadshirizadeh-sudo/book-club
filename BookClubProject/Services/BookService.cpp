@@ -760,3 +760,35 @@ QMap<QString, QVector<QSharedPointer<Book>>> BookService::searchAuthorsWithBooks
 
     return result;
 }
+
+
+
+// BookService.cpp
+bool BookService::updateBook(QSharedPointer<Book> book)
+{
+    if (!book) {
+        qWarning() << "Book is null!";
+        return false;
+    }
+
+    int bookId = book->getBookId();
+
+    // 1. به‌روزرسانی در حافظه (Cache)
+    if (!bookRepo->updateBook(book)) {
+        qWarning() << "Failed to update book in cache:" << bookId;
+        return false;
+    }
+
+    // 2. ذخیره در دیتابیس
+    if (!bookRepo->saveToDatabase(book)) {
+        qWarning() << "Failed to save book to database:" << bookId;
+        return false;
+    }
+
+    qDebug() << "✅ Book updated successfully:" << book->getTitle() << "(ID:" << bookId << ")";
+    return true;
+}
+
+
+
+
