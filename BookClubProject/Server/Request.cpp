@@ -149,6 +149,11 @@ CommandType Request::stringToCommandType(const QString& str)
         {"SearchUsers", CommandType::SearchUsers},
         {"GetNotifications" , CommandType ::GetNotifications},
         {"MarkNotificationRead" , CommandType ::MarkNotificationRead},
+        {"ClearAllNotifications" , CommandType ::ClearAllNotifications},
+        {"MarkAllNotificationsRead" , CommandType ::MarkAllNotificationsRead},
+
+
+
         {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
 
         {"GetUserShelves" , CommandType ::GetUserShelves},
@@ -178,6 +183,15 @@ CommandType Request::stringToCommandType(const QString& str)
         {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
         {"RemoveDiscount" , CommandType ::RemoveDiscount},
         {"ApplyDiscount" , CommandType ::ApplyDiscount},
+
+        {"GetSalesTrend" , CommandType ::GetSalesTrend},
+        {"GetBookRatingsChart" , CommandType ::GetBookRatingsChart},
+        {"GetTopSellingBooks" , CommandType ::GetTopSellingBooks},
+
+         {"GetBottomSellingBooks" , CommandType ::GetBottomSellingBooks},
+        {"GetSalesOverview" , CommandType ::GetSalesOverview},
+
+
 
 
 
@@ -261,6 +275,7 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::SearchUsers: return "SearchUsers";
     case CommandType::SearchAuthors : return "SearchAuthors";
     case CommandType::GetNotifications: return "GetNotifications";
+    case CommandType::MarkNotificationRead: return "MarkNotificationRead";
     case CommandType::MarkAllNotificationsRead: return "MarkAllNotificationsRead";
 
     case CommandType::ClearAllNotifications: return "ClearAllNotifications";
@@ -289,12 +304,11 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::AddBookToShelf: return "AddBookToShelf";
     case CommandType::RemoveDiscount: return "RemoveDiscount";
     case CommandType::ApplyDiscount: return "ApplyDiscount";
-
-
-
-
-
-
+    case CommandType::GetSalesTrend: return "GetSalesTrend";
+    case CommandType::GetBookRatingsChart: return "GetBookRatingsChart";
+    case CommandType::GetTopSellingBooks: return "GetTopSellingBooks";
+    case CommandType::GetBottomSellingBooks: return "GetBottomSellingBooks";
+    case CommandType::GetSalesOverview: return "GetSalesOverview";
 
 
     default: return "Unknown";

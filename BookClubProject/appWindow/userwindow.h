@@ -76,6 +76,8 @@ private slots:
 
     void on_pushButton_8_clicked();
 
+    void on_notificationPushButton_clicked();
+
 signals:
     void userProfileWindow();
     void searchWindow();
@@ -83,6 +85,7 @@ signals:
     void cartWindow();
     void libraryWindow();
     void shelfWindow();
+    void notificationWindow();
 
 private:
     Ui::UserWindow *ui;

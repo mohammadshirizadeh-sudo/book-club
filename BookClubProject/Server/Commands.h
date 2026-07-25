@@ -1015,10 +1015,88 @@ private:
 };
 
 
+class GetSalesTrendCommand : public Command
+{
+public:
+    explicit GetSalesTrendCommand(BookService* bookService, PurchaseService* purchaseService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetSalesTrend; }
+    QString getName() const override { return "GetSalesTrend"; }
+    bool requiresAuth() const override { return true; }
+    bool requiresPublisher() const override { return true; }
+
+private:
+    BookService* m_bookService;
+    PurchaseService* m_purchaseService;
+};
+
+
+class GetBookRatingsChartCommand : public Command
+{
+public:
+    explicit GetBookRatingsChartCommand(BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetBookRatingsChart; }
+    QString getName() const override { return "GetBookRatingsChart"; }
+    bool requiresAuth() const override { return true; }
+    bool requiresPublisher() const override { return true; }
+
+private:
+    BookService* m_bookService;
+};
+
+
+
+class GetTopSellingBooksCommand : public Command
+{
+public:
+    explicit GetTopSellingBooksCommand(BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetTopSellingBooks; }
+    QString getName() const override { return "GetTopSellingBooks"; }
+    bool requiresAuth() const override { return true; }
+    bool requiresPublisher() const override { return true; }
+
+private:
+    BookService* m_bookService;
+};
+
+
+
+class GetBottomSellingBooksCommand : public Command
+{
+public:
+    explicit GetBottomSellingBooksCommand(BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetBottomSellingBooks; }
+    QString getName() const override { return "GetBottomSellingBooks"; }
+    bool requiresAuth() const override { return true; }
+    bool requiresPublisher() const override { return true; }
+
+private:
+    BookService* m_bookService;
+};
+
+
+
+class GetSalesOverviewCommand : public Command
+{
+public:
+    explicit GetSalesOverviewCommand(BookService* bookService, PurchaseService* purchaseService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetSalesOverview; }
+    QString getName() const override { return "GetSalesOverview"; }
+    bool requiresAuth() const override { return true; }
+    bool requiresPublisher() const override { return true; }
+
+private:
+    BookService* m_bookService;
+    PurchaseService* m_purchaseService;
+};
 
 
 
 
 
 
-#endif // COMMANDS_H
+#endif

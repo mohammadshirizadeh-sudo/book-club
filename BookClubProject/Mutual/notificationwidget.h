@@ -2,10 +2,11 @@
 #define NOTIFICATIONWIDGET_H
 
 #include <QWidget>
-#include <QListWidgetItem>
+#include <QVariantMap>
 
-#include "../NetworkManger/NetworkManager.h"
-#include <QListWidgetItem>
+class NetworkManager;
+class Response;
+class QListWidgetItem;
 
 namespace Ui {
 class NotificationWidget;
@@ -19,26 +20,33 @@ public:
     explicit NotificationWidget(NetworkManager* networkManager, QWidget *parent = nullptr);
     ~NotificationWidget();
 
-    void loadNotifications();
-    int getUnreadCount() const;
-
-signals:
-    void notificationCountChanged(int count);
+protected:
+    void showEvent(QShowEvent *event) override;
 
 private slots:
+    // مدیریت مرکزی پاسخ‌های شبکه
+    void handleResponse(const Response& response);
+
+    // اسلات‌های دکمه‌ها و عناصر UI
     void on_markReadButton_clicked();
     void on_markAllReadButton_clicked();
     void on_clearAllButton_clicked();
     void on_refreshButton_clicked();
     void on_notificationList_itemDoubleClicked(QListWidgetItem *item);
-    void onResponseReceived(const Response& response);
 
 private:
     Ui::NotificationWidget *ui;
-    NetworkManager* m_networkManager;
+    NetworkManager *m_networkManager;
 
-    void updateStatusLabels();
-    void populateNotificationList(const QVariantList &notifications);
+    // متدهای ارسال درخواست به سرور
+    void loadNotifications();
+    void markNotificationAsRead(int notificationId);
+    void markAllNotificationsAsRead();
+    void clearAllNotifications();
+
+    // متدهای بروزرسانی رابط کاربری
+    void updateNotificationsList(const QVariantList& notifications);
+    void updateBadgeAndStatus(int totalCount, int unreadCount);
 };
 
 #endif // NOTIFICATIONWIDGET_H

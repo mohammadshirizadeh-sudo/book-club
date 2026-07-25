@@ -50,11 +50,18 @@ void InfoDialog::handleResponse(const Response& response)
         ui->usernameLabel->setText(data["username"].toString());
         ui->emailLabel->setText(data["email"].toString());
         ui->fullnameLabel->setText(data["fullName"].toString());
-        ui->roleLabel->setText(data["role"].toString());
+        QString role =data["role"].toString();
+        ui->roleLabel->setText(role);
+        ui->updatedAtLabel->setText(data["updatedAt"].toString());
         ui->statusLabel->setText(data["status"].toString());
 
-        QStringList favoriteGenres = data["favoriteGenres"].toStringList();
-        ui->favGenresLabel->setText(favoriteGenres.isEmpty() ? "بدون ژانر محبوب" : favoriteGenres.join("، "));
+        if(role == "User"){
+            QStringList favoriteGenres = data["favoriteGenres"].toStringList();
+            ui->favGenresLabel->setText(favoriteGenres.isEmpty() ? "بدون ژانر محبوب" : favoriteGenres.join("، "));
+        }else{
+            ui->label_7->setText("Joining time:");
+            ui->favGenresLabel->setText(data["joinedAt"].toString());
+        }
 
         qDebug() << "✅ [InfoDialog] UI successfully updated with profile data.";
     }

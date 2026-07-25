@@ -156,16 +156,8 @@ void Book::deactivate() {
 
 double Book::getFinalPrice() const
 {
-    double finalPrice = price * (1.0 - discountPercent / 100.0);
-
-    // اگر تخفیف زمان‌دار است و زمان آن تمام شده، قیمت اصلی برگردانده شود
-    if (isTimedDiscount && discountEndDate.isValid()) {
-        if (QDateTime::currentDateTime() > discountEndDate) {
-            return price;  // تخفیف منقضی شده
-        }
-    }
-
-    return finalPrice;
+    expireDiscountIfNeeded();
+    return price * (1.0 - discountPercent / 100.0);
 }
 
 
@@ -175,10 +167,24 @@ bool Book::isFree() const {
 
 bool Book::isDiscounted() const
 {
-    if (isTimedDiscount && discountEndDate.isValid()) {
-        if (QDateTime::currentDateTime() > discountEndDate) {
-            return false;  // تخفیف منقضی شده
-        }
-    }
+    expireDiscountIfNeeded();
     return discountPercent > 0.0;
+}
+
+
+void Book::expireDiscountIfNeeded() const
+{
+    if (isTimedDiscount &&
+        discountEndDate.isValid() &&
+        QDateTime::currentDateTime() > discountEndDate)
+    {
+        const_cast<Book*>(this)->removeDiscount();
+    }
+}
+
+
+double Book::getDiscountPercent() const
+{
+    expireDiscountIfNeeded();
+    return discountPercent;
 }

@@ -33,9 +33,17 @@ void BookDetailDialog::displayBookInfo(const QVariantMap& bookData)
     ui->titleLabel->setText(bookData["title"].toString());
     ui->authorLabel->setText(bookData["author"].toString());
     ui->genreLabel->setText(bookData["genre"].toString());
-    ui->priceLabel->setText(bookData["price"].toString() + " Tooman");
+    double price = bookData["price"].toDouble();
+    double finalPrice = bookData["finalPrice"].toDouble();
+
+    ui->priceLabel->setText(
+        QString::number(price, 'f', 2) + " Tooman"
+        );
+
+    ui->finalPriceLabel->setText(
+        QString::number(finalPrice, 'f', 2) + " Tooman"
+        );
     ui->discountLabel->setText(bookData["discountPercent"].toString() + " ٪");
-    ui->finalPriceLabel->setText(bookData["finalPrice"].toString() + " Tooman");
     ui->ratingLabel->setText(bookData["averageRating"].toString());
     int bookId = bookData["bookId"].toInt();
     bool isFav = bookData["isFavorite"].toBool();

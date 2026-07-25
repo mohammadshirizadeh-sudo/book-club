@@ -265,6 +265,27 @@ Command* CommandFactory::create(
     case CommandType::ApplyDiscount:
         return new ApplyDiscountCommand(bookService);
 
+    case CommandType::GetSalesTrend:
+        return new GetSalesTrendCommand(bookService ,purchaseService);
+
+    case CommandType::GetBookRatingsChart:
+        return new GetBookRatingsChartCommand(bookService);
+    case CommandType::GetTopSellingBooks:
+        return new GetTopSellingBooksCommand(bookService);
+
+    case CommandType::GetSalesOverview:
+        return new GetSalesOverviewCommand(bookService , purchaseService);
+    case CommandType::GetBottomSellingBooks:
+        return new GetBottomSellingBooksCommand(bookService);
+
+
+        \
+
+
+
+
+
+
 
 
 

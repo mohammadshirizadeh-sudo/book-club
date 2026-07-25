@@ -95,7 +95,11 @@ enum class CommandType {
     GetUserLibrary,
     RemoveDiscount,
     ApplyDiscount,
-
+    GetSalesTrend,
+    GetBookRatingsChart,
+    GetTopSellingBooks,
+    GetBottomSellingBooks,
+    GetSalesOverview,
     SearchAuthors
 };
 
@@ -137,6 +141,7 @@ public:
     static CommandType stringToCommandType(const QString& str);
     static QString CommandTypeToString(CommandType cmd);
 
+
 private:
     CommandType m_CommandType;
     QVariantMap m_params;
@@ -144,3 +149,7 @@ private:
 };
 
 #endif // REQUEST_H
+
+
+
+

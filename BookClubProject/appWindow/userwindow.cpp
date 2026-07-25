@@ -753,3 +753,9 @@ void UserWindow::on_pushButton_8_clicked()
     emit shelfWindow();
 }
 
+
+void UserWindow::on_notificationPushButton_clicked()
+{
+    emit notificationWindow();
+}
+

@@ -27,6 +27,11 @@ private:
     QDateTime discountStartDate;
     QDateTime discountEndDate;
 
+
+
+
+    void expireDiscountIfNeeded() const;
+
 public:
     // ===== Constructors =====
     Book();
@@ -53,7 +58,7 @@ public:
     Genre getGenre() const { return genre; }
     QString getDescription() const { return description; }
     double getPrice() const { return price; }
-    double getDiscountPercent() const { return discountPercent; }
+    double getDiscountPercent() const;
     QString getCoverPath() const { return coverPath; }
     QString getPdfPath() const { return pdfPath; }
     bool getIsActive() const { return isActive; }

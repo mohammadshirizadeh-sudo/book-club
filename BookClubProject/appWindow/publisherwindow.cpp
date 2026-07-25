@@ -61,7 +61,7 @@ void PublisherWindow::on_editBooksPushButton_clicked()
 
 void PublisherWindow::on_bookStatsPushButton_clicked()
 {
-
+    emit bookStatisticWindow();
 }
 
 
@@ -80,6 +80,6 @@ void PublisherWindow::on_deactivatePushButton_clicked()
 
 void PublisherWindow::on_notifPushButton_clicked()
 {
-
+    emit notificationWindow();
 }
 

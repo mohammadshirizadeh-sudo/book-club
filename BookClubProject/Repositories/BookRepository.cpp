@@ -109,7 +109,8 @@ bool BookRepository::loadAllFromDatabase() {
 
     QString query = R"(
         SELECT id, title, author, genre, description, price,
-               discount_percent, cover_path, pdf_path, is_active,
+               discount_percent,is_timed_discount ,discount_start_date
+               ,discount_end_date , cover_path, pdf_path, is_active,
                average_rating, sales_count, publisher_id,
                created_at, updated_at
         FROM book

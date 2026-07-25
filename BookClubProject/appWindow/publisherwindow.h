@@ -45,6 +45,9 @@ signals:
     void editWindow();
     void deactivateBook();
 
+    void bookStatisticWindow();
+    void notificationWindow();
+
 private:
     Ui::PublisherWindow *ui;
     NetworkManager* m_networkManager;
