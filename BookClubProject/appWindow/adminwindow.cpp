@@ -186,8 +186,6 @@ void AdminWindow::setupConnections()
             this, &AdminWindow::on_systemLogsButton_clicked);
     connect(ui->serverStatusButton, &QPushButton::clicked,
             this, &AdminWindow::on_serverStatusButton_clicked);
-    connect(ui->notifButton, &QPushButton::clicked,
-            this, &AdminWindow::on_notifButton_clicked);
     connect(ui->signOutButton, &QPushButton::clicked,
             this, &AdminWindow::on_signOutButton_clicked);
 
@@ -738,21 +736,6 @@ void AdminWindow::on_blockedUsersTable_cellClicked(int row, int column)
 }
 
 // ==================== LOADING STATE MANAGEMENT ====================
-
-void AdminWindow::showDashboardLoading(bool show)
-{
-    m_isLoadingDashboard = show;
-    ui->dashboardLoadingOverlay->setVisible(show);
-    ui->mainStackedWidget->widget(0)->setEnabled(!show);
-}
-
-void AdminWindow::showUsersLoading(bool show)
-{
-    m_isLoadingUsers = show;
-    ui->usersLoadingOverlay->setVisible(show);
-    ui->userManagementPage->setEnabled(!show);
-}
-
 void AdminWindow::setLoadingText(QWidget *label, const QString &text)
 {
     QLabel *lbl = qobject_cast<QLabel*>(label);
@@ -1994,3 +1977,9 @@ void AdminWindow::clearTable(QTableWidget *table)
 {
     table->setRowCount(0);
 }
+
+void AdminWindow::on_requestLogTextEdit_copyAvailable(bool b)
+{
+
+}
+

@@ -8,6 +8,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QInputDialog>
+#include <QTableWidget>
 
 namespace Ui {
 class AdminWindow;

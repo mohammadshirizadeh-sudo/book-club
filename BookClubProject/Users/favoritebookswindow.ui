@@ -68,7 +68,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>❤️ My Favorite Books</string>
+      <string>My Favorite Books</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -94,7 +94,7 @@
 }</string>
      </property>
      <property name="placeholderText">
-      <string>Search your favorites...</string>
+      <string>🔎Search among your favorites...</string>
      </property>
     </widget>
     <widget class="QScrollArea" name="favoritesScrollArea">
