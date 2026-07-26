@@ -286,23 +286,8 @@ Command* CommandFactory::create(
         return new GetSalesOverviewCommand(bookService , purchaseService);
     case CommandType::GetBottomSellingBooks:
         return new GetBottomSellingBooksCommand(bookService);
-
-
-
-
-        \
-
-
-
-
-
-
-
-
-
-
-
-
+    case CommandType::CheckBookOwnership:
+        return new CheckBookOwnershipCommand(libraryService);
 
     // =============================================
     // ===== Unknown Command =====

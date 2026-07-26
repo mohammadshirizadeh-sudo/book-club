@@ -1133,6 +1133,20 @@ private:
 };
 
 
+class CheckBookOwnershipCommand : public Command
+{
+public:
+    explicit CheckBookOwnershipCommand(LibraryService* libraryService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::CheckBookOwnership; }
+    QString getName() const override { return "CheckBookOwnership"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    LibraryService* m_libraryService;
+};
+
+
 
 
 

@@ -195,9 +195,7 @@ CommandType Request::stringToCommandType(const QString& str)
 
          {"GetBottomSellingBooks" , CommandType ::GetBottomSellingBooks},
         {"GetSalesOverview" , CommandType ::GetSalesOverview},
-
-
-
+        {"CheckBookOwnership" , CommandType ::CheckBookOwnership},
 
 
 
@@ -319,6 +317,10 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetSystemAlerts: return "GetSystemAlerts";
     case CommandType::GetDatabaseStatus: return "GetDatabaseStatus";
     case CommandType::GetServerStatus: return "GetServerStatus";
+
+    case CommandType::CheckBookOwnership: return "CheckBookOwnership";
+
+
 
 
     default: return "Unknown";

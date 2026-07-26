@@ -370,3 +370,10 @@ QSharedPointer<Shelf> LibraryService::getShelfByName(int userId, const QString& 
     qDebug() << "Shelf with name" << name << "not found for user" << userId;
     return nullptr;
 }
+
+
+bool LibraryService::isBookOwned(int userId, int bookId) const
+{
+    QVector<int> ownedBookIds = getOwnedBooks(userId);
+    return ownedBookIds.contains(bookId);
+}

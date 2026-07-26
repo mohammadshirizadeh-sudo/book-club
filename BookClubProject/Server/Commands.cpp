@@ -3277,6 +3277,30 @@ Response GetSalesOverviewCommand::execute(const QVariantMap& params)
 }
 
 
+CheckBookOwnershipCommand::CheckBookOwnershipCommand(LibraryService* libraryService)
+    : m_libraryService(libraryService) {}
+
+Response CheckBookOwnershipCommand::execute(const QVariantMap& params)
+{
+    int userId = params.value("userId", -1).toInt();
+    int bookId = params.value("bookId", -1).toInt();
+
+    if (userId <= 0 || bookId <= 0) {
+        return Response::error(CommandType::CheckBookOwnership, "Invalid userId or bookId");
+    }
+
+    // ASSUMPTION: LibraryService exposes isBookOwned(userId, bookId).
+    // Adjust this one line if the real method name/signature differs.
+    bool owned = m_libraryService->isBookOwned(userId, bookId);
+
+
+    QVariantMap data;
+    data["bookId"] = bookId;
+    data["isOwned"] = owned;
+    return Response::success(CommandType::CheckBookOwnership, data);
+}
+
+
 
 
 

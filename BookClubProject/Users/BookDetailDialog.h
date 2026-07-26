@@ -32,7 +32,12 @@ private:
     NetworkManager* m_networkManager;
     QVariantMap m_bookData;
     bool m_isFavorite;
+    bool m_isOwned = false;
     void updateFavoriteButtonAppearance();
+
+    void checkBookOwnership();
+    void updateCartButtonAppearance();
+    void openBookPdf();
 };
 
 #endif // BOOKDETAILDIALOG_H

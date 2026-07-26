@@ -1,3 +1,5 @@
+
+/*
 #ifndef ALLREVIEWSDIALOG_H
 #define ALLREVIEWSDIALOG_H
 
@@ -20,3 +22,4 @@ private:
 };
 
 #endif // ALLREVIEWSDIALOG_H
+*/

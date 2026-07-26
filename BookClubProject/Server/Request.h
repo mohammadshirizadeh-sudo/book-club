@@ -104,6 +104,7 @@ enum class CommandType {
     GetTopSellingBooks,
     GetBottomSellingBooks,
     GetSalesOverview,
+    CheckBookOwnership,
     SearchAuthors
 };
 

@@ -1,3 +1,5 @@
+/*
+
 #include "allreviewsdialog.h"
 #include "ui_allreviewsdialog.h"
 
@@ -12,3 +14,4 @@ AllReviewsDialog::~AllReviewsDialog()
 {
     delete ui;
 }
+*/

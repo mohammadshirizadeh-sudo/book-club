@@ -1,4 +1,3 @@
-
 #include"BookDetailDialog.h"
 #include "Users/ui_BookDetailDialog.h"
 #include "../Server/Request.h"
@@ -7,6 +6,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include "pdfreaderwindow.h"
+#include <QFile>
 
 BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVariantMap& bookData, QWidget *parent) :
     QDialog(parent),
@@ -21,6 +21,7 @@ BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVarian
 
 
     displayBookInfo(bookData);
+    checkBookOwnership();
 }
 
 BookDetailDialog::~BookDetailDialog()
@@ -63,9 +64,49 @@ void BookDetailDialog::displayBookInfo(const QVariantMap& bookData)
     }
 
     updateFavoriteButtonAppearance();
+    updateCartButtonAppearance();
 }
 
+void BookDetailDialog::checkBookOwnership()
+{
+    int userId = SessionManager::instance()->getUserId();
+    int bookId = m_bookData["bookId"].toInt();
 
+    if (userId <= 0 || bookId <= 0) {
+        return;
+    }
+
+    QVariantMap params;
+    params["userId"] = userId;
+    params["bookId"] = bookId;
+
+    Request request(CommandType::CheckBookOwnership, params);
+    m_networkManager->sendRequest(request);
+}
+
+void BookDetailDialog::updateCartButtonAppearance()
+{
+    if (m_isOwned) {
+        ui->addCartPushButton->setText("📖 Open PDF");
+        ui->addCartPushButton->setStyleSheet(
+            "border: 3px solid black;"
+            "border-radius: 12px;"
+            "color: rgb(0, 0, 0);"
+            "background-color: rgb(200, 255, 200);"
+            "font: 700 9pt \"Script MT\";"
+            "font-size: 40px;"
+            );
+    } else {
+        ui->addCartPushButton->setText("Add to Cart");
+        ui->addCartPushButton->setStyleSheet(
+            "border: 3px solid black;"
+            "border-radius: 12px;"
+            "color: rgb(0, 0, 0);"
+            "font: 700 9pt \"Script MT\";"
+            "font-size: 40px;"
+            );
+    }
+}
 
 void BookDetailDialog::updateFavoriteButtonAppearance()
 {
@@ -111,6 +152,19 @@ void BookDetailDialog::onResponseReceived(const Response& response)
         } else {
             ui->coverLable->setText("Failed to download cover");
         }
+    }else if (response.getCommandType() == CommandType::CheckBookOwnership) {
+        if (response.isSuccess()) {
+            QVariantMap data = response.getData();
+            int responseBookId = data.value("bookId").toInt();
+            int currentBookId = m_bookData["bookId"].toInt();
+
+            // اطمینان از تعلق پاسخ به همین کتاب (در صورت باز بودن چند دیالوگ)
+            if (responseBookId == currentBookId) {
+                m_isOwned = data.value("isOwned").toBool();
+                updateCartButtonAppearance();
+            }
+        }
+        // در صورت خطا، فرض می‌کنیم مالک نیست و دکمه به شکل پیش‌فرض (Add to Cart) باقی می‌ماند
     }else if (response.getCommandType() == CommandType::AddFavoriteBook) {
         ui->addFavoritePushButton->setEnabled(true);
 
@@ -190,6 +244,11 @@ void BookDetailDialog::on_addFavoritePushButton_clicked()
 
 void BookDetailDialog::on_addCartPushButton_clicked()
 {
+    if (m_isOwned) {
+        openBookPdf();
+        return;
+    }
+
     // 1. دریافت userId از SessionManager
     int userId = SessionManager::instance()->getUserId();
 
@@ -217,8 +276,7 @@ void BookDetailDialog::on_addCartPushButton_clicked()
     m_networkManager->sendRequest(request);
 }
 
-/*
-void BookDetailDialog::on_pushButton_clicked()
+void BookDetailDialog::openBookPdf()
 {
     int bookId = m_bookData["bookId"].toInt();
     QString title = m_bookData["title"].toString();
@@ -229,36 +287,9 @@ void BookDetailDialog::on_pushButton_clicked()
         return;
     }
 
-    PdfReaderWindow *readerWindow = new PdfReaderWindow(bookId);
-    readerWindow->setAttribute(Qt::WA_DeleteOnClose);
-
-    // حصول اطمینان از اینکه پنجره مستقل است
-    readerWindow->setWindowFlags(Qt::Window);
-
-    readerWindow->setBookTitle(title);
-
-    connect(readerWindow, &PdfReaderWindow::backRequested, readerWindow, &QWidget::close);
-
-    if (readerWindow->loadPdf(filePath)) {
-        readerWindow->show();
-
-        // آوردن پنجره به روی تمام پنجره‌های دیگر و دادن فوکوس به آن
-        readerWindow->raise();
-        readerWindow->activateWindow();
-    } else {
-        readerWindow->deleteLater();
-    }
-}
-*/
-
-void BookDetailDialog::on_pushButton_clicked()
-{
-    int bookId = m_bookData["bookId"].toInt();
-    QString title = m_bookData["title"].toString();
-    QString filePath = m_bookData["pdfPath"].toString();
-
-    if (filePath.isEmpty()) {
-        QMessageBox::warning(this, "خطا", "مسیر فایل PDF برای این کتاب ثبت نشده است.");
+    // ✅ بررسی وجود فایل قبل از هر کاری
+    if (!QFile::exists(filePath)) {
+        QMessageBox::warning(this, "خطا", "فایل PDF پیدا نشد:\n" + filePath);
         return;
     }
 
@@ -267,20 +298,26 @@ void BookDetailDialog::on_pushButton_clicked()
     readerWindow->setWindowFlags(Qt::Window);
     readerWindow->setBookTitle(title);
 
-    // دیالوگ جاری را مخفی کن و پس از بستن PDF دوباره نشان بده
-    this->hide();
+    // ✅ اتصال سیگنال قبل از hide
     connect(readerWindow, &PdfReaderWindow::backRequested, this, [this, readerWindow]() {
         readerWindow->close();
         this->show();
     });
 
+    // ✅ بارگذاری PDF
     if (readerWindow->loadPdf(filePath)) {
-        readerWindow->showMaximized(); // یا readerWindow->show();
+        this->hide();  // فقط در صورت موفقیت hide کن
+        readerWindow->showMaximized();
         readerWindow->raise();
         readerWindow->activateWindow();
     } else {
-        this->show(); // در صورت خطا، دیالوگ دوباره ظاهر شود
-        readerWindow->deleteLater();
+        // ❌ در صورت خطا، پنجره PDF رو ببند و به کاربر خطا نشون بده
+        QMessageBox::warning(this, "خطا", "بارگذاری فایل PDF با شکست مواجه شد.");
+        readerWindow->deleteLater();  // یا delete readerWindow;
+        // this->show() نیازی نیست چون hide نشده
     }
 }
-
+void BookDetailDialog::on_pushButton_clicked()
+{
+    openBookPdf();
+}
