@@ -68,7 +68,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>📚 Browse by Genre</string>
+      <string>Browse by Genre</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -94,7 +94,7 @@
 }</string>
      </property>
      <property name="placeholderText">
-      <string>Search genres...</string>
+      <string>🔎Search genres...</string>
      </property>
     </widget>
     <widget class="QScrollArea" name="genresScrollArea">

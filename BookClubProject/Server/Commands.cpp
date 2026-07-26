@@ -495,6 +495,7 @@ Response GetNewBooksCommand::execute(const QVariantMap& params)
         } 
         bookData["genre"] =GenreHelper::toString(book->getGenre());
         bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["pdfPath"] = book->getPdfPath();
         bookList.append(bookData);
     }
 
@@ -530,6 +531,7 @@ Response GetFreeBooksCommand::execute(const QVariantMap& params)
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["coverPath"] = book->getCoverPath();
+        bookData["pdfPath"] = book->getPdfPath();
         if (userId > 0) {
             bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
             bookData["isFavorite"] = isFavorite;
@@ -581,6 +583,7 @@ Response GetRecommendedBooksCommand::execute(const QVariantMap& params)
         bookData["coverPath"] = book->getCoverPath();
         bookData["genre"] = GenreHelper::toString(book->getGenre());
         bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["pdfPath"] = book->getPdfPath();
         bookList.append(bookData);
     }
 
@@ -1533,6 +1536,69 @@ Response GetSystemStatsCommand::execute(const QVariantMap& params)
     }
     return Response::success(CommandType::GetSystemStats , data);
 }
+
+GetRecentActivitiesCommand::GetRecentActivitiesCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response GetRecentActivitiesCommand::execute(const QVariantMap& params)
+{
+    int limit = params.value("limit", 10).toInt();
+
+    QStringList activities = m_adminService->getRecentActivities(limit);
+
+    QVariantList list;
+    for (const QString& a : activities) {
+        list.append(a);
+    }
+
+    QVariantMap data;
+    data["activities"] = list;
+    data["count"] = list.size();
+
+    return Response::success(CommandType::GetRecentActivities, "Recent activities loaded", data);
+}
+
+GetSystemAlertsCommand::GetSystemAlertsCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response GetSystemAlertsCommand::execute(const QVariantMap& params)
+{
+    QStringList alerts = m_adminService->getSystemAlerts();
+
+    QVariantList list;
+    for (const QString& a : alerts) {
+        list.append(a);
+    }
+
+    QVariantMap data;
+    data["alerts"] = list;
+    data["count"] = list.size();
+
+    return Response::success(CommandType::GetSystemAlerts, "System alerts loaded", data);
+}
+GetDatabaseStatusCommand::GetDatabaseStatusCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response GetDatabaseStatusCommand::execute(const QVariantMap& params)
+{
+    QMap<QString, QVariant> status = m_adminService->getDatabaseStatus();
+
+    QVariantMap data;
+    for (auto it = status.begin(); it != status.end(); ++it) {
+        data[it.key()] = it.value();
+    }
+
+    return Response::success(CommandType::GetDatabaseStatus, "Database status loaded", data);
+}
+
+
+
 RequestPasswordResetCommand::RequestPasswordResetCommand(AuthService *authService)
     :m_authService(authService)
 {
@@ -2530,7 +2596,6 @@ Response GetBestSellersCommand::execute(const QVariantMap& params)
         bookData["coverPath"] = book->getCoverPath();
         bookData["pdfPath"] = book->getPdfPath();
         bookData["isActive"] = book->getIsActive();
-        bookData["genre"] = GenreHelper::toString(book->getGenre());
         bookData["discountPercent"] = book->getDiscountPercent();
 
         // اطلاعات ناشر (اختیاری)
@@ -3209,6 +3274,30 @@ Response GetSalesOverviewCommand::execute(const QVariantMap& params)
     data["periods"] = periodSummaries;
 
     return Response::success(CommandType::GetSalesOverview, "Sales overview loaded", data);
+}
+
+
+CheckBookOwnershipCommand::CheckBookOwnershipCommand(LibraryService* libraryService)
+    : m_libraryService(libraryService) {}
+
+Response CheckBookOwnershipCommand::execute(const QVariantMap& params)
+{
+    int userId = params.value("userId", -1).toInt();
+    int bookId = params.value("bookId", -1).toInt();
+
+    if (userId <= 0 || bookId <= 0) {
+        return Response::error(CommandType::CheckBookOwnership, "Invalid userId or bookId");
+    }
+
+    // ASSUMPTION: LibraryService exposes isBookOwned(userId, bookId).
+    // Adjust this one line if the real method name/signature differs.
+    bool owned = m_libraryService->isBookOwned(userId, bookId);
+
+
+    QVariantMap data;
+    data["bookId"] = bookId;
+    data["isOwned"] = owned;
+    return Response::success(CommandType::CheckBookOwnership, data);
 }
 
 

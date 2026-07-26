@@ -140,6 +140,11 @@ CommandType Request::stringToCommandType(const QString& str)
         {"DeleteReview", CommandType::DeleteReview},
         {"GetSystemStats", CommandType::GetSystemStats},
 
+        {"GetRecentActivities", CommandType::GetRecentActivities},
+        {"GetSystemAlerts", CommandType::GetSystemAlerts},
+        {"GetDatabaseStatus", CommandType::GetDatabaseStatus},
+        {"GetServerStatus", CommandType::GetServerStatus},
+
 
 
         {"RequestPasswordReset", CommandType::RequestPasswordReset},
@@ -190,9 +195,7 @@ CommandType Request::stringToCommandType(const QString& str)
 
          {"GetBottomSellingBooks" , CommandType ::GetBottomSellingBooks},
         {"GetSalesOverview" , CommandType ::GetSalesOverview},
-
-
-
+        {"CheckBookOwnership" , CommandType ::CheckBookOwnership},
 
 
 
@@ -309,6 +312,15 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetTopSellingBooks: return "GetTopSellingBooks";
     case CommandType::GetBottomSellingBooks: return "GetBottomSellingBooks";
     case CommandType::GetSalesOverview: return "GetSalesOverview";
+
+    case CommandType::GetRecentActivities: return "GetRecentActivities";
+    case CommandType::GetSystemAlerts: return "GetSystemAlerts";
+    case CommandType::GetDatabaseStatus: return "GetDatabaseStatus";
+    case CommandType::GetServerStatus: return "GetServerStatus";
+
+    case CommandType::CheckBookOwnership: return "CheckBookOwnership";
+
+
 
 
     default: return "Unknown";

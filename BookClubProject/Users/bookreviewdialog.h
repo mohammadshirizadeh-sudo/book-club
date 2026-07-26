@@ -15,6 +15,8 @@ public:
     explicit BookReviewDialog(QWidget *parent = nullptr);
     ~BookReviewDialog();
 
+private slots:
+
 private:
     Ui::BookReviewDialog *ui;
 };
