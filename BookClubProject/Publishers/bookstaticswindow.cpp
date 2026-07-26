@@ -1,345 +1,299 @@
-
-
-/*
 #include "bookstaticswindow.h"
 #include "Publishers/ui_bookstaticswindow.h"
-#include <QDebug>
-#include <QMessageBox>
 
-BookStaticsWindow::BookStaticsWindow(QWidget *parent) :
+#include "../appWindow/SessionManager.h"
+#include "../Server/Request.h"
+
+#include <QMessageBox>
+#include <QVBoxLayout>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QValueAxis>
+#include "../Network-Manger/NetworkManager.h"
+
+BookStaticsWindow::BookStaticsWindow(NetworkManager* networkManager, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::BookStaticsWindow),
-    m_salesChartView(nullptr),
-    m_ratingsChartView(nullptr),
-    m_salesChart(nullptr),
-    m_ratingsChart(nullptr)
+    m_networkManager(networkManager),
+    m_salesTrendChart(new QChart()),
+    m_ratingsChart(new QChart())
 {
     ui->setupUi(this);
-
-    // Initialize charts
-    initializeCharts();
-
-    // Load initial data
-    loadStatisticsData();
+    connect(m_networkManager, &NetworkManager::responseReceived,
+            this, &BookStaticsWindow::handleResponse);
+    setupCharts();
+    setupTables();
 }
 
 BookStaticsWindow::~BookStaticsWindow()
 {
+    disconnect(m_networkManager, &NetworkManager::responseReceived,
+               this, &BookStaticsWindow::handleResponse);
     delete ui;
 }
 
-void BookStaticsWindow::initializeCharts()
+void BookStaticsWindow::showEvent(QShowEvent *event)
 {
-    // === Sales Trend Chart (Line Chart) ===
-    m_salesChart = new QChart();
-    m_salesChart->setTitle("Sales Over Time");
-    m_salesChart->setTitleFont(QFont("Segoe UI", 12, QFont::Bold));
-    m_salesChart->setAnimationOptions(QChart::SeriesAnimations);
-    m_salesChart->legend()->setVisible(true);
-    m_salesChart->legend()->setAlignment(Qt::AlignBottom);
-    m_salesChart->setBackgroundVisible(false);
+    QWidget::showEvent(event);
+    loadAllStatistics();
+}
 
-    // Create line series for sales data
-    QLineSeries *salesSeries = new QLineSeries();
-    salesSeries->setName("Sales Count");
-    salesSeries->setColor(QColor(0, 85, 170));
-    salesSeries->setPen(QPen(QColor(0, 85, 170), 3));
+void BookStaticsWindow::setupCharts()
+{
+    m_salesTrendChartView = new QChartView(m_salesTrendChart, ui->salesChartPlaceholder);
+    m_salesTrendChartView->setRenderHint(QPainter::Antialiasing);
 
-    // Sample data - will be replaced with real data
-    QStringList categories;
-    for (int i = 1; i <= 7; i++) {
-        categories << QString("Day %1").arg(i);
-        *salesSeries << QPointF(i, qrand() % 50 + 10);
-    }
-
-    m_salesChart->addSeries(salesSeries);
-
-    // Configure axes
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    axisX->append(categories);
-    m_salesChart->addAxis(axisX, Qt::AlignBottom);
-    salesSeries->attachAxis(axisX);
-
-    QValueAxis *axisY = new QValueAxis();
-    axisY->setRange(0, 60);
-    axisY->setTitleText("Sales");
-    axisY->setTitleFont(QFont("Segoe UI", 10));
-    m_salesChart->addAxis(axisY, Qt::AlignLeft);
-    salesSeries->attachAxis(axisY);
-
-    // Create chart view and add to placeholder
-    m_salesChartView = new QChartView(m_salesChart, ui->salesChartPlaceholder);
-    m_salesChartView->setRenderHint(QPainter::Antialiasing);
-    m_salesChartView->setGeometry(ui->salesChartPlaceholder->geometry());
-    m_salesChartView->show();
-
-    // === Ratings Bar Chart ===
-    m_ratingsChart = new QChart();
-    m_ratingsChart->setTitle("Average Rating by Book");
-    m_ratingsChart->setTitleFont(QFont("Segoe UI", 12, QFont::Bold));
-    m_ratingsChart->setAnimationOptions(QChart::SeriesAnimations);
-    m_ratingsChart->legend()->setVisible(false);
-    m_ratingsChart->setBackgroundVisible(false);
-
-    // Create bar series for ratings
-    QBarSeries *barSeries = new QBarSeries();
-
-    // Sample rating data
-    QBarSet *ratingsSet = new QBarSet("Rating");
-    ratingsSet->setColor(QColor(255, 152, 0));
-    ratingsSet->setLabelColor(QColor(50, 50, 50));
-
-    // Sample books with ratings
-    QStringList bookNames;
-    bookNames << "Book A" << "Book B" << "Book C" << "Book D" << "Book E";
-
-    double sampleRatings[] = {4.5, 3.8, 4.2, 3.5, 4.8};
-    for (int i = 0; i < 5; i++) {
-        *ratingsSet << sampleRatings[i];
-    }
-    barSeries->append(ratingsSet);
-    m_ratingsChart->addSeries(barSeries);
-
-    // Configure axes for bar chart
-    QBarCategoryAxis *ratingAxisX = new QBarCategoryAxis();
-    ratingAxisX->append(bookNames);
-    m_ratingsChart->addAxis(ratingAxisX, Qt::AlignBottom);
-    barSeries->attachAxis(ratingAxisX);
-
-    QValueAxis *ratingAxisY = new QValueAxis();
-    ratingAxisY->setRange(0, 5);
-    ratingAxisY->setTitleText("Stars (1-5)");
-    ratingAxisY->setTitleFont(QFont("Segoe UI", 10));
-    ratingAxisY->setTickCount(6);
-    m_ratingsChart->addAxis(ratingAxisY, Qt::AlignLeft);
-    barSeries->attachAxis(ratingAxisY);
-
-    // Create chart view and add to placeholder
+    QVBoxLayout *layoutTrend = new QVBoxLayout(ui->salesChartPlaceholder);
+    layoutTrend->setContentsMargins(0, 0, 0, 0);
+    layoutTrend->addWidget(m_salesTrendChartView);
     m_ratingsChartView = new QChartView(m_ratingsChart, ui->ratingsChartPlaceholder);
     m_ratingsChartView->setRenderHint(QPainter::Antialiasing);
-    m_ratingsChartView->setGeometry(ui->ratingsChartPlaceholder->geometry());
-    m_ratingsChartView->show();
 
-    // Connect resize events to update chart positions
-    connect(ui->salesChartPlaceholder, &QWidget::resized, this, [this]() {
-        if (m_salesChartView) {
-            m_salesChartView->setGeometry(ui->salesChartPlaceholder->geometry());
-        }
-    });
-
-    connect(ui->ratingsChartPlaceholder, &QWidget::resized, this, [this]() {
-        if (m_ratingsChartView) {
-            m_ratingsChartView->setGeometry(ui->ratingsChartPlaceholder->geometry());
-        }
-    });
+    QVBoxLayout *layoutRatings = new QVBoxLayout(ui->ratingsChartPlaceholder);
+    layoutRatings->setContentsMargins(0, 0, 0, 0);
+    layoutRatings->addWidget(m_ratingsChartView);
 }
-
-void BookStaticsWindow::loadStatisticsData()
+void BookStaticsWindow::setupTables()
 {
-    updateSummaryCards();
-    populateBestSellersTable();
-    populateWorstSellersTable();
-    updateRatingsChart();
-    updateSalesChart("Daily");
+    auto configureTable = [](QTableWidget *table) {
+        table->setColumnCount(4);
+        table->setHorizontalHeaderLabels({"Rank", "Book Title", "Sales", "Revenue"});
+        table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+        table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    };
+
+    configureTable(ui->bestSellersTable);
+    configureTable(ui->worstSellersTable);
 }
-
-void BookStaticsWindow::updateSummaryCards()
+void BookStaticsWindow::loadAllStatistics()
 {
-    // Update summary cards with data
-    ui->revenueValueLabel->setText(QString("$%1").arg(getTotalRevenue(), 0, 'f', 2));
-    ui->booksValueLabel->setText(QString::number(getTotalBooksCount()));
-    ui->ratingValueLabel->setText(QString("⭐ %1").arg(getAverageRating(), 0, 'f', 1));
-    ui->salesValueLabel->setText(QString::number(getTotalSalesCount()));
+    int publisherId = SessionManager::instance()->getUserId();
+    if (publisherId <= 0) return;
+
+    requestSalesOverview();
+    requestSalesTrend();
+    requestBookRatingsChart();
+    requestTopSellingBooks();
+    requestBottomSellingBooks();
 }
-
-void BookStaticsWindow::updateSalesChart(const QString &period)
+void BookStaticsWindow::requestSalesOverview()
 {
-    if (!m_salesChart) return;
+    int publisherId = SessionManager::instance()->getUserId();
+    QVariantMap params;
+    params["publisherId"] = publisherId;
 
-    // Clear existing series
-    m_salesChart->removeAllSeries();
+    Request request(CommandType::GetSalesOverview, params);
+    m_networkManager->sendRequest(request);
+}
+void BookStaticsWindow::requestSalesTrend()
+{
+    int publisherId = SessionManager::instance()->getUserId();
+    QVariantMap params;
+    params["publisherId"] = publisherId;
+    params["period"] = ui->chartPeriodCombo->currentText(); // Daily, Weekly, Monthly
+    params["limit"] = 30;
 
-    // Remove old axes
-    QList<QAbstractAxis*> axes = m_salesChart->axes();
-    for (QAbstractAxis* axis : axes) {
-        m_salesChart->removeAxis(axis);
+    Request request(CommandType::GetSalesTrend, params);
+    m_networkManager->sendRequest(request);
+}
+void BookStaticsWindow::requestBookRatingsChart()
+{
+    int publisherId = SessionManager::instance()->getUserId();
+    QVariantMap params;
+    params["publisherId"] = publisherId;
+
+    Request request(CommandType::GetBookRatingsChart, params);
+    m_networkManager->sendRequest(request);
+}
+void BookStaticsWindow::requestTopSellingBooks()
+{
+    int publisherId = SessionManager::instance()->getUserId();
+    QVariantMap params;
+    params["publisherId"] = publisherId;
+    params["limit"] = 5;
+
+    Request request(CommandType::GetTopSellingBooks, params);
+    m_networkManager->sendRequest(request);
+}
+void BookStaticsWindow::requestBottomSellingBooks()
+{
+    int publisherId = SessionManager::instance()->getUserId();
+    QVariantMap params;
+    params["publisherId"] = publisherId;
+    params["limit"] = 5;
+
+    Request request(CommandType::GetBottomSellingBooks, params);
+    m_networkManager->sendRequest(request);
+}
+void BookStaticsWindow::handleResponse(const Response& response)
+{
+    CommandType type = response.getCommandType();
+
+    // فیلتر کردن دستورات مرتبط با این صفحه
+    if (type != CommandType::GetSalesOverview &&
+        type != CommandType::GetSalesTrend &&
+        type != CommandType::GetBookRatingsChart &&
+        type != CommandType::GetTopSellingBooks &&
+        type != CommandType::GetBottomSellingBooks) {
+        return;
     }
 
-    // Create new series
-    QLineSeries *salesSeries = new QLineSeries();
-    salesSeries->setName("Sales Count");
-    salesSeries->setColor(QColor(0, 85, 170));
-    salesSeries->setPen(QPen(QColor(0, 85, 170), 3));
+    if (!response.isSuccess()) {
+        QMessageBox::warning(this, "Error", response.getMessage());
+        return;
+    }
+
+    QVariantMap data = response.getData();
+
+    if (type == CommandType::GetSalesOverview) {
+        updateSalesOverviewUI(data);
+    }
+    else if (type == CommandType::GetSalesTrend) {
+        updateSalesTrendChartUI(data);
+    }
+    else if (type == CommandType::GetBookRatingsChart) {
+        updateRatingsChartUI(data);
+    }
+    else if (type == CommandType::GetTopSellingBooks) {
+        updateTableUI(ui->bestSellersTable, data["books"].toList());
+    }
+    else if (type == CommandType::GetBottomSellingBooks) {
+        updateTableUI(ui->worstSellersTable, data["books"].toList());
+    }
+}
+
+void BookStaticsWindow::updateSalesOverviewUI(const QVariantMap& data)
+{
+    ui->revenueValueLabel->setText(QString("$%1").arg(data["totalRevenue"].toDouble(), 0, 'f', 2));
+    ui->booksValueLabel->setText(QString::number(data["totalBooks"].toInt()));
+    ui->ratingValueLabel->setText(QString::number(data["averageRating"].toDouble(), 'f', 1));
+    ui->salesValueLabel->setText(QString::number(data["totalSales"].toInt()));
+}
+
+void BookStaticsWindow::updateSalesTrendChartUI(const QVariantMap& data)
+{
+    m_salesTrendChart->removeAllSeries();
+    for (auto *axis : m_salesTrendChart->axes()) {
+        m_salesTrendChart->removeAxis(axis);
+    }
+
+    QVariantList labels = data["labels"].toList();
+    QVariantList sales = data["sales"].toList();
+
+    QLineSeries *series = new QLineSeries();
+    series->setName("Units Sold");
+    series->setPointsVisible(true);
 
     QStringList categories;
-    int dataPoints = 7;
-
-    if (period == "Weekly") {
-        dataPoints = 4;
-        for (int i = 1; i <= dataPoints; i++) {
-            categories << QString("Week %1").arg(i);
-            *salesSeries << QPointF(i, qrand() % 200 + 50);
-        }
-    } else if (period == "Monthly") {
-        dataPoints = 6;
-        for (int i = 1; i <= dataPoints; i++) {
-            categories << QString("Month %1").arg(i);
-            *salesSeries << QPointF(i, qrand() % 500 + 100);
-        }
-    } else { // Daily
-        for (int i = 1; i <= dataPoints; i++) {
-            categories << QString("Day %1").arg(i);
-            *salesSeries << QPointF(i, qrand() % 50 + 10);
-        }
+    for (int i = 0; i < labels.size(); ++i) {
+        categories.append(labels[i].toString());
+        series->append(i, sales[i].toInt());
     }
 
-    m_salesChart->addSeries(salesSeries);
+    m_salesTrendChart->addSeries(series);
 
-    // Reconfigure axes
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
-    axisX->append(categories);
-    m_salesChart->addAxis(axisX, Qt::AlignBottom);
-    salesSeries->attachAxis(axisX);
+    if (!categories.isEmpty()) {
+        int maxSales = 0;
 
-    QValueAxis *axisY = new QValueAxis();
-    int maxY = (period == "Monthly") ? 600 : (period == "Weekly") ? 250 : 60;
-    axisY->setRange(0, maxY);
-    axisY->setTitleText("Sales");
-    axisY->setTitleFont(QFont("Segoe UI", 10));
-    m_salesChart->addAxis(axisY, Qt::AlignLeft);
-    salesSeries->attachAxis(axisY);
+        for (int i = 0; i < sales.size(); ++i)
+        {
+            maxSales = qMax(maxSales, sales[i].toInt());
+        }
+        QBarCategoryAxis *axisX = new QBarCategoryAxis();
+        axisX->append(categories);
+        m_salesTrendChart->addAxis(axisX, Qt::AlignBottom);
+        series->attachAxis(axisX);
+
+        QValueAxis *axisY = new QValueAxis();
+        axisY->setLabelFormat("%d");
+        axisY->setTitleText("Sales");
+        axisY->setRange(0, qMax(maxSales, 1) + 1);
+        m_salesTrendChart->addAxis(axisY, Qt::AlignLeft);
+        series->attachAxis(axisY);
+    }
+
+    m_salesTrendChart->legend()->setVisible(true);
+    m_salesTrendChart->legend()->setAlignment(Qt::AlignBottom);
 }
-
-void BookStaticsWindow::updateRatingsChart()
+void BookStaticsWindow::updateRatingsChartUI(const QVariantMap& data)
 {
-    if (!m_ratingsChart) return;
+    m_ratingsChart->removeAllSeries();
+    for (auto *axis : m_ratingsChart->axes()) {
+        m_ratingsChart->removeAxis(axis);
+    }
 
-    // This would be updated with real data from database
-    // For now using sample data set in initializeCharts
+    QVariantList titles = data["bookTitles"].toList();
+    QVariantList ratings = data["ratings"].toList();
+
+    QBarSet *set = new QBarSet("Rating");
+    QStringList categories;
+
+    for (int i = 0; i < titles.size(); ++i) {
+        *set << ratings[i].toDouble();
+
+        QString title = titles[i].toString();
+        if (title.length() > 10) {
+            title = title.left(8) + "..";
+        }
+        categories.append(title);
+    }
+
+    QBarSeries *series = new QBarSeries();
+    series->append(set);
+    m_ratingsChart->addSeries(series);
+
+    if (!categories.isEmpty()) {
+        QBarCategoryAxis *axisX = new QBarCategoryAxis();
+        axisX->append(categories);
+        m_ratingsChart->addAxis(axisX, Qt::AlignBottom);
+        series->attachAxis(axisX);
+
+        QValueAxis *axisY = new QValueAxis();
+        axisY->setRange(0, 5);
+        axisY->setLabelFormat("%.1f");
+        m_ratingsChart->addAxis(axisY, Qt::AlignLeft);
+        series->attachAxis(axisY);
+    }
+
+    m_ratingsChart->legend()->setVisible(false);
 }
-
-void BookStaticsWindow::populateBestSellersTable()
+void BookStaticsWindow::updateTableUI(QTableWidget *table, const QVariantList &books)
 {
-    ui->bestSellersTable->setRowCount(5);
+    table->setRowCount(0);
 
-    // Sample best sellers data
-    struct BestSellerData {
-        QString title;
-        int sales;
-        double revenue;
-    };
+    for (int i = 0; i < books.size(); ++i) {
+        QVariantMap book = books[i].toMap();
+        table->insertRow(i);
 
-    BestSellerData sampleData[] = {
-        {"The Great Adventure", 150, 449.99},
-        {"Mystery of Shadows", 132, 395.99},
-        {"Science Today", 98, 294.00},
-        {"Poetry Collection", 87, 261.00},
-        {"History Revealed", 76, 228.00}
-    };
+        QTableWidgetItem *rankItem = new QTableWidgetItem(QString::number(book["rank"].toInt()));
+        QTableWidgetItem *titleItem = new QTableWidgetItem(book["title"].toString());
+        QTableWidgetItem *salesItem = new QTableWidgetItem(QString::number(book["salesCount"].toInt()));
+        QTableWidgetItem *revenueItem = new QTableWidgetItem(QString("$%1").arg(book["revenue"].toDouble(), 0, 'f', 2));
 
-    for (int row = 0; row < 5; row++) {
-        QTableWidgetItem *rankItem = new QTableWidgetItem(QString::number(row + 1));
         rankItem->setTextAlignment(Qt::AlignCenter);
-        rankItem->setFont(QFont("Segoe UI", 10, QFont::Bold));
-        rankItem->setBackground(QColor(232, 245, 233));
-        ui->bestSellersTable->setItem(row, 0, rankItem);
-
-        QTableWidgetItem *titleItem = new QTableWidgetItem(sampleData[row].title);
-        titleItem->setFont(QFont("Segoe UI", 10));
-        ui->bestSellersTable->setItem(row, 1, titleItem);
-
-        QTableWidgetItem *salesItem = new QTableWidgetItem(QString::number(sampleData[row].sales));
+        titleItem->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
         salesItem->setTextAlignment(Qt::AlignCenter);
-        salesItem->setFont(QFont("Segoe UI", 10, QFont::Bold));
-        ui->bestSellersTable->setItem(row, 2, salesItem);
-
-        QTableWidgetItem *revenueItem = new QTableWidgetItem(QString("$%1").arg(sampleData[row].revenue, 0, 'f', 2));
         revenueItem->setTextAlignment(Qt::AlignCenter);
-        revenueItem->setForeground(QColor(56, 142, 60));
-        ui->bestSellersTable->setItem(row, 3, revenueItem);
+
+        table->setItem(i, 0, rankItem);
+        table->setItem(i, 1, titleItem);
+        table->setItem(i, 2, salesItem);
+        table->setItem(i, 3, revenueItem);
     }
 }
-
-void BookStaticsWindow::populateWorstSellersTable()
-{
-    ui->worstSellersTable->setRowCount(5);
-
-    // Sample worst sellers data
-    struct WorstSellerData {
-        QString title;
-        int sales;
-        double revenue;
-    };
-
-    WorstSellerData sampleData[] = {
-        {"Advanced Mathematics", 8, 24.00},
-        {"Rare Botany Guide", 12, 36.00},
-        {"Local History Vol.3", 15, 45.00},
-        {"Niche Philosophy", 18, 54.00},
-        {"Technical Manual", 22, 66.00}
-    };
-
-    for (int row = 0; row < 5; row++) {
-        QTableWidgetItem *rankItem = new QTableWidgetItem(QString::number(row + 1));
-        rankItem->setTextAlignment(Qt::AlignCenter);
-        rankItem->setFont(QFont("Segoe UI", 10, QFont::Bold));
-        rankItem->setBackground(QColor(255, 235, 238));
-        ui->worstSellersTable->setItem(row, 0, rankItem);
-
-        QTableWidgetItem *titleItem = new QTableWidgetItem(sampleData[row].title);
-        titleItem->setFont(QFont("Segoe UI", 10));
-        ui->worstSellersTable->setItem(row, 1, titleItem);
-
-        QTableWidgetItem *salesItem = new QTableWidgetItem(QString::number(sampleData[row].sales));
-        salesItem->setTextAlignment(Qt::AlignCenter);
-        salesItem->setFont(QFont("Segoe UI", 10, QFont::Bold));
-        ui->worstSellersTable->setItem(row, 2, salesItem);
-
-        QTableWidgetItem *revenueItem = new QTableWidgetItem(QString("$%1").arg(sampleData[row].revenue, 0, 'f', 2));
-        revenueItem->setTextAlignment(Qt::AlignCenter);
-        revenueItem->setForeground(QColor(198, 40, 40));
-        ui->worstSellersTable->setItem(row, 3, revenueItem);
-    }
-}
-
-// ==================== Data Access Methods (To be connected to real data source) ====================
-
-double BookStaticsWindow::getTotalRevenue() const
-{
-    // TODO: Connect to actual data source
-    return 1629.97;
-}
-
-int BookStaticsWindow::getTotalBooksCount() const
-{
-    // TODO: Connect to actual data source
-    return 15;
-}
-
-double BookStaticsWindow::getAverageRating() const
-{
-    // TODO: Connect to actual data source
-    return 4.16;
-}
-
-int BookStaticsWindow::getTotalSalesCount() const
-{
-    // TODO: Connect to actual data source
-    return 561;
-}
-
-
 void BookStaticsWindow::on_refreshStatsButton_clicked()
 {
-    loadStatisticsData();
-    QMessageBox::information(this, "Statistics Refreshed",
-                             "Statistics have been refreshed successfully!");
+    loadAllStatistics();
 }
-
-void BookStaticsWindow::on_chartPeriodCombo_currentIndexChanged(int index)
+void BookStaticsWindow::on_chartPeriodCombo_currentIndexChanged(const QString &period)
 {
-    Q_UNUSED(index)
-    QString period = ui->chartPeriodCombo->currentText();
-    updateSalesChart(period);
+    Q_UNUSED(period);
+    requestSalesTrend();
 }
-*/
+void BookStaticsWindow::on_quitPushButton_clicked()
+{
+    this->close();
+}

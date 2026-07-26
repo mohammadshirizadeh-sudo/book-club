@@ -1,526 +1,330 @@
 #include "deactivatebookwindow.h"
 #include "Publishers/ui_deactivatebookwindow.h"
+#include "../appWindow/SessionManager.h"
+#include "../Server/Request.h"
+
 #include <QMessageBox>
-#include <QDebug>
 #include <QFileDialog>
 #include <QTextStream>
-#include <QTableWidgetItem>
+#include <QFile>
+#include <QPixmap>
 
-DeactivateBookWindow::DeactivateBookWindow(QWidget *parent) :
+DeactivateBookWindow::DeactivateBookWindow(NetworkManager* networkManager, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DeactivateBookWindow),
-    m_selectedBookId(-1),
-    m_isSelectedBookActive(false)
+    m_networkManager(networkManager)
 {
     ui->setupUi(this);
 
-    // Load initial books list
-    loadBooksList();
+    // اتصال سیگنال شبکه
+    connect(m_networkManager, &NetworkManager::responseReceived,
+            this, &DeactivateBookWindow::handleResponse);
 
-    // Configure table selection behavior
-    ui->booksTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    ui->booksTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    // تنظیمات اولیه جدول
+    ui->booksTable->setColumnWidth(0, 60);   // ID
+    ui->booksTable->setColumnWidth(1, 80);   // Cover
+    ui->booksTable->setColumnWidth(2, 250);  // Title
+    ui->booksTable->setColumnWidth(3, 180);  // Author
+    ui->booksTable->setColumnWidth(4, 100);  // Price
+    ui->booksTable->setColumnWidth(5, 120);  // Status
+    ui->booksTable->setColumnWidth(6, 90);   // Sales
 }
 
 DeactivateBookWindow::~DeactivateBookWindow()
 {
+    disconnect(m_networkManager, &NetworkManager::responseReceived,
+               this, &DeactivateBookWindow::handleResponse);
     delete ui;
 }
 
-void DeactivateBookWindow::loadBooksList(const QString &filter, const QString &searchText)
+void DeactivateBookWindow::showEvent(QShowEvent *event)
 {
-    // Get all books from database
-    QList<BookData> allBooks = getPublisherBooksFromDB();
+    QWidget::showEvent(event);
+    loadPublisherBooks();
+}
 
-    // Apply filters
-    QList<BookData> filteredBooks = filterBooks(allBooks, filter, searchText);
+// 🟢 درخواست بارگذاری کتاب‌های ناشر
+void DeactivateBookWindow::loadPublisherBooks()
+{
+    int publisherId = SessionManager::instance()->getUserId();
+    if (publisherId <= 0) return;
 
-    // Clear and populate table
+    QVariantMap params;
+    params["publisherId"] = publisherId;
+
+    Request request(CommandType::GetPublisherBooks, params);
+    m_networkManager->sendRequest(request);
+}
+
+// 🟢 مدیریت پاسخ‌های دریافتی از سرور
+void DeactivateBookWindow::handleResponse(const Response& response)
+{
+    CommandType type = response.getCommandType();
+
+    if (type != CommandType::GetPublisherBooks &&
+        type != CommandType::DeactivateBook &&
+        type != CommandType::ReactivateBook) {
+        return;
+    }
+
+    if (!response.isSuccess()) {
+        QMessageBox::warning(this, "Error", response.getMessage());
+        return;
+    }
+
+    QVariantMap data = response.getData();
+
+    // ۱. لیست کتاب‌ها دریافت شد
+    if (type == CommandType::GetPublisherBooks) {
+        m_allBooks.clear();
+        QVariantList books = data["books"].toList();
+
+        for (const QVariant& var : books) {
+            m_allBooks.append(var.toMap());
+        }
+
+        populateTable();
+    }
+    // ۲. غیرفعال‌سازی یا فعال‌سازی مجدد موفقیت‌آمیز بود
+    else if (type == CommandType::DeactivateBook || type == CommandType::ReactivateBook) {
+        QMessageBox::information(this, "Success", response.getMessage());
+        loadPublisherBooks(); // بروزرسانی جدول
+    }
+}
+
+// 📋 پر کردن جدول بر اساس فیلترها و جستجو
+void DeactivateBookWindow::populateTable()
+{
+    ui->booksTable->clearContents();
     ui->booksTable->setRowCount(0);
 
-    for (int i = 0; i < filteredBooks.size(); i++) {
-        const BookData &book = filteredBooks[i];
-        int row = i;
-        ui->booksTable->insertRow(row);
+    QString filterText = ui->searchLineEdit->text().trimmed().toLower();
+    bool showAll = ui->allBooksRadio->isChecked();
+    bool showActiveOnly = ui->activeBooksRadio->isChecked();
 
-        // ID
-        QTableWidgetItem *idItem = new QTableWidgetItem(QString::number(book.id));
-        idItem->setTextAlignment(Qt::AlignCenter);
-        idItem->setFont(QFont("Segoe UI", 9));
-        ui->booksTable->setItem(row, 0, idItem);
+    int row = 0;
+    for (const auto& book : m_allBooks) {
+        bool isActive = book["isActive"].toBool();
+        QString title = book["title"].toString();
+        QString author = book["author"].toString();
 
-        // Cover placeholder
-        QTableWidgetItem *coverItem = new QTableWidgetItem("📖");
-        coverItem->setTextAlignment(Qt::AlignCenter);
-        coverItem->setFont(QFont("Segoe UI", 16));
-        coverItem->setBackground(QColor(248, 248, 248));
-        ui->booksTable->setItem(row, 1, coverItem);
+        // اعمال فیلتر وضعیت
+        if (showActiveOnly && !isActive) continue;
+        if (ui->deactivatedBooksRadio->isChecked() && isActive) continue;
 
-        // Title
-        QTableWidgetItem *titleItem = new QTableWidgetItem(book.title);
-        titleItem->setFont(QFont("Segoe UI", 10, QFont::Bold));
-        ui->booksTable->setItem(row, 2, titleItem);
-
-        // Author
-        QTableWidgetItem *authorItem = new QTableWidgetItem(book.author);
-        authorItem->setTextAlignment(Qt::AlignCenter);
-        ui->booksTable->setItem(row, 3, authorItem);
-
-        // Price
-        QTableWidgetItem *priceItem = new QTableWidgetItem(QString("$%1").arg(book.price, 0, 'f', 2));
-        priceItem->setTextAlignment(Qt::AlignCenter);
-        priceItem->setFont(QFont("Segoe UI", 10, QFont::Bold));
-        priceItem->setForeground(QColor(33, 150, 243));
-        ui->booksTable->setItem(row, 4, priceItem);
-
-        // Status with colored badge
-        QTableWidgetItem *statusItem = new QTableWidgetItem();
-        if (book.status == "active") {
-            statusItem->setText("✅ Active");
-            statusItem->setForeground(QColor(56, 142, 60));
-            statusItem->setBackground(QColor(232, 245, 233));
-        } else {
-            statusItem->setText("🚫 Inactive");
-            statusItem->setForeground(QColor(198, 40, 40));
-            statusItem->setBackground(QColor(255, 235, 238));
-        }
-        statusItem->setTextAlignment(Qt::AlignCenter);
-        statusItem->setFont(QFont("Segoe UI", 9, QFont::Bold));
-        ui->booksTable->setItem(row, 5, statusItem);
-
-        // Sales
-        QTableWidgetItem *salesItem = new QTableWidgetItem(QString::number(book.sales));
-        salesItem->setTextAlignment(Qt::AlignCenter);
-        ui->booksTable->setItem(row, 6, salesItem);
-
-        // Publish Date
-        QTableWidgetItem *dateItem = new QTableWidgetItem(book.publishDate);
-        dateItem->setTextAlignment(Qt::AlignCenter);
-        ui->booksTable->setItem(row, 7, dateItem);
-
-        // Actions - show appropriate button text
-        QString actionText = (book.status == "active") ? "🚫 Deactivate" : "✅ Reactivate";
-        QTableWidgetItem *actionItem = new QTableWidgetItem(actionText);
-        actionItem->setTextAlignment(Qt::AlignCenter);
-        actionItem->setFont(QFont("Segoe UI", 9, QFont::Bold));
-        if (book.status == "active") {
-            actionItem->setForeground(QColor(255, 87, 34));
-        } else {
-            actionItem->setForeground(QColor(76, 175, 80));
-        }
-        ui->booksTable->setItem(row, 8, actionItem);
-
-        // Store book ID in first column for retrieval
-        idItem->setData(Qt::UserRole, book.id);
-        idItem->setData(Qt::UserRole + 1, book.status);
-    }
-
-    // Update statistics label
-    int activeCount = 0;
-    int deactivatedCount = 0;
-    for (const BookData &book : filteredBooks) {
-        if (book.status == "active") activeCount++;
-        else deactivatedCount++;
-    }
-
-
-
-    //check this
-    /*
-    ui->tableTitleLabel->setText(
-        QString("📋 Your Books Inventory | Showing: %1 total (%2 active, %3 deactivated)")
-            .arg(filteredBooks.size())
-            .arg(activeCount)
-            .arg(deactivatedCount)
-        );
-*/
-}
-
-void DeactivateBookWindow::updateSelectionState(int row)
-{
-    if (row < 0 || row >= ui->booksTable->rowCount()) {
-        m_selectedBookId = -1;
-        m_selectedBookTitle.clear();
-        m_isSelectedBookActive = false;
-        updateActionButtons();
-        return;
-    }
-
-    // Get book ID from user role data
-    QTableWidgetItem *idItem = ui->booksTable->item(row, 0);
-    if (idItem) {
-        m_selectedBookId = idItem->data(Qt::UserRole).toInt();
-        m_isSelectedBookActive = (idItem->data(Qt::UserRole + 1).toString() == "active");
-
-        // Get title
-        QTableWidgetItem *titleItem = ui->booksTable->item(row, 2);
-        m_selectedBookTitle = titleItem ? titleItem->text() : "";
-    }
-
-    // Update selected book label
-    ui->selectedBookLabel->setText(
-        QString("Selected: %1 (ID: %2) - Status: %3")
-            .arg(m_selectedBookTitle)
-            .arg(m_selectedBookId)
-            .arg(m_isSelectedBookActive ? "✅ Active" : "🚫 Inactive")
-        );
-
-    updateActionButtons();
-}
-
-void DeactivateBookWindow::updateActionButtons()
-{
-    bool hasSelection = (m_selectedBookId != -1);
-
-    ui->deactivateBookButton->setEnabled(hasSelection && m_isSelectedBookActive);
-    ui->reactivateBookButton->setEnabled(hasSelection && !m_isSelectedBookActive);
-    ui->deleteBookButton->setEnabled(hasSelection);
-    ui->viewDetailsButton->setEnabled(hasSelection);
-}
-
-void DeactivateBookWindow::deactivateSelectedBook()
-{
-    if (m_selectedBookId == -1) return;
-
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(
-        this,
-        "Deactivate Book",
-        QString("Are you sure you want to deactivate \"%1\"?\n\n"
-                "The book will be removed from:\n"
-                "• Store listings\n"
-                "• Search results\n\n"
-                "Note: Buyers who already purchased this book can still access it in their library.")
-            .arg(m_selectedBookTitle),
-        QMessageBox::Yes | QMessageBox::No
-        );
-
-    if (reply == QMessageBox::Yes) {
-        bool success = deactivateBookInDatabase(m_selectedBookId);
-
-        if (success) {
-            QMessageBox::information(this, "Success",
-                                     QString("\"%1\" has been successfully deactivated.\n"
-                                             "It is no longer visible in the store.").arg(m_selectedBookTitle));
-
-            // Refresh list
-            loadBooksList(getCurrentFilter(), ui->searchLineEdit->text());
-            m_selectedBookId = -1;
-            updateActionButtons();
-        } else {
-            QMessageBox::critical(this, "Error",
-                                  "Failed to deactivate the book. Please try again.");
-        }
-    }
-}
-
-void DeactivateBookWindow::reactivateSelectedBook()
-{
-    if (m_selectedBookId == -1) return;
-
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(
-        this,
-        "Reactivate Book",
-        QString("Are you sure you want to reactivate \"%1\"?\n\n"
-                "The book will become visible again in:")
-                .arg(m_selectedBookTitle) +
-            "\n• Store listings\n• Search results",
-        QMessageBox::Yes | QMessageBox::No
-        );
-
-    if (reply == QMessageBox::Yes) {
-        bool success = reactivateBookInDatabase(m_selectedBookId);
-
-        if (success) {
-            QMessageBox::information(this, "Success",
-                                     QString("\"%1\" has been successfully reactivated!\n"
-                                             "It is now visible in the store again.").arg(m_selectedBookTitle));
-
-            // Refresh list
-            loadBooksList(getCurrentFilter(), ui->searchLineEdit->text());
-            m_selectedBookId = -1;
-            updateActionButtons();
-        } else {
-            QMessageBox::critical(this, "Error",
-                                  "Failed to reactivate the book. Please try again.");
-        }
-    }
-}
-
-void DeactivateBookWindow::deleteSelectedBook()
-{
-    if (m_selectedBookId == -1) return;
-
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::warning(
-        this,
-        "⚠️ PERMANENT DELETION WARNING",
-        QString("⚠️ WARNING: You are about to PERMANENTLY DELETE \"%1\"!\n\n"
-                "This action CANNOT be undone! The following data will be lost:\n\n"
-                "📖 Book information and content\n"
-                "💰 All sales records for this book\n"
-                "👥 Customer purchase history\n"
-                "⭐ Reviews and ratings\n"
-                "🏷️ Any active discounts\n\n"
-                "Are you absolutely sure you want to proceed?")
-            .arg(m_selectedBookTitle),
-        QMessageBox::Yes | QMessageBox::No,
-        QMessageBox::No  // Default to No for safety
-        );
-
-    if (reply == QMessageBox::Yes) {
-        // Second confirmation for extra safety
-        QMessageBox::StandardButton finalConfirm;
-        finalConfirm = QMessageBox::critical(
-            this,
-            "FINAL CONFIRMATION",
-            QString("LAST CHANCE: This is your FINAL opportunity to cancel.\n\n"
-                    "Deleting \"%1\" permanently...\n\n"
-                    "Type 'DELETE' to confirm or press Cancel to abort.")
-                .arg(m_selectedBookTitle),
-            QMessageBox::Ok | QMessageBox::Cancel,
-            QMessageBox::Cancel
-            );
-
-        if (finalConfirm == QMessageBox::Ok) {
-            bool success = deleteBookPermanently(m_selectedBookId);
-
-            if (success) {
-                QMessageBox::information(this, "Deleted",
-                                         QString("\"%1\" has been permanently deleted from the system.\n"
-                                                 "All associated data has been removed.").arg(m_selectedBookTitle));
-
-                // Refresh list
-                loadBooksList(getCurrentFilter(), ui->searchLineEdit->text());
-                m_selectedBookId = -1;
-                updateActionButtons();
-            } else {
-                QMessageBox::critical(this, "Error",
-                                      "Failed to delete the book. Please try again.");
-            }
-        }
-    }
-}
-
-void DeactivateBookWindow::viewBookDetails()
-{
-    if (m_selectedBookId == -1) return;
-
-    // TODO: Open detailed view dialog
-    QMessageBox::information(this,
-                             "Book Details",
-                             QString("Detailed view for \"%1\"\n\n"
-                                     "This would open a comprehensive details dialog showing:\n"
-                                     "• Full book information\n"
-                                     "• Sales analytics\n"
-                                     "• Customer reviews\n"
-                                     "• Purchase history").arg(m_selectedBookTitle));
-}
-
-void DeactivateBookWindow::exportToCSV()
-{
-    QString fileName = QFileDialog::getSaveFileName(
-        this,
-        "Export Books List",
-        "books_export.csv",
-        "CSV Files (*.csv);;All Files (*)"
-        );
-
-    if (fileName.isEmpty()) return;
-
-    QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::critical(this, "Error", "Could not create file for export.");
-        return;
-    }
-
-    QTextStream out(&file);
-
-    // Write header
-    out << "ID,Title,Author,Price,Status,Sales,Publish Date\n";
-
-    // Write data rows
-    for (int row = 0; row < ui->booksTable->rowCount(); row++) {
-        QStringList rowData;
-        for (int col = 0; col < 8; col++) {  // Exclude actions column
-            QTableWidgetItem *item = ui->booksTable->item(row, col);
-            if (item) {
-                QString text = item->text();
-                // Escape commas in CSV
-                if (text.contains(',')) {
-                    text = "\"" + text + "\"";
-                }
-                rowData << text;
-            } else {
-                rowData << "";
-            }
-        }
-        out << rowData.join(",") << "\n";
-    }
-
-    file.close();
-
-    QMessageBox::information(this, "Export Complete",
-                             QString("Successfully exported %1 books to:\n%2")
-                                 .arg(ui->booksTable->rowCount())
-                                 .arg(fileName));
-}
-
-QString DeactivateBookWindow::getCurrentFilter() const
-{
-    if (ui->allBooksRadio->isChecked()) return "all";
-    if (ui->activeBooksRadio->isChecked()) return "active";
-    if (ui->deactivatedBooksRadio->isChecked()) return "deactivated";
-    return "all";
-}
-
-// ==================== Database Methods (To be connected to real data source) ====================
-
-QList<DeactivateBookWindow::BookData> DeactivateBookWindow::getPublisherBooksFromDB() const
-{
-    QList<BookData> books;
-
-    // TODO: Connect to actual database
-    // Sample data for demonstration
-    BookData sampleBooks[] = {
-        {1, "The Great Adventure", "John Smith", 29.99, "active", 150, "2024-01-15", ""},
-        {2, "Mystery of Shadows", "Jane Doe", 24.99, "active", 132, "2024-02-20", ""},
-        {3, "Science Today", "Dr. Alan Brown", 34.99, "active", 98, "2024-03-10", ""},
-        {4, "Poetry Collection", "Emily White", 14.99, "deactivated", 87, "2023-11-05", ""},
-        {5, "History Revealed", "Prof. Robert Lee", 19.99, "active", 76, "2024-04-22", ""},
-        {6, "Advanced Mathematics", "Dr. Sarah Chen", 49.99, "active", 8, "2024-05-18", ""},
-        {7, "Rare Botany Guide", "Dr. Maria Garcia", 39.99, "deactivated", 12, "2023-09-30", ""},
-        {8, "Local History Vol.3", "James Wilson", 25.00, "active", 15, "2024-06-01", ""}
-    };
-
-    for (int i = 0; i < 8; i++) {
-        books.append(sampleBooks[i]);
-    }
-
-    return books;
-}
-
-QList<DeactivateBookWindow::BookData> DeactivateBookWindow::filterBooks(
-    const QList<BookData> &books,
-    const QString &statusFilter,
-    const QString &searchText) const
-{
-    QList<BookData> result;
-
-    for (const BookData &book : books) {
-        // Apply status filter
-        if (statusFilter != "all" && book.status != statusFilter) {
-            continue;
-        }
-
-        // Apply search filter
-        if (!searchText.isEmpty()) {
-            QString searchLower = searchText.toLower();
-            if (!book.title.toLower().contains(searchLower) &&
-                !book.author.toLower().contains(searchLower)) {
+        // اعمال فیلتر جستجو
+        if (!filterText.isEmpty()) {
+            if (!title.toLower().contains(filterText) && !author.toLower().contains(filterText)) {
                 continue;
             }
         }
 
-        result.append(book);
+        ui->booksTable->insertRow(row);
+
+        // ID
+        QTableWidgetItem* idItem = new QTableWidgetItem(QString::number(book["bookId"].toInt()));
+        idItem->setTextAlignment(Qt::AlignCenter);
+        ui->booksTable->setItem(row, 0, idItem);
+
+        // Cover Thumbnail
+        QString coverPath = book["coverPath"].toString();
+        QLabel* coverLabel = new QLabel();
+        coverLabel->setAlignment(Qt::AlignCenter);
+        if (!coverPath.isEmpty() && QFile::exists(coverPath)) {
+            QPixmap pix(coverPath);
+            coverLabel->setPixmap(pix.scaled(40, 50, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        } else {
+            coverLabel->setText("📖");
+        }
+        ui->booksTable->setCellWidget(row, 1, coverLabel);
+
+        // Title & Author
+        ui->booksTable->setItem(row, 2, new QTableWidgetItem(title));
+        ui->booksTable->setItem(row, 3, new QTableWidgetItem(author));
+
+        // Price
+        double price = book["price"].toDouble();
+        ui->booksTable->setItem(row, 4, new QTableWidgetItem(QString("$%1").arg(price, 0, 'f', 2)));
+
+        // Status
+        QTableWidgetItem* statusItem = new QTableWidgetItem(isActive ? "🟢 Active" : "🔴 Deactivated");
+        statusItem->setTextAlignment(Qt::AlignCenter);
+        ui->booksTable->setItem(row, 5, statusItem);
+
+        // Sales
+        int sales = book["salesCount"].toInt();
+        QTableWidgetItem* salesItem = new QTableWidgetItem(QString::number(sales));
+        salesItem->setTextAlignment(Qt::AlignCenter);
+        ui->booksTable->setItem(row, 6, salesItem);
+
+        // Publish Date
+        QString publishDate = book["publishDate"].toString();
+        ui->booksTable->setItem(row, 7, new QTableWidgetItem(publishDate.isEmpty() ? "N/A" : publishDate));
+
+        // Actions column info text
+        ui->booksTable->setItem(row, 8, new QTableWidgetItem(isActive ? "Available" : "Hidden"));
+
+        row++;
     }
 
-    return result;
+    updateSelectedBookUI();
 }
 
-bool DeactivateBookWindow::deactivateBookInDatabase(int bookId)
+// 📖 تغییر ردیف انتخابی در جدول
+void DeactivateBookWindow::on_booksTable_itemSelectionChanged()
 {
-    Q_UNUSED(bookId)
-    // TODO: Implement actual database operation
-    qDebug() << "Deactivating book:" << bookId;
-    return true;
+    int currentRow = ui->booksTable->currentRow();
+    if (currentRow < 0) {
+        m_selectedBookId = -1;
+        m_selectedBookData.clear();
+    } else {
+        QTableWidgetItem* idItem = ui->booksTable->item(currentRow, 0);
+        if (idItem) {
+            m_selectedBookId = idItem->text().toInt();
+            for (const auto& book : m_allBooks) {
+                if (book["bookId"].toInt() == m_selectedBookId) {
+                    m_selectedBookData = book;
+                    break;
+                }
+            }
+        }
+    }
+    updateSelectedBookUI();
 }
 
-bool DeactivateBookWindow::reactivateBookInDatabase(int bookId)
+// 🔄 بروزرسانی وضعیت دکمه‌ها و لیبل کتاب انتخابی
+void DeactivateBookWindow::updateSelectedBookUI()
 {
-    Q_UNUSED(bookId)
-    // TODO: Implement actual database operation
-    qDebug() << "Reactivating book:" << bookId;
-    return true;
+    if (m_selectedBookId <= 0 || m_selectedBookData.isEmpty()) {
+        ui->selectedBookLabel->setText("Selected: No book selected");
+        ui->deactivateBookButton->setEnabled(false);
+        ui->reactivateBookButton->setEnabled(false);
+        ui->viewDetailsButton->setEnabled(false);
+        return;
+    }
+
+    QString title = m_selectedBookData["title"].toString();
+    bool isActive = m_selectedBookData["isActive"].toBool();
+
+    ui->selectedBookLabel->setText(QString("Selected: %1 (%2)").arg(title, isActive ? "Active" : "Deactivated"));
+
+    // اگر کتاب فعال است، دکمه Deactivate فعال می‌شود
+    ui->deactivateBookButton->setEnabled(isActive);
+    // اگر غیرفعال است، دکمه Reactivate فعال می‌شود
+    ui->reactivateBookButton->setEnabled(!isActive);
+
+    ui->viewDetailsButton->setEnabled(true);
 }
 
-bool DeactivateBookWindow::deleteBookPermanently(int bookId)
+// 🚫 غیرفعال‌سازی کتاب
+void DeactivateBookWindow::on_deactivateBookButton_clicked()
 {
-    Q_UNUSED(bookId)
-    // TODO: Implement actual database operation
-    qDebug() << "Permanently deleting book:" << bookId;
-    return true;
+    if (m_selectedBookId <= 0) return;
+
+    auto reply = QMessageBox::question(this, "Confirm Deactivation",
+                                       QString("Are you sure you want to deactivate '%1'?\nIt will be hidden from the store.")
+                                           .arg(m_selectedBookData["title"].toString()),
+                                       QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        QVariantMap params;
+        params["bookId"] = m_selectedBookId;
+
+        Request request(CommandType::DeactivateBook, params);
+        m_networkManager->sendRequest(request);
+    }
 }
 
-// ==================== Slot Implementations ====================
-// Functionality slots
+// ✅ فعال‌سازی مجدد کتاب
+void DeactivateBookWindow::on_reactivateBookButton_clicked()
+{
+    if (m_selectedBookId <= 0) return;
+
+    QVariantMap params;
+    params["bookId"] = m_selectedBookId;
+
+    Request request(CommandType::ReactivateBook, params);
+    m_networkManager->sendRequest(request);
+}
+
+// 👁️ مشاهده جزئیات کتاب
+void DeactivateBookWindow::on_viewDetailsButton_clicked()
+{
+    if (m_selectedBookData.isEmpty()) return;
+
+    QString details = QString("Title: %1\nAuthor: %2\nPrice: $%3\nSales: %4\nStatus: %5\n\nDescription:\n%6")
+                          .arg(m_selectedBookData["title"].toString())
+                          .arg(m_selectedBookData["author"].toString())
+                          .arg(m_selectedBookData["price"].toDouble(), 0, 'f', 2)
+                          .arg(m_selectedBookData["salesCount"].toInt())
+                          .arg(m_selectedBookData["isActive"].toBool() ? "Active" : "Deactivated")
+                          .arg(m_selectedBookData["description"].toString());
+
+    QMessageBox::information(this, "Book Details", details);
+}
+
+// 🔍 فیلترها و جستجو
+void DeactivateBookWindow::on_searchLineEdit_textChanged(const QString &text)
+{
+    Q_UNUSED(text);
+    populateTable();
+}
+
 void DeactivateBookWindow::on_allBooksRadio_toggled(bool checked)
 {
-    if (checked) {
-        loadBooksList("all", ui->searchLineEdit->text());
-    }
+    if (checked) populateTable();
 }
 
 void DeactivateBookWindow::on_activeBooksRadio_toggled(bool checked)
 {
-    if (checked) {
-        loadBooksList("active", ui->searchLineEdit->text());
-    }
+    if (checked) populateTable();
 }
 
 void DeactivateBookWindow::on_deactivatedBooksRadio_toggled(bool checked)
 {
-    if (checked) {
-        loadBooksList("deactivated", ui->searchLineEdit->text());
-    }
-}
-
-void DeactivateBookWindow::on_searchLineEdit_textChanged(const QString &text)
-{
-    loadBooksList(getCurrentFilter(), text);
+    if (checked) populateTable();
 }
 
 void DeactivateBookWindow::on_refreshListButton_clicked()
 {
-    loadBooksList(getCurrentFilter(), ui->searchLineEdit->text());
-    QMessageBox::information(this, "Refreshed", "Book list has been refreshed!");
+    loadPublisherBooks();
 }
 
+// 📥 خروجی CSV
 void DeactivateBookWindow::on_exportListButton_clicked()
 {
     exportToCSV();
 }
 
-void DeactivateBookWindow::on_booksTable_cellClicked(int row, int column)
+void DeactivateBookWindow::exportToCSV()
 {
-    Q_UNUSED(column)
-    updateSelectionState(row);
+    QString fileName = QFileDialog::getSaveFileName(this, "Export Inventory to CSV", "", "CSV Files (*.csv)");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Export Error", "Cannot write to file.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out << "ID,Title,Author,Price,Status,SalesCount\n";
+
+    for (const auto& book : m_allBooks) {
+        out << book["bookId"].toInt() << ","
+            << "\"" << book["title"].toString() << "\","
+            << "\"" << book["author"].toString() << "\","
+            << book["price"].toDouble() << ","
+            << (book["isActive"].toBool() ? "Active" : "Deactivated") << ","
+            << book["salesCount"].toInt() << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Export Success", "Books inventory exported successfully.");
 }
 
-void DeactivateBookWindow::on_booksTable_cellDoubleClicked(int row, int column)
+// ⬅ بازگشت
+void DeactivateBookWindow::on_backPushButton_clicked()
 {
-    Q_UNUSED(column)
-    updateSelectionState(row);
-    viewBookDetails();
-}
-
-void DeactivateBookWindow::on_deactivateBookButton_clicked()
-{
-    deactivateSelectedBook();
-}
-
-void DeactivateBookWindow::on_reactivateBookButton_clicked()
-{
-    reactivateSelectedBook();
-}
-
-void DeactivateBookWindow::on_deleteBookButton_clicked()
-{
-    deleteSelectedBook();
-}
-
-void DeactivateBookWindow::on_viewDetailsButton_clicked()
-{
-    viewBookDetails();
+    this->close();
 }

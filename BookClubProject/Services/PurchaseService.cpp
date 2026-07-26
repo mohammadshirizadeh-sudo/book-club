@@ -7,13 +7,15 @@ PurchaseService::PurchaseService(PurchaseRepository* purchaseRepo,
                                  BookRepository* bookRepo,
                                  LibraryRepository* libraryRepo,
                                  CartService* cartService,
-                                 NotificationService* notifService , QObject* parent)
+                                 NotificationService* notifService ,BookService* bookService , QObject* parent)
+
 
     : purchaseRepo(purchaseRepo)
     , bookRepo(bookRepo)
     , libraryRepo(libraryRepo)
     , cartService(cartService)
-    , notifService(notifService) , QObject(parent) {
+    , notifService(notifService) , QObject(parent)
+    , m_bookService(bookService){
 
 
     int maxExistingId = purchaseRepo->getMaxPurchaseId();
@@ -271,4 +273,71 @@ int PurchaseService::getPurchaseCount(int userId) const
     }
 
     return count;
+}
+
+
+QVariantList PurchaseService::getPeriodSummaries(int publisherId, int months) const
+{
+    QVariantList periods;
+
+    // 1. دریافت همه خریدها
+    QVector<QSharedPointer<Purchase>> allPurchases = purchaseRepo->getAllPurchases();
+
+    // 2. دریافت کتاب‌های ناشر
+    QVector<QSharedPointer<Book>> books = m_bookService->getBooksByPublisher(publisherId);
+    QVector<int> bookIds;
+    for (const auto& book : books) {
+        bookIds.append(book->getBookId());
+    }
+
+    if (bookIds.isEmpty()) {
+        return periods;
+    }
+
+    // 3. گروه‌بندی بر اساس ماه
+    QMap<QString, QPair<int, double>> monthlyData;
+
+    for (QSharedPointer<Purchase> purchase : allPurchases) {
+        // فقط خریدهایی که شامل کتاب‌های ناشر هستند
+        bool hasPublisherBook = false;
+        double purchaseRevenue = 0.0;
+        int purchaseCount = 0;
+
+        for (const CartItem& item : purchase->getItems()) {
+            if (bookIds.contains(item.getBookId())) {
+                hasPublisherBook = true;
+                purchaseRevenue += item.getTotalDiscountedPrice();
+                purchaseCount += item.getQuantity();
+            }
+        }
+
+        if (!hasPublisherBook) continue;
+
+        QString monthKey = purchase->getPurchasedAt().toString("yyyy-MM");
+        if (monthlyData.contains(monthKey)) {
+            monthlyData[monthKey].first += purchaseCount;
+            monthlyData[monthKey].second += purchaseRevenue;
+        } else {
+            monthlyData[monthKey] = qMakePair(purchaseCount, purchaseRevenue);
+        }
+    }
+
+    // 4. مرتب‌سازی و محدود کردن به ماه‌های اخیر
+    QList<QString> sortedKeys = monthlyData.keys();
+    std::sort(sortedKeys.begin(), sortedKeys.end());
+
+    if (sortedKeys.size() > months) {
+        sortedKeys = sortedKeys.mid(sortedKeys.size() - months);
+    }
+
+    // 5. ساخت خروجی
+    for (const QString& key : sortedKeys) {
+        QVariantMap periodData;
+        periodData["period"] = key;
+        periodData["sales"] = monthlyData[key].first;
+        periodData["revenue"] = monthlyData[key].second;
+        periods.append(periodData);
+    }
+
+    return periods;
 }

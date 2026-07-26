@@ -2,59 +2,53 @@
 #define APPLYDISCOUNTWINDOW_H
 
 #include <QWidget>
-#include <QDateTime>
 #include <QVariantMap>
-#include <QVariantList>
+#include <QList>
+#include <QDateTime>
+#include "../Network-Manger/NetworkManager.h"
+#include "../Server/Response.h"
 
 namespace Ui {
 class ApplyDiscountWindow;
 }
-
-// ساختار داده‌ای نمونه برای نگهداری اطلاعات کتاب
-struct BookItem {
-    int id = 0;
-    QString title;
-    double originalPrice = 0.0;
-    double currentDiscount = 0.0;
-    bool isPercentage = true;
-    bool hasDiscount = false;
-    bool isTimed = false;
-    QDateTime startDate;
-    QDateTime endDate;
-    QString coverPath;
-};
 
 class ApplyDiscountWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ApplyDiscountWindow(QWidget *parent = nullptr);
+    explicit ApplyDiscountWindow(NetworkManager* networkManager, QWidget *parent = nullptr);
     ~ApplyDiscountWindow();
 
-    // متدی برای بارگذاری کتاب‌های نویسنده/کاربر در ComboBox
-    void loadBooksData();
+protected:
+    void showEvent(QShowEvent *event) override;
 
 private slots:
-    void on_quitPushButton_clicked();
-    void on_clearFormButton_clicked();
+    void handleResponse(const Response& response);
     void on_applyDiscountButton_clicked();
     void on_removeDiscountButton_clicked();
+    void on_clearFormButton_clicked();
+    void on_quitPushButton_clicked();
 
     void on_bookComboBox_currentIndexChanged(int index);
     void on_percentageRadio_toggled(bool checked);
+    void on_fixedAmountRadio_toggled(bool checked);
     void on_timedDiscountCheck_toggled(bool checked);
-
-    // اسلات محاسبه قیمت جدید هنگام تغییر هر یک از مقادیر
-    void updatePricePreview();
+    void on_percentageSpinBox_valueChanged(int value);
+    void on_fixedAmountSpinBox_valueChanged(double value);
 
 private:
     Ui::ApplyDiscountWindow *ui;
-    QList<BookItem> m_books; // لیست کتاب‌های بارگذاری شده
+    NetworkManager *m_networkManager;
 
-    void setupUiDefaults();
-    void setupConnections();
-    void refreshActiveDiscountsTable();
+    QList<QVariantMap> m_publisherBooks;
+    int m_selectedBookId = -1;
+
+
+    void loadPublisherBooks();
+    void updatePricePreview();
+    void updateBookDetailsUI(const QVariantMap& bookData);
+    void updateActiveDiscountsTable();
     void clearForm();
 };
 

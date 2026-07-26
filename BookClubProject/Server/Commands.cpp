@@ -179,14 +179,16 @@ Response GetProfileCommand::execute(const QVariantMap& params)
         data["fullName"] = user->getFullname();
         data["role"] = user->getRoleString();
         data["status"] = m_userService->getStringStatus(status);
-        QStringList genreStrings;
-        for (const Genre& genre : user->getFavouriteGenre()) {
-            genreStrings.append(GenreHelper::toString(genre));
-        }
-        data["favoriteGenres"] = genreStrings;
+        data["updatedAt"] = user->getUpdatedAt();
+
 
 
         if(user->getRole()==UserRole::User){
+            QStringList genreStrings;
+            for (const Genre& genre : user->getFavouriteGenre()) {
+                genreStrings.append(GenreHelper::toString(genre));
+            }
+            data["favoriteGenres"] = genreStrings;
             qDebug()<<"Enter to if role ";
             int purchaseCount = m_purchaseService->getPurchaseCount(userId);
 
@@ -490,7 +492,10 @@ Response GetNewBooksCommand::execute(const QVariantMap& params)
         if (userId > 0) {
             bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
             bookData["isFavorite"] = isFavorite;
-        }
+        } 
+        bookData["genre"] =GenreHelper::toString(book->getGenre());
+        bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["pdfPath"] = book->getPdfPath();
         bookList.append(bookData);
     }
 
@@ -526,10 +531,12 @@ Response GetFreeBooksCommand::execute(const QVariantMap& params)
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["coverPath"] = book->getCoverPath();
+        bookData["pdfPath"] = book->getPdfPath();
         if (userId > 0) {
             bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
             bookData["isFavorite"] = isFavorite;
         }
+        bookData["discountPercent"] = book->getDiscountPercent();
         bookList.append(bookData);
     }
     qDebug() << "📦 [Server DB] Successfully pulled"
@@ -574,6 +581,9 @@ Response GetRecommendedBooksCommand::execute(const QVariantMap& params)
         bookData["finalPrice"] = book->getFinalPrice();
         bookData["averageRating"] = book->getAverageRating();
         bookData["coverPath"] = book->getCoverPath();
+        bookData["genre"] = GenreHelper::toString(book->getGenre());
+        bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["pdfPath"] = book->getPdfPath();
         bookList.append(bookData);
     }
 
@@ -976,7 +986,7 @@ Response AddBookCommand::execute(const QVariantMap& params)
 
     QByteArray coverBytes =
         QByteArray::fromBase64(
-            params["coverImage"].toByteArray()
+            params["coverData"].toByteArray()
             );
 
     QByteArray pdfBytes =
@@ -1154,7 +1164,6 @@ Response ReactivateBookCommand::execute(const QVariantMap& params)
     return Response::error(CommandType::ReactivateBook ,"Failed to reactivate book");
 }
 
-// ----- GetPublisherBooksCommand -----
 GetPublisherBooksCommand::GetPublisherBooksCommand(PublisherService* publisherService)
     : m_publisherService(publisherService)
 {
@@ -1163,7 +1172,7 @@ GetPublisherBooksCommand::GetPublisherBooksCommand(PublisherService* publisherSe
 Response GetPublisherBooksCommand::execute(const QVariantMap& params)
 {
     int publisherId = params["publisherId"].toInt();
-    QVector<QSharedPointer<Book>> books = m_publisherService->getBooksByPublisher(publisherId);
+    QVector<QSharedPointer<Book>> books = m_publisherService->getAllBooksByPublisher(publisherId);
 
     QVariantList bookList;
     for (QSharedPointer<Book> book : books) {
@@ -1176,7 +1185,11 @@ Response GetPublisherBooksCommand::execute(const QVariantMap& params)
         bookData["averageRating"] = book->getAverageRating();
         bookData["salesCount"] = book->getSalesCount();
         bookData["coverPath"] = book->getCoverPath();
-
+        bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["isDiscounted"] = book->getDiscountPercent() > 0;
+        bookData["isTimed"] = book->getisTimedDiscount();
+        bookData["endDate"] = book->getDiscountEndDate().toString(Qt::ISODate);
+        bookData["isActive"] = book->getIsActive();
         bookList.append(bookData);
     }
 
@@ -1184,6 +1197,156 @@ Response GetPublisherBooksCommand::execute(const QVariantMap& params)
     data["books"] = bookList;
     data["count"] = bookList.size();
     return Response::success(CommandType::GetPublisherBooks, data);
+}
+ApplyDiscountCommand::ApplyDiscountCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response ApplyDiscountCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int publisherId = params.value("publisherId").toInt();
+    int bookId = params.value("bookId").toInt();
+    QString discountType = params.value("discountType").toString(); // "percentage" or "fixed"
+    double discountValue = params.value("discountValue").toDouble();
+    bool isTimed = params.value("isTimed").toBool();
+    QDateTime startDate = QDateTime::fromString(params.value("startDate").toString(), Qt::ISODate);
+    QDateTime endDate = QDateTime::fromString(params.value("endDate").toString(), Qt::ISODate);
+
+
+    // 2. اعتبارسنجی
+    if (publisherId <= 0) {
+        return Response::error(CommandType::ApplyDiscount, "Invalid publisher ID");
+    }
+
+    if (bookId <= 0) {
+        return Response::error(CommandType::ApplyDiscount, "Invalid book ID");
+    }
+
+    if (discountValue <= 0) {
+        return Response::error(CommandType::ApplyDiscount, "Discount value must be greater than 0");
+    }
+
+    // 3. بررسی مالکیت کتاب توسط ناشر
+    QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+    if (!book) {
+        return Response::error(CommandType::ApplyDiscount, "Book not found");
+    }
+
+    if (book->getPublisherId() != publisherId) {
+        return Response::error(CommandType::ApplyDiscount, "You don't have permission to modify this book");
+    }
+
+    // 4. اعمال تخفیف
+    double discountPercent = 0.0;
+
+    if (discountType == "percentage") {
+        discountPercent = discountValue;
+    } else if (discountType == "fixed") {
+        double originalPrice = book->getPrice();
+        if (discountValue >= originalPrice) {
+            return Response::error(CommandType::ApplyDiscount, "Discount amount cannot exceed the original price");
+        }
+        discountPercent = (discountValue / originalPrice) * 100.0;
+    } else {
+        return Response::error(CommandType::ApplyDiscount, "Invalid discount type");
+    }
+
+    // 5. محدودیت تخفیف
+    if (discountPercent > 100) {
+        return Response::error(CommandType::ApplyDiscount, "Discount cannot exceed 100%");
+    }
+
+
+    if (isTimed) {
+        if (!startDate.isValid() || !endDate.isValid()) {
+            return Response::error(
+                CommandType::ApplyDiscount,
+                "Invalid start or end date for timed discount"
+                );
+        }
+
+        if (startDate >= endDate) {
+            return Response::error(
+                CommandType::ApplyDiscount,
+                "Start date must be before end date"
+                );
+        }
+
+        book->applyTimedDiscount(
+            discountPercent,
+            startDate,
+            endDate
+            );
+    }
+    else {
+        book->applyDiscount(discountPercent);
+    }
+
+    // 8. ذخیره در دیتابیس
+    if (!m_bookService->updateBook(book)) {
+        return Response::error(CommandType::ApplyDiscount, "Failed to save discount to database");
+    }
+
+    QVariantMap data;
+    data["bookId"] = bookId;
+    data["title"] = book->getTitle();
+    data["discountPercent"] = discountPercent;
+    data["finalPrice"] = book->getFinalPrice();
+
+    return Response::success(CommandType::ApplyDiscount, "Discount applied successfully", data);
+}
+
+RemoveDiscountCommand::RemoveDiscountCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response RemoveDiscountCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int publisherId = params.value("publisherId").toInt();
+    int bookId = params.value("bookId").toInt();
+
+    // 2. اعتبارسنجی
+    if (publisherId <= 0) {
+        return Response::error(CommandType::RemoveDiscount, "Invalid publisher ID");
+    }
+
+    if (bookId <= 0) {
+        return Response::error(CommandType::RemoveDiscount, "Invalid book ID");
+    }
+
+    // 3. بررسی مالکیت کتاب توسط ناشر
+    QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+    if (!book) {
+        return Response::error(CommandType::RemoveDiscount, "Book not found");
+    }
+
+    if (book->getPublisherId() != publisherId) {
+        return Response::error(CommandType::RemoveDiscount, "You don't have permission to modify this book");
+    }
+
+    // 4. بررسی اینکه کتاب تخفیف دارد
+    if (!book->isDiscounted()) {
+        return Response::error(CommandType::RemoveDiscount, "This book does not have any discount");
+    }
+
+    // 5. حذف تخفیف
+    book->removeDiscount();
+
+    // 6. ذخیره در دیتابیس
+    if (!m_bookService->updateBook(book)) {
+        return Response::error(CommandType::RemoveDiscount, "Failed to remove discount from database");
+    }
+
+    QVariantMap data;
+    data["bookId"] = bookId;
+    data["title"] = book->getTitle();
+    data["price"] = book->getPrice();
+
+    return Response::success(CommandType::RemoveDiscount, "Discount removed successfully", data);
 }
 
 // ----- GetPublisherStatsCommand -----
@@ -1373,6 +1536,69 @@ Response GetSystemStatsCommand::execute(const QVariantMap& params)
     }
     return Response::success(CommandType::GetSystemStats , data);
 }
+
+GetRecentActivitiesCommand::GetRecentActivitiesCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response GetRecentActivitiesCommand::execute(const QVariantMap& params)
+{
+    int limit = params.value("limit", 10).toInt();
+
+    QStringList activities = m_adminService->getRecentActivities(limit);
+
+    QVariantList list;
+    for (const QString& a : activities) {
+        list.append(a);
+    }
+
+    QVariantMap data;
+    data["activities"] = list;
+    data["count"] = list.size();
+
+    return Response::success(CommandType::GetRecentActivities, "Recent activities loaded", data);
+}
+
+GetSystemAlertsCommand::GetSystemAlertsCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response GetSystemAlertsCommand::execute(const QVariantMap& params)
+{
+    QStringList alerts = m_adminService->getSystemAlerts();
+
+    QVariantList list;
+    for (const QString& a : alerts) {
+        list.append(a);
+    }
+
+    QVariantMap data;
+    data["alerts"] = list;
+    data["count"] = list.size();
+
+    return Response::success(CommandType::GetSystemAlerts, "System alerts loaded", data);
+}
+GetDatabaseStatusCommand::GetDatabaseStatusCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response GetDatabaseStatusCommand::execute(const QVariantMap& params)
+{
+    QMap<QString, QVariant> status = m_adminService->getDatabaseStatus();
+
+    QVariantMap data;
+    for (auto it = status.begin(); it != status.end(); ++it) {
+        data[it.key()] = it.value();
+    }
+
+    return Response::success(CommandType::GetDatabaseStatus, "Database status loaded", data);
+}
+
+
+
 RequestPasswordResetCommand::RequestPasswordResetCommand(AuthService *authService)
     :m_authService(authService)
 {
@@ -2370,6 +2596,7 @@ Response GetBestSellersCommand::execute(const QVariantMap& params)
         bookData["coverPath"] = book->getCoverPath();
         bookData["pdfPath"] = book->getPdfPath();
         bookData["isActive"] = book->getIsActive();
+        bookData["discountPercent"] = book->getDiscountPercent();
 
         // اطلاعات ناشر (اختیاری)
         // int publisherId = book->getPublisherId();
@@ -2651,5 +2878,405 @@ Response GetUserLibraryCommand::execute(const QVariantMap& params)
 
     return Response::success(CommandType::GetUserLibrary, "Library loaded", data);
 }
+
+
+
+// Commands.cpp
+GetSalesTrendCommand::GetSalesTrendCommand(BookService* bookService, PurchaseService* purchaseService)
+    : m_bookService(bookService)
+    , m_purchaseService(purchaseService)
+{
+}
+
+Response GetSalesTrendCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int publisherId = params.value("publisherId").toInt();
+    QString period = params.value("period", "Daily").toString(); // Daily, Weekly, Monthly
+    int limit = params.value("limit", 30).toInt();
+
+    if (publisherId <= 0) {
+        return Response::error(CommandType::GetSalesTrend, "Invalid publisher ID");
+    }
+
+    // 2. دریافت کتاب‌های ناشر
+    QVector<QSharedPointer<Book>> books = m_bookService->getBooksByPublisher(publisherId);
+    if (books.isEmpty()) {
+        QVariantMap data;
+        data["labels"] = QVariantList();
+        data["sales"] = QVariantList();
+        data["revenue"] = QVariantList();
+        return Response::success(CommandType::GetSalesTrend, "No books found for this publisher", data);
+    }
+
+    // 3. ایجاد لیست خریدها برای کتاب‌های ناشر
+    QVector<int> bookIds;
+    for (const auto& book : books) {
+        bookIds.append(book->getBookId());
+    }
+
+    QVector<QSharedPointer<Purchase>> allPurchases = m_purchaseService->getAllPurchases();
+
+    // 4. فیلتر کردن خریدها بر اساس کتاب‌های ناشر
+    QVector<QSharedPointer<Purchase>> publisherPurchases;
+    for (QSharedPointer<Purchase> purchase : allPurchases) {
+        for (const CartItem& item : purchase->getItems()) {
+            if (bookIds.contains(item.getBookId())) {
+                publisherPurchases.append(purchase);
+                break;
+            }
+        }
+    }
+
+    // 5. گروه‌بندی بر اساس بازه زمانی
+    QMap<QString, QPair<int, double>> groupedData;
+
+    for (QSharedPointer<Purchase> purchase : publisherPurchases) {
+        QString key;
+        QDateTime date = purchase->getPurchasedAt();
+
+        if (period == "Daily") {
+            key = date.toString("yyyy-MM-dd");
+        } else if (period == "Weekly") {
+            // شروع هفته (دوشنبه)
+            int weekNumber = date.date().weekNumber();
+            key = QString("%1-W%2").arg(date.date().year()).arg(weekNumber, 2, 10, QChar('0'));
+        } else if (period == "Monthly") {
+            key = date.toString("yyyy-MM");
+        } else {
+            key = date.toString("yyyy-MM-dd");
+        }
+
+        // محاسبه فروش فقط برای کتاب‌های ناشر
+        double revenue = 0.0;
+        int salesCount = 0;
+        for (const CartItem& item : purchase->getItems()) {
+            if (bookIds.contains(item.getBookId())) {
+                revenue += item.getTotalDiscountedPrice();
+                salesCount += item.getQuantity();
+            }
+        }
+
+        if (groupedData.contains(key)) {
+            groupedData[key].first += salesCount;
+            groupedData[key].second += revenue;
+        } else {
+            groupedData[key] = qMakePair(salesCount, revenue);
+        }
+    }
+
+    // 6. مرتب‌سازی بر اساس تاریخ
+    QList<QString> sortedKeys = groupedData.keys();
+    std::sort(sortedKeys.begin(), sortedKeys.end());
+
+    // 7. محدود کردن تعداد داده‌ها
+    if (sortedKeys.size() > limit) {
+        sortedKeys = sortedKeys.mid(sortedKeys.size() - limit);
+    }
+
+    // 8. ساخت پاسخ
+    QVariantList labels;
+    QVariantList salesData;
+    QVariantList revenueData;
+
+    for (const QString& key : sortedKeys) {
+        labels.append(key);
+        salesData.append(groupedData[key].first);
+        revenueData.append(groupedData[key].second);
+    }
+
+    QVariantMap data;
+    data["labels"] = labels;
+    data["sales"] = salesData;
+    data["revenue"] = revenueData;
+    data["period"] = period;
+    data["count"] = labels.size();
+
+    return Response::success(CommandType::GetSalesTrend, "Sales trend loaded", data);
+}
+
+
+// Commands.cpp
+GetBookRatingsChartCommand::GetBookRatingsChartCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response GetBookRatingsChartCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int publisherId = params.value("publisherId").toInt();
+
+    if (publisherId <= 0) {
+        return Response::error(CommandType::GetBookRatingsChart, "Invalid publisher ID");
+    }
+
+    // 2. دریافت کتاب‌های ناشر
+    QVector<QSharedPointer<Book>> books = m_bookService->getBooksByPublisher(publisherId);
+
+    if (books.isEmpty()) {
+        QVariantMap data;
+        data["bookTitles"] = QVariantList();
+        data["ratings"] = QVariantList();
+        data["count"] = 0;
+        return Response::success(CommandType::GetBookRatingsChart, "No books found for this publisher", data);
+    }
+    QVariantList bookTitles;
+    QVariantList ratings;
+    std::sort(books.begin(), books.end(),
+              [](const QSharedPointer<Book>& a, const QSharedPointer<Book>& b) {
+                  return a->getAverageRating() > b->getAverageRating();
+              });
+
+    int maxBooks = qMin(10, books.size());
+
+    for (int i = 0; i < maxBooks; ++i) {
+        QSharedPointer<Book> book = books[i];
+        bookTitles.append(book->getTitle());
+        ratings.append(book->getAverageRating());
+    }
+
+    QVariantMap data;
+    data["bookTitles"] = bookTitles;
+    data["ratings"] = ratings;
+    data["count"] = bookTitles.size();
+
+    return Response::success(CommandType::GetBookRatingsChart, "Book ratings chart loaded", data);
+}
+
+
+GetTopSellingBooksCommand::GetTopSellingBooksCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response GetTopSellingBooksCommand::execute(const QVariantMap& params)
+{
+    int publisherId = params.value("publisherId").toInt();
+    int limit = params.value("limit", 5).toInt();
+
+    if (publisherId <= 0) {
+        return Response::error(CommandType::GetTopSellingBooks, "Invalid publisher ID");
+    }
+
+    if (limit <= 0) {
+        limit = 5;
+    }
+
+    QVector<QSharedPointer<Book>> books = m_bookService->getBooksByPublisher(publisherId);
+
+    if (books.isEmpty()) {
+        QVariantMap data;
+        data["books"] = QVariantList();
+        data["count"] = 0;
+        return Response::success(CommandType::GetTopSellingBooks, "No books found for this publisher", data);
+    }
+
+    std::sort(books.begin(), books.end(),
+              [](const QSharedPointer<Book>& a, const QSharedPointer<Book>& b) {
+                  return a->getSalesCount() > b->getSalesCount();
+              });
+
+    int count = qMin(limit, books.size());
+    QVariantList bookList;
+    for (int i = 0; i < count; ++i) {
+        QSharedPointer<Book> book = books[i];
+        QVariantMap bookData;
+        bookData["rank"] = i + 1;
+        bookData["bookId"] = book->getBookId();
+        bookData["title"] = book->getTitle();
+        bookData["author"] = book->getAuthor();
+        bookData["genre"] = GenreHelper::toString(book->getGenre());
+        bookData["salesCount"] = book->getSalesCount();
+        bookData["price"] = book->getPrice();
+        bookData["finalPrice"] = book->getFinalPrice();
+        bookData["averageRating"] = book->getAverageRating();
+        bookData["coverPath"] = book->getCoverPath();
+        double revenue = book->getFinalPrice() * book->getSalesCount();
+        bookData["revenue"] = revenue;
+
+        bookList.append(bookData);
+    }
+
+    QVariantMap data;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+
+    return Response::success(CommandType::GetTopSellingBooks, "Top selling books loaded", data);
+}
+
+
+GetBottomSellingBooksCommand::GetBottomSellingBooksCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response GetBottomSellingBooksCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int publisherId = params.value("publisherId").toInt();
+    int limit = params.value("limit", 5).toInt();
+
+    if (publisherId <= 0) {
+        return Response::error(CommandType::GetBottomSellingBooks, "Invalid publisher ID");
+    }
+
+    if (limit <= 0) {
+        limit = 5;
+    }
+
+    // 2. دریافت کتاب‌های ناشر
+    QVector<QSharedPointer<Book>> books = m_bookService->getBooksByPublisher(publisherId);
+
+    if (books.isEmpty()) {
+        QVariantMap data;
+        data["books"] = QVariantList();
+        data["count"] = 0;
+        return Response::success(CommandType::GetBottomSellingBooks, "No books found for this publisher", data);
+    }
+
+    // 3. مرتب‌سازی بر اساس فروش (صعودی)
+    std::sort(books.begin(), books.end(),
+              [](const QSharedPointer<Book>& a, const QSharedPointer<Book>& b) {
+                  return a->getSalesCount() < b->getSalesCount();
+              });
+
+    // 4. محدود کردن تعداد
+    int count = qMin(limit, books.size());
+
+    // 5. ساخت لیست کتاب‌های کم‌فروش
+    QVariantList bookList;
+    for (int i = 0; i < count; ++i) {
+        QSharedPointer<Book> book = books[i];
+        QVariantMap bookData;
+        bookData["rank"] = i + 1;
+        bookData["bookId"] = book->getBookId();
+        bookData["title"] = book->getTitle();
+        bookData["author"] = book->getAuthor();
+        bookData["genre"] = GenreHelper::toString(book->getGenre());
+        bookData["salesCount"] = book->getSalesCount();
+        bookData["price"] = book->getPrice();
+        bookData["finalPrice"] = book->getFinalPrice();
+        bookData["averageRating"] = book->getAverageRating();
+        bookData["coverPath"] = book->getCoverPath();
+
+        // محاسبه درآمد (قیمت نهایی × تعداد فروش)
+        double revenue = book->getFinalPrice() * book->getSalesCount();
+        bookData["revenue"] = revenue;
+
+        bookList.append(bookData);
+    }
+
+    QVariantMap data;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+
+    return Response::success(CommandType::GetBottomSellingBooks, "Bottom selling books loaded", data);
+}
+
+
+
+// Commands.cpp
+GetSalesOverviewCommand::GetSalesOverviewCommand(BookService* bookService, PurchaseService* purchaseService)
+    : m_bookService(bookService)
+    , m_purchaseService(purchaseService)
+{
+}
+
+Response GetSalesOverviewCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int publisherId = params.value("publisherId").toInt();
+
+    if (publisherId <= 0) {
+        return Response::error(CommandType::GetSalesOverview, "Invalid publisher ID");
+    }
+
+    // 2. دریافت کتاب‌های ناشر
+    QVector<QSharedPointer<Book>> books = m_bookService->getBooksByPublisher(publisherId);
+
+    if (books.isEmpty()) {
+        QVariantMap data;
+        data["totalBooks"] = 0;
+        data["totalSales"] = 0;
+        data["totalRevenue"] = 0.0;
+        data["averageRating"] = 0.0;
+        data["bestSeller"] = QVariantMap();
+        data["worstSeller"] = QVariantMap();
+        data["periods"] = QVariantList();
+        return Response::success(CommandType::GetSalesOverview, "No books found for this publisher", data);
+    }
+
+    // 3. محاسبه آمار کلی
+    int totalBooks = books.size();
+    int totalSales = 0;
+    double totalRevenue = 0.0;
+    double totalRating = 0.0;
+    int ratedBooks = 0;
+
+    // شناسایی پرفروش‌ترین و کم‌فروش‌ترین کتاب
+    QSharedPointer<Book> bestSeller = books[0];
+    QSharedPointer<Book> worstSeller = books[0];
+
+    for (const auto& book : books) {
+        // فروش کل
+        totalSales += book->getSalesCount();
+
+        // درآمد کل (قیمت نهایی × تعداد فروش)
+        totalRevenue += book->getFinalPrice() * book->getSalesCount();
+
+        // میانگین امتیاز
+        if (book->getAverageRating() > 0) {
+            totalRating += book->getAverageRating();
+            ratedBooks++;
+        }
+
+        // پرفروش‌ترین
+        if (book->getSalesCount() > bestSeller->getSalesCount()) {
+            bestSeller = book;
+        }
+
+        // کم‌فروش‌ترین
+        if (book->getSalesCount() < worstSeller->getSalesCount()) {
+            worstSeller = book;
+        }
+    }
+
+    // 4. دریافت خلاصه دوره‌های زمانی از PurchaseService
+    QVariantList periodSummaries = m_purchaseService->getPeriodSummaries(publisherId);
+
+    // 5. ساخت پاسخ
+    QVariantMap data;
+    data["totalBooks"] = totalBooks;
+    data["totalSales"] = totalSales;
+    data["totalRevenue"] = totalRevenue;
+    data["averageRating"] = ratedBooks > 0 ? totalRating / ratedBooks : 0.0;
+
+    // اطلاعات پرفروش‌ترین کتاب
+    QVariantMap bestSellerData;
+    bestSellerData["bookId"] = bestSeller->getBookId();
+    bestSellerData["title"] = bestSeller->getTitle();
+    bestSellerData["author"] = bestSeller->getAuthor();
+    bestSellerData["salesCount"] = bestSeller->getSalesCount();
+    bestSellerData["revenue"] = bestSeller->getFinalPrice() * bestSeller->getSalesCount();
+    data["bestSeller"] = bestSellerData;
+
+    // اطلاعات کم‌فروش‌ترین کتاب
+    QVariantMap worstSellerData;
+    worstSellerData["bookId"] = worstSeller->getBookId();
+    worstSellerData["title"] = worstSeller->getTitle();
+    worstSellerData["author"] = worstSeller->getAuthor();
+    worstSellerData["salesCount"] = worstSeller->getSalesCount();
+    worstSellerData["revenue"] = worstSeller->getFinalPrice() * worstSeller->getSalesCount();
+    data["worstSeller"] = worstSellerData;
+
+    // خلاصه دوره‌های زمانی
+    data["periods"] = periodSummaries;
+
+    return Response::success(CommandType::GetSalesOverview, "Sales overview loaded", data);
+}
+
+
+
 
 

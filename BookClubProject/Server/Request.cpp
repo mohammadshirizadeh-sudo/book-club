@@ -140,6 +140,11 @@ CommandType Request::stringToCommandType(const QString& str)
         {"DeleteReview", CommandType::DeleteReview},
         {"GetSystemStats", CommandType::GetSystemStats},
 
+        {"GetRecentActivities", CommandType::GetRecentActivities},
+        {"GetSystemAlerts", CommandType::GetSystemAlerts},
+        {"GetDatabaseStatus", CommandType::GetDatabaseStatus},
+        {"GetServerStatus", CommandType::GetServerStatus},
+
 
 
         {"RequestPasswordReset", CommandType::RequestPasswordReset},
@@ -149,6 +154,11 @@ CommandType Request::stringToCommandType(const QString& str)
         {"SearchUsers", CommandType::SearchUsers},
         {"GetNotifications" , CommandType ::GetNotifications},
         {"MarkNotificationRead" , CommandType ::MarkNotificationRead},
+        {"ClearAllNotifications" , CommandType ::ClearAllNotifications},
+        {"MarkAllNotificationsRead" , CommandType ::MarkAllNotificationsRead},
+
+
+
         {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
 
         {"GetUserShelves" , CommandType ::GetUserShelves},
@@ -176,6 +186,20 @@ CommandType Request::stringToCommandType(const QString& str)
         {"GetUserLibrary" , CommandType ::GetUserLibrary},
         {"AddBookToShelf" , CommandType ::AddBookToShelf},
         {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
+        {"RemoveDiscount" , CommandType ::RemoveDiscount},
+        {"ApplyDiscount" , CommandType ::ApplyDiscount},
+
+        {"GetSalesTrend" , CommandType ::GetSalesTrend},
+        {"GetBookRatingsChart" , CommandType ::GetBookRatingsChart},
+        {"GetTopSellingBooks" , CommandType ::GetTopSellingBooks},
+
+         {"GetBottomSellingBooks" , CommandType ::GetBottomSellingBooks},
+        {"GetSalesOverview" , CommandType ::GetSalesOverview},
+
+
+
+
+
 
 
 
@@ -256,6 +280,7 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::SearchUsers: return "SearchUsers";
     case CommandType::SearchAuthors : return "SearchAuthors";
     case CommandType::GetNotifications: return "GetNotifications";
+    case CommandType::MarkNotificationRead: return "MarkNotificationRead";
     case CommandType::MarkAllNotificationsRead: return "MarkAllNotificationsRead";
 
     case CommandType::ClearAllNotifications: return "ClearAllNotifications";
@@ -282,6 +307,20 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetAllGenres: return "GetAllGenres";
     case CommandType::GetUserLibrary: return "GetUserLibrary";
     case CommandType::AddBookToShelf: return "AddBookToShelf";
+    case CommandType::RemoveDiscount: return "RemoveDiscount";
+    case CommandType::ApplyDiscount: return "ApplyDiscount";
+    case CommandType::GetSalesTrend: return "GetSalesTrend";
+    case CommandType::GetBookRatingsChart: return "GetBookRatingsChart";
+    case CommandType::GetTopSellingBooks: return "GetTopSellingBooks";
+    case CommandType::GetBottomSellingBooks: return "GetBottomSellingBooks";
+    case CommandType::GetSalesOverview: return "GetSalesOverview";
+
+    case CommandType::GetRecentActivities: return "GetRecentActivities";
+    case CommandType::GetSystemAlerts: return "GetSystemAlerts";
+    case CommandType::GetDatabaseStatus: return "GetDatabaseStatus";
+    case CommandType::GetServerStatus: return "GetServerStatus";
+
+
     default: return "Unknown";
     }
 }

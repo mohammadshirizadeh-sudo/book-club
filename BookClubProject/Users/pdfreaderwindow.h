@@ -1,17 +1,9 @@
-
-
-/*
 #ifndef PDFREADERWINDOW_H
 #define PDFREADERWINDOW_H
 
 #include <QWidget>
-
-// #include <QPdfDocument>
-// #include <QPdfView>
-
 #include <QPdfDocument>
 #include <QtPdfWidgets/QPdfView>
-
 
 namespace Ui {
 class PdfReaderWindow;
@@ -32,6 +24,9 @@ signals:
     void backRequested();
     void pageChanged(int currentPage);
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
 private slots:
     void on_backButton_clicked();
     void on_firstPageButton_clicked();
@@ -45,13 +40,11 @@ private slots:
     void on_fullscreenButton_clicked();
     void on_zoomCombo_currentIndexChanged(int index);
 
-    void on_zoomStatusLabel_linkActivated(const QString &link);
-
 private:
     Ui::PdfReaderWindow *ui;
 
-    // QPdfDocument *m_pdfDocument;
-    // QPdfView *m_pdfView;
+    QPdfDocument *m_pdfDocument;
+    QPdfView *m_pdfView;
 
     int m_bookId;
     int m_currentPage;
@@ -66,6 +59,3 @@ private:
 };
 
 #endif // PDFREADERWINDOW_H
-
-
-*/

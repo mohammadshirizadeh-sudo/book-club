@@ -6,6 +6,7 @@
 #include "../appWindow/SessionManager.h"
 #include <QMessageBox>
 #include <QPixmap>
+#include "pdfreaderwindow.h"
 
 BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVariantMap& bookData, QWidget *parent) :
     QDialog(parent),
@@ -33,9 +34,17 @@ void BookDetailDialog::displayBookInfo(const QVariantMap& bookData)
     ui->titleLabel->setText(bookData["title"].toString());
     ui->authorLabel->setText(bookData["author"].toString());
     ui->genreLabel->setText(bookData["genre"].toString());
-    ui->priceLabel->setText(bookData["price"].toString() + " Tooman");
+    double price = bookData["price"].toDouble();
+    double finalPrice = bookData["finalPrice"].toDouble();
+
+    ui->priceLabel->setText(
+        QString::number(price, 'f', 2) + " Tooman"
+        );
+
+    ui->finalPriceLabel->setText(
+        QString::number(finalPrice, 'f', 2) + " Tooman"
+        );
     ui->discountLabel->setText(bookData["discountPercent"].toString() + " ٪");
-    ui->finalPriceLabel->setText(bookData["finalPrice"].toString() + " Tooman");
     ui->ratingLabel->setText(bookData["averageRating"].toString());
     int bookId = bookData["bookId"].toInt();
     bool isFav = bookData["isFavorite"].toBool();
@@ -206,5 +215,72 @@ void BookDetailDialog::on_addCartPushButton_clicked()
     // 6. ارسال درخواست به سرور
     Request request(CommandType::AddToCart, params);
     m_networkManager->sendRequest(request);
+}
+
+/*
+void BookDetailDialog::on_pushButton_clicked()
+{
+    int bookId = m_bookData["bookId"].toInt();
+    QString title = m_bookData["title"].toString();
+    QString filePath = m_bookData["pdfPath"].toString();
+
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, "خطا", "مسیر فایل PDF برای این کتاب ثبت نشده است.");
+        return;
+    }
+
+    PdfReaderWindow *readerWindow = new PdfReaderWindow(bookId);
+    readerWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+    // حصول اطمینان از اینکه پنجره مستقل است
+    readerWindow->setWindowFlags(Qt::Window);
+
+    readerWindow->setBookTitle(title);
+
+    connect(readerWindow, &PdfReaderWindow::backRequested, readerWindow, &QWidget::close);
+
+    if (readerWindow->loadPdf(filePath)) {
+        readerWindow->show();
+
+        // آوردن پنجره به روی تمام پنجره‌های دیگر و دادن فوکوس به آن
+        readerWindow->raise();
+        readerWindow->activateWindow();
+    } else {
+        readerWindow->deleteLater();
+    }
+}
+*/
+
+void BookDetailDialog::on_pushButton_clicked()
+{
+    int bookId = m_bookData["bookId"].toInt();
+    QString title = m_bookData["title"].toString();
+    QString filePath = m_bookData["pdfPath"].toString();
+
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, "خطا", "مسیر فایل PDF برای این کتاب ثبت نشده است.");
+        return;
+    }
+
+    PdfReaderWindow *readerWindow = new PdfReaderWindow(bookId);
+    readerWindow->setAttribute(Qt::WA_DeleteOnClose);
+    readerWindow->setWindowFlags(Qt::Window);
+    readerWindow->setBookTitle(title);
+
+    // دیالوگ جاری را مخفی کن و پس از بستن PDF دوباره نشان بده
+    this->hide();
+    connect(readerWindow, &PdfReaderWindow::backRequested, this, [this, readerWindow]() {
+        readerWindow->close();
+        this->show();
+    });
+
+    if (readerWindow->loadPdf(filePath)) {
+        readerWindow->showMaximized(); // یا readerWindow->show();
+        readerWindow->raise();
+        readerWindow->activateWindow();
+    } else {
+        this->show(); // در صورت خطا، دیالوگ دوباره ظاهر شود
+        readerWindow->deleteLater();
+    }
 }
 

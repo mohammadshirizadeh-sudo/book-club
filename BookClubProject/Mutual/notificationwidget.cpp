@@ -1,204 +1,196 @@
 #include "notificationwidget.h"
 #include "Mutual/ui_notificationwidget.h"
-
-#include "../Server/Request.h"
-#include "../Server/Response.h"
-#include "../Shared/Notification.h"
 #include "../appWindow/SessionManager.h"
+#include "../Server/Request.h"
+#include "../Network-Manger/NetworkManager.h"
 
 #include <QMessageBox>
 #include <QListWidgetItem>
+#include <QDateTime>
+#include <QColor>
 
-NotificationWidget::NotificationWidget(NetworkManager* networkManager, QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::NotificationWidget)
-    , m_networkManager(networkManager)
+NotificationWidget::NotificationWidget(NetworkManager* networkManager, QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::NotificationWidget),
+    m_networkManager(networkManager)
 {
     ui->setupUi(this);
 
-    // Connect network manager response signal
     connect(m_networkManager, &NetworkManager::responseReceived,
-            this, &NotificationWidget::onResponseReceived);
-
-    // Load initial notifications
-    loadNotifications();
+            this, &NotificationWidget::handleResponse);
+    connect(ui->notificationList, &QListWidget::itemDoubleClicked,
+            this, &NotificationWidget::on_notificationList_itemDoubleClicked);
 }
 
 NotificationWidget::~NotificationWidget()
 {
+    disconnect(m_networkManager, &NetworkManager::responseReceived,
+               this, &NotificationWidget::handleResponse);
     delete ui;
+}
+
+void NotificationWidget::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    loadNotifications();
 }
 
 void NotificationWidget::loadNotifications()
 {
     int userId = SessionManager::instance()->getUserId();
-    QVariantMap data;
-    data["userId"] = userId;
+    if (userId <= 0) return;
 
+    QVariantMap params;
+    params["userId"] = userId;
 
-    Request request(CommandType::GetNotifications , data);
+    Request request(CommandType::GetNotifications, params);
     m_networkManager->sendRequest(request);
 }
 
-int NotificationWidget::getUnreadCount() const
+void NotificationWidget::handleResponse(const Response& response)
 {
-    int unreadCount = 0;
-    for (int i = 0; i < ui->notificationList->count(); ++i) {
-        QListWidgetItem *item = ui->notificationList->item(i);
-        if (item && item->data(Qt::UserRole).toMap()["isRead"].toBool() == false) {
-            unreadCount++;
-        }
+    CommandType type = response.getCommandType();
+    if (type != CommandType::GetNotifications &&
+        type != CommandType::MarkNotificationRead &&
+        type != CommandType::MarkAllNotificationsRead &&
+        type != CommandType::ClearAllNotifications) {
+        return;
     }
-    return unreadCount;
+
+    if (!response.isSuccess()) {
+        QMessageBox::warning(this, "Error", response.getMessage());
+        return;
+    }
+
+    QVariantMap data = response.getData();
+
+    // ۱. دریافت و نمایش لیست اعلان‌ها
+    if (type == CommandType::GetNotifications) {
+        QVariantList notifications = data["notifications"].toList();
+        int count = data["count"].toInt();
+        int unreadCount = data["unreadCount"].toInt();
+
+        updateNotificationsList(notifications);
+        updateBadgeAndStatus(count, unreadCount);
+    }
+    else if (type == CommandType::MarkNotificationRead ||
+             type == CommandType::MarkAllNotificationsRead ||
+             type == CommandType::ClearAllNotifications) {
+        loadNotifications();
+    }
 }
-
-void NotificationWidget::updateStatusLabels()
-{
-    int totalCount = ui->notificationList->count();
-    int unreadCount = getUnreadCount();
-
-    ui->statusLabel->setText(QString("Total: %1 | Unread: %2").arg(totalCount).arg(unreadCount));
-    ui->unreadBadgeLabel->setText(QString::number(unreadCount));
-
-    emit notificationCountChanged(unreadCount);
-}
-
-void NotificationWidget::populateNotificationList(const QVariantList &notifications)
+void NotificationWidget::updateNotificationsList(const QVariantList& notifications)
 {
     ui->notificationList->clear();
 
-    for (const QVariant &notifVar : notifications) {
-        QVariantMap notif = notifVar.toMap();
+    for (const QVariant& var : notifications) {
+        QVariantMap notif = var.toMap();
 
-        QListWidgetItem *item = new QListWidgetItem();
+        int id = notif["notificationId"].toInt();
+        QString typeStr = notif["type"].toString();
+        QString title = notif["title"].toString();
+        QString message = notif["message"].toString();
+        bool isRead = notif["isRead"].toBool();
+        QString createdAtStr = notif["createdAt"].toString();
+        QDateTime dt = QDateTime::fromString(createdAtStr, Qt::ISODate);
+        QString formattedDate = dt.isValid() ? dt.toString("yyyy/MM/dd HH:mm") : createdAtStr;
+        QString iconStr = isRead ? "✉" : "📩";
+        QString itemText = QString("%1 [%2] %3\n%4\n🕒 %5")
+                               .arg(iconStr, typeStr, title, message, formattedDate);
 
-        QString displayText = QString("[%1] %2")
-                                  .arg(notif["timestamp"].toString())
-                                  .arg(notif["message"].toString());
-
-        item->setText(displayText);
-        item->setData(Qt::UserRole, notif);
-
-        if (!notif["isRead"].toBool()) {
+        QListWidgetItem *item = new QListWidgetItem(itemText);
+        item->setData(Qt::UserRole, id);
+        item->setData(Qt::UserRole + 1, isRead);
+        if (!isRead) {
             QFont font = item->font();
             font.setBold(true);
             item->setFont(font);
+            item->setForeground(QBrush(QColor(255, 255, 255)));
+        } else {
+            item->setForeground(QBrush(QColor(160, 160, 160)));
         }
 
         ui->notificationList->addItem(item);
     }
-
-    updateStatusLabels();
 }
 
-// ===== Slot Implementations =====
-
+void NotificationWidget::updateBadgeAndStatus(int totalCount, int unreadCount)
+{
+    ui->unreadBadgeLabel->setText(QString::number(unreadCount));
+    ui->statusLabel->setText(QString("Total: %1   |   Unread: %2").arg(totalCount).arg(unreadCount));
+}
 void NotificationWidget::on_markReadButton_clicked()
 {
     QListWidgetItem *currentItem = ui->notificationList->currentItem();
     if (!currentItem) {
-        QMessageBox::information(this, "Info", "Please select a notification to mark as read.");
+        QMessageBox::information(this, "Notice", "Please select a notification first.");
         return;
     }
 
-    QVariantMap notifData = currentItem->data(Qt::UserRole).toMap();
-    int notificationId = notifData["id"].toInt();
+    int notificationId = currentItem->data(Qt::UserRole).toInt();
+    bool isRead = currentItem->data(Qt::UserRole + 1).toBool();
+
+    if (isRead) {
+        return;
+    }
+
+    markNotificationAsRead(notificationId);
+}
+void NotificationWidget::markNotificationAsRead(int notificationId)
+{
     int userId = SessionManager::instance()->getUserId();
+    if (userId <= 0 || notificationId <= 0) return;
 
     QVariantMap params;
     params["notificationId"] = notificationId;
     params["userId"] = userId;
 
     Request request(CommandType::MarkNotificationRead, params);
-
     m_networkManager->sendRequest(request);
 }
-
 void NotificationWidget::on_markAllReadButton_clicked()
 {
-    QMessageBox::StandardButton reply = QMessageBox::question(
-        this, "Confirm",
-        "Mark all notifications as read?",
-        QMessageBox::Yes | QMessageBox::No
-        );
+    int userId = SessionManager::instance()->getUserId();
+    if (userId <= 0) return;
 
-    if (reply == QMessageBox::Yes) {
-        int userId = SessionManager::instance()->getUserId();
-        QVariantMap params;
-        params["userId"] = userId;
-        Request request(CommandType::MarkAllNotificationsRead , params);
+    QVariantMap params;
+    params["userId"] = userId;
 
-        m_networkManager->sendRequest(request);
-    }
+    Request request(CommandType::MarkAllNotificationsRead, params);
+    m_networkManager->sendRequest(request);
 }
-
 void NotificationWidget::on_clearAllButton_clicked()
 {
+    if (ui->notificationList->count() == 0) return;
+
     QMessageBox::StandardButton reply = QMessageBox::question(
-        this, "Confirm Clear",
-        "Are you sure you want to clear all notifications?\nThis action cannot be undone!",
+        this, "Confirm Clear", "Are you sure you want to clear all notifications?",
         QMessageBox::Yes | QMessageBox::No
         );
 
-    if (reply == QMessageBox::Yes) {
-        int userId = SessionManager::instance()->getUserId();
-        QVariantMap params;
-        params["userId"] = userId;
-        Request request(CommandType::ClearAllNotifications , params);
-        m_networkManager->sendRequest(request);
-    }
-}
+    if (reply != QMessageBox::Yes) return;
 
+    int userId = SessionManager::instance()->getUserId();
+    if (userId <= 0) return;
+
+    QVariantMap params;
+    params["userId"] = userId;
+
+    Request request(CommandType::ClearAllNotifications, params);
+    m_networkManager->sendRequest(request);
+}
 void NotificationWidget::on_refreshButton_clicked()
 {
     loadNotifications();
 }
-
 void NotificationWidget::on_notificationList_itemDoubleClicked(QListWidgetItem *item)
 {
-    Q_UNUSED(item);
-    on_markReadButton_clicked();
-}
+    if (!item) return;
 
-void NotificationWidget::onResponseReceived(const Response& response)
-{
-    switch (response.getCommandType()) {
-    case CommandType::GetNotifications:
-        if (response.isSuccess()) {
-            populateNotificationList(response.getData()["notifications"].toList());
-        } else {
-            QMessageBox::warning(this, "Error", "Failed to load notifications: " + response.getMessage());
-        }
-        break;
+    int notificationId = item->data(Qt::UserRole).toInt();
+    bool isRead = item->data(Qt::UserRole + 1).toBool();
 
-    case CommandType::MarkNotificationRead:
-        if (response.isSuccess()) {
-            QMessageBox::information(this, "Success", "Notification marked as read.");
-            loadNotifications();
-        } else {
-            QMessageBox::warning(this, "Error", "Failed to mark notification as read: " + response.getMessage());
-        }
-        break;
-
-    case CommandType::MarkAllNotificationsRead:
-        if (response.isSuccess()) {
-            QMessageBox::information(this, "Success", "All notifications marked as read.");
-            loadNotifications();
-        } else {
-            QMessageBox::warning(this, "Error", "Failed to mark all as read: " + response.getMessage());
-        }
-        break;
-
-    case CommandType::ClearAllNotifications:
-        if (response.isSuccess()) {
-            QMessageBox::information(this, "Success", "All notifications cleared.");
-            loadNotifications();
-        } else {
-            QMessageBox::warning(this, "Error", "Failed to clear notifications: " + response.getMessage());
-        }
-        break;
-
-    default:
-        break;
+    if (!isRead && notificationId > 0) {
+        markNotificationAsRead(notificationId);
     }
 }

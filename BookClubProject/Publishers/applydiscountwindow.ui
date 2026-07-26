@@ -383,7 +383,7 @@ QRadioButton::indicator {
      <property name="geometry">
       <rect>
        <x>350</x>
-       <y>70</y>
+       <y>40</y>
        <width>211</width>
        <height>51</height>
       </rect>
@@ -421,7 +421,7 @@ QSpinBox::up-button, QSpinBox::down-button {
      <property name="geometry">
       <rect>
        <x>350</x>
-       <y>70</y>
+       <y>100</y>
        <width>211</width>
        <height>51</height>
       </rect>

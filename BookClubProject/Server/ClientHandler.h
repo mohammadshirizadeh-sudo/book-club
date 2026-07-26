@@ -39,6 +39,7 @@ class ReviewService;
 class CartService;
 class PublisherService;
 class AdminService;
+class NotificationService;
 class Book;
 
 class ClientHandler : public QObject
@@ -56,6 +57,7 @@ public:
                            PublisherService* publisherService,
                            AdminService* adminService,
                            LibraryService* libraryService,
+                           NotificationService* notificationService,
                            QObject *parent = nullptr);
     ~ClientHandler();
 

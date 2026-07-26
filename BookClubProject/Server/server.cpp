@@ -61,11 +61,11 @@ void Server::initServices()
     m_bookService = new BookService(m_bookRepo, m_reviewRepo, this);
     m_cartService = new CartService(m_bookRepo, this);
     m_purchaseService = new PurchaseService(
-        m_purchaseRepo, m_bookRepo, m_libraryRepo, m_cartService, m_notifService, this
+        m_purchaseRepo, m_bookRepo, m_libraryRepo, m_cartService, m_notifService,m_bookService, this
         );
     m_reviewService = new ReviewService(m_reviewRepo, m_bookRepo, m_notifService, this);
     m_publisherService = new PublisherService(m_bookService,m_bookRepo, m_userRepo, this);
-    m_adminService = new AdminService(this);
+    m_adminService = new AdminService( m_userService, m_bookService, m_reviewService, m_purchaseService, m_notifService, this);
     m_libraryService = new LibraryService(m_libraryRepo , this);
 }
 
@@ -142,7 +142,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
         socketDescriptor,
         m_authService, m_bookService, m_userService, m_purchaseService,
         m_reviewService, m_cartService, m_publisherService, m_adminService,
-        m_libraryService,
+        m_libraryService,m_notifService,
         this
         );
 

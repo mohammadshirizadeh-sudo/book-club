@@ -74,7 +74,7 @@ void PublisherProfileWindow::handleResponse(const Response& response)
         QVariantMap data = response.getData();
 
         ui->publishernameLabel->setText(data["username"].toString());
-
+        ui->totalRevenueLabel->setText(data["totalRevenue"].toString());
 
         qDebug() << "✅ [InfoDialog] UI successfully updated with profile data.";
     }

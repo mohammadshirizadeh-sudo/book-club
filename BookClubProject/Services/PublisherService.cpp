@@ -155,3 +155,13 @@ int PublisherService::getTotalSalesCount(int publisherId) const
     }
     return total;
 }
+
+QVector<QSharedPointer<Book>> PublisherService::getAllBooksByPublisher(int publisherId) const {
+    QVector<QSharedPointer<Book>> results;
+    for (QSharedPointer<Book> book : bookRepo->getAllBooks()) {
+        if (book->getPublisherId() == publisherId) {
+            results.append(book);
+        }
+    }
+    return results;
+}

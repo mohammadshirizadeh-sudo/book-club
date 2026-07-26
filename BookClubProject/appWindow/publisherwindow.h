@@ -42,6 +42,11 @@ signals:
 
     void myBooksWindow();
     void applydiscountWindow();
+    void editWindow();
+    void deactivateBook();
+
+    void bookStatisticWindow();
+    void notificationWindow();
 
 private:
     Ui::PublisherWindow *ui;

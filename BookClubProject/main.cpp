@@ -1,3 +1,15 @@
+//rating for bookdetaildialog
+
+
+
+
+
+
+
+
+
+
+
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
@@ -10,6 +22,7 @@
 #include "Publishers/publisherprofilewindow.h"
 #include "Publishers/applydiscountwindow.h"
 // #include "../appWindow/adminwindow.h"
+#include "Publishers/applydiscountwindow.h"
 #include "appWindow/SessionManager.h"
 #include "appWindow/userwindow.h"
 #include "Users/searchwindow.h"
@@ -22,6 +35,10 @@
 #include "Database/DatabaseInitializer.h"
 #include "Users/shelfmanagementdialog.h"
 #include "Users/cartwindow.h"
+#include "Publishers/editbookswindow.h"
+#include "Publishers/deactivatebookwindow.h"
+#include "Publishers/bookstaticswindow.h"
+#include "Mutual/notificationwidget.h"
 
 #include <QApplication>
 #include <QStackedWidget>
@@ -78,7 +95,12 @@ int main(int argc, char *argv[])
     MyLibraryWindow* libraryWindow = new MyLibraryWindow(networkManager);
 
     ShelfManagementDialog* shelfWindow = new ShelfManagementDialog(networkManager);
-    // ApplyDiscountWindow* applydiscountWindow = new ApplyDiscountWindow(networkManager);
+    ApplyDiscountWindow* applydiscountWindow = new ApplyDiscountWindow(networkManager);
+    EditBooksWindow* editWindow = new EditBooksWindow(networkManager);
+    DeactivateBookWindow* deactivateBook = new DeactivateBookWindow(networkManager);
+    BookStaticsWindow* bookstaticsWindow = new BookStaticsWindow(networkManager);
+    NotificationWidget* notificatoinWindow = new NotificationWidget(networkManager);
+
 
 
     // اضافه کردن صفحات
@@ -98,6 +120,12 @@ int main(int argc, char *argv[])
     int shoppingWindowIndex  = stackedWidget.addWidget(shoppingWindow);
     int libraryWindowIndex = stackedWidget.addWidget(libraryWindow);
     int shelfWindowIndex = stackedWidget.addWidget(shelfWindow);
+    int applyDiscountIndex = stackedWidget.addWidget(applydiscountWindow);
+    int editWindowIndex = stackedWidget.addWidget(editWindow);
+    int deactivateWindowIndex = stackedWidget.addWidget(deactivateBook);
+    int bookStaticsWindowIndex = stackedWidget.addWidget(bookstaticsWindow);
+    int notificationIndex = stackedWidget.addWidget(notificatoinWindow);
+
 
 
     //-------------------------------------------------
@@ -118,6 +146,14 @@ int main(int argc, char *argv[])
                      {
                          stackedWidget.setCurrentIndex(cartWindowIndex);
                      });
+
+
+    QObject::connect(userWindow,
+                     &UserWindow::notificationWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(notificationIndex);
+                     });
     QObject::connect(userWindow,
                      &UserWindow::libraryWindow,
                      [&]()
@@ -137,6 +173,28 @@ int main(int argc, char *argv[])
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(searchIndex);
+                     });
+
+    QObject::connect(publisherWindow,
+                     &PublisherWindow::applydiscountWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(applyDiscountIndex);
+                     });
+
+
+    QObject::connect(publisherWindow,
+                     &PublisherWindow::bookStatisticWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(bookStaticsWindowIndex);
+                     });
+
+    QObject::connect(publisherWindow,
+                     &PublisherWindow::notificationWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(notificationIndex);
                      });
 
     QObject::connect(userWindow,
@@ -239,6 +297,22 @@ int main(int argc, char *argv[])
                          userWindow->loadNewBooks();
                          userWindow->loadRecommendedBooks();
                      });
+
+
+    QObject::connect(publisherWindow,
+                     &PublisherWindow::editWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(editWindowIndex);
+
+                     });
+    QObject::connect(publisherWindow,
+                    &PublisherWindow::deactivateBook,
+                    [&]()
+                    {
+                        stackedWidget.setCurrentIndex(deactivateWindowIndex);
+
+                    });
 
 
 

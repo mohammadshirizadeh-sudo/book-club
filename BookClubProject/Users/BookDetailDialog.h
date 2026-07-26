@@ -24,6 +24,8 @@ private slots:
 
     void on_addCartPushButton_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::BookDetailDialog *ui;
     void displayBookInfo(const QVariantMap& bookData);
