@@ -115,7 +115,7 @@ QPushButton:hover {
 }</string>
      </property>
      <property name="text">
-      <string>Book Title</string>
+      <string>Book Title...</string>
      </property>
     </widget>
     <widget class="QWidget" name="pageNavigationWidget" native="true">

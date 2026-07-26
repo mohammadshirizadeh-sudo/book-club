@@ -253,7 +253,7 @@ QPushButton:hover {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>5</number>
     </property>
     <widget class="QWidget" name="dashboardPage">
      <property name="styleSheet">
@@ -1509,7 +1509,7 @@ color: black;
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>9</y>
+        <y>5</y>
         <width>500</width>
         <height>61</height>
        </rect>
@@ -1561,7 +1561,7 @@ QGroupBox::title {
         <rect>
          <x>24</x>
          <y>50</y>
-         <width>1181</width>
+         <width>1161</width>
          <height>351</height>
         </rect>
        </property>
@@ -1619,6 +1619,23 @@ color: black;
         </property>
        </column>
       </widget>
+      <widget class="QScrollBar" name="verticalScrollBar_4">
+       <property name="geometry">
+        <rect>
+         <x>1200</x>
+         <y>50</y>
+         <width>21</width>
+         <height>351</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(0, 0, 0);
+border: 3px solid black;</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Vertical</enum>
+       </property>
+      </widget>
      </widget>
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
@@ -1654,7 +1671,7 @@ QGroupBox::title {
         <rect>
          <x>24</x>
          <y>50</y>
-         <width>1181</width>
+         <width>1161</width>
          <height>211</height>
         </rect>
        </property>
@@ -1703,6 +1720,23 @@ color: black;
          <string>Status</string>
         </property>
        </column>
+      </widget>
+      <widget class="QScrollBar" name="verticalScrollBar_5">
+       <property name="geometry">
+        <rect>
+         <x>1200</x>
+         <y>50</y>
+         <width>21</width>
+         <height>211</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(0, 0, 0);
+border: 3px solid black;</string>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Vertical</enum>
+       </property>
       </widget>
      </widget>
     </widget>
@@ -2612,7 +2646,7 @@ font: 700 12pt &quot;Script MT&quot;;
         <rect>
          <x>760</x>
          <y>13</y>
-         <width>151</width>
+         <width>141</width>
          <height>34</height>
         </rect>
        </property>
@@ -2804,10 +2838,10 @@ border: 3px solid black;</string>
      <widget class="QLabel" name="systemLogsPlaceholderLabel">
       <property name="geometry">
        <rect>
-        <x>400</x>
-        <y>249</y>
-        <width>455</width>
-        <height>201</height>
+        <x>20</x>
+        <y>-1</y>
+        <width>351</width>
+        <height>71</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -2818,7 +2852,7 @@ border: 3px solid black;</string>
 	color: rgb(0, 0, 0);</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:30pt;&quot;&gt;📋 System Logs&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:30pt;&quot;&gt;(Coming Soon)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:30pt;&quot;&gt;📋 System Logs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -3086,9 +3120,9 @@ QPushButton:hover {
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>540</y>
+        <y>549</y>
         <width>1251</width>
-        <height>250</height>
+        <height>241</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -3117,7 +3151,7 @@ QGroupBox::title {
          <x>20</x>
          <y>40</y>
          <width>1211</width>
-         <height>191</height>
+         <height>181</height>
         </rect>
        </property>
        <property name="styleSheet">
