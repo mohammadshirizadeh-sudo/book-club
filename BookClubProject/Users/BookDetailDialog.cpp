@@ -6,6 +6,7 @@
 #include "../appWindow/SessionManager.h"
 #include <QMessageBox>
 #include <QPixmap>
+#include "pdfreaderwindow.h"
 
 BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVariantMap& bookData, QWidget *parent) :
     QDialog(parent),
@@ -214,5 +215,72 @@ void BookDetailDialog::on_addCartPushButton_clicked()
     // 6. ارسال درخواست به سرور
     Request request(CommandType::AddToCart, params);
     m_networkManager->sendRequest(request);
+}
+
+/*
+void BookDetailDialog::on_pushButton_clicked()
+{
+    int bookId = m_bookData["bookId"].toInt();
+    QString title = m_bookData["title"].toString();
+    QString filePath = m_bookData["pdfPath"].toString();
+
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, "خطا", "مسیر فایل PDF برای این کتاب ثبت نشده است.");
+        return;
+    }
+
+    PdfReaderWindow *readerWindow = new PdfReaderWindow(bookId);
+    readerWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+    // حصول اطمینان از اینکه پنجره مستقل است
+    readerWindow->setWindowFlags(Qt::Window);
+
+    readerWindow->setBookTitle(title);
+
+    connect(readerWindow, &PdfReaderWindow::backRequested, readerWindow, &QWidget::close);
+
+    if (readerWindow->loadPdf(filePath)) {
+        readerWindow->show();
+
+        // آوردن پنجره به روی تمام پنجره‌های دیگر و دادن فوکوس به آن
+        readerWindow->raise();
+        readerWindow->activateWindow();
+    } else {
+        readerWindow->deleteLater();
+    }
+}
+*/
+
+void BookDetailDialog::on_pushButton_clicked()
+{
+    int bookId = m_bookData["bookId"].toInt();
+    QString title = m_bookData["title"].toString();
+    QString filePath = m_bookData["pdfPath"].toString();
+
+    if (filePath.isEmpty()) {
+        QMessageBox::warning(this, "خطا", "مسیر فایل PDF برای این کتاب ثبت نشده است.");
+        return;
+    }
+
+    PdfReaderWindow *readerWindow = new PdfReaderWindow(bookId);
+    readerWindow->setAttribute(Qt::WA_DeleteOnClose);
+    readerWindow->setWindowFlags(Qt::Window);
+    readerWindow->setBookTitle(title);
+
+    // دیالوگ جاری را مخفی کن و پس از بستن PDF دوباره نشان بده
+    this->hide();
+    connect(readerWindow, &PdfReaderWindow::backRequested, this, [this, readerWindow]() {
+        readerWindow->close();
+        this->show();
+    });
+
+    if (readerWindow->loadPdf(filePath)) {
+        readerWindow->showMaximized(); // یا readerWindow->show();
+        readerWindow->raise();
+        readerWindow->activateWindow();
+    } else {
+        this->show(); // در صورت خطا، دیالوگ دوباره ظاهر شود
+        readerWindow->deleteLater();
+    }
 }
 

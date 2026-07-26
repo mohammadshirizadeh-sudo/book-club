@@ -668,10 +668,48 @@ private:
     AdminService* m_adminService;
 };
 
+class GetRecentActivitiesCommand : public Command
+{
+public:
+    explicit GetRecentActivitiesCommand(AdminService* adminService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetRecentActivities; }
+    QString getName() const override { return "GetRecentActivities"; }
+    bool requiresAdmin() const override { return true; }
+
+private:
+    AdminService* m_adminService;
+};
+
+class GetSystemAlertsCommand : public Command
+{
+public:
+    explicit GetSystemAlertsCommand(AdminService* adminService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetSystemAlerts; }
+    QString getName() const override { return "GetSystemAlerts"; }
+    bool requiresAdmin() const override { return true; }
+
+private:
+    AdminService* m_adminService;
+};
+
+
+class GetDatabaseStatusCommand : public Command
+{
+public:
+    explicit GetDatabaseStatusCommand(AdminService* adminService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetDatabaseStatus; }
+    QString getName() const override { return "GetDatabaseStatus"; }
+    bool requiresAdmin() const override { return true; }
+
+private:
+    AdminService* m_adminService;
+};
 
 
 
-// Commands.h
 class SearchUserCommand : public Command
 {
 public:

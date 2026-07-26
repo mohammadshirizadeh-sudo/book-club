@@ -25,7 +25,7 @@ signals:
     void backRequested();
 
 private slots:
-    // void on_backButton_clicked();
+    void on_backButton_clicked();
     void on_startServerButton_clicked();
     void on_stopServerButton_clicked();
     void on_refreshStatsButton_clicked();
@@ -59,6 +59,7 @@ private:
     void logRequest(const QString &message, const QString &type = "INFO");
     void logEvent(const QString &message, const QString &level = "INFO");
     void refreshStatistics();
+    void refreshAdminStats();
 };
 
-#endif // SERVERDASHBOARDWINDOW_H
+#endif

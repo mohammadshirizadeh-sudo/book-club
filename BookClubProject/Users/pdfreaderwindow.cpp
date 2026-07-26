@@ -1,20 +1,18 @@
 
-
-/*
 #include "pdfreaderwindow.h"
 #include "Users/ui_pdfreaderwindow.h"
 
-
-// #include <QPdfDocument>
-// #include <QPdfView>
-
 #include <QPdfDocument>
+#include <QPdfPageNavigator>
 #include <QtPdfWidgets/QPdfView>
->>>>>>> develop
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QKeyEvent>
 #include <QScrollBar>
+#include <QFile>
+#include <QFileInfo>
+#include <QVBoxLayout>
+
 
 PdfReaderWindow::PdfReaderWindow(int bookId, QWidget *parent)
     : QWidget(parent)
@@ -39,7 +37,7 @@ PdfReaderWindow::~PdfReaderWindow()
 {
     delete ui;
 }
-
+/*
 void PdfReaderWindow::setupPdfView()
 {
     // Create PDF view widget inside container
@@ -52,22 +50,49 @@ void PdfReaderWindow::setupPdfView()
 
     // Hide placeholder label when PDF is loaded
     connect(m_pdfDocument, &QPdfDocument::statusChanged, this, [this](QPdfDocument::Status status) {
-        if (status == QPdfDocument::Ready) {
+        if (status == QPdfDocument::Status::Ready) {
             ui->placeholderLabel->hide();
             m_totalPages = m_pdfDocument->pageCount();
             updatePageInfo();
         }
     });
 
-    // Connect page navigation signal
-    connect(m_pdfView->verticalScrollBar(), &QScrollBar::valueChanged, this, [this]() {
-        int newPage = m_pdfView->currentPage();
-        if (newPage != m_currentPage) {
-            m_currentPage = newPage;
+    // Note: page-change tracking is done explicitly via goToPage(), not via the
+    // scrollbar. In SinglePage mode the vertical scrollbar pans within a single
+    // (possibly zoomed) page rather than indicating a page turn, so listening to
+    // it here would fire spuriously and duplicate the emits already done in
+    // goToPage(). If continuous/multi-page scrolling is added later, revisit this.
+}
+*/
+void PdfReaderWindow::setupPdfView()
+{
+    m_pdfView = new QPdfView(ui->pdfViewContainer);
+    m_pdfView->setDocument(m_pdfDocument);
+    m_pdfView->setPageMode(QPdfView::PageMode::MultiPage);
+    m_pdfView->setZoomMode(QPdfView::ZoomMode::Custom);
+    m_pdfView->setZoomFactor(1.0);
+
+    QVBoxLayout *layout = new QVBoxLayout(ui->pdfViewContainer);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(m_pdfView);
+
+    // ۱. به‌روزرسانی اطلاعات پس از لود شدن کامل سند
+    connect(m_pdfDocument, &QPdfDocument::statusChanged, this, [this](QPdfDocument::Status status) {
+        if (status == QPdfDocument::Status::Ready) {
+            ui->placeholderLabel->hide();
+            m_totalPages = m_pdfDocument->pageCount();
             updatePageInfo();
-            emit pageChanged(m_currentPage + 1);
         }
     });
+
+    // ۲. به‌روزرسانی شماره صفحه موقع اسکرول دستی توسط کاربر
+    connect(m_pdfView->pageNavigator(), &QPdfPageNavigator::currentPageChanged,
+            this, [this](int page) {
+                if (m_currentPage != page) {
+                    m_currentPage = page;
+                    updatePageInfo();
+                }
+            });
 }
 
 bool PdfReaderWindow::loadPdf(const QString &filePath)
@@ -83,7 +108,8 @@ bool PdfReaderWindow::loadPdf(const QString &filePath)
         return false;
     }
 
-    bool success = m_pdfDocument->load(filePath);
+    QPdfDocument::Error err = m_pdfDocument->load(filePath);
+    bool success = (err == QPdfDocument::Error::None);
 
     if (success) {
         m_totalPages = m_pdfDocument->pageCount();
@@ -148,10 +174,11 @@ void PdfReaderWindow::updateZoomControls()
 
 void PdfReaderWindow::goToPage(int page)
 {
-    if (page < 0 || page >= m_totalPages) return;
+    if (page < 0 || page >= m_totalPages || page == m_currentPage) return;
 
     m_currentPage = page;
-    m_pdfView->setCurrentPage(page);
+    // m_pdfView->pageNavigator()->setCurrentPage(page);
+    m_pdfView->pageNavigator()->currentPageChanged(page);
     updatePageInfo();
     emit pageChanged(page + 1);
 }
@@ -301,4 +328,3 @@ void PdfReaderWindow::keyPressEvent(QKeyEvent *event)
         break;
     }
 }
-*/

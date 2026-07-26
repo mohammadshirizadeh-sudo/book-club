@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.19)
 project(BookClubProject LANGUAGES CXX)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Network Sql Concurrent Charts)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Network Sql Concurrent Charts Pdf PdfWidgets)
 
 qt_standard_project_setup()
 
@@ -116,8 +116,8 @@ target_link_libraries(BookClubProject
         Qt6::Sql
         Qt::Concurrent
         Qt6::Charts
-
-        # Qt6::Pdf
+        Qt6::Pdf
+        Qt6::PdfWidgets
 
 )
 

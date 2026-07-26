@@ -435,6 +435,19 @@ font-size: 40px;</string>
      <string>❤️</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>560</y>
+      <width>90</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>read</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

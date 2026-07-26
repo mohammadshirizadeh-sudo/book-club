@@ -3,6 +3,7 @@
 
 #include "../Server/server.h"
 #include "../Network-Manger/NetworkManager.h"
+#include "../Services/AdminService.h"
 
 #include <QDateTime>
 #include <QMessageBox>
@@ -41,6 +42,7 @@ ServerDashboardWindow::ServerDashboardWindow(QWidget *parent)
 
     // Initial stats update
     refreshStatistics();
+    refreshAdminStats();
 }
 
 ServerDashboardWindow::~ServerDashboardWindow()
@@ -91,6 +93,7 @@ void ServerDashboardWindow::autoRefreshStats()
 {
     if (m_server && m_server->isRunning()) {
         refreshStatistics();
+        refreshAdminStats();
     }
 }
 
@@ -99,6 +102,9 @@ void ServerDashboardWindow::refreshStatistics()
     // Update online users count
     ui->onlineUsersLabel->setText(QString::number(ui->clientsTableWidget->rowCount()));
 
+    // Active connections mirrors the connected-clients table (was previously never updated)
+    ui->activeConnectionsLabel->setText(QString::number(ui->clientsTableWidget->rowCount()));
+
     // Simulated CPU/RAM values (in real app, would get from system)
     static float cpuUsage = 0.0f;
     static float ramUsage = 30.0f;
@@ -106,13 +112,46 @@ void ServerDashboardWindow::refreshStatistics()
     cpuUsage = qMin(100.0f, cpuUsage + (rand() % 20 - 10) * 0.1f);
     ramUsage = qMin(95.0f, qMax(25.0f, ramUsage + (rand() % 6 - 3) * 0.1f));
 
-
-
     ui->cpuValueLabel->setText(QString("%1%").arg(cpuUsage, 0, 'f', 1));
     ui->cpuProgressBar->setValue(static_cast<int>(cpuUsage));
 
     ui->ramValueLabel->setText(QString("%1%").arg(ramUsage, 0, 'f', 1));
     ui->ramProgressBar->setValue(static_cast<int>(ramUsage));
+}
+
+void ServerDashboardWindow::refreshAdminStats()
+{
+    if (!m_server) return;
+
+    AdminService* admin = m_server->getAdminService();
+    if (!admin) return;
+
+    // ---- System stats ----
+    QMap<QString, QVariant> stats = admin->getSystemStats();
+    ui->totalUsersValueLabel->setText(stats.value("totalUsers").toString());
+    ui->totalBooksValueLabel->setText(stats.value("totalBooks").toString());
+    ui->blockedUsersValueLabel->setText(stats.value("blockedUsers").toString());
+    ui->totalRevenueValueLabel->setText(
+        QString("$%1").arg(stats.value("totalRevenue").toDouble(), 0, 'f', 2));
+
+    // ---- Database status ----
+    QMap<QString, QVariant> dbStatus = admin->getDatabaseStatus();
+    bool dbHealthy = dbStatus.value("isOpen").toBool();
+    ui->dbStatusValueLabel->setText(dbStatus.value("status").toString());
+    ui->dbStatusValueLabel->setStyleSheet(QString(
+                                              "QLabel { background-color: %1; border: 2px solid black; "
+                                              "border-radius: 8px; font: 700; font-size: 18px; color: black; padding: 3px; }"
+                                              ).arg(dbHealthy ? "rgb(200,255,200)" : "rgb(255,180,180)"));
+
+    // ---- Alerts ----
+    ui->alertsListWidget->clear();
+    for (const QString& alert : admin->getSystemAlerts())
+        ui->alertsListWidget->addItem(alert);
+
+    // ---- Recent activity ----
+    ui->recentActivityListWidget->clear();
+    for (const QString& activity : admin->getRecentActivities(10))
+        ui->recentActivityListWidget->addItem(activity);
 }
 
 void ServerDashboardWindow::updateServerStatus(bool running)
@@ -185,6 +224,7 @@ bool ServerDashboardWindow::startServer(int port)
         m_startTime = QDateTime::currentDateTime();
         updateServerStatus(true);
         logRequest(QString("Server started on port %1").arg(port), "SYSTEM");
+        refreshAdminStats();
     } else {
         QMessageBox::critical(this, "Error",
                               QString("Failed to start server on port %1").arg(port));
@@ -251,10 +291,10 @@ void ServerDashboardWindow::logEvent(const QString &message, const QString &leve
 
 // ===== Slot Implementations =====
 
-// void ServerDashboardWindow::on_backButton_clicked()
-// {
-//     emit backRequested();
-// }
+void ServerDashboardWindow::on_backButton_clicked()
+{
+    emit backRequested();
+}
 
 void ServerDashboardWindow::on_startServerButton_clicked()
 {
@@ -270,6 +310,7 @@ void ServerDashboardWindow::on_stopServerButton_clicked()
 void ServerDashboardWindow::on_refreshStatsButton_clicked()
 {
     refreshStatistics();
+    refreshAdminStats();
     logEvent("Statistics refreshed manually", "INFO");
 }
 
@@ -294,7 +335,7 @@ void ServerDashboardWindow::onClientConnected(qintptr socketDescriptor, const QS
 
 {
 
-     QString socketId = QString::number(socketDescriptor);
+    QString socketId = QString::number(socketDescriptor);
     int row = ui->clientsTableWidget->rowCount();
     ui->clientsTableWidget->insertRow(row);
 
@@ -303,6 +344,7 @@ void ServerDashboardWindow::onClientConnected(qintptr socketDescriptor, const QS
     ui->clientsTableWidget->setItem(row, 2, new QTableWidgetItem("--"));
 
     ui->onlineUsersLabel->setText(QString::number(ui->clientsTableWidget->rowCount()));
+    ui->activeConnectionsLabel->setText(QString::number(ui->clientsTableWidget->rowCount()));
 
     logEvent(QString("Client connected: %1 (%2)").arg(ipAddress).arg(socketId), "SUCCESS");
 }
@@ -320,6 +362,7 @@ void ServerDashboardWindow::onClientDisconnected(qintptr socketDescriptor)
     }
 
     ui->onlineUsersLabel->setText(QString::number(ui->clientsTableWidget->rowCount()));
+    ui->activeConnectionsLabel->setText(QString::number(ui->clientsTableWidget->rowCount()));
 
     logEvent(QString("Client disconnected: %1").arg(socketId), "WARNING");
 }
