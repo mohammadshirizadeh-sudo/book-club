@@ -14,7 +14,7 @@
    <string>My Library - Book Club</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/main.jpg);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QFrame" name="mainFrame">

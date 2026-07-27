@@ -18,7 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/enter.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -50,8 +50,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:45px;
+     <string notr="true">	font: 700 15pt &quot;Script MT Bold&quot;;
+	font-size:55px;
 	color: rgb(0, 0, 0);
 	background: transparent;</string>
     </property>
@@ -65,15 +65,15 @@
    <widget class="QLabel" name="fullnameNewLabel">
     <property name="geometry">
      <rect>
-      <x>110</x>
+      <x>100</x>
       <y>120</y>
-      <width>161</width>
+      <width>171</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:30px;
+	font-size:35px;
 	color: rgb(0, 0, 0);
 	background: transparent;
 </string>
@@ -85,17 +85,18 @@
    <widget class="QLabel" name="usernameNewLabel">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>110</x>
       <y>220</y>
-      <width>141</width>
+      <width>161</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:30px;
+	font-size:35px;
 	color: rgb(0, 0, 0);
-	background: transparent;</string>
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string> Username:</string>
@@ -104,17 +105,18 @@
    <widget class="QLabel" name="passwordLabel">
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>110</x>
       <y>310</y>
-      <width>141</width>
+      <width>161</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:30px;
+	font-size:35px;
 	color: rgb(0, 0, 0);
-	background: transparent;</string>
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string> Password:</string>
@@ -130,7 +132,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -147,7 +150,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -167,7 +171,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -180,17 +185,18 @@
    <widget class="QLabel" name="emailNewLabel">
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>150</x>
       <y>500</y>
-      <width>101</width>
+      <width>111</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:30px;
+	font-size:35px;
 	color: rgb(0, 0, 0);
-	background: transparent;</string>
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string> E-mail:</string>
@@ -206,7 +212,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -227,7 +234,8 @@
 	font-size:35px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>Sign up as User</string>
@@ -247,7 +255,8 @@
 	font-size:35px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>Already have an account? Sign in!</string>
@@ -256,17 +265,18 @@
    <widget class="QLabel" name="passwordLabel_2">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>0</x>
       <y>410</y>
-      <width>231</width>
+      <width>271</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:30px;
+	font-size:35px;
 	color: rgb(0, 0, 0);
-	background: transparent;</string>
+	background: transparent;
+</string>
     </property>
     <property name="text">
      <string> Repeat Password:</string>
@@ -282,7 +292,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -306,7 +317,8 @@
 	font-size:35px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>Sign up as Publisher</string>

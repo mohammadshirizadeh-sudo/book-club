@@ -18,7 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/main.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -482,15 +482,17 @@ QGroupBox::title {
       <string notr="true">QTableWidget {
 	font: 700 11pt &quot;Script MT&quot;;
 	gridline-color: rgb(0, 0, 0);
+	border: 2px solid black;
 }
 QTableWidget::item {
 	padding: 8px;
 }
 QHeaderView::section {
 	font: 700 13pt &quot;Script MT&quot;;
-	background-color: rgb(192, 196, 206);
+	background-color: rgb(178, 199, 143);
 	color: rgb(0, 0, 0);
 	padding: 8px;
+	border: 1px solid black
 }</string>
      </property>
      <attribute name="horizontalHeaderDefaultSectionSize">
@@ -563,15 +565,17 @@ QGroupBox::title {
       <string notr="true">QTableWidget {
 	font: 700 11pt &quot;Script MT&quot;;
 	gridline-color: rgb(0, 0, 0);
+	border: 2px solid black;
 }
 QTableWidget::item {
 	padding: 8px;
 }
 QHeaderView::section {
 	font: 700 13pt &quot;Script MT&quot;;
-	background-color: rgb(192, 196, 206);
+	background-color: rgb(176, 196, 143);
 	color: rgb(0, 0, 0);
 	padding: 8px;
+	border: 1px solid black;
 }</string>
      </property>
      <attribute name="horizontalHeaderDefaultSectionSize">

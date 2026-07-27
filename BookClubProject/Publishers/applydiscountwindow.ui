@@ -18,7 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/main.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -699,18 +699,19 @@ QGroupBox::title {
       <string notr="true">QTableWidget {
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	gridline-color: black;
-	border: none;
+	border: 2px solid black;
 }
 QTableWidget::item {
 	padding: 6px;
 }
 QHeaderView::section {
 	font: 700 9pt &quot;Script MT&quot;;
-	background-color: rgb(255, 243, 224);
+	background-color: rgb(171, 189, 139);
 	color: black;
 	font-size: 20px;
 	padding: 8px;
 	border-bottom: 2px solid rgb(0, 0, 0);
+	border: 1px solid black;
 }</string>
      </property>
      <attribute name="horizontalHeaderStretchLastSection">

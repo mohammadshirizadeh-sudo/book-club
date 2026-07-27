@@ -6,32 +6,47 @@
 #include "appWindow/genrewindow.h"
 #include "appWindow/userwindow.h"
 #include "appWindow/publisherwindow.h"
-
-#include "Publishers/publisherprofilewindow.h"
-#include "Publishers/applydiscountwindow.h"
-// #include "../appWindow/adminwindow.h"
-#include "Publishers/applydiscountwindow.h"
+#include "appWindow/adminwindow.h"
 #include "appWindow/SessionManager.h"
 #include "appWindow/userwindow.h"
-#include "Users/searchwindow.h"
-#include "Users/UserProfileWindow.h"
-#include "Users/genrebrowserwindow.h"
-#include "Users/favoritebookswindow.h"
-#include "Users/mylibrarywindow.h"
-#include "Users/shoppinghistorywindow.h"
-#include "Server/server.h"
-#include "Database/DatabaseInitializer.h"
-#include "Users/shelfmanagementdialog.h"
-#include "Users/cartwindow.h"
-#include "Publishers/editbookswindow.h"
-#include "Publishers/deactivatebookwindow.h"
+
+#include "Publishers/addbookdialog.h"
+#include "Publishers/applydiscountwindow.h"
 #include "Publishers/bookstaticswindow.h"
+#include "Publishers/deactivatebookwindow.h"
+#include "Publishers/editbookswindow.h"
+#include "Publishers/publisherprofilewindow.h"
+
+#include "Users/AuthorDetailDialog.h"
+#include "Users/BookDetailDialog.h"
+#include "Users/bookreviewdialog.h"
+#include "Users/cartwindow.h"
+#include "Users/favoritebookswindow.h"
+#include "Users/genrebrowserwindow.h"
+#include "Users/mylibrarywindow.h"
+#include "Users/pdfreaderwindow.h"
+#include "Users/searchwindow.h"
+#include "Users/shelfmanagementdialog.h"
+#include "Users/shoppinghistorywindow.h"
+#include "Users/UserDetailDialog.h"
+#include "Users/UserProfileWindow.h"
+
+#include "Mutual/changepassworddialog.h"
+#include "Mutual/editinfodialog.h"
+#include "Mutual/infodialog.h"
 #include "Mutual/notificationwidget.h"
+
+#include "Server/server.h"
+
+#include "Database/DatabaseInitializer.h"
+#include "Database/DatabaseManager.h"
 
 #include <QApplication>
 #include <QStackedWidget>
 #include <QMessageBox>
 #include <QResource>
+#include <QScreen>
+#include <QGuiApplication>
 
 int main(int argc, char *argv[])
 {
@@ -57,12 +72,11 @@ int main(int argc, char *argv[])
     NetworkManager* networkManager = new NetworkManager();
     networkManager->connectToServer("127.0.0.1", 8099);
 
-    // پنجره اصلی
+    // پنجره اصلی. میخوام دقیقا وسط قرار بگیره همه صفهات
     QStackedWidget stackedWidget;
     stackedWidget.setWindowTitle("Book Club");
     stackedWidget.resize(1500, 800);
 
-    // صفحات
     LoginWindow* loginWindow = new LoginWindow(networkManager);
     ForgotPasswordWindow* forgotWindow = new ForgotPasswordWindow(networkManager);
     RegisterWindow* registerWindow = new RegisterWindow(networkManager);
@@ -73,7 +87,6 @@ int main(int argc, char *argv[])
     UserProfileWindow* profileWindow = new UserProfileWindow(networkManager);
     SearchWindow* searchWindow = new SearchWindow(networkManager);
     PublisherProfileWindow* publisherProfileWindow =  new PublisherProfileWindow(networkManager);
-    //MyBooks* mybooks = new MyBooks(networkManager);
     FavoriteBooksWindow* favoriteBooks = new FavoriteBooksWindow(networkManager);
 
     GenreBrowserWindow* genreBrowsWindow = new GenreBrowserWindow(networkManager);
@@ -90,15 +103,13 @@ int main(int argc, char *argv[])
     NotificationWidget* notificatoinWindow = new NotificationWidget(networkManager);
 
 
-
-    // اضافه کردن صفحات
     int loginIndex = stackedWidget.addWidget(loginWindow);
     int forgotIndex = stackedWidget.addWidget(forgotWindow);
     int registerIndex = stackedWidget.addWidget(registerWindow);
     int genreIndex = stackedWidget.addWidget(genreWindow);
     int userIndex = stackedWidget.addWidget(userWindow);
     int publisherIndex = stackedWidget.addWidget(publisherWindow);
-    // int adminIndex = stackedWidget.addWidget(adminWindow);
+    //int adminIndex = stackedWidget.addWidget(adminWindow);
     int profileIndex = stackedWidget.addWidget(profileWindow);
     int searchIndex = stackedWidget.addWidget(searchWindow);
     int publisherProfileindex = stackedWidget.addWidget(publisherProfileWindow);
@@ -113,12 +124,6 @@ int main(int argc, char *argv[])
     int deactivateWindowIndex = stackedWidget.addWidget(deactivateBook);
     int bookStaticsWindowIndex = stackedWidget.addWidget(bookstaticsWindow);
     int notificationIndex = stackedWidget.addWidget(notificatoinWindow);
-
-
-
-    //-------------------------------------------------
-    // Navigation
-    //-------------------------------------------------
 
 
 
