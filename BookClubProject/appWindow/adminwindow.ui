@@ -18,7 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/main.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -879,7 +879,7 @@ QGroupBox::title {
         <rect>
          <x>24</x>
          <y>40</y>
-         <width>505</width>
+         <width>504</width>
          <height>331</height>
         </rect>
        </property>
@@ -891,7 +891,7 @@ border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
-background-color:rgb(190, 195, 205);
+    background-color: rgb(120, 135, 79);
 padding: 8px;
 color: black;
 }</string>
@@ -1447,7 +1447,7 @@ border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
-background-color:rgb(190, 195, 205);
+    background-color: rgb(120, 135, 79);
 padding: 8px;
 color: black;
 }</string>
@@ -1569,10 +1569,11 @@ QGroupBox::title {
         <string notr="true">QTableWidget {
 font: 700 11pt &quot;Script MT Bold&quot;;
 gridline-color: black;
+border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
-background-color:rgb(190, 195, 205);
+    background-color: rgb(120, 135, 79);
 padding: 8px;
 color: black;
 }</string>
@@ -1678,12 +1679,13 @@ QGroupBox::title {
        <property name="styleSheet">
         <string notr="true">QTableWidget {
 font: 700 11pt &quot;Script MT Bold&quot;;
- gridline-color: black;
+gridline-color: black;
+border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
- background-color:rgb(190, 195, 205);
- padding: 8px;
+    background-color: rgb(120, 135, 79);
+padding: 8px;
 color: black;
 }</string>
        </property>
@@ -2143,7 +2145,7 @@ border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
-background-color:rgb(190, 195, 205);
+    background-color: rgb(120, 135, 79);
 padding: 8px;
 color: black;
 }</string>
@@ -2264,7 +2266,7 @@ border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
-background-color:rgb(190, 195, 205);
+    background-color: rgb(120, 135, 79);
 padding: 8px;
 color: black;
 }</string>
@@ -2760,7 +2762,7 @@ border: 2px solid black;
 }
 QHeaderView::section {
 font: 700 12pt &quot;Script MT&quot;;
-background-color:rgb(190, 195, 205);
+    background-color: rgb(120, 135, 79);
 padding: 8px;
 color: black;
 }</string>
@@ -3754,7 +3756,7 @@ QTableWidget::item {
 QHeaderView::section {
     font: 700 12pt &quot;Script MT Bold&quot;;
     font-size: 22px;
-    background-color: rgb(178, 185, 197);
+    background-color: rgb(120, 135, 79);
     color: black;
     border: 2px solid black;
     padding: 6px;

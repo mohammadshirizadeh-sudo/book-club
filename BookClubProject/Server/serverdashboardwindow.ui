@@ -24,7 +24,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/main.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -401,10 +401,10 @@ QGroupBox::title {
     <widget class="QTableWidget" name="clientsTableWidget">
      <property name="geometry">
       <rect>
-       <x>15</x>
-       <y>75</y>
-       <width>420</width>
-       <height>260</height>
+       <x>35</x>
+       <y>80</y>
+       <width>381</width>
+       <height>241</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -423,7 +423,7 @@ QTableWidget::item {
 QHeaderView::section {
     font: 700 12pt &quot;Script MT Bold&quot;;
     font-size: 16px;
-    background-color: rgb(70, 130, 180);
+    background-color: rgb(171, 191, 138);
     color: white;
     border: 2px solid black;
     padding: 6px;

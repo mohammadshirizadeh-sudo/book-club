@@ -18,7 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/main.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -246,9 +246,9 @@ border-radius: 12px;</string>
     <property name="geometry">
      <rect>
       <x>39</x>
-      <y>494</y>
+      <y>500</y>
       <width>1411</width>
-      <height>71</height>
+      <height>70</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -405,9 +405,9 @@ QPushButton:disabled {
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>570</y>
+      <y>580</y>
       <width>1411</width>
-      <height>221</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -503,17 +503,17 @@ QGroupBox::title {
     <widget class="QTableWidget" name="booksTable">
      <property name="geometry">
       <rect>
-       <x>39</x>
+       <x>29</x>
        <y>39</y>
-       <width>1331</width>
-       <height>281</height>
+       <width>1351</width>
+       <height>271</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QTableWidget {
 	font: 700 9pt &quot;Script MT&quot;;
 	gridline-color: rgb(0, 0, 0);
-	border: none;
+	border: 2px solid black;
 	selection-background-color: rgba(33, 150, 243, 30);
 }
 QTableWidget::item {
@@ -524,7 +524,7 @@ QHeaderView::section {
 	background-color:white;
 	color: black;
 	padding: 10px;
-	border-bottom: 2px solid black;
+	border: 1px solid black;
 }</string>
      </property>
      <property name="alternatingRowColors">

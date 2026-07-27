@@ -21,7 +21,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/enter.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -116,7 +116,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -136,7 +137,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -163,7 +165,8 @@
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>🗝️ Forgot Password?</string>
@@ -183,7 +186,8 @@
 	font-size:45px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>Don't have an account? Sign up!</string>
@@ -203,7 +207,8 @@
 	font-size:45px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>Sign in</string>

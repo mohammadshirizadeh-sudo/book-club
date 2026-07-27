@@ -24,7 +24,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/dia.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -111,6 +111,7 @@
     border-radius: 12px;
     margin-top: 15px;
     padding-top: 10px;
+	background: transparent;
 }
 
 QGroupBox::title {
@@ -215,7 +216,7 @@ QPushButton:hover {
     font-size: 18px;
     border: 3px solid black;
     border-radius: 12px;
-    background-color: white;
+	background: transparent;
 }
 
 QListWidget#shelfList::item {
@@ -260,6 +261,7 @@ QListWidget#shelfList::item:hover:!selected {
     border-radius: 12px;
     margin-top: 15px;
     padding-top: 10px;
+	background: transparent;
 }
 
 QGroupBox::title {
@@ -349,7 +351,7 @@ QPushButton:disabled {
     font-size: 14px;
     border: 3px solid black;
     border-radius: 12px;
-    background-color: white;
+	background: transparent;
 }
 
 QListWidget#bookList::item {
@@ -414,6 +416,7 @@ QListWidget#bookList::item:hover:!selected {
     border-radius: 12px;
     margin-top: 15px;
     padding-top: 10px;
+	background: transparent;
 }
 
 QGroupBox::title {
@@ -441,6 +444,7 @@ QGroupBox::title {
     border-radius: 12px;
     font-size: 16px;
     color: gray;
+	background: transparent;
 }</string>
      </property>
      <property name="text">
@@ -552,7 +556,7 @@ QGroupBox::title {
     color: rgb(60, 60, 60);
     border: 3px solid black;
     border-radius: 12px;
-    background-color: rgb(250, 250, 250);
+	background: transparent;
     padding: 8px;
 }</string>
      </property>

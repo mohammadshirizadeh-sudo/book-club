@@ -18,7 +18,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/dia.jpg);</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -360,6 +360,7 @@ padding: 4px;</string>
     color: rgb(0, 0, 0);
     border: 3px solid black;
     border-radius: 12px;
+background: transparent;
     margin-top: 15px;
     padding-top: 10px;
 }
@@ -431,6 +432,7 @@ pading: 2px;</string>
     font-size: 25px;
     color: rgb(0, 0, 0);
     border: 3px solid black;
+	background: transparent;
     border-radius: 12px;
     margin-top: 15px;
     padding-top: 10px;
@@ -457,7 +459,7 @@ QGroupBox::title {
      <property name="styleSheet">
       <string notr="true">QScrollArea {
 	border: none;
-	background-color: transparent;
+	background: transparent;
 }
 QScrollBar:vertical {
 	width: 8px;
@@ -489,29 +491,6 @@ QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
        <string notr="true">QWidget { background-color: transparent; }</string>
       </property>
      </widget>
-    </widget>
-    <widget class="QPushButton" name="viewAllReviewsButton">
-     <property name="geometry">
-      <rect>
-       <x>970</x>
-       <y>20</y>
-       <width>115</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:20px;
-	color: rgb(0, 0, 0);
-	border: none;
-	border-radius: 12px;
-	background: transparent;
-}</string>
-     </property>
-     <property name="text">
-      <string>View All →</string>
-     </property>
     </widget>
    </widget>
    <widget class="QPushButton" name="submitReviewButton">

@@ -14,7 +14,7 @@
    <string>Shopping History - Book Club</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/dia.jpg);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QFrame" name="mainFrame">
@@ -84,7 +84,7 @@
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#totalSpentCard { background-color: #E3F2FD; border: 3px solid black; border-radius: 12px; }</string>
+      <string notr="true">background-color: #E3F2FD; border: 3px solid black; border-radius: 12px; 	background: transparent;</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::Shape::StyledPanel</enum>
@@ -152,6 +152,7 @@ background: transparent;</string>
 	border-radius: 12px; 
 	margin-top: 10px;
 	padding-top: 25px;
+	background: transparent;
 }</string>
      </property>
      <property name="title">
@@ -167,7 +168,11 @@ background: transparent;</string>
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">QScrollArea#ordersScrollArea { border: 2px solid black; border-radius: 10px; background-color: white; }</string>
+       <string notr="true">
+	border: 2px solid black;
+	border-radius: 10px;
+	background: transparent;
+</string>
       </property>
       <property name="widgetResizable">
        <bool>true</bool>

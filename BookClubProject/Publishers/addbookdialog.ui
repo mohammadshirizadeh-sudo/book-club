@@ -27,7 +27,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/sui.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -131,7 +131,7 @@
     border: 3px solid black;
     border-radius: 12px;
     padding: 8px;
-    background-color: white;
+    background: transparent;
 }
 QLineEdit:focus {
     border-color: rgb(0, 100, 200);
@@ -184,7 +184,7 @@ QLineEdit:focus {
     border: 3px solid black;
     border-radius: 12px;
     padding: 8px;
-    background-color: white;
+    background: transparent;
 }
 QLineEdit:focus {
     border-color: rgb(0, 100, 200);
@@ -234,7 +234,7 @@ QLineEdit:focus {
     border: 3px solid black;
     border-radius: 12px;
     padding: 8px;
-    background-color: white;
+    background: transparent;
 }
 
 QComboBox::drop-down {
@@ -348,7 +348,7 @@ QComboBox QAbstractItemView {
     border: 3px solid black;
     border-radius: 12px;
     padding: 5px;
-    background-color: white;
+    background: transparent;
 }
 QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
     width: 35px;
@@ -412,7 +412,7 @@ QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
     border: 3px solid black;
     border-radius: 12px;
     padding: 5px;
-    background-color: white;
+    background: transparent;
 }
 QSpinBox::up-button, QSpinBox::down-button {
     width: 35px;
@@ -469,7 +469,7 @@ QSpinBox::up-button, QSpinBox::down-button {
     color: rgb(0, 0, 0);
     border: 3px solid black;
     border-radius: 12px;
-    background-color: white;
+    background: transparent;
     padding: 8px;
 }
 QTextEdit:focus {
@@ -539,7 +539,7 @@ QTextEdit:focus {
     </property>
     <property name="styleSheet">
      <string notr="true">QFrame#coverPreviewFrame {
-    background-color: rgba(248, 249, 250, 230);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }</string>
@@ -585,7 +585,7 @@ QTextEdit:focus {
     font: 700 9pt &quot;Script MT Bold&quot;;
     font-size: 22px;
     color: rgb(0, 0, 0);
-    background-color: rgb(23, 162, 184);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
     padding: 8px;
@@ -609,7 +609,7 @@ QPushButton:hover {
      </property>
      <property name="styleSheet">
       <string notr="true">QLabel#coverPreviewLabel {
-    background-color: rgb(248, 249, 250);
+    background: transparent;
     border: 3px dashed black;
     border-radius: 12px;
     font-size: 18px;
@@ -679,7 +679,7 @@ QPushButton:hover {
     </property>
     <property name="styleSheet">
      <string notr="true">QFrame#pdfSelectorFrame {
-    background-color: rgba(248, 249, 250, 230);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }</string>
@@ -725,7 +725,7 @@ QPushButton:hover {
     font: 700 9pt &quot;Script MT Bold&quot;;
     font-size: 22px;
     color: rgb(0, 0, 0);
-    background-color: rgb(23, 162, 184);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
     padding: 8px;
@@ -749,7 +749,7 @@ QPushButton:hover {
      </property>
      <property name="styleSheet">
       <string notr="true">QLabel#pdfFileNameLabel {
-    background-color: rgb(248, 249, 250);
+    background: transparent;
     border: 2px dashed black;
     border-radius: 10px;
     font-size: 16px;
@@ -781,7 +781,7 @@ QPushButton:hover {
 }</string>
      </property>
      <property name="text">
-      <string/>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;loading...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -805,7 +805,7 @@ QPushButton:hover {
 }</string>
      </property>
      <property name="text">
-      <string/>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;loading...&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </widget>
@@ -829,7 +829,7 @@ QPushButton:hover {
     font: 700 11pt &quot;Script MT Bold&quot;;
     font-size: 25px;
     color: black;
-    background-color: rgb(40, 167, 69);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -837,7 +837,7 @@ QPushButton:hover {
     background-color: rgb(33, 136, 56);
 }
 QPushButton:disabled {
-    background-color: rgb(200, 200, 200);
+    background: transparent;
     color: gray;
 }</string>
     </property>
@@ -859,7 +859,7 @@ QPushButton:disabled {
     font: 700 11pt &quot;Script MT Bold&quot;;
     font-size: 25px;
     color: rgb(0, 0, 0);
-    background-color: rgb(255, 193, 7);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -885,7 +885,7 @@ QPushButton:hover {
     font: 700 11pt &quot;Script MT Bold&quot;;
     font-size: 25px;
     color: black;
-    background-color: rgb(220, 53, 69);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }

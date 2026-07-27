@@ -14,7 +14,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/sui.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -387,7 +387,8 @@ border-radius: 12px;</string>
 border-radius: 12px;
 color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT&quot;;
-font-size: 30px;</string>
+font-size: 30px;
+background: transparent;</string>
     </property>
     <property name="text">
      <string>Add to Cart</string>
@@ -429,7 +430,8 @@ color: rgb(0, 0, 0);
 border-radius: 12px;
 color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT&quot;;
-font-size: 30px;</string>
+font-size: 30px;
+background: transparent;</string>
     </property>
     <property name="text">
      <string>❤️</string>
@@ -449,7 +451,8 @@ font-size: 30px;</string>
 border-radius: 12px;
 color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT&quot;;
-font-size: 30px;</string>
+font-size: 30px;
+background: transparent;</string>
     </property>
     <property name="text">
      <string>📔 Start Reading</string>
