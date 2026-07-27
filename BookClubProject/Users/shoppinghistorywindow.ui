@@ -68,7 +68,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>📋 Shopping History</string>
+      <string>Shopping History</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -105,7 +105,7 @@ color: black;
 background: transparent;</string>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:24pt;&quot;&gt;$247.45&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:24pt;&quot;&gt;$ 0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -156,15 +156,15 @@ background: transparent;</string>
 }</string>
      </property>
      <property name="title">
-      <string>Order History</string>
+      <string>📜 Shopping History</string>
      </property>
      <widget class="QScrollArea" name="ordersScrollArea">
       <property name="geometry">
        <rect>
         <x>24</x>
-        <y>44</y>
+        <y>54</y>
         <width>1341</width>
-        <height>461</height>
+        <height>451</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -183,7 +183,7 @@ background: transparent;</string>
          <x>0</x>
          <y>0</y>
          <width>1337</width>
-         <height>457</height>
+         <height>447</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="ordersLayout"/>

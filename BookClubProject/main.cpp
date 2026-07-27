@@ -1,3 +1,15 @@
+//rating for bookdetaildialog
+
+
+
+
+
+
+
+
+
+
+
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"

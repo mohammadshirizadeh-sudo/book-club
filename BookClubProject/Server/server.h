@@ -47,6 +47,12 @@ public:
       bool startServer(quint16 port);
 
 
+    AdminService* getAdminService() const
+    {
+        return m_adminService;
+    }
+
+
  signals:
     void clientConnected(qintptr socketDescriptor, const QString& ipAddress);
 

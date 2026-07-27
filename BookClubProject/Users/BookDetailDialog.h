@@ -24,13 +24,20 @@ private slots:
 
     void on_addCartPushButton_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::BookDetailDialog *ui;
     void displayBookInfo(const QVariantMap& bookData);
     NetworkManager* m_networkManager;
     QVariantMap m_bookData;
     bool m_isFavorite;
+    bool m_isOwned = false;
     void updateFavoriteButtonAppearance();
+
+    void checkBookOwnership();
+    void updateCartButtonAppearance();
+    void openBookPdf();
 };
 
 #endif // BOOKDETAILDIALOG_H

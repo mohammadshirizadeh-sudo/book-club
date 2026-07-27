@@ -62,11 +62,10 @@ void CartWindow::handleResponse(const Response& response)
             QMessageBox::critical(this, "Error", "Failed to load cart.");
         }
     }
-    // 🟢 پاسخ کم کردن از سبد خرید یا اضافه کردن به آن
-    else if (response.getCommandType() == CommandType::RemoveFromCart ||
-             response.getCommandType() == CommandType::AddToCart) {
+    // 🟢 پاسخ حذف از سبد خرید
+    else if (response.getCommandType() == CommandType::RemoveFromCart) {
         if (response.isSuccess()) {
-            loadCart(); // رفرش خودکار سبد خرید برای نمایش تعداد و قیمت جدید
+            loadCart(); // رفرش خودکار سبد خرید برای نمایش لیست جدید
         } else {
             QMessageBox::warning(this, "Error", response.getMessage());
         }
@@ -85,7 +84,7 @@ void CartWindow::handleResponse(const Response& response)
         } else {
             QMessageBox::warning(this, "Error", "Failed to fetch book details: " + response.getMessage());
         }
-    }else if (response.getCommandType() == CommandType::Checkout) {
+    } else if (response.getCommandType() == CommandType::Checkout) {
         if (response.isSuccess()) {
             QVariantMap data = response.getData();
             int purchaseId = data["purchaseId"].toInt();
@@ -102,7 +101,6 @@ void CartWindow::handleResponse(const Response& response)
 
             QMessageBox::information(this, "تسویه‌حساب موفق", msg);
 
-            // رفرش سبد خرید (که پس از خرید موفق در سرور خالی می‌شود)
             loadCart();
         } else {
             QMessageBox::critical(this, "خطا در خرید", response.getMessage());
@@ -142,7 +140,6 @@ void CartWindow::displayCart(const QVariantMap& cartData)
         rowLayout->setContentsMargins(15, 10, 15, 10);
 
         int bookId = item["bookId"].toInt();
-        int quantity = item["quantity"].toInt();
         double totalPrice = item["totalPrice"].toDouble();
         double totalDiscountedPrice = item["totalDiscountedPrice"].toDouble();
 
@@ -156,52 +153,34 @@ void CartWindow::displayCart(const QVariantMap& cartData)
 
         // لیبل متن اطلاعات کتاب
         QLabel* infoLabel = new QLabel();
-        infoLabel->setText(QString("📖 <b>Book ID: %1</b> &nbsp;&nbsp;|&nbsp;&nbsp; 💵 Total: %2")
+        infoLabel->setText(QString("📖 <b>Book ID: %1</b> &nbsp;&nbsp;|&nbsp;&nbsp; 💵 Price: %2")
                                .arg(bookId).arg(priceText));
         infoLabel->setStyleSheet("font-size: 16px; color: black; border: none; background: transparent;");
         infoLabel->setCursor(Qt::PointingHandCursor);
         infoLabel->setProperty("bookId", bookId);
         infoLabel->installEventFilter(this);
 
-        // 🟢 دکمه کم کردن تعداد (➖)
-        QPushButton* decreaseButton = new QPushButton("➖");
-        decreaseButton->setFixedSize(35, 35);
-        decreaseButton->setStyleSheet(
-            "QPushButton { background-color: #ffcdd2; border: 1px solid #d32f2f; border-radius: 5px; font-weight: bold; font-size: 16px; color: #c62828; }"
+        // 🟢 دکمه حذف آیتم از سبد خرید
+        QPushButton* removeButton = new QPushButton("🗑️ Remove");
+        removeButton->setFixedSize(100, 35);
+        removeButton->setStyleSheet(
+            "QPushButton { background-color: #ffcdd2; border: 1px solid #d32f2f; border-radius: 5px; font-weight: bold; font-size: 13px; color: #c62828; }"
             "QPushButton:hover { background-color: #ef9a9a; }"
             );
-        decreaseButton->setProperty("bookId", bookId);
-        connect(decreaseButton, &QPushButton::clicked, this, &CartWindow::onDecreaseButtonClicked);
-
-        // 🟢 نمایش تعداد جاری کتاب
-        QLabel* qtyLabel = new QLabel(QString(" 📦 Qty: <b>%1</b> ").arg(quantity));
-        qtyLabel->setStyleSheet("font-size: 16px; color: black; border: none; background: transparent;");
-
-        // 🟢 دکمه افزودن تعداد (➕)
-        QPushButton* increaseButton = new QPushButton("➕");
-        increaseButton->setFixedSize(35, 35);
-        increaseButton->setStyleSheet(
-            "QPushButton { background-color: #c8e6c9; border: 1px solid #2e7d32; border-radius: 5px; font-weight: bold; font-size: 16px; color: #2e7d32; }"
-            "QPushButton:hover { background-color: #a5d6a7; }"
-            );
-        increaseButton->setProperty("bookId", bookId);
-        connect(increaseButton, &QPushButton::clicked, this, &CartWindow::onIncreaseButtonClicked);
+        removeButton->setProperty("bookId", bookId);
+        connect(removeButton, &QPushButton::clicked, this, &CartWindow::onRemoveButtonClicked);
 
         rowLayout->addWidget(infoLabel);
         rowLayout->addStretch();
-
-        // چیدن دکمه‌های کنترل تعداد کنار هم
-        rowLayout->addWidget(decreaseButton);
-        rowLayout->addWidget(qtyLabel);
-        rowLayout->addWidget(increaseButton);
+        rowLayout->addWidget(removeButton);
 
         ui->cartItemsLayout->addWidget(rowWidget);
     }
     ui->cartItemsLayout->addStretch();
 }
 
-// 🟢 اسلات کلیک روی دکمه کم کردن (➖)
-void CartWindow::onDecreaseButtonClicked()
+// 🟢 اسلات حذف آیتم از سبد خرید
+void CartWindow::onRemoveButtonClicked()
 {
     QPushButton* button = qobject_cast<QPushButton*>(sender());
     if (!button) return;
@@ -216,26 +195,6 @@ void CartWindow::onDecreaseButtonClicked()
     params["bookId"] = bookId;
 
     Request request(CommandType::RemoveFromCart, params);
-    m_networkManager->sendRequest(request);
-}
-
-// 🟢 اسلات کلیک روی دکمه افزودن (➕)
-void CartWindow::onIncreaseButtonClicked()
-{
-    QPushButton* button = qobject_cast<QPushButton*>(sender());
-    if (!button) return;
-
-    int bookId = button->property("bookId").toInt();
-    int userId = SessionManager::instance()->getUserId();
-
-    if (userId <= 0 || bookId <= 0) return;
-
-    QVariantMap params;
-    params["userId"] = userId;
-    params["bookId"] = bookId;
-    params["quantity"] = 1; // اضافه کردن ۱ عدد
-
-    Request request(CommandType::AddToCart, params);
     m_networkManager->sendRequest(request);
 }
 
@@ -282,7 +241,6 @@ void CartWindow::on_checkoutButton_clicked()
         return;
     }
 
-    // ارسال درخواست تسویه‌حساب به سرور
     QVariantMap params;
     params["userId"] = userId;
 

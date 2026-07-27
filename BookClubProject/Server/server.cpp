@@ -65,7 +65,7 @@ void Server::initServices()
         );
     m_reviewService = new ReviewService(m_reviewRepo, m_bookRepo, m_notifService, this);
     m_publisherService = new PublisherService(m_bookService,m_bookRepo, m_userRepo, this);
-    m_adminService = new AdminService(this);
+    m_adminService = new AdminService( m_userService, m_bookService, m_reviewService, m_purchaseService, m_notifService, this);
     m_libraryService = new LibraryService(m_libraryRepo , this);
 }
 

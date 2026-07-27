@@ -92,9 +92,9 @@
      <widget class="QLabel" name="totalBooksLabel">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>210</x>
         <y>5</y>
-        <width>351</width>
+        <width>81</width>
         <height>61</height>
        </rect>
       </property>
@@ -105,7 +105,31 @@ color: black;
 background: transparent;</string>
       </property>
       <property name="text">
-       <string>Total Books: 5</string>
+       <string>0</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="titleLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>171</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QLabel {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size: 30px;
+	color: rgb(0,0,0);
+	background: transparent;
+}</string>
+      </property>
+      <property name="text">
+       <string>Total Books:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignCenter</set>
       </property>
      </widget>
     </widget>
@@ -156,7 +180,7 @@ background: transparent;</string>
 }</string>
      </property>
      <property name="placeholderText">
-      <string>Search genres...</string>
+      <string>🔎Search genres...</string>
      </property>
     </widget>
    </widget>

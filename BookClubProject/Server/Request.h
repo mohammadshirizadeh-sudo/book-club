@@ -73,6 +73,10 @@ enum class CommandType {
     GetSystemStats,
     SearchUsers,
     GetNotifications,
+    GetRecentActivities,
+    GetSystemAlerts,
+    GetDatabaseStatus,
+    GetServerStatus,
 
      MarkNotificationRead,
     MarkAllNotificationsRead,
@@ -100,6 +104,7 @@ enum class CommandType {
     GetTopSellingBooks,
     GetBottomSellingBooks,
     GetSalesOverview,
+    CheckBookOwnership,
     SearchAuthors
 };
 

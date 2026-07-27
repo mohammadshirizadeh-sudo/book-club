@@ -175,6 +175,15 @@ Command* CommandFactory::create(
     case CommandType::GetSystemStats:
         return new GetSystemStatsCommand(adminService);
 
+    case CommandType::GetRecentActivities:
+        return new GetRecentActivitiesCommand(adminService);
+
+    case CommandType::GetSystemAlerts:
+        return new GetSystemAlertsCommand(adminService);
+
+    case CommandType::GetDatabaseStatus:
+        return new GetDatabaseStatusCommand(adminService);
+
     case CommandType::RequestPasswordReset:
         return new RequestPasswordResetCommand(authService);
 
@@ -277,21 +286,8 @@ Command* CommandFactory::create(
         return new GetSalesOverviewCommand(bookService , purchaseService);
     case CommandType::GetBottomSellingBooks:
         return new GetBottomSellingBooksCommand(bookService);
-
-
-        \
-
-
-
-
-
-
-
-
-
-
-
-
+    case CommandType::CheckBookOwnership:
+        return new CheckBookOwnershipCommand(libraryService);
 
     // =============================================
     // ===== Unknown Command =====
