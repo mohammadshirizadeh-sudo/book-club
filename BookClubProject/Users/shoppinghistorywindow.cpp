@@ -1,5 +1,5 @@
 #include "shoppinghistorywindow.h"
-#include "ui_ShoppingHistoryWindow.h"
+#include "Users/ui_shoppinghistorywindow.h"
 #include "../appWindow/SessionManager.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>

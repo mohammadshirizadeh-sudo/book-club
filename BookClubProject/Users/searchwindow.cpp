@@ -162,6 +162,7 @@ void SearchWindow::on_searchResultsListWidget_itemClicked(QListWidgetItem *item)
 }
 void SearchWindow::on_backPushButton_clicked()
 {
-    emit userWindow();
+    emit backButtonClicked();
+
 }
 

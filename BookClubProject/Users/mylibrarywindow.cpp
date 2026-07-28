@@ -77,7 +77,14 @@ void MyLibraryWindow::handleResponse(const Response& response)
     else if (type == CommandType::GetBookById) {
         if (!m_isFetchingBook)
             return;
+
+        if (response.getRequestId() !=
+            m_pendingBookDetailsRequestId)
+        {
+            return;
+        }
         m_isFetchingBook = false;
+        m_pendingBookDetailsRequestId = -1;
 
         if (response.isSuccess()) {
             QVariantMap resData = response.getData();
@@ -93,48 +100,29 @@ void MyLibraryWindow::handleResponse(const Response& response)
             QMessageBox::warning(this, "Error", "Failed to fetch book details: " + response.getMessage());
         }
     }
-    // ۳. دریافت لیست قفسه‌ها (جهت افزودن کتاب به قفسه)
-    else if (type == CommandType::GetUserShelves) {
-        if (m_selectedBookIdForShelf <= 0) return;
+    else if (type == CommandType::GetBookById) {
+        if (!m_isFetchingBook)
+            return;
+
+        if (response.getRequestId() != m_pendingBookDetailsRequestId)
+        {
+            return;
+        }
+        m_isFetchingBook = false;
+        m_pendingBookDetailsRequestId = -1;
 
         if (response.isSuccess()) {
-            QVariantList shelves = response.getData()["shelves"].toList();
-
-            // اگر قفسه جدیدی ایجاد شده بود، ID آن را پیدا کرده و کتاب را اضافه می‌کنیم
-            if (!m_newShelfNameToAdd.isEmpty()) {
-                int newShelfId = -1;
-                for (const QVariant& var : shelves) {
-                    QVariantMap s = var.toMap();
-                    if (s["name"].toString() == m_newShelfNameToAdd) {
-                        newShelfId = s["shelfId"].toInt();
-                        break;
-                    }
-                }
-
-                if (newShelfId > 0) {
-                    int userId = SessionManager::instance()->getUserId();
-                    QVariantMap params;
-                    params["userId"] = userId;
-                    params["shelfId"] = newShelfId;
-                    params["bookId"] = m_selectedBookIdForShelf;
-
-                    Request req(CommandType::AddBookToShelf, params);
-                    m_networkManager->sendRequest(req);
-                } else {
-                    QMessageBox::warning(this, "Error", "Could not find newly created shelf.");
-                    m_selectedBookIdForShelf = -1;
-                }
-                m_newShelfNameToAdd = "";
-            } else {
-                // نمایش دیالوگ انتخاب قفسه به کاربر
-                showShelfSelectionDialog(shelves);
-            }
+            QVariantMap resData = response.getData();
+            QVariantMap bookData = resData.contains("book") ? resData["book"].toMap() : resData;
+            bookData["userId"] = SessionManager::instance()->getUserId();
+            QTimer::singleShot(0, this, [this, bookData]() {
+                BookDetailDialog dialog(m_networkManager, bookData, this);
+                dialog.exec();
+            });
         } else {
-            QMessageBox::warning(this, "Error", "Failed to load shelves: " + response.getMessage());
-            m_selectedBookIdForShelf = -1;
+            QMessageBox::warning(this, "Error", "Failed to fetch book details: " + response.getMessage());
         }
     }
-    // ۴. پاسخ ایجاد قفسه جدید
     else if (type == CommandType::CreateShelf) {
         if (response.isSuccess()) {
             // پس از ساخت موفق قفسه، مجدداً لیست قفسه‌ها را می‌گیریم تا ID قفسه جدید مشخص شود
@@ -363,7 +351,14 @@ bool MyLibraryWindow::eventFilter(QObject *watched, QEvent *event)
             params["userId"] = SessionManager::instance()->getUserId();
 
             Request request(CommandType::GetBookById, params);
-            m_networkManager->sendRequest(request);
+
+            m_pendingBookDetailsRequestId = m_networkManager->sendRequest(request);
+            QTimer::singleShot(3000, this, [this]() {
+                if (m_isFetchingBook) {
+                    m_isFetchingBook = false;
+                    m_pendingBookDetailsRequestId = -1;
+                }
+            });
             return true;
         }
     }
@@ -383,5 +378,5 @@ void MyLibraryWindow::clearLayout()
 
 void MyLibraryWindow::on_backButton_clicked()
 {
-    emit userWindow();
+    emit backButtonClicked();
 }

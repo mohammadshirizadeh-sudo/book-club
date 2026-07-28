@@ -100,6 +100,6 @@ void UserProfileWindow::handleResponse(const Response& response)
 
 void UserProfileWindow::on_backPushButton_clicked()
 {
-    emit userWindow();
+    emit backButtonClicked();
 }
 

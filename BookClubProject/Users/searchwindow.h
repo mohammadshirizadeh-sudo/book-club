@@ -36,6 +36,7 @@ private slots:
 
 signals:
     void userWindow();
+    void backButtonClicked();
 
 private:
     Ui::SearchWindow *ui;
