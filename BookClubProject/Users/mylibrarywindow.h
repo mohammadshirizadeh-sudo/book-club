@@ -19,6 +19,7 @@ public:
 
 signals:
     void backButtonClicked();
+    void userWindow();
 
 protected:
     void showEvent(QShowEvent *event) override;

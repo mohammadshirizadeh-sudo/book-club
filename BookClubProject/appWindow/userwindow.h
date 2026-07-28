@@ -88,6 +88,7 @@ signals:
     void libraryWindow();
     void shelfWindow();
     void notificationWindow();
+    void openLoginWindow();
 
 private:
     Ui::UserWindow *ui;

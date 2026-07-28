@@ -313,7 +313,6 @@ void EditBooksWindow::clearForm()
     ui->statusLabel->setText("Select a book from the list to begin editing...");
 }
 
-// ⬅ بازگشت/بستن پنجره
 void EditBooksWindow::on_quitPushButton_clicked()
 {
     emit publisherWindow();

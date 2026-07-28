@@ -40,6 +40,10 @@ private slots:
     void on_resetFormButton_clicked();
     void on_quitPushButton_clicked();
 
+
+signals:
+    void publisherWindow();
+
 private:
     Ui::EditBooksWindow *ui;
     NetworkManager *m_networkManager;

@@ -34,6 +34,9 @@ private slots:
 
     void on_backPushButton_clicked();
 
+signals:
+    void userWindow();
+
 private:
     Ui::SearchWindow *ui;
     NetworkManager* m_networkManager;

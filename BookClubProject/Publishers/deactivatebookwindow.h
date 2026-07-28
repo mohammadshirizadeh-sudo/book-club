@@ -42,6 +42,9 @@ private slots:
     void on_viewDetailsButton_clicked();
     void on_backPushButton_clicked();
 
+signals:
+    void publisherWindow();
+
 private:
     Ui::DeactivateBookWindow *ui;
     NetworkManager *m_networkManager;
