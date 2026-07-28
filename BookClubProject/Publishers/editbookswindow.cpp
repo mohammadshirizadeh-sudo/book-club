@@ -43,11 +43,19 @@ void EditBooksWindow::loadPublisherBooks()
 
     ui->statusLabel->setText("Loading books list...");
 
-    QVariantMap params;
-    params["publisherId"] = publisherId;
+    if(SessionManager::instance()->getRole()== "Admin"){
+        Request request(CommandType::GetAllBooks);
+        m_networkManager->sendRequest(request);
+    }else{
 
-    Request request(CommandType::GetPublisherBooks, params);
-    m_networkManager->sendRequest(request);
+        QVariantMap params;
+        params["publisherId"] = publisherId;
+
+        Request request(CommandType::GetPublisherBooks, params);
+        m_networkManager->sendRequest(request);
+    }
+
+
 }
 
 // 🟢 دریافت اطلاعات تکمیلی کتاب با ID مشخص
@@ -70,6 +78,7 @@ void EditBooksWindow::handleResponse(const Response& response)
 
     // فیلتر پاسخ‌های غیرمرتبط
     if (type != CommandType::GetPublisherBooks &&
+        type != CommandType::GetAllBooks &&
         type != CommandType::GetBookById &&
         type != CommandType::EditBook) {
         return;
@@ -84,7 +93,7 @@ void EditBooksWindow::handleResponse(const Response& response)
     QVariantMap data = response.getData();
 
     // ۱. لیست کتاب‌های ناشر دریافت شد
-    if (type == CommandType::GetPublisherBooks) {
+    if (type == CommandType::GetPublisherBooks|| type == CommandType::GetAllBooks) {
         ui->booksListWidget->clear();
         clearForm();
 

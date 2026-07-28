@@ -391,6 +391,11 @@ int main(int argc, char *argv[])
                          userWindow->loadRecommendedBooks();
                          userWindow->loadNewBooks();
                      });
+    QObject::connect(adminWindow, &AdminWindow::editWindow,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(editWindowIndex);
+
+                     });
 
 
     //-------------------------------------------------

@@ -19,6 +19,13 @@ AdminWindow::AdminWindow(NetworkManager* networkManager, QWidget *parent)
     setWindowTitle("🛡️ Book Club - System Admin Panel");
     setMinimumSize(1500, 800);
 
+    m_serverStatusRefreshTimer = new QTimer(this);
+    connect(m_serverStatusRefreshTimer, &QTimer::timeout, this, &AdminWindow::refreshServerStatusPage);
+
+    m_serverStatusClockTimer = new QTimer(this);
+    connect(m_serverStatusClockTimer, &QTimer::timeout, this, &AdminWindow::updateServerStatusClock);
+    m_serverStatusClockTimer->start(1000);
+
     if (m_networkManager) {
         setupConnections();
     } else {
@@ -27,18 +34,26 @@ AdminWindow::AdminWindow(NetworkManager* networkManager, QWidget *parent)
 
     setupUIInitialState();
     ui->mainStackedWidget->setCurrentIndex(0);
-
 }
 
 AdminWindow::~AdminWindow()
 {
+    if (m_networkManager)
+    {
+        disconnect(
+            m_networkManager,
+            &NetworkManager::responseReceived,
+            this,
+            &AdminWindow::onResponseReceived
+            );
+    }
+
     delete ui;
 }
 
 void AdminWindow::setAdminInfo()
 {
-     SessionManager::instance()->setCurrentUser(m_adminId, m_adminName, "Admin");
-
+    SessionManager::instance()->setCurrentUser(m_adminId, m_adminName, "Admin");
 }
 
 void AdminWindow::initializeFromServer()
@@ -46,11 +61,11 @@ void AdminWindow::initializeFromServer()
     switchToPage(0);
 }
 
-// ==================== SETUP ====================
-
 void AdminWindow::setupConnections()
 {
-    // Navigation
+    if (m_connectionsSetup) return;
+    m_connectionsSetup = true;
+
     connect(ui->dashboardButton, &QPushButton::clicked, this, &AdminWindow::handleDashboardButtonClicked);
     connect(ui->userManageButton, &QPushButton::clicked, this, &AdminWindow::handleUserManageButtonClicked);
     connect(ui->accessControlButton, &QPushButton::clicked, this, &AdminWindow::handleAccessControlButtonClicked);
@@ -60,7 +75,6 @@ void AdminWindow::setupConnections()
     connect(ui->serverStatusButton, &QPushButton::clicked, this, &AdminWindow::handleServerStatusButtonClicked);
     connect(ui->signOutButton, &QPushButton::clicked, this, &AdminWindow::handleSignOutButtonClicked);
 
-    // Dashboard actions
     connect(ui->refreshDashboardBtn, &QPushButton::clicked, this, &AdminWindow::handleRefreshDashboardClicked);
     connect(ui->exportReportBtn, &QPushButton::clicked, this, &AdminWindow::handleExportReportClicked);
     connect(ui->backupBtn, &QPushButton::clicked, this, &AdminWindow::handleBackupClicked);
@@ -69,7 +83,6 @@ void AdminWindow::setupConnections()
     connect(ui->checkServerBtn, &QPushButton::clicked, this, &AdminWindow::handleCheckServerClicked);
     connect(ui->restartServerBtn, &QPushButton::clicked, this, &AdminWindow::handleRestartServerClicked);
 
-    // Users
     connect(ui->allUsersRadio, &QRadioButton::toggled, this, &AdminWindow::handleAllUsersRadioToggled);
     connect(ui->regularUsersRadio, &QRadioButton::toggled, this, &AdminWindow::handleRegularUsersRadioToggled);
     connect(ui->publishersRadio, &QRadioButton::toggled, this, &AdminWindow::handlePublishersRadioToggled);
@@ -84,7 +97,6 @@ void AdminWindow::setupConnections()
     connect(ui->deleteUserBtn, &QPushButton::clicked, this, &AdminWindow::handleDeleteUserClicked);
     connect(ui->toggleActiveBtn, &QPushButton::clicked, this, &AdminWindow::handleToggleActiveClicked);
 
-    // Content management
     connect(ui->bookSearchLineEdit, &QLineEdit::textChanged, this, &AdminWindow::handleBookSearchTextChanged);
     connect(ui->publisherFilterCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &AdminWindow::handlePublisherFilterChanged);
@@ -99,7 +111,6 @@ void AdminWindow::setupConnections()
     connect(ui->editBookBtn, &QPushButton::clicked, this, &AdminWindow::handleEditBookClicked);
     connect(ui->viewReviewsBtn, &QPushButton::clicked, this, &AdminWindow::handleViewReviewsClicked);
 
-    // Reviews
     connect(ui->reviewStatusFilter, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, &AdminWindow::handleReviewStatusFilterChanged);
     connect(ui->reviewRatingFilter, QOverload<int>::of(&QComboBox::currentIndexChanged),
@@ -112,9 +123,14 @@ void AdminWindow::setupConnections()
     connect(ui->flagReviewBtn, &QPushButton::clicked, this, &AdminWindow::handleFlagReviewClicked);
     connect(ui->deleteReviewBtn, &QPushButton::clicked, this, &AdminWindow::handleDeleteReviewClicked);
 
-    // Network funnel
     connect(m_networkManager, &NetworkManager::responseReceived,
             this, &AdminWindow::onResponseReceived);
+
+    connect(ui->refreshStatsButton, &QPushButton::clicked,
+            this, &AdminWindow::handleRefreshStatsClicked);
+
+    connect(ui->clearLogsButton, &QPushButton::clicked,
+            this, &AdminWindow::handleClearLogsClicked);
 }
 
 void AdminWindow::setupUIInitialState()
@@ -122,11 +138,28 @@ void AdminWindow::setupUIInitialState()
     updateUserActionButtons();
     updateBookActionButtons();
     updateReviewActionButtons();
+
+    ui->startServerButton->setEnabled(false);
+    ui->startServerButton->setToolTip("The server is managed by the host process, not remotely from here.");
+    ui->stopServerButton->setEnabled(false);
+    ui->stopServerButton->setToolTip("Remote shutdown isn't supported — no command exists for it yet.");
+    ui->portSpinBox->setEnabled(false);
+
+    ui->clientsTableWidget->setEnabled(true);
+    ui->clientsTableWidget->setToolTip("");
 }
 
 void AdminWindow::switchToPage(int pageIndex)
 {
     ui->mainStackedWidget->setCurrentIndex(pageIndex);
+
+    if (pageIndex == 6) {
+        refreshServerStatusPage();
+        m_serverStatusRefreshTimer->start(5000);
+    } else {
+        m_serverStatusRefreshTimer->stop();
+    }
+
     switch (pageIndex) {
     case 0:
         requestDashboardStats();
@@ -138,12 +171,15 @@ void AdminWindow::switchToPage(int pageIndex)
     case 2: requestBlockedUsers(); requestAccessLog(); break;
     case 3: requestBooksList(); requestReviewsList(5); break;
     case 4: requestReviewsList(); break;
-    case 6: requestServerStatus(); break;
+    case 5:
+        logServerEvent("System Logs page opened", "INFO");
+        requestDatabaseStatus();
+
+        break;
+    case 6: break;
     default: break;
     }
 }
-
-// ==================== NAVIGATION SLOTS ====================
 
 void AdminWindow::handleDashboardButtonClicked()      { switchToPage(0); }
 void AdminWindow::handleUserManageButtonClicked()     { switchToPage(1); }
@@ -159,8 +195,6 @@ void AdminWindow::handleSignOutButtonClicked()
         emit signOutRequested();
     }
 }
-
-// ==================== REQUEST SENDERS ====================
 
 void AdminWindow::requestDashboardStats() {
     if (m_networkManager) m_networkManager->sendRequest(CommandType::GetSystemStats);
@@ -181,6 +215,30 @@ void AdminWindow::requestServerStatus() {
     if (m_networkManager) m_networkManager->sendRequest(CommandType::GetServerRuntimeStatus);
 }
 
+void AdminWindow::requestDatabaseStatus() {
+    if (m_networkManager) m_networkManager->sendRequest(CommandType::GetDatabaseStatus);
+}
+
+void AdminWindow::requestServerResourceUsage() {
+    if (m_networkManager) m_networkManager->sendRequest(CommandType::GetServerResourceUsage);
+}
+
+void AdminWindow::requestConnectedClients() {
+    if (m_networkManager) m_networkManager->sendRequest(CommandType::GetConnectedClients);
+}
+
+void AdminWindow::requestTrafficStats() {
+    if (m_networkManager) m_networkManager->sendRequest(CommandType::GetTrafficStats);
+}
+
+void AdminWindow::refreshServerStatusPage() {
+    requestServerStatus();
+    requestDatabaseStatus();
+    requestServerResourceUsage();
+    requestConnectedClients();
+    requestTrafficStats();
+}
+
 void AdminWindow::requestUsersList() {
     if (!m_networkManager) return;
     QVariantMap params{
@@ -199,12 +257,9 @@ void AdminWindow::requestBlockedUsers() {
 
 void AdminWindow::handleEditBookClicked()
 {
-    if (m_selectedBookId <= 0)
-        return;
-
-    emit editBookRequested(m_selectedBookId);
+    if (m_selectedBookId <= 0) return;
+    emit editWindow();
 }
-
 
 void AdminWindow::handleViewReviewsClicked() {
     if (m_selectedBookId <= 0) return;
@@ -243,15 +298,26 @@ void AdminWindow::requestReviewsList(int limit) {
     m_networkManager->sendRequest(request);
 }
 
-// ==================== RESPONSE DISPATCHER ====================
-
 void AdminWindow::onResponseReceived(const Response &response)
 {
+    ui->requestLogTextEdit->append(
+        QString("[%1] %2 — %3")
+            .arg(QDateTime::currentDateTime().toString("hh:mm:ss"))
+            .arg(Request::CommandTypeToString(response.getCommandType()))
+            .arg(response.isSuccess()
+                     ? "OK"
+                     : "FAILED: " + response.getMessage()));
+
+
     switch (response.getCommandType()) {
     case CommandType::GetSystemStats:          handleDashboardStats(response); break;
     case CommandType::GetRecentActivities:     handleRecentActivity(response); break;
     case CommandType::GetSystemAlerts:         handleSystemAlerts(response); break;
     case CommandType::GetServerRuntimeStatus:  handleServerStatus(response); break;
+    case CommandType::GetDatabaseStatus:       handleDatabaseStatus(response); break;
+    case CommandType::GetServerResourceUsage:  handleResourceUsage(response); break;
+    case CommandType::GetConnectedClients:    handleConnectedClients(response); break;
+    case CommandType::GetTrafficStats:        handleTrafficStats(response); break;
     case CommandType::GetAllUsers:             handleUsersList(response); break;
     case CommandType::GetBlockedUsers:         handleBlockedUsers(response); break;
     case CommandType::GetAdminAccessLog:       handleAccessLog(response); break;
@@ -307,80 +373,126 @@ void AdminWindow::onResponseReceived(const Response &response)
     case CommandType::RestartServer:
         handleGenericActionResult(response, "Server restart scheduled.", nullptr);
         break;
+
     case CommandType::GetBookById:
     {
-        if (response.isSuccess())
-        {
-            BookDetailDialog dialog(
-                m_networkManager,
-                response.getData(),
-                this
-                );
-
+        if (response.isSuccess()) {
+            if (response.getRequestId() != m_pendingBookDetailsRequestId) break;
+            m_pendingBookDetailsRequestId = -1;
+            BookDetailDialog dialog(m_networkManager, response.getData(), this);
             dialog.exec();
+        } else {
+            showError("Error", "Failed to load book details.");
         }
-        else
-        {
-            showError(
-                "Error",
-                "Failed to load book details."
-                );
-        }
-
         break;
     }
     case CommandType::SearchUsers:
     {
-        if (response.isSuccess())
-        {
-            QVariantList users =
-                response.getData()["users"].toList();
-
-            for (const QVariant& v : users)
-            {
+        if (response.isSuccess()) {
+            QVariantList users = response.getData()["users"].toList();
+            for (const QVariant& v : users) {
                 QVariantMap u = v.toMap();
-
-                if (u["id"].toInt() == m_selectedUserId)
-                {
-                    UserDetailDialog dialog(
-                        u,
-                        this
-                        );
-
+                if (u["id"].toInt() == m_selectedUserId) {
+                    UserDetailDialog dialog(u, this);
                     dialog.exec();
                     break;
                 }
             }
+        } else {
+            showError("Error", "Failed to load user details.");
         }
-        else
-        {
-            showError(
-                "Error",
-                "Failed to load user details."
-                );
-        }
-
         break;
     }
-    case CommandType::UnflagBook: handleGenericActionResult( response, "Flag removed!", [this] { requestBooksList(); } ); break;
+    case CommandType::UnflagBook:
+        handleGenericActionResult(response, "Flag removed!", [this] { requestBooksList(); });
+        break;
 
     default:
         break;
     }
 }
 
-void AdminWindow::handleGenericActionResult(const Response &r, const QString &successMsg,
-                                            std::function<void()> onSuccess)
+void AdminWindow::handleResourceUsage(const Response &r)
 {
-    if (!r.isSuccess()) {
-        showError("Error", r.getMessage().isEmpty() ? "Action failed." : r.getMessage());
+    bool available = r.isSuccess() && r.getData().value("available", false).toBool();
+
+    ui->cpuProgressBar->setEnabled(available);
+    ui->ramProgressBar->setEnabled(available);
+
+    if (!available) {
+        ui->cpuValueLabel->setText("N/A");
+        ui->ramValueLabel->setText("N/A");
+        ui->cpuProgressBar->setValue(0);
+        ui->ramProgressBar->setValue(0);
         return;
     }
-    showSuccess(successMsg);
-    if (onSuccess) onSuccess();
+
+    double cpu = r.getData()["cpuPercent"].toDouble();
+    double ramPercent = r.getData()["ramPercent"].toDouble();
+    qint64 ramUsedKB = r.getData()["ramUsedKB"].toLongLong();
+
+    ui->cpuProgressBar->setValue(qBound(0, static_cast<int>(cpu), 100));
+    ui->cpuValueLabel->setText(QString::number(cpu, 'f', 1) + "%");
+
+    ui->ramProgressBar->setValue(qBound(0, static_cast<int>(ramPercent), 100));
+    ui->ramValueLabel->setText(QString::number(ramUsedKB / 1024.0, 'f', 1) + " MB");
 }
 
-// ==================== DASHBOARD ACTIONS ====================
+void AdminWindow::handleTrafficStats(const Response &r)
+{
+    if (!r.isSuccess()) return;
+    ui->totalRequestsLabel->setText(QString::number(r.getData()["totalRequests"].toLongLong()));
+    ui->totalResponsesLabel->setText(QString::number(r.getData()["totalResponses"].toLongLong()));
+    ui->activeConnectionsLabel->setText(QString::number(r.getData()["activeConnections"].toInt()));
+}
+
+void AdminWindow::handleConnectedClients(const Response &r)
+{
+    if (!r.isSuccess()) return;
+
+    QTableWidget *table = ui->clientsTableWidget;
+    clearTable(table);
+
+    QVariantList clients = r.getData()["clients"].toList();
+    table->setRowCount(clients.size());
+    for (int i = 0; i < clients.size(); ++i) {
+        QVariantMap c = clients[i].toMap();
+        table->setItem(i, 0, new QTableWidgetItem(c["socketId"].toString()));
+        table->setItem(i, 1, new QTableWidgetItem(c["ipAddress"].toString()));
+        table->setItem(i, 2, new QTableWidgetItem(c["username"].toString()));
+    }
+
+    ui->onlineUsersLabel->setText(QString::number(clients.size()));
+}
+
+void AdminWindow::handleGenericActionResult(
+    const Response &r,
+    const QString &successMsg,
+    std::function<void()> onSuccess)
+{
+    if (!r.isSuccess()) {
+
+        logServerEvent(
+            r.getMessage().isEmpty() ? "Action failed."
+                                     : r.getMessage(),
+            "ERROR");
+
+        showError(
+            "Error",
+            r.getMessage().isEmpty()
+                ? "Action failed."
+                : r.getMessage());
+
+        return;
+    }
+
+    logServerEvent(successMsg, "SUCCESS");
+
+    showSuccess(successMsg);
+
+    if (onSuccess)
+        onSuccess();
+}
 
 void AdminWindow::handleRefreshDashboardClicked()
 {
@@ -431,11 +543,42 @@ void AdminWindow::handleSystemAlerts(const Response &r)
 void AdminWindow::handleServerStatus(const Response &r)
 {
     bool online = r.isSuccess() && r.getData()["online"].toBool();
+    int onlineUsers = r.getData()["onlineUsers"].toInt();
+    QString uptime = r.getData()["uptime"].toString();
+
     ui->serverStatusLabel->setText(QString("🖥️ Server Status: %1").arg(online ? "🟢 Online" : "🔴 Offline"));
-    ui->connectedUsersLabel->setText(QString("👥 Online Users: %1").arg(r.getData()["onlineUsers"].toInt()));
+    ui->connectedUsersLabel->setText(QString("👥 Online Users: %1").arg(onlineUsers));
     ui->dbStatusLabel->setText(QString("💾 Database: %1").arg(r.getData()["dbConnected"].toBool() ? "💚 Connected" : "❌ Disconnected"));
-    ui->uptimeLabel->setText(QString("⏱️ Uptime: %1").arg(r.getData()["uptime"].toString()));
+    ui->uptimeLabel->setText(QString("⏱️ Uptime: %1").arg(uptime));
     ui->lastUpdateLabel->setText(QString("Last update: %1").arg(QDateTime::currentDateTime().toString("HH:mm:ss")));
+
+    if (online) {
+        ui->statusValueLabel->setText("RUNNING");
+        ui->statusValueLabel->setStyleSheet(
+            "QLabel { background-color: rgb(100,255,100); border: 3px solid black; "
+            "border-radius: 12px; font: 700 12pt \"Script MT Bold\"; font-size: 24px; color: white; padding: 5px; }");
+    } else {
+        ui->statusValueLabel->setText("OFFLINE");
+        ui->statusValueLabel->setStyleSheet(
+            "QLabel { background-color: rgb(255,100,100); border: 3px solid black; "
+            "border-radius: 12px; font: 700 12pt \"Script MT Bold\"; font-size: 24px; color: white; padding: 5px; }");
+        logServerEvent("Server reported offline", "WARNING");
+    }
+    ui->onlineUsersLabel->setText(QString::number(onlineUsers));
+    ui->activeConnectionsLabel->setText(QString::number(onlineUsers));
+    ui->uptimeLabel_2->setText(uptime);
+}
+
+void AdminWindow::handleDatabaseStatus(const Response &r)
+{
+    if (!r.isSuccess()) {
+        logServerEvent("Failed to load database status", "ERROR");
+        return;
+    }
+    QString status = r.getData()["status"].toString();
+    QString health = r.getData()["health"].toString();
+    logServerEvent(QString("Database: %1 (%2)").arg(status, health),
+                   health == "Healthy" ? "SUCCESS" : "ERROR");
 }
 
 void AdminWindow::handleBackupClicked()
@@ -499,7 +642,44 @@ void AdminWindow::handleExportReportClicked()
     }
 }
 
-// ==================== USER MANAGEMENT ACTIONS ====================
+void AdminWindow::updateServerStatusClock()
+{
+    ui->currentTimeLabel->setText(QDateTime::currentDateTime().toString("HH:mm:ss"));
+}
+
+void AdminWindow::handleRefreshStatsClicked()
+{
+    refreshServerStatusPage();
+    logServerEvent("Statistics refreshed manually", "INFO");
+}
+
+void AdminWindow::handleClearLogsClicked()
+{
+    auto reply = QMessageBox::question(this, "Confirm Clear", "Clear all local logs?",
+                                       QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes) {
+        ui->eventLogTextEdit->clear();
+        ui->requestLogTextEdit->clear();
+    }
+}
+
+void AdminWindow::logServerEvent(const QString &message, const QString &level)
+{
+    QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
+    QString color;
+    if (level == "SUCCESS") color = "color: green; font-weight: bold;";
+    else if (level == "WARNING") color = "color: orange; font-weight: bold;";
+    else if (level == "ERROR") color = "color: red; font-weight: bold;";
+    else color = "color: black;";
+
+    ui->eventLogTextEdit->append(
+        QString("<span style='color:gray;'>[%1]</span> <span style='%2'>[%3]</span> %4")
+            .arg(timestamp, color, level, message));
+
+    QTextCursor cursor = ui->eventLogTextEdit->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    ui->eventLogTextEdit->setTextCursor(cursor);
+}
 
 void AdminWindow::handleAllUsersRadioToggled(bool checked)     { if (checked) { m_userFilterType = "all"; requestUsersList(); } }
 void AdminWindow::handleRegularUsersRadioToggled(bool checked) { if (checked) { m_userFilterType = "regular"; requestUsersList(); } }
@@ -537,18 +717,12 @@ void AdminWindow::handleUsersTableCellClicked(int row, int) { updateUserSelectio
 
 void AdminWindow::handleViewUserDetailsClicked()
 {
-    if (m_selectedUserId <= 0 || !m_networkManager)
-        return;
+    if (m_selectedUserId <= 0 || !m_networkManager) return;
 
     QVariantMap params;
-
     params["keyword"] = m_selectedUserData.email;
 
-    Request request(
-        CommandType::SearchUsers,
-        params
-        );
-
+    Request request(CommandType::SearchUsers, params);
     m_networkManager->sendRequest(request);
 }
 
@@ -617,8 +791,6 @@ void AdminWindow::handleUsersList(const Response &r)
     populateUsersTable(users);
 }
 
-// ==================== ACCESS CONTROL HANDLERS ====================
-
 void AdminWindow::handleBlockedUsers(const Response &r)
 {
     if (!r.isSuccess()) return;
@@ -655,8 +827,6 @@ void AdminWindow::handleAccessLog(const Response &r)
     populateAccessLogTable(logs);
 }
 
-// ==================== CONTENT MANAGEMENT ACTIONS ====================
-
 void AdminWindow::handleBookSearchTextChanged(const QString &text) { m_bookSearchText = text; requestBooksList(); }
 
 void AdminWindow::handlePublisherFilterChanged(int)
@@ -682,43 +852,27 @@ void AdminWindow::handleAdminBooksTableCellClicked(int row, int) { updateBookSel
 
 void AdminWindow::handleViewBookDetailsClicked()
 {
-    if (m_selectedBookId <= 0 || !m_networkManager)
-        return;
+    if (m_selectedBookId <= 0 || !m_networkManager) return;
 
     QVariantMap params;
-
-    qDebug()<<"admin id is ::::::::::::::::::::::::::::: "<< m_adminId;
-
     params["bookId"] = m_selectedBookId;
-    params["userId"] = m_adminId;
+    params["userId"] = SessionManager::instance()->getUserId();
 
-    Request request(
-        CommandType::GetBookById,
-        params
-        );
-
+    Request request(CommandType::GetBookById, params);
     m_networkManager->sendRequest(request);
 }
 
 void AdminWindow::handleFlagBookClicked()
 {
-    if (m_selectedBookId <= 0 || !m_networkManager)
-        return;
+    if (m_selectedBookId <= 0 || !m_networkManager) return;
 
-    bool currentlyFlagged =
-        (m_selectedBookData.status == "flagged");
-
-    CommandType cmd =
-        currentlyFlagged
-            ? CommandType::UnflagBook
-            : CommandType::FlagBook;
+    bool currentlyFlagged = (m_selectedBookData.status == "flagged");
+    CommandType cmd = currentlyFlagged ? CommandType::UnflagBook : CommandType::FlagBook;
 
     QVariantMap data;
-
     data["bookId"] = m_selectedBookId;
 
     Request request(cmd, data);
-
     m_networkManager->sendRequest(request);
 }
 
@@ -768,8 +922,6 @@ void AdminWindow::handleBooksList(const Response &r)
     }
     populateBooksTable(books);
 }
-
-// ==================== REVIEWS MONITORING ACTIONS ====================
 
 void AdminWindow::handleReviewStatusFilterChanged(int)
 {
@@ -848,9 +1000,6 @@ void AdminWindow::handleReviewsList(const Response &r)
     populateReviewsTable(reviews);
 }
 
-
-// ==================== UI HELPERS (IMPLEMENTATIONS) ====================
-
 void AdminWindow::populateDashboardStats(const DashboardStats &stats)
 {
     if (ui->totalUsersValue) ui->totalUsersValue->setText(QString::number(stats.totalUsers));
@@ -861,7 +1010,6 @@ void AdminWindow::populateDashboardStats(const DashboardStats &stats)
 
 void AdminWindow::populateActivityLog(const QList<ActivityLogEntry> &logs)
 {
-    // Implementation heavily depends on your specific object name, checking generic patterns
     QTableWidget *table = findChild<QTableWidget*>("recentActivityTable");
     if (!table) return;
 
@@ -874,6 +1022,7 @@ void AdminWindow::populateActivityLog(const QList<ActivityLogEntry> &logs)
         table->setItem(i, 3, new QTableWidgetItem(logs[i].targetUser));
     }
 }
+
 QString AdminWindow::formatTimeAgo(const QDateTime &dt) const
 {
     if (!dt.isValid()) return "";
@@ -888,9 +1037,7 @@ QString AdminWindow::formatTimeAgo(const QDateTime &dt) const
 void AdminWindow::populateSystemAlerts(const QStringList &alerts)
 {
     ui->alertsTextBrowser->clear();
-
-    for (const QString &alert : alerts)
-    {
+    for (const QString &alert : alerts) {
         ui->alertsTextBrowser->append(alert);
     }
 }
@@ -982,35 +1129,16 @@ void AdminWindow::populateReviewsTable(const QList<AdminReviewData> &reviews)
 
 void AdminWindow::updateUserSelectionState(int row)
 {
-    if (row < 0 || row >= ui->usersTable->rowCount())
-    {
+    if (row < 0 || row >= ui->usersTable->rowCount()) {
         m_selectedUserId = -1;
         ui->selectedUserLabel->setText("Selected: No user selected");
+    } else {
+        m_selectedUserId = ui->usersTable->item(row, 0)->text().toInt();
+        m_selectedUserData.fullName = ui->usersTable->item(row, 1)->text();
+        m_selectedUserData.email = ui->usersTable->item(row, 2)->text();
+        m_selectedUserData.status = ui->usersTable->item(row, 4)->text();
+        ui->selectedUserLabel->setText("Selected: " + m_selectedUserData.fullName);
     }
-    else
-    {
-        m_selectedUserId =
-            ui->usersTable->item(row, 0)
-                ->text()
-                .toInt();
-
-        m_selectedUserData.fullName =
-            ui->usersTable->item(row, 1)
-                ->text();
-
-        m_selectedUserData.email =
-            ui->usersTable->item(row, 2)
-                ->text();
-
-        m_selectedUserData.status =
-            ui->usersTable->item(row, 4)
-                ->text();
-
-        ui->selectedUserLabel->setText(
-            "Selected: " + m_selectedUserData.fullName
-            );
-    }
-
     updateUserActionButtons();
 }
 
@@ -1026,54 +1154,27 @@ void AdminWindow::updateUserActionButtons()
 
 void AdminWindow::updateBookSelectionState(int row)
 {
-    if (row < 0 || row >= ui->adminBooksTable->rowCount())
-    {
+    if (row < 0 || row >= ui->adminBooksTable->rowCount()) {
         m_selectedBookId = -1;
         ui->selectedBookLabel->setText("Selected: No book selected");
+    } else {
+        m_selectedBookId = ui->adminBooksTable->item(row, 0)->text().toInt();
+        m_selectedBookData.title = ui->adminBooksTable->item(row, 1)->text();
+        m_selectedBookData.status = ui->adminBooksTable->item(row, 4)->text();
+        ui->selectedBookLabel->setText("Selected: " + m_selectedBookData.title);
     }
-    else
-    {
-        m_selectedBookId =
-            ui->adminBooksTable->item(row, 0)
-                ->text()
-                .toInt();
-
-        m_selectedBookData.title =
-            ui->adminBooksTable->item(row, 1)
-                ->text();
-
-        m_selectedBookData.status =
-            ui->adminBooksTable->item(row, 4)
-                ->text();
-
-        ui->selectedBookLabel->setText(
-            "Selected: " + m_selectedBookData.title
-            );
-    }
-
     updateBookActionButtons();
 }
+
 void AdminWindow::updateBookActionButtons()
 {
     bool hasSelection = (m_selectedBookId > 0);
-
-    if (ui->viewBookDetailsBtn)
-        ui->viewBookDetailsBtn->setEnabled(hasSelection);
-
-    if (ui->editBookBtn)
-        ui->editBookBtn->setEnabled(hasSelection);
-
-    if (ui->viewReviewsBtn)
-        ui->viewReviewsBtn->setEnabled(hasSelection);
-
-    if (ui->flagBookBtn)
-        ui->flagBookBtn->setEnabled(hasSelection);
-
-    if (ui->deleteBookBtn)
-        ui->deleteBookBtn->setEnabled(hasSelection);
-
-    if (ui->deactivateBookBtn)
-        ui->deactivateBookBtn->setEnabled(hasSelection);
+    if (ui->viewBookDetailsBtn) ui->viewBookDetailsBtn->setEnabled(hasSelection);
+    if (ui->editBookBtn) ui->editBookBtn->setEnabled(hasSelection);
+    if (ui->viewReviewsBtn) ui->viewReviewsBtn->setEnabled(hasSelection);
+    if (ui->flagBookBtn) ui->flagBookBtn->setEnabled(hasSelection);
+    if (ui->deleteBookBtn) ui->deleteBookBtn->setEnabled(hasSelection);
+    if (ui->deactivateBookBtn) ui->deactivateBookBtn->setEnabled(hasSelection);
 }
 
 void AdminWindow::updateReviewSelectionState(int row)
@@ -1139,6 +1240,6 @@ QString AdminWindow::formatTimeAgo(const QString &isoDate) const
 
 QString AdminWindow::getStarString(int rating) const
 {
-    rating = std::max(0, std::min(5, rating)); // Clamp between 0 and 5
+    rating = std::max(0, std::min(5, rating));
     return QString("★").repeated(rating) + QString("☆").repeated(5 - rating);
 }

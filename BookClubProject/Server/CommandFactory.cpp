@@ -319,6 +319,19 @@ Command* CommandFactory::create(
     case CommandType::UnflagBook:
         return new UnflagBookCommand(bookService);
 
+    case CommandType::GetServerResourceUsage:
+        return new GetServerResourceUsageCommand(clientHandler);
+    case CommandType::GetConnectedClients:
+        return new GetConnectedClientsCommand(clientHandler);
+    case CommandType::GetTrafficStats:
+        return new GetTrafficStatsCommand(clientHandler);
+    case CommandType::GetAllBooks:
+        return new GetAllBooksCommand(bookService);
+
+
+
+
+
 
 
 

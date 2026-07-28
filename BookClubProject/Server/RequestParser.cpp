@@ -26,6 +26,9 @@ Request RequestParser::parse(const QString& data)
 
     request.setParams(obj["params"].toObject().toVariantMap());
     request.setValid(request.getCommandType()!=CommandType::Unknown);
+    request.setRequestId(
+        obj.value("requestId").toVariant().toLongLong()
+        );
 
     return request;
 }

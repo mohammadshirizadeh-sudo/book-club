@@ -41,6 +41,7 @@ Server::~Server()
 {
     stop();
     cleanupServices();
+    delete m_resourceMonitor;
 }
 
 void Server::initServices()
@@ -155,23 +156,27 @@ void Server::incomingConnection(qintptr socketDescriptor)
 
     connectToClientSignals(handler);
     m_clients[socketDescriptor] = handler;
+    ClientInfo info;
+    info.socketDescriptor = socketDescriptor;
+    info.ipAddress = handler->peerAddress();
+    info.connectedAt = QDateTime::currentDateTime();
+    m_clientInfo[socketDescriptor] = info;
 
     emit clientConnected(socketDescriptor, handler->peerAddress());
 }
 
-void Server::connectToClientSignals(ClientHandler* handler)
-{
+void Server::connectToClientSignals(ClientHandler* handler) {
     if (!handler) return;
 
-    // اتصال سیگنال‌های ClientHandler به سیگنال‌های Server
     connect(handler, &ClientHandler::requestReceived,
             this, [this](const QString& request) {
+                m_totalRequests.fetchAndAddOrdered(1);
                 emit requestReceived(request);
-
             });
 
     connect(handler, &ClientHandler::responseSent,
             this, [this](const QString& response) {
+                m_totalResponses.fetchAndAddOrdered(1);
                 emit responseSent(response);
             });
 
@@ -182,11 +187,13 @@ void Server::connectToClientSignals(ClientHandler* handler)
 
     connect(handler, &ClientHandler::disconnected,
             this, [this, handler]() {
-                emit clientDisconnected(handler->m_socketDescriptor);
+                qintptr descriptor = handler->m_socketDescriptor;
+                m_clients.remove(descriptor);
+                m_clientInfo.remove(descriptor);
+                emit clientDisconnected(descriptor);
                 emit systemEvent("Client disconnected");
             });
 }
-
 bool Server::startServer(quint16 port)
 {
     return start(port);  // ← همان start موجود را صدا می‌زند
@@ -211,10 +218,63 @@ int Server::getOnlineUserCount() const
     return m_clients.size();
 }
 
-// =============================================
-// ===== getUptimeString =====
-// =============================================
 
+
+void Server::updateClientUsername(qintptr socketDescriptor, const QString& username) {
+    auto it = m_clientInfo.find(socketDescriptor);
+    if (it != m_clientInfo.end()) {
+        it.value().username = username;
+    }
+}
+
+
+QVariantMap Server::getTrafficStats() const {
+    QVariantMap data;
+    data["totalRequests"]     = static_cast<qlonglong>(m_totalRequests.loadAcquire());
+    data["totalResponses"]    = static_cast<qlonglong>(m_totalResponses.loadAcquire());
+    data["activeConnections"] = m_clients.size();
+    return data;
+}
+
+
+QVariantList Server::getConnectedClientsInfo() const {
+    QVariantList list;
+    for (auto it = m_clientInfo.constBegin(); it != m_clientInfo.constEnd(); ++it) {
+        const ClientInfo &info = it.value();
+        qint64 secondsConnected = info.connectedAt.secsTo(QDateTime::currentDateTime());
+
+        QVariantMap m;
+        m["socketId"]     = static_cast<qlonglong>(info.socketDescriptor);
+        m["ipAddress"]    = info.ipAddress;
+        m["username"]     = info.username.isEmpty() ? QStringLiteral("(not logged in)") : info.username;
+        m["connectedAt"]  = info.connectedAt.toString(Qt::ISODate);
+        m["connectedFor"] = QString("%1:%2:%3")
+                                .arg(secondsConnected / 3600, 2, 10, QChar('0'))
+                                .arg((secondsConnected % 3600) / 60, 2, 10, QChar('0'))
+                                .arg(secondsConnected % 60, 2, 10, QChar('0'));
+        list.append(m);
+    }
+    return list;
+}
+
+
+
+QVariantMap Server::getResourceUsage() const {
+    if (!m_resourceMonitor) {
+        const_cast<Server*>(this)->m_resourceMonitor = new ServerResourceMonitor();
+    }
+    ResourceUsage usage = m_resourceMonitor->sample();
+
+    QVariantMap data;
+    data["available"] = usage.available;
+    if (usage.available) {
+        data["cpuPercent"] = usage.cpuPercent;
+        data["ramUsedKB"]  = static_cast<qlonglong>(usage.ramUsedKB);
+        data["ramTotalKB"] = static_cast<qlonglong>(usage.ramTotalKB);
+        data["ramPercent"] = usage.ramPercent;
+    }
+    return data;
+}
 QString Server::getUptimeString() const
 {
     if (!isRunning() || m_startTime.isNull()) {
@@ -327,6 +387,33 @@ void Server::performRestart()
             emit systemEvent(QString("Server restarted successfully on port %1").arg(m_currentPort));
         }
     });
+}
+
+
+
+
+QString ClientHandler::getSessionUsername() const {
+    QMutexLocker locker(&m_sessionMutex);
+    return m_sessionUsername;
+}
+
+QVariantMap ClientHandler::getServerResourceUsage() const {
+    if (Server* server = qobject_cast<Server*>(parent()))
+        return server->getResourceUsage();
+    return QVariantMap();
+}
+
+QVariantList ClientHandler::getConnectedClientsInfo() const {
+    if (Server* server = qobject_cast<Server*>(parent()))
+        return server->getConnectedClientsInfo();
+    return QVariantList();
+}
+
+
+QVariantMap ClientHandler::getTrafficStats() const {
+    if (Server* server = qobject_cast<Server*>(parent()))
+        return server->getTrafficStats();
+    return QVariantMap();
 }
 
 

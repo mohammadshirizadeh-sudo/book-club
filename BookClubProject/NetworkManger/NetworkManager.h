@@ -24,7 +24,7 @@ public:
     quint16 getPort() const { return m_port; }
 
     // ===== Send Request =====
-    void sendRequest(const Request& request);
+    void sendRequest( Request request);
     void sendRequest(const QString& command, const QVariantMap& params = QVariantMap());
 
 signals:

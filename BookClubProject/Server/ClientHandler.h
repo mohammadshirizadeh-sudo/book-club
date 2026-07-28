@@ -63,6 +63,10 @@ public:
 
 
     void setSession(int userId, UserRole role);
+    QVariantMap  getServerResourceUsage() const;
+    QVariantList getConnectedClientsInfo() const;
+    QVariantMap  getTrafficStats() const;
+    QString      getSessionUsername() const;
     void disconnectFromClient();
 
 
@@ -144,10 +148,14 @@ private:
     UserRole m_sessionRole = UserRole::User;
     bool m_isAuthenticated = false;
 
+    QString m_sessionUsername;
+
 
 
 public:
     void sendResponse(const QString& response);
+
+    void setSession(int userId, UserRole role, const QString& username);
 
 
 
