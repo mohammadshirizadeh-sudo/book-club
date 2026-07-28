@@ -17,6 +17,10 @@ public:
     bool createTables();
     bool dropTables();
 
+
+    bool insertDefaultAdmin();
+
+
 private:
     bool createUserTable();
     bool createPublisherInfoTable();
@@ -34,6 +38,7 @@ private:
     bool createLibraryOwnedBookTable();
 
     bool createLibrarySavedBookTable();
+    bool createAccessLogTable();
 
 
 

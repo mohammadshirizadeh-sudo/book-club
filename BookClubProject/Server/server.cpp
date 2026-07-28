@@ -65,8 +65,8 @@ void Server::initServices()
         );
     m_reviewService = new ReviewService(m_reviewRepo, m_bookRepo, m_notifService, this);
     m_publisherService = new PublisherService(m_bookService,m_bookRepo, m_userRepo, this);
-    m_adminService = new AdminService( m_userService, m_bookService, m_reviewService, m_purchaseService, m_notifService, this);
     m_libraryService = new LibraryService(m_libraryRepo , this);
+    m_adminService = new AdminService( m_userService, m_bookService, m_reviewService, m_purchaseService, m_notifService, m_libraryService, this);
 }
 
 
@@ -82,6 +82,9 @@ bool Server::start(quint16 port)
         qCritical() << "❌ Server could not start on port" << port << ":" << errorString();
         return false;
     }
+
+
+    m_startTime = QDateTime::currentDateTime();
 
     qDebug() << "✅ Server started on port" << port;
     return true;
@@ -194,5 +197,137 @@ void Server::stopServer()
 {
     stop();  // ← همان stop موجود را صدا می‌زند
 }
+
+
+// Server.cpp
+
+// =============================================
+// ===== getOnlineUserCount =====
+// =============================================
+
+int Server::getOnlineUserCount() const
+{
+    // تعداد کلاینت‌های متصل را برمی‌گرداند
+    return m_clients.size();
+}
+
+// =============================================
+// ===== getUptimeString =====
+// =============================================
+
+QString Server::getUptimeString() const
+{
+    if (!isRunning() || m_startTime.isNull()) {
+        return "00:00:00";
+    }
+
+    qint64 uptimeSeconds = m_startTime.secsTo(QDateTime::currentDateTime());
+
+    int hours = uptimeSeconds / 3600;
+    int minutes = (uptimeSeconds % 3600) / 60;
+    int seconds = uptimeSeconds % 60;
+
+    return QString("%1:%2:%3")
+        .arg(hours, 2, 10, QChar('0'))
+        .arg(minutes, 2, 10, QChar('0'))
+        .arg(seconds, 2, 10, QChar('0'));
+}
+
+
+void Server::broadcastToAll(const Response& response)
+{
+    qDebug() << "📢 Broadcasting to all clients:" << response.getMessage();
+
+    for (ClientHandler* client : m_clients) {
+        if (client) {
+
+            client->sendResponse(response);
+        }
+    }
+}
+
+
+// Server.cpp
+#include <QTimer>
+#include <QCoreApplication>
+#include <QProcess>
+
+// =============================================
+// ===== scheduleRestart =====
+// =============================================
+
+void Server::scheduleRestart(int delayMs)
+{
+    if (m_restartPending) {
+        qWarning() << "⚠️ Restart already pending!";
+        return;
+    }
+
+    if (!isRunning()) {
+        qWarning() << "⚠️ Server is not running! Cannot restart.";
+        return;
+    }
+
+    // ذخیره پورت فعلی
+    m_currentPort = serverPort();
+
+    // ایجاد تایمر اگر وجود ندارد
+    if (!m_restartTimer) {
+        m_restartTimer = new QTimer(this);
+        connect(m_restartTimer, &QTimer::timeout, this, &Server::performRestart);
+    }
+
+    m_restartPending = true;
+    m_restartTimer->start(delayMs);
+
+    qDebug() << "🔄 Server restart scheduled in" << delayMs << "ms";
+    emit systemEvent(QString("Server restart scheduled in %1 ms").arg(delayMs));
+}
+
+// =============================================
+// ===== cancelRestart =====
+// =============================================
+
+void Server::cancelRestart()
+{
+    if (m_restartTimer) {
+        m_restartTimer->stop();
+    }
+    m_restartPending = false;
+
+    qDebug() << "🔄 Server restart cancelled";
+    emit systemEvent("Server restart cancelled");
+}
+
+// =============================================
+// ===== performRestart =====
+// =============================================
+
+void Server::performRestart()
+{
+    m_restartPending = false;
+
+    if (m_restartTimer) {
+        m_restartTimer->stop();
+    }
+
+    qDebug() << "🔄 Performing server restart...";
+    emit systemEvent("Server restarting...");
+
+    // 1. توقف سرور فعلی
+    stop();
+
+    // 2. راه‌اندازی مجدد با پورت قبلی
+    QTimer::singleShot(500, this, [this]() {
+        if (!start(m_currentPort)) {
+            qCritical() << "❌ Server failed to restart on port" << m_currentPort;
+            emit systemEvent("Server restart failed!");
+        } else {
+            qDebug() << "✅ Server restarted successfully on port" << m_currentPort;
+            emit systemEvent(QString("Server restarted successfully on port %1").arg(m_currentPort));
+        }
+    });
+}
+
 
 

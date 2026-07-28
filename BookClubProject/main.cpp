@@ -1,3 +1,4 @@
+
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
@@ -33,6 +34,7 @@
 #include "Mutual/editinfodialog.h"
 #include "Mutual/infodialog.h"
 #include "Mutual/notificationwidget.h"
+#include "appWindow/adminwindow.h"
 
 #include "Server/server.h"
 
@@ -98,7 +100,7 @@ int main(int argc, char *argv[])
     EditBooksWindow* editWindow = new EditBooksWindow(networkManager);
     DeactivateBookWindow* deactivateBook = new DeactivateBookWindow(networkManager);
     NotificationWidget* notificatoinWindow = new NotificationWidget(networkManager);
-
+    AdminWindow* adminWindow = new AdminWindow(networkManager);
 
     int loginIndex = stackedWidget.addWidget(loginWindow);
     int forgotIndex = stackedWidget.addWidget(forgotWindow);
@@ -120,8 +122,17 @@ int main(int argc, char *argv[])
     int editWindowIndex = stackedWidget.addWidget(editWindow);
     int deactivateWindowIndex = stackedWidget.addWidget(deactivateBook);
     int notificationIndex = stackedWidget.addWidget(notificatoinWindow);
+    int adminWindowIndex = stackedWidget.addWidget(adminWindow);
 
 
+
+
+    QObject::connect(loginWindow,
+                     &LoginWindow::openAdminWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(adminWindowIndex);
+                     });
 
     QObject::connect(userWindow,
                      &UserWindow::genrebrowsWindow,
@@ -357,6 +368,8 @@ int main(int argc, char *argv[])
                          userWindow->loadRecommendedBooks();
                          userWindow->loadNewBooks();
                      });
+
+
     //-------------------------------------------------
 
     stackedWidget.show();

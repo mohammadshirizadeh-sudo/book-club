@@ -252,3 +252,89 @@ QVector<QSharedPointer<Review>> ReviewService::getAllReviews() const
 
     return reviewRepo->getAllReviews();
 }
+
+
+// ReviewService.cpp
+
+// =============================================
+// ===== setReviewStatus =====
+// =============================================
+
+bool ReviewService::setReviewStatus(int reviewId, const QString& status)
+{
+    // 1. پیدا کردن نظر
+    QSharedPointer<Review> review = reviewRepo->findById(reviewId);
+    if (!review) {
+        qWarning() << "Review not found with ID:" << reviewId;
+        return false;
+    }
+
+    // 2. اعتبارسنجی وضعیت جدید
+    QString validStatus = status.trimmed().toLower();
+    if (validStatus != "pending" &&
+        validStatus != "approved" &&
+        validStatus != "rejected") {
+        qWarning() << "Invalid review status:" << status
+                   << "Valid values: pending, approved, rejected";
+        return false;
+    }
+
+    // 3. بررسی اینکه وضعیت فعلی با وضعیت جدید فرق دارد
+    if (review->getStatus() == validStatus) {
+        qDebug() << "Review" << reviewId << "already has status" << validStatus;
+        return true;  // قبلاً همین وضعیت را دارد
+    }
+
+    // 4. به‌روزرسانی وضعیت
+    review->setStatus(validStatus);
+    review->setUpdatedAt(QDateTime::currentDateTime());
+
+    // 5. ذخیره در دیتابیس
+    if (!reviewRepo->updateReview(review)) {
+        qWarning() << "Failed to update review status in database for ID:" << reviewId;
+        return false;
+    }
+
+    qDebug() << "Review" << reviewId << "status updated to" << validStatus;
+    return true;
+}
+
+// =============================================
+// ===== setReviewFlagged =====
+// =============================================
+
+bool ReviewService::setReviewFlagged(int reviewId, bool flagged)
+{
+    // 1. پیدا کردن نظر
+    QSharedPointer<Review> review = reviewRepo->findById(reviewId);
+    if (!review) {
+        qWarning() << "Review not found with ID:" << reviewId;
+        return false;
+    }
+
+    // 2. بررسی اینکه وضعیت فعلی با وضعیت جدید فرق دارد
+    if (review->getIsFlagged() == flagged) {
+        qDebug() << "Review" << reviewId << "already has flagged status:" << flagged;
+        return true;  // قبلاً همین وضعیت را دارد
+    }
+
+    // 3. به‌روزرسانی وضعیت فلگ
+    review->setIsFlagged(flagged);
+    review->setUpdatedAt(QDateTime::currentDateTime());
+
+    // 4. ذخیره در دیتابیس
+    if (!reviewRepo->updateReview(review)) {
+        qWarning() << "Failed to update review flag in database for ID:" << reviewId;
+        return false;
+    }
+
+    qDebug() << "Review" << reviewId << "flagged status updated to" << flagged;
+    return true;
+}
+
+ReviewRepository *ReviewService::getReviewRepo()
+{
+    return reviewRepo;
+}
+
+

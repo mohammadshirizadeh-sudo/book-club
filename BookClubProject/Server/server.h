@@ -4,6 +4,9 @@
 
 #include <QTcpServer>
 #include <QMap>
+#include <QDateTime>
+#include "../Server/Response.h"
+#include <QTimer>
 
 class ClientHandler;
 class UserRepository;
@@ -34,17 +37,17 @@ public:
     bool start(quint16 port);
     void stop();
 
-     bool isRunning() const { return isListening(); }
+    bool isRunning() const { return isListening(); }
 
-      void stopServer();
+    void stopServer();
 
 
-     QList<ClientHandler*> getClients() const {
-         return m_clients.values();
-     }
+    QList<ClientHandler*> getClients() const {
+        return m_clients.values();
+    }
 
     void connectToClientSignals(ClientHandler* handler);
-      bool startServer(quint16 port);
+    bool startServer(quint16 port);
 
 
     AdminService* getAdminService() const
@@ -53,14 +56,29 @@ public:
     }
 
 
- signals:
+    int getOnlineUserCount() const;
+
+    QString getUptimeString() const;
+    void broadcastToAll(const Response& response);
+
+
+    void scheduleRestart(int delayMs = 1000);
+    void cancelRestart();
+    bool isRestartPending() const { return m_restartPending; }
+
+
+
+private slots:
+    void performRestart();
+
+signals:
     void clientConnected(qintptr socketDescriptor, const QString& ipAddress);
 
-     void clientDisconnected(qintptr socketDescriptor);
-     void requestReceived(const QString& request);
-     void responseSent(const QString& response);
-     void errorOccurred(const QString& error);
-     void systemEvent(const QString& event);
+    void clientDisconnected(qintptr socketDescriptor);
+    void requestReceived(const QString& request);
+    void responseSent(const QString& response);
+    void errorOccurred(const QString& error);
+    void systemEvent(const QString& event);
 
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
@@ -86,9 +104,15 @@ private:
     AdminService* m_adminService;
     NotificationService* m_notifService;
     LibraryService* m_libraryService;
+    QDateTime m_startTime;
 
     void initServices();
     void cleanupServices();
+
+
+    QTimer* m_restartTimer = nullptr;
+    bool m_restartPending = false;
+    quint16 m_currentPort = 0;
 };
 
 #endif // SERVER_H

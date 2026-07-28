@@ -341,3 +341,8 @@ QVariantList PurchaseService::getPeriodSummaries(int publisherId, int months) co
 
     return periods;
 }
+
+PurchaseRepository* PurchaseService::getPurchaseRepo()
+{
+    return purchaseRepo;
+}
