@@ -341,5 +341,5 @@ void ApplyDiscountWindow::clearForm()
 // ⬅ بازگشت/خروج
 void ApplyDiscountWindow::on_quitPushButton_clicked()
 {
-    this->close();
+    emit publisherWindow();
 }

@@ -759,3 +759,9 @@ void UserWindow::on_notificationPushButton_clicked()
     emit notificationWindow();
 }
 
+
+void UserWindow::on_pushButton_6_clicked()
+{
+    emit openLoginWindow();
+}
+

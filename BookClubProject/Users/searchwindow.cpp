@@ -160,3 +160,8 @@ void SearchWindow::on_searchResultsListWidget_itemClicked(QListWidgetItem *item)
         dialog.exec();
     }
 }
+void SearchWindow::on_backPushButton_clicked()
+{
+    emit userWindow();
+}
+

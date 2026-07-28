@@ -234,15 +234,7 @@ bool GenreBrowserWindow::eventFilter(QObject *watched, QEvent *event)
 }
 void GenreBrowserWindow::on_backButton_clicked()
 {
-    if (m_currentMode == BooksMode) {
-        m_currentMode = GenresMode;
-        ui->titleLabel->setText("📚 Browse by Genre");
-        ui->searchInput->setPlaceholderText("Search genres...");
-        ui->searchInput->clear();
-        displayGenres(m_allGenres);
-    } else {
-        emit backButtonClicked();
-    }
+    emit userWindow();
 }
 
 void GenreBrowserWindow::clearGrid()

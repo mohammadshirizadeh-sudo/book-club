@@ -36,6 +36,8 @@ private slots:
 
 
 
+    void on_backButton_clicked();
+
 protected:
     void showEvent(QShowEvent *event) override;
 private:

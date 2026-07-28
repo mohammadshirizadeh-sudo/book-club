@@ -347,3 +347,9 @@ void ShelfManagementDialog::clearBookDetails()
 
 
 
+
+void ShelfManagementDialog::on_backButton_clicked()
+{
+    emit userWindow();
+}
+

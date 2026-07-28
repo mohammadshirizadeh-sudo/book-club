@@ -383,5 +383,5 @@ void MyLibraryWindow::clearLayout()
 
 void MyLibraryWindow::on_backButton_clicked()
 {
-    emit backButtonClicked();
+    emit userWindow();
 }

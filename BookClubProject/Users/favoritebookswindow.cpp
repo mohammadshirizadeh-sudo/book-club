@@ -156,5 +156,5 @@ void FavoriteBooksWindow::clearGrid()
 
 void FavoriteBooksWindow::on_backButton_clicked()
 {
-    emit backButtonClicked();
+    emit userWindow();
 }

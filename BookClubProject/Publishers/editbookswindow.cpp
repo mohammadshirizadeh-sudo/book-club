@@ -307,5 +307,5 @@ void EditBooksWindow::clearForm()
 // ⬅ بازگشت/بستن پنجره
 void EditBooksWindow::on_quitPushButton_clicked()
 {
-    this->close();
+    emit publisherWindow();
 }

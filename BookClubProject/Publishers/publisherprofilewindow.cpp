@@ -93,3 +93,9 @@ void PublisherProfileWindow::on_editPubInfoPushButton_clicked()
     dialog->exec();
 }
 
+
+void PublisherProfileWindow::on_backPushButton_clicked()
+{
+    emit publisherWindow();
+}
+
