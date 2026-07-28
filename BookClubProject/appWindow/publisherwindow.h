@@ -44,6 +44,8 @@ private slots:
 
     void on_quitPushButton_clicked();
 
+    void on_publishedPushButton_clicked();
+
 signals:
     void publisherProfileWindow();
     void myBooksWindow();
@@ -53,6 +55,7 @@ signals:
     void bookStatisticWindow();
     void notificationWindow();
     void openLoginWindow();
+    void publishedBookWindow();
 
 private:
     Ui::PublisherWindow *ui;

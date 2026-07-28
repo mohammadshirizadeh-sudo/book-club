@@ -35,6 +35,7 @@
 #include "Mutual/infodialog.h"
 #include "Mutual/notificationwidget.h"
 #include "appWindow/adminwindow.h"
+#include "Publishers/publishedbookswindow.h"
 
 #include "Server/server.h"
 
@@ -101,6 +102,13 @@ int main(int argc, char *argv[])
     DeactivateBookWindow* deactivateBook = new DeactivateBookWindow(networkManager);
     NotificationWidget* notificatoinWindow = new NotificationWidget(networkManager);
     AdminWindow* adminWindow = new AdminWindow(networkManager);
+    PublishedBooksWindow* publishedWindow = new PublishedBooksWindow(networkManager);
+
+
+
+
+
+
 
     int loginIndex = stackedWidget.addWidget(loginWindow);
     int forgotIndex = stackedWidget.addWidget(forgotWindow);
@@ -123,6 +131,7 @@ int main(int argc, char *argv[])
     int deactivateWindowIndex = stackedWidget.addWidget(deactivateBook);
     int notificationIndex = stackedWidget.addWidget(notificatoinWindow);
     int adminWindowIndex = stackedWidget.addWidget(adminWindow);
+    int publishedBookIndex = stackedWidget.addWidget(publishedWindow);
 
 
 
@@ -371,6 +380,11 @@ int main(int argc, char *argv[])
     QObject::connect(adminWindow, &AdminWindow::editWindow,
                      [&]() {
                          stackedWidget.setCurrentIndex(editWindowIndex);
+
+                     });
+    QObject::connect(publisherWindow, &PublisherWindow::publishedBookWindow,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(publishedBookIndex);
 
                      });
 

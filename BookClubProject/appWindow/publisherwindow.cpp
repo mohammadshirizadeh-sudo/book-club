@@ -398,3 +398,9 @@ void PublisherWindow::on_quitPushButton_clicked()
     emit openLoginWindow();
 }
 
+
+void PublisherWindow::on_publishedPushButton_clicked()
+{
+    emit publishedBookWindow();
+}
+
