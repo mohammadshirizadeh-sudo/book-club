@@ -24,7 +24,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/dia.jpg);</string>
+   <string notr="true">background-image: url(:/resources/sui.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -52,12 +52,12 @@
       <x>5</x>
       <y>5</y>
       <width>1490</width>
-      <height>70</height>
+      <height>66</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QFrame#toolbarFrame {
-    background-color: rgba(70, 130, 180, 220);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }</string>
@@ -85,7 +85,7 @@
     font: 700 9pt &quot;Script MT Bold&quot;;
     font-size: 25px;
     color: rgb(0, 0, 0);
-    background-color: rgb(200, 220, 255);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -147,7 +147,7 @@ QPushButton:hover {
     font: 700 9pt &quot;Script MT Bold&quot;;
     font-size: 40px;
     color: rgb(0, 0, 0);
-    background-color: rgb(240, 240, 240);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -156,7 +156,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>⏪</string>
+       <string>⇪</string>
       </property>
      </widget>
      <widget class="QPushButton" name="prevPageButton">
@@ -176,7 +176,7 @@ QPushButton:hover {
     font: 700 9pt &quot;Script MT Bold&quot;;
     font-size: 40px;
     color: rgb(0, 0, 0);
-    background-color: rgb(240, 240, 240);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -185,7 +185,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>◀️</string>
+       <string>◀︎</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="pageEdit">
@@ -207,7 +207,7 @@ QPushButton:hover {
     border: 3px solid black;
     border-radius: 12px;
     padding: 5px;
-    background-color: white;
+    background: transparent;
 }</string>
       </property>
       <property name="maxLength">
@@ -235,9 +235,9 @@ QPushButton:hover {
       <property name="styleSheet">
        <string notr="true">QPushButton {
     font: 700 9pt &quot;Script MT Bold&quot;;
-    font-size: 40px;
+    font-size: 30px;
     color: rgb(0, 0, 0);
-    background-color: rgb(240, 240, 240);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -246,7 +246,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>🆗</string>
+       <string>Go</string>
       </property>
      </widget>
      <widget class="QPushButton" name="nextPageButton">
@@ -266,7 +266,7 @@ QPushButton:hover {
     font: 700 9pt &quot;Script MT Bold&quot;;
     font-size: 40px;
     color: rgb(0, 0, 0);
-    background-color: rgb(240, 240, 240);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -275,7 +275,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>▶️</string>
+       <string>▶︎</string>
       </property>
      </widget>
      <widget class="QPushButton" name="lastPageButton">
@@ -295,7 +295,7 @@ QPushButton:hover {
     font: 700 9pt &quot;Script MT Bold&quot;;
     font-size: 40px;
     color: rgb(0, 0, 0);
-    background-color: rgb(240, 240, 240);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -304,7 +304,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>⏩</string>
+       <string>⇩</string>
       </property>
      </widget>
     </widget>
@@ -345,7 +345,7 @@ QPushButton:hover {
     font: 700 16pt &quot;Script MT Bold&quot;;
     font-size: 24px;
     color: rgb(0, 0, 0);
-    background-color: rgb(240, 240, 240);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -354,7 +354,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>➖</string>
+       <string>−</string>
       </property>
      </widget>
      <widget class="QComboBox" name="zoomCombo">
@@ -376,7 +376,7 @@ QPushButton:hover {
     border: 3px solid black;
     border-radius: 12px;
     padding: 5px;
-    background-color: white;
+    background: transparent;
 }
 
 QComboBox::drop-down {
@@ -465,7 +465,7 @@ QComboBox QAbstractItemView {
     font: 700 16pt &quot;Script MT Bold&quot;;
     font-size: 24px;
     color: rgb(0, 0, 0);
-    background-color: rgb(240, 240, 240);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }
@@ -474,7 +474,7 @@ QPushButton:hover {
 }</string>
       </property>
       <property name="text">
-       <string>➕</string>
+       <string>+</string>
       </property>
      </widget>
      <widget class="QPushButton" name="fullscreenButton">
@@ -483,7 +483,7 @@ QPushButton:hover {
         <x>207</x>
         <y>0</y>
         <width>81</width>
-        <height>55</height>
+        <height>50</height>
        </rect>
       </property>
       <property name="toolTip">
@@ -494,16 +494,13 @@ QPushButton:hover {
     font: 700 9pt &quot;Script MT Bold&quot;;
     font-size: 30px;
     color: rgb(0, 0, 0);
-    background-color: rgb(200, 220, 255);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
-}
-QPushButton:hover {
-    background-color: rgb(150, 190, 255);
 }</string>
       </property>
       <property name="text">
-       <string>⛶ FS</string>
+       <string>⧉</string>
       </property>
      </widget>
     </widget>
@@ -512,14 +509,14 @@ QPushButton:hover {
     <property name="geometry">
      <rect>
       <x>5</x>
-      <y>85</y>
+      <y>80</y>
       <width>1490</width>
-      <height>650</height>
+      <height>655</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QFrame#pdfViewContainer {
-    background-color: white;
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }</string>
@@ -569,7 +566,7 @@ QPushButton:hover {
     </property>
     <property name="styleSheet">
      <string notr="true">QFrame#statusBarFrame {
-    background-color: rgba(70, 130, 180, 180);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }</string>
