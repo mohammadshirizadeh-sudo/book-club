@@ -46,7 +46,7 @@
       <x>10</x>
       <y>10</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -67,9 +67,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>110</y>
+      <y>100</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -89,9 +89,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>720</y>
+      <y>730</y>
       <width>211</width>
-      <height>71</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -111,9 +111,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>210</y>
+      <y>280</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -133,9 +133,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>310</y>
+      <y>370</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -155,9 +155,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>410</y>
+      <y>460</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -177,9 +177,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>510</y>
+      <y>550</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -199,9 +199,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>610</y>
+      <y>640</y>
       <width>211</width>
-      <height>81</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -780,6 +780,28 @@ QHeaderView::section {
       </column>
      </widget>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="publishedPushButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>190</y>
+      <width>211</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	font: 700 9pt &quot;Script MT Bold&quot;;
+	font-size:30px;
+	color: rgb(0, 0, 0);
+	border: 3px solid black;
+	border-radius: 12px;
+}</string>
+    </property>
+    <property name="text">
+     <string>Published Books</string>
+    </property>
    </widget>
   </widget>
  </widget>

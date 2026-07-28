@@ -101,6 +101,7 @@ qt_add_executable(BookClubProject
     Publishers/editbookswindow.h Publishers/editbookswindow.cpp Publishers/editbookswindow.ui
 
     Users/bookreviewdialog.h Users/bookreviewdialog.cpp Users/bookreviewdialog.ui
+    Publishers/publishedbookswindow.h Publishers/publishedbookswindow.cpp Publishers/publishedbookswindow.ui
 
 
 
