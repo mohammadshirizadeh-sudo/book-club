@@ -52,6 +52,7 @@ signals:
     void deactivateBook();
     void bookStatisticWindow();
     void notificationWindow();
+    void openLoginWindow();
 
 private:
     Ui::PublisherWindow *ui;

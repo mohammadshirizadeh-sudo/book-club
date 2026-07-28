@@ -30,7 +30,7 @@ private slots:
     void updateCharCount();
     void onResponseReceived(const Response& response);
 
-    void on_pdfStatusLabel_linkActivated(const QString &link);
+    // void on_pdfStatusLabel_linkActivated(const QString &link);
 
     void on_cancelButton_clicked();
 

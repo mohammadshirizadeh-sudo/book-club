@@ -37,6 +37,9 @@ private slots:
     void on_percentageSpinBox_valueChanged(int value);
     void on_fixedAmountSpinBox_valueChanged(double value);
 
+
+signals:
+    void publisherWindow();
 private:
     Ui::ApplyDiscountWindow *ui;
     NetworkManager *m_networkManager;

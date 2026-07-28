@@ -38,6 +38,9 @@ private slots:
 
     void on_backButton_clicked();
 
+signals:
+    void userWindow();
+
 protected:
     void showEvent(QShowEvent *event) override;
 private:

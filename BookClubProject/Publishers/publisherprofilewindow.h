@@ -22,6 +22,8 @@ public:
 signals:
 
     void openPublisherInfoDialog();
+    void publisherWindow();
+
 
 
 private slots:

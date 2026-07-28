@@ -29,6 +29,7 @@ signals:
     void openChangeUserPassDialog();
     void openShoppingHistoryDialog();
     void openFavBooksWindow();
+    void userWindow();
 
 private slots:
     void on_favGenresPushButton_clicked();
