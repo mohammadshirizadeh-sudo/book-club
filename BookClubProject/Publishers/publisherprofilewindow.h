@@ -32,6 +32,8 @@ private slots:
 
     void on_editPubInfoPushButton_clicked();
 
+    void on_backPushButton_clicked();
+
 private:
     Ui::PublisherProfileWindow *ui;
     NetworkManager* m_networkManager;

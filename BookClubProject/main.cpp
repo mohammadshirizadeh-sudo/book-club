@@ -1,19 +1,6 @@
-//rating for bookdetaildialog
-
-
-
-
-
-
-
-
-
-
-
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
-
 
 #include "appWindow/genrewindow.h"
 #include "appWindow/userwindow.h"
@@ -24,7 +11,6 @@
 
 #include "Publishers/addbookdialog.h"
 #include "Publishers/applydiscountwindow.h"
-#include "Publishers/bookstaticswindow.h"
 #include "Publishers/deactivatebookwindow.h"
 #include "Publishers/editbookswindow.h"
 #include "Publishers/publisherprofilewindow.h"
@@ -111,7 +97,6 @@ int main(int argc, char *argv[])
     ApplyDiscountWindow* applydiscountWindow = new ApplyDiscountWindow(networkManager);
     EditBooksWindow* editWindow = new EditBooksWindow(networkManager);
     DeactivateBookWindow* deactivateBook = new DeactivateBookWindow(networkManager);
-    BookStaticsWindow* bookstaticsWindow = new BookStaticsWindow(networkManager);
     NotificationWidget* notificatoinWindow = new NotificationWidget(networkManager);
 
 
@@ -134,7 +119,6 @@ int main(int argc, char *argv[])
     int applyDiscountIndex = stackedWidget.addWidget(applydiscountWindow);
     int editWindowIndex = stackedWidget.addWidget(editWindow);
     int deactivateWindowIndex = stackedWidget.addWidget(deactivateBook);
-    int bookStaticsWindowIndex = stackedWidget.addWidget(bookstaticsWindow);
     int notificationIndex = stackedWidget.addWidget(notificatoinWindow);
 
 
@@ -185,14 +169,6 @@ int main(int argc, char *argv[])
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(applyDiscountIndex);
-                     });
-
-
-    QObject::connect(publisherWindow,
-                     &PublisherWindow::bookStatisticWindow,
-                     [&]()
-                     {
-                         stackedWidget.setCurrentIndex(bookStaticsWindowIndex);
                      });
 
     QObject::connect(publisherWindow,

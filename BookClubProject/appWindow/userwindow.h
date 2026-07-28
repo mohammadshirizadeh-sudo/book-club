@@ -78,6 +78,8 @@ private slots:
 
     void on_notificationPushButton_clicked();
 
+    void on_pushButton_6_clicked();
+
 signals:
     void userProfileWindow();
     void searchWindow();

@@ -32,6 +32,8 @@ private slots:
 
     void on_searchResultsListWidget_itemClicked(QListWidgetItem *item);
 
+    void on_backPushButton_clicked();
+
 private:
     Ui::SearchWindow *ui;
     NetworkManager* m_networkManager;

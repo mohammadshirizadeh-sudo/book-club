@@ -99,9 +99,9 @@ qt_add_executable(BookClubProject
     Publishers/applydiscountwindow.h Publishers/applydiscountwindow.cpp Publishers/applydiscountwindow.ui
     Publishers/deactivatebookwindow.h Publishers/deactivatebookwindow.cpp Publishers/deactivatebookwindow.ui
     Publishers/editbookswindow.h Publishers/editbookswindow.cpp Publishers/editbookswindow.ui
-    Publishers/bookstaticswindow.h Publishers/bookstaticswindow.cpp Publishers/bookstaticswindow.ui
+
     Users/bookreviewdialog.h Users/bookreviewdialog.cpp Users/bookreviewdialog.ui
-    Users/allreviewsdialog.h Users/allreviewsdialog.cpp Users/allreviewsdialog.ui
+
 
 
 

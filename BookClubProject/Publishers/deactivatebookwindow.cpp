@@ -326,5 +326,5 @@ void DeactivateBookWindow::exportToCSV()
 // ⬅ بازگشت
 void DeactivateBookWindow::on_backPushButton_clicked()
 {
-    this->close();
+    emit publisherWindow();
 }

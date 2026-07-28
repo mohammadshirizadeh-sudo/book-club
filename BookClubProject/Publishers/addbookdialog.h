@@ -32,6 +32,8 @@ private slots:
 
     void on_pdfStatusLabel_linkActivated(const QString &link);
 
+    void on_cancelButton_clicked();
+
 private:
     Ui::AddBookDialog *ui;
     NetworkManager* m_networkManager;

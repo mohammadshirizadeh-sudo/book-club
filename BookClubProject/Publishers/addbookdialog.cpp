@@ -396,8 +396,9 @@ void AddBookDialog::onResponseReceived(const Response& response)
     }
 }
 
-void AddBookDialog::on_pdfStatusLabel_linkActivated(const QString &link)
-{
 
+void AddBookDialog::on_cancelButton_clicked()
+{
+    this->close();
 }
 

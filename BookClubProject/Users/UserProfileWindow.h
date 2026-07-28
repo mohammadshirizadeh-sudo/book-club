@@ -41,6 +41,8 @@ private slots:
 
     void handleResponse(const Response& response);
 
+    void on_backPushButton_clicked();
+
 private:
     Ui::UserProfileWindow *ui;
     NetworkManager* m_networkManager;
