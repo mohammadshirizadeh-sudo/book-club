@@ -102,6 +102,7 @@ qt_add_executable(BookClubProject
     Publishers/bookstaticswindow.h Publishers/bookstaticswindow.cpp Publishers/bookstaticswindow.ui
     Users/bookreviewdialog.h Users/bookreviewdialog.cpp Users/bookreviewdialog.ui
     Users/allreviewsdialog.h Users/allreviewsdialog.cpp Users/allreviewsdialog.ui
+    Services/AccessLog.h
 
 
 

@@ -41,6 +41,10 @@ public:
     QSqlDatabase connectionForCurrentThread();
 
     static void shutdown();
+    qint64 lastInsertId() const;
+
+
+
 
 private:
     explicit DatabaseManager(QObject *parent = nullptr);
@@ -53,6 +57,8 @@ private:
     bool m_isOpen;
 
     void bindValues(QSqlQuery& query, const QVariantMap& params);
+    // DatabaseManager.cpp
+
 
 };
 

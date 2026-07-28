@@ -5,24 +5,27 @@
 #include <QString>
 #include <QDateTime>
 
-/**
- * @brief Review class for user book reviews and ratings
- */
+
 class Review {
 private:
     int reviewId;
     int userId;
     int bookId;
     QString text;
-    int rating;          // 1 to 5 stars
+
+    int rating;
+
     QDateTime createdAt;
     QDateTime updatedAt;
+
+    QString status;
+    bool isFlagged;
 
 public:
     // ===== Constructors =====
     Review();
     Review(int reviewId, int userId, int bookId, const QString& text, int rating);
-    Review(int reviewId, int userId, int bookId, const QString& text, int rating ,QDateTime createdAt ,QDateTime updatedAt);
+    Review(int reviewId, int userId, int bookId, const QString& text, int rating, const QString& status, bool isFlagged ,QDateTime createdAt ,QDateTime updatedAt);
 
     // ===== Getters =====
     int getReviewId() const { return reviewId; }
@@ -48,6 +51,10 @@ public:
     // ===== Helper Methods =====
     bool isValidRating() const { return rating >= 1 && rating <= 5; }
     QString getRatingStars() const;
+    QString getStatus() const;
+    void setStatus(const QString &newStatus);
+    bool getIsFlagged() const;
+    void setIsFlagged(bool newIsFlagged);
 };
 
 #endif // REVIEW_H

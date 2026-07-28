@@ -112,7 +112,7 @@ bool BookRepository::loadAllFromDatabase() {
                discount_percent,is_timed_discount ,discount_start_date
                ,discount_end_date , cover_path, pdf_path, is_active,
                average_rating, sales_count, publisher_id,
-               created_at, updated_at
+               created_at, updated_at, is_flagged
         FROM book
     )";
 
@@ -149,6 +149,7 @@ bool BookRepository::loadAllFromDatabase() {
             sqlQuery.value("publisher_id").toInt(),
             QDateTime::fromString(sqlQuery.value("created_at").toString(), Qt::ISODate),
             QDateTime::fromString(sqlQuery.value("updated_at").toString(), Qt::ISODate));
+        book->setIsFlagged(sqlQuery.value("is_flagged").toBool());
 
 
 
@@ -184,13 +185,13 @@ bool BookRepository::saveToDatabase(QSharedPointer<Book> book) {
             id, title, author, genre, description, price,
             discount_percent,is_timed_discount, discount_start_date, discount_end_date,
             cover_path, pdf_path, is_active,
-            average_rating, sales_count, publisher_id,
+            average_rating,is_flagged, sales_count, publisher_id,
             created_at, updated_at
         ) VALUES (
             :id, :title, :author, :genre, :description, :price,
             :discount_percent, :is_timed_discount, :discount_start_date, :discount_end_date,
             :cover_path, :pdf_path, :is_active,
-            :average_rating, :sales_count, :publisher_id,
+            :average_rating,:is_flagged, :sales_count, :publisher_id,
             :created_at, :updated_at
         )
     )";
@@ -210,6 +211,8 @@ bool BookRepository::saveToDatabase(QSharedPointer<Book> book) {
     params["pdf_path"] = book->getPdfPath();
     params["is_active"] = book->getIsActive() ? 1 : 0;
     params["average_rating"] = book->getAverageRating();
+    params["is_flagged"] =
+        book->getIsFlagged() ? 1 : 0;
     params["sales_count"] = book->getSalesCount();
     params["publisher_id"] = book->getPublisherId();
     params["created_at"] = book->getCreatedAt().toString(Qt::ISODate);

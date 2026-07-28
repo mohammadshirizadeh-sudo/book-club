@@ -78,7 +78,7 @@ enum class CommandType {
     GetDatabaseStatus,
     GetServerStatus,
 
-     MarkNotificationRead,
+    MarkNotificationRead,
     MarkAllNotificationsRead,
     ClearAllNotifications,
     GetUserShelves,
@@ -105,7 +105,25 @@ enum class CommandType {
     GetBottomSellingBooks,
     GetSalesOverview,
     CheckBookOwnership,
-    SearchAuthors
+    SearchAuthors,
+
+
+    //admin section
+    ToggleUserActiveStatus,
+    GetAdminAccessLog,
+    GetAdminBooks,
+    FlagBook,
+    UnflagBook,
+    GetAdminReviews,
+    ApproveReview,
+    RejectReview,
+    FlagReview,
+    GetServerRuntimeStatus,
+    BroadcastMessage,
+    BackupDatabase,
+    ClearServerCache,
+    RestartServer,
+
 };
 
 

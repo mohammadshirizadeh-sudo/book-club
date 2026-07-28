@@ -47,6 +47,8 @@ public:
 
     bool isBookOwned(int userId, int bookId) const;
 
+    LibraryRepository* getLibraryRepo();
+
 
 
 

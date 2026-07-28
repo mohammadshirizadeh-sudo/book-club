@@ -29,8 +29,8 @@ User* UserService::getProfile(int userId) const {
 }
 
 ValidationResult UserService::updateProfile(int userId, const QString& newEmail,
-                                const QString& newFullName,
-                                const QString& newUserName) {
+                                            const QString& newFullName,
+                                            const QString& newUserName) {
 
     // 1. Find user
     User* user = userRepo->findById(userId);
@@ -372,4 +372,94 @@ QVector<int> UserService::getFavoriteBooks(int userId) const
     }
 
     return user->getFavoriteBooks();
+}
+
+
+
+// UserService.cpp
+
+// =============================================
+// ===== Deactivate User =====
+// =============================================
+
+bool UserService::deactivateUser(int userId)
+{
+    // 1. پیدا کردن کاربر
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return false;
+    }
+
+    // 2. بررسی اینکه کاربر ادمین نباشد
+    if (user->isAdmin()) {
+        qWarning() << "Cannot deactivate an admin!";
+        return false;
+    }
+
+    // 3. بررسی اینکه کاربر قبلاً غیرفعال نباشد
+    if (user->getStatus() == AccountStatus::Inactive) {
+        qWarning() << "User is already inactive!";
+        return false;
+    }
+
+    // 4. بررسی اینکه کاربر مسدود نباشد (اختیاری)
+    if (user->isBlocked()) {
+        qWarning() << "Cannot deactivate a blocked user. Unblock first.";
+        return false;
+    }
+
+    // 5. غیرفعال کردن کاربر
+    user->setStatus(AccountStatus::Inactive);
+    user->setUpdatedAt(QDateTime::currentDateTime());
+
+    // 6. ذخیره در دیتابیس
+    if (!userRepo->updateUser(user, user->getUsername(), user->getEmail())) {
+        qWarning() << "Failed to deactivate user in repository";
+        return false;
+    }
+
+    qDebug() << "User deactivated:" << user->getUsername() << "(ID:" << userId << ")";
+    return true;
+}
+
+// =============================================
+// ===== Activate User =====
+// =============================================
+
+bool UserService::activateUser(int userId)
+{
+    // 1. پیدا کردن کاربر
+    User* user = userRepo->findById(userId);
+    if (!user) {
+        qWarning() << "User not found with ID:" << userId;
+        return false;
+    }
+
+    // 2. بررسی اینکه کاربر قبلاً فعال نباشد
+    if (user->getStatus() == AccountStatus::Active) {
+        qWarning() << "User is already active!";
+        return false;
+    }
+
+    // 3. فعال کردن کاربر (فقط اگر وضعیت Inactive یا Pending باشد)
+    if (user->getStatus() != AccountStatus::Inactive &&
+        user->getStatus() != AccountStatus::Pending) {
+        qWarning() << "User cannot be activated from status:"
+                   << static_cast<int>(user->getStatus());
+        return false;
+    }
+
+    // 4. فعال کردن کاربر
+    user->setStatus(AccountStatus::Active);
+    user->setUpdatedAt(QDateTime::currentDateTime());
+
+    // 5. ذخیره در دیتابیس
+    if (!userRepo->updateUser(user, user->getUsername(), user->getEmail())) {
+        qWarning() << "Failed to activate user in repository";
+        return false;
+    }
+
+    qDebug() << "User activated:" << user->getUsername() << "(ID:" << userId << ")";
+    return true;
 }

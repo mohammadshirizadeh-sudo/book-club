@@ -51,6 +51,9 @@ public:
 
     QSharedPointer<Review> getUserReview(int userId, int bookId) const;
     QVector<QSharedPointer<Review>> getAllReviews() const;
+    bool setReviewStatus(int reviewId, const QString& status);
+    bool setReviewFlagged(int reviewId, bool flagged);
+    ReviewRepository* getReviewRepo();
 private:
 
     void updateBookAverageRating(int bookId);
