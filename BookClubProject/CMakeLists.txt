@@ -105,6 +105,7 @@ qt_add_executable(BookClubProject
 
     Services/AccessLog.h
     Server/ServerResourceMonitor.h Server/ServerResourceMonitor.cpp
+    Users/groupreadingwindow.h Users/groupreadingwindow.cpp Users/groupreadingwindow.ui
 
 
 

@@ -56,6 +56,7 @@
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }
 </string>
     </property>
@@ -79,6 +80,7 @@
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
@@ -101,6 +103,7 @@
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
@@ -123,6 +126,7 @@
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
@@ -144,6 +148,7 @@
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
+	background: transparent;
 	border-radius: 12px;
 }</string>
     </property>
@@ -166,6 +171,7 @@
 	font-size:26px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
+	background: transparent;
 	border-radius: 12px;
 }</string>
     </property>
@@ -189,6 +195,7 @@
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
@@ -211,6 +218,7 @@
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
@@ -227,7 +235,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: transparent;
+     <string notr="true">background: transparent;
 </string>
     </property>
     <property name="frameShape">
@@ -793,14 +801,15 @@ QHeaderView::section {
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:30px;
+	font-size:24px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
-     <string>Published Books</string>
+     <string>🖨️ Published Books</string>
     </property>
    </widget>
   </widget>

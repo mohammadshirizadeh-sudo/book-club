@@ -51,6 +51,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QPushButton {
+	background: transparent;
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
@@ -77,6 +78,7 @@
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
+	background: transparent;
 	border-radius: 12px;
 }</string>
     </property>
@@ -98,6 +100,7 @@
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
+	background: transparent;
 	border: 3px solid black;
 	border-radius: 12px;
 }</string>
@@ -122,6 +125,7 @@
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
@@ -144,6 +148,7 @@
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
@@ -162,6 +167,7 @@
     <property name="styleSheet">
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
+	background: transparent;
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -187,6 +193,7 @@
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
+	background: transparent;
 	border-radius: 12px;
 }</string>
     </property>
@@ -270,7 +277,8 @@ border-radius: 12px;</string>
     </property>
     <property name="styleSheet">
      <string notr="true">border: 3px solid black;
-border-radius: 12px;</string>
+border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string/>
@@ -360,6 +368,7 @@ font-size: 20px;</string>
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
+	background: transparent;
 }</string>
     </property>
     <property name="text">
@@ -380,6 +389,7 @@ font-size: 20px;</string>
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:30px;
 	color: rgb(0, 0, 0);
+	background: transparent;
 	border: 3px solid black;
 	border-radius: 12px;
 }</string>
@@ -401,6 +411,7 @@ font-size: 20px;</string>
      <string notr="true">QPushButton {
 	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:26px;
+	background: transparent;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
 	border-radius: 12px;
