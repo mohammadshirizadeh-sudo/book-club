@@ -61,6 +61,9 @@ public:
 
     QVariantList getPeriodSummaries(int publisherId, int months = 6) const;
 
+
+    PurchaseRepository* getPurchaseRepo();
+
 private:
 
     bool processPayment(double amount);

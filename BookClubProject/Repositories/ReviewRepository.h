@@ -20,6 +20,8 @@ private:
 
     void addToCache(QSharedPointer<Review> review);
     void removeFromCache(int reviewId);
+public:
+
     void clearCache();
 
 public:

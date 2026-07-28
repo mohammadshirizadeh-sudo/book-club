@@ -17,6 +17,8 @@ private:
 
     void addToCache(QSharedPointer<Purchase> purchase);
     void removeFromCache(int purchaseId);
+public:
+
     void clearCache();
 
 public:

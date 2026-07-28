@@ -148,13 +148,13 @@ Command* CommandFactory::create(
     // =============================================
     case CommandType::BlockUser:
 
-        return new BlockUserCommand(userService );
+        return new BlockUserCommand(userService, adminService, clientHandler);
 
     case CommandType::UnblockUser:
-        return new UnblockUserCommand(userService);
+        return new UnblockUserCommand(userService, adminService, clientHandler);
 
     case CommandType::DeleteUser:
-        return new DeleteUserCommand(userService);
+        return new DeleteUserCommand(userService, adminService, clientHandler);
 
     case CommandType::GetAllUsers:
         return new GetAllUsersCommand(userService);
@@ -288,6 +288,41 @@ Command* CommandFactory::create(
         return new GetBottomSellingBooksCommand(bookService);
     case CommandType::CheckBookOwnership:
         return new CheckBookOwnershipCommand(libraryService);
+
+
+    case CommandType::ToggleUserActiveStatus:
+        return new ToggleUserActiveCommand(userService);
+    case CommandType::GetAdminAccessLog:
+        return new GetAdminAccessLogCommand(adminService);
+    case CommandType::GetAdminBooks:
+        return new GetAdminBooksCommand(bookService);
+    case CommandType::FlagBook:
+        return new FlagBookCommand(bookService);
+    case CommandType::GetAdminReviews:
+        return new GetAdminReviewsCommand(reviewService);
+    case CommandType::ApproveReview:
+        return new ApproveReviewCommand(reviewService);
+    case CommandType::RejectReview:
+        return new RejectReviewCommand(reviewService);
+    case CommandType::FlagReview:
+        return new FlagReviewCommand(reviewService);
+    case CommandType::GetServerRuntimeStatus:
+        return new GetServerRuntimeStatusCommand(adminService);
+    case CommandType::BroadcastMessage:
+        return new BroadcastMessageCommand(clientHandler);
+    case CommandType::BackupDatabase:
+        return new BackupDatabaseCommand(adminService);
+    case CommandType::ClearServerCache:
+        return new ClearServerCacheCommand(adminService);
+    case CommandType::RestartServer:
+        return new RestartServerCommand(adminService);
+    case CommandType::UnflagBook:
+        return new UnflagBookCommand(bookService);
+
+
+
+
+
 
     // =============================================
     // ===== Unknown Command =====

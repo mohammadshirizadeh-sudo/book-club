@@ -253,7 +253,7 @@ QPushButton:hover {
      </rect>
     </property>
     <property name="currentIndex">
-     <number>6</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="dashboardPage">
      <property name="styleSheet">

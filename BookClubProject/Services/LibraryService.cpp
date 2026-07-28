@@ -377,3 +377,8 @@ bool LibraryService::isBookOwned(int userId, int bookId) const
     QVector<int> ownedBookIds = getOwnedBooks(userId);
     return ownedBookIds.contains(bookId);
 }
+
+LibraryRepository* LibraryService::getLibraryRepo()
+{
+    return m_libraryRepo;
+}

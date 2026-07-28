@@ -172,6 +172,16 @@ bool Book::isDiscounted() const
 }
 
 
+bool Book::getIsFlagged() const
+{
+    return isFlagged;
+}
+
+void Book::setIsFlagged(bool newIsFlagged)
+{
+    isFlagged = newIsFlagged;
+}
+
 void Book::expireDiscountIfNeeded() const
 {
     if (isTimedDiscount &&

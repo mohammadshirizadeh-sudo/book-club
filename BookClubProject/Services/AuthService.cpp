@@ -4,6 +4,7 @@
 #include "../Shared/PasswordHelper.h"
 #include <QDebug>
 #include "../Shared/UserFactory.h"
+#include "../appWindow/SessionManager.h"
 
 AuthService::AuthService(UserRepository* repo , QObject* parent)
     : userRepo(repo) ,QObject(parent) {
@@ -170,6 +171,9 @@ ValidationResult AuthService::login(const QString& usernameOrEmail, const QStrin
     currentUserId = user->getId();
     user->setLastLogin(QDateTime::currentDateTime());
     userRepo->updateUser(user, user->getUsername(), user->getEmail());
+    if(user->getRole()== UserRole::Admin){
+        SessionManager::instance()->setCurrentUser(user->getId() , "ali" , "Admin");
+    }
 
     qDebug() << "✅ User logged in:" << user->getUsername();
 

@@ -3,12 +3,34 @@
 #include <QDebug>
 
 // ===== Constructors =====
+QString Review::getStatus() const
+{
+    return status;
+}
+
+void Review::setStatus(const QString &newStatus)
+{
+    status = newStatus;
+}
+
+bool Review::getIsFlagged() const
+{
+    return isFlagged;
+}
+
+void Review::setIsFlagged(bool newIsFlagged)
+{
+    isFlagged = newIsFlagged;
+}
+
 Review::Review()
     : reviewId(0)
     , userId(0)
     , bookId(0)
     , text("")
     , rating(0)
+    , status("pending")
+    , isFlagged(false)
     , createdAt(QDateTime::currentDateTime())
     , updatedAt(QDateTime::currentDateTime()) {
 }
@@ -19,6 +41,8 @@ Review::Review(int reviewId, int userId, int bookId, const QString& text, int ra
     , bookId(bookId)
     , text(text)
     , rating(rating)
+    , status("pending")
+    , isFlagged(false)
     , createdAt(QDateTime::currentDateTime())
     , updatedAt(QDateTime::currentDateTime()) {
 
@@ -29,12 +53,14 @@ Review::Review(int reviewId, int userId, int bookId, const QString& text, int ra
     }
 }
 //constructor for DataBase
-Review::Review(int reviewId, int userId, int bookId, const QString& text, int rating ,QDateTime createdAt ,QDateTime updatedAt)
+Review::Review(int reviewId, int userId, int bookId, const QString& text, int rating, const QString& status, bool isFlagged ,QDateTime createdAt ,QDateTime updatedAt)
     : reviewId(reviewId)
     , userId(userId)
     , bookId(bookId)
     , text(text)
     , rating(rating)
+    , status(status)
+    , isFlagged(isFlagged)
     , createdAt(createdAt)
     , updatedAt(updatedAt){
 

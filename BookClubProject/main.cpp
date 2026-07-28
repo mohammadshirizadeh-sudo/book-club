@@ -1,5 +1,5 @@
 //rating for bookdetaildialog
-
+//handle commmands and adminlevel for different admins
 
 
 
@@ -47,6 +47,7 @@
 #include "Mutual/editinfodialog.h"
 #include "Mutual/infodialog.h"
 #include "Mutual/notificationwidget.h"
+#include "appWindow/adminwindow.h"
 
 #include "Server/server.h"
 
@@ -113,7 +114,7 @@ int main(int argc, char *argv[])
     DeactivateBookWindow* deactivateBook = new DeactivateBookWindow(networkManager);
     BookStaticsWindow* bookstaticsWindow = new BookStaticsWindow(networkManager);
     NotificationWidget* notificatoinWindow = new NotificationWidget(networkManager);
-
+    AdminWindow* adminWindow = new AdminWindow(networkManager);
 
     int loginIndex = stackedWidget.addWidget(loginWindow);
     int forgotIndex = stackedWidget.addWidget(forgotWindow);
@@ -136,8 +137,17 @@ int main(int argc, char *argv[])
     int deactivateWindowIndex = stackedWidget.addWidget(deactivateBook);
     int bookStaticsWindowIndex = stackedWidget.addWidget(bookstaticsWindow);
     int notificationIndex = stackedWidget.addWidget(notificatoinWindow);
+    int adminWindowIndex = stackedWidget.addWidget(adminWindow);
 
 
+
+
+    QObject::connect(loginWindow,
+                     &LoginWindow::openAdminWindow,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(adminWindowIndex);
+                     });
 
     QObject::connect(userWindow,
                      &UserWindow::genrebrowsWindow,
@@ -381,6 +391,8 @@ int main(int argc, char *argv[])
                          userWindow->loadRecommendedBooks();
                          userWindow->loadNewBooks();
                      });
+
+
     //-------------------------------------------------
 
     stackedWidget.show();

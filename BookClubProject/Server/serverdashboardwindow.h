@@ -1,3 +1,5 @@
+
+/*
 #ifndef SERVERDASHBOARDWINDOW_H
 #define SERVERDASHBOARDWINDOW_H
 
@@ -63,3 +65,5 @@ private:
 };
 
 #endif
+
+*/
