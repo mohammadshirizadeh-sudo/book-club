@@ -39,13 +39,15 @@ private:
     void displayBooks(const QVariantList& books);
     void filterBooks(const QString& query);
     void clearLayout();
-    bool m_isFetchingBook = false;\
+    bool m_isFetchingBook = false;
 
 
     int m_selectedBookIdForShelf = -1;
     QString m_newShelfNameToAdd = "";
 
     void showShelfSelectionDialog(const QVariantList& shelves);
+
+    qint64 m_pendingBookDetailsRequestId = -1;
 
 };
 

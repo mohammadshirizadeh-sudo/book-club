@@ -30,6 +30,7 @@ signals:
     void openShoppingHistoryDialog();
     void openFavBooksWindow();
     void userWindow();
+     void backButtonClicked();
 
 private slots:
     void on_favGenresPushButton_clicked();

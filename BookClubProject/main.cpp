@@ -389,6 +389,44 @@ int main(int argc, char *argv[])
                      });
 
 
+
+
+
+
+    //backpush buttoms
+    QObject::connect(cartWindow, &CartWindow::backButtonClicked,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(userIndex);
+
+                     });
+
+    QObject::connect(libraryWindow, &MyLibraryWindow::backButtonClicked,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(userIndex);
+
+                     });
+    QObject::connect(searchWindow, &SearchWindow::backButtonClicked,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(userIndex);
+
+                     });
+    QObject::connect(shelfWindow, &ShelfManagementDialog::backButtonClicked,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(userIndex);
+
+                     });
+    QObject::connect(profileWindow, &UserProfileWindow::backButtonClicked,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(userIndex);
+
+                     });
+    QObject::connect(shoppingWindow, &ShoppingHistoryWindow::backButtonClicked,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(profileIndex);
+
+                     });
+
+
     //-------------------------------------------------
 
     stackedWidget.show();
