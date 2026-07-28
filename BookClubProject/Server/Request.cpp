@@ -80,7 +80,7 @@ QString Request::getCommandTypeString() const
 CommandType Request::stringToCommandType(const QString& str)
 {
     static QMap<QString, CommandType> CommandTypeMap = {
-        // Auth
+                                                        // Auth
         {"Login", CommandType::Login},
         {"Register", CommandType::Register},
         {"Logout", CommandType::Logout},
@@ -172,12 +172,12 @@ CommandType Request::stringToCommandType(const QString& str)
 
         {"MoveBookBetweenShelves" , CommandType ::MoveBookBetweenShelves},
 
-         {"GetBestSellers" , CommandType ::GetBestSellers},
+        {"GetBestSellers" , CommandType ::GetBestSellers},
 
         {"GetBookCover" , CommandType ::GetBookCover},
 
 
-         {"AddFavoriteBook" , CommandType ::AddFavoriteBook},
+        {"AddFavoriteBook" , CommandType ::AddFavoriteBook},
 
 
         {"GetFavoriteBooks" , CommandType ::GetFavoriteBooks},
@@ -193,9 +193,29 @@ CommandType Request::stringToCommandType(const QString& str)
         {"GetBookRatingsChart" , CommandType ::GetBookRatingsChart},
         {"GetTopSellingBooks" , CommandType ::GetTopSellingBooks},
 
-         {"GetBottomSellingBooks" , CommandType ::GetBottomSellingBooks},
+        {"GetBottomSellingBooks" , CommandType ::GetBottomSellingBooks},
         {"GetSalesOverview" , CommandType ::GetSalesOverview},
         {"CheckBookOwnership" , CommandType ::CheckBookOwnership},
+        {"ToggleUserActiveStatus" , CommandType ::ToggleUserActiveStatus},
+        {"GetAdminAccessLog" , CommandType ::GetAdminAccessLog},
+        {"GetAdminBooks" , CommandType ::GetAdminBooks},
+        {"FlagBook" , CommandType ::FlagBook},
+        {"ApproveReview" , CommandType ::ApproveReview},
+        {"RejectReview" , CommandType ::RejectReview},
+        {"FlagReview" , CommandType ::FlagReview},
+        {"GetServerRuntimeStatus" , CommandType ::GetServerRuntimeStatus},
+        {"BroadcastMessage" , CommandType ::BroadcastMessage},
+        {"BackupDatabase" , CommandType ::BackupDatabase},
+        {"ClearServerCache" , CommandType ::ClearServerCache},
+        {"RestartServer" , CommandType ::RestartServer},
+         {"GetAdminReviews", CommandType::GetAdminReviews},
+
+        {"UnflagBook", CommandType::UnflagBook},
+        {"GetServerResourceUsage", CommandType::GetServerResourceUsage},
+        {"GetConnectedClients",    CommandType::GetConnectedClients},
+        {"GetTrafficStats",        CommandType::GetTrafficStats},
+        {"GetAllBooks", CommandType::GetAllBooks},
+
 
 
 
@@ -319,6 +339,28 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetServerStatus: return "GetServerStatus";
 
     case CommandType::CheckBookOwnership: return "CheckBookOwnership";
+    case CommandType::ToggleUserActiveStatus: return "ToggleUserActiveStatus";
+    case CommandType::GetAdminAccessLog: return "GetAdminAccessLog";
+
+    case CommandType::GetAdminBooks: return "GetAdminBooks";
+    case CommandType::FlagBook: return "FlagBook";
+    case CommandType::GetAdminReviews: return "GetAdminReviews";
+    case CommandType::ApproveReview: return "ApproveReview";
+    case CommandType::RejectReview: return "RejectReview";
+    case CommandType::FlagReview: return "FlagReview";
+    case CommandType::GetServerRuntimeStatus: return "GetServerRuntimeStatus";
+    case CommandType::BroadcastMessage: return "BroadcastMessage";
+    case CommandType::BackupDatabase: return "BackupDatabase";
+    case CommandType::ClearServerCache: return "ClearServerCache";
+    case CommandType::RestartServer: return "RestartServer";     
+    case CommandType::UnflagBook: return "UnflagBook";
+    case CommandType::GetServerResourceUsage: return "GetServerResourceUsage";
+    case CommandType::GetConnectedClients:    return "GetConnectedClients";
+    case CommandType::GetTrafficStats:        return "GetTrafficStats";
+    case CommandType::GetAllBooks: return "GetAllBooks";
+
+
+
 
 
 
@@ -333,6 +375,7 @@ QJsonObject Request::toJson() const
 {
     QJsonObject obj;
     obj["command"] = getCommandTypeString();
+    obj["requestId"] = m_requestId;
 
     if (!m_params.isEmpty()) {
         QJsonObject paramsObj;
@@ -363,6 +406,9 @@ Request Request::fromJson(const QJsonObject& json)
 
     QString commandstr = json["command"].toString();
     request.setCommandType(stringToCommandType(commandstr));
+    request.setRequestId(
+        json.value("requestId").toVariant().toLongLong()
+        );
 
     if (json.contains("params") && json["params"].isObject()) {
         QJsonObject paramsObj = json["params"].toObject();

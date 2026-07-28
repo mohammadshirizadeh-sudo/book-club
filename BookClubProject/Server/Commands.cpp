@@ -37,6 +37,9 @@ Response LoginCommand::execute(const QVariantMap& params)
     QString password = params["password"].toString();
 
 
+
+
+
     ValidationResult result = m_authService->login(username, password);
 
 
@@ -49,17 +52,19 @@ Response LoginCommand::execute(const QVariantMap& params)
         return Response::error(CommandType::Login,"User created but could not be retrieved");
     }
 
-        QVariantMap data ;
+    QVariantMap data ;
 
-        int userId = user->getId();
-        data["userId"] = userId;
+    int userId = user->getId();
+    data["userId"] = userId;
 
-        data["username"] = user->getUsername();
-        QString role = user->getRoleString();
-        data["role"] = role;
-        m_clientHandler->setSession(userId, UserRepository::stringToRole(role));
+    data["username"] = user->getUsername();
+    QString role = user->getRoleString();
+    data["role"] = role;
+    m_clientHandler->setSession(userId, UserRepository::stringToRole(role));
 
-        return Response::success(CommandType::Login,"Login successful", data);
+    m_clientHandler->setSession(userId, UserRepository::stringToRole(role), user->getUsername());
+
+    return Response::success(CommandType::Login,"Login successful", data);
 
 }
 
@@ -169,6 +174,7 @@ Response GetProfileCommand::execute(const QVariantMap& params)
     qDebug()<<"Enter to getprofile execute";
     int userId = params["userId"].toInt();
     User* user = m_userService->getProfile(userId);
+    if (!user) { return Response::error( CommandType::GetProfile, "User not found"); }
     AccountStatus status = user->getStatus();
 
     if (user) {
@@ -492,7 +498,7 @@ Response GetNewBooksCommand::execute(const QVariantMap& params)
         if (userId > 0) {
             bool isFavorite = m_userService->isFavoriteBook(userId, bookId);
             bookData["isFavorite"] = isFavorite;
-        } 
+        }
         bookData["genre"] =GenreHelper::toString(book->getGenre());
         bookData["discountPercent"] = book->getDiscountPercent();
         bookData["pdfPath"] = book->getPdfPath();
@@ -844,7 +850,7 @@ Response EditReviewCommand::execute(const QVariantMap& params)
     if (m_reviewService->editReview(reviewId, userId, text, rating)) {
         return Response::success(CommandType::EditReview, "Review updated");
     }
-    return Response::error(CommandType::EditBook ,"Failed to update review");
+    return Response::error(CommandType::EditReview ,"Failed to update review");
 }
 
 // ----- DeleteReviewCommand -----
@@ -1373,53 +1379,162 @@ Response GetPublisherStatsCommand::execute(const QVariantMap& params)
 // =============================================
 
 // ----- BlockUserCommand -----
-BlockUserCommand::BlockUserCommand(UserService* adminService)
-    : m_adminService(adminService)
+BlockUserCommand::BlockUserCommand(UserService* userService , AdminService* adminService,ClientHandler* clientHandler)
+    :  m_userService(userService) , m_adminService(adminService) , m_clientHandler(clientHandler)
 {
 }
 
 Response BlockUserCommand::execute(const QVariantMap& params)
 {
-    int userId = params["userId"].toInt();
-    QString reason = params["reason"].toString();
+    // 1. دریافت پارامترها
+    int userId = params.value("userId", 0).toInt();
+    QString reason = params.value("reason").toString();
 
-    if (m_adminService->blockUser(userId, reason)) {
-        return Response::success(CommandType::BlockUser ,"User blocked");
+    // 2. اعتبارسنجی
+    if (userId <= 0) {
+        return Response::error(CommandType::BlockUser, "Invalid user ID");
     }
-    return Response::error(CommandType::BlockUser ,"Failed to block user");
+
+    // 3. دریافت کاربر هدف
+    User* targetUser = m_userService->getProfile(userId);
+    if (!targetUser) {
+        return Response::error(CommandType::BlockUser, "User not found");
+    }
+
+    // 4. دریافت نام ادمین (از Session)
+    QString adminName = "Admin";
+    if (m_clientHandler) {
+        // اگر کاربر لاگین است و ادمین است، نام او را بگیر
+        int adminId = m_clientHandler->getSessionUserId();
+        if (adminId > 0) {
+            User* adminUser = m_userService->getProfile(adminId);
+            if (adminUser) {
+                adminName = adminUser->getUsername();
+            }
+        }
+    }
+
+    // 5. اجرای عملیات مسدودسازی
+    bool success = m_adminService->blockUser(userId, reason);
+
+    // 6. ثبت در Access Log
+    AccessLogEntry entry(
+        QDateTime::currentDateTime(),
+        adminName,
+        "Block User",
+        targetUser->getUsername(),
+        m_clientHandler->peerAddress(),
+        success ? "success" : "failed"
+        );
+    m_adminService->appendAccessLog(entry);
+
+    // 7. ساخت پاسخ
+    if (success) {
+        QVariantMap data;
+        data["userId"] = userId;
+        data["username"] = targetUser->getUsername();
+        data["reason"] = reason;
+        return Response::success(CommandType::BlockUser, "User blocked successfully", data);
+    }
+
+    return Response::error(CommandType::BlockUser, "Failed to block user");
 }
 
 // ----- UnblockUserCommand -----
-UnblockUserCommand::UnblockUserCommand(UserService* adminService)
-    : m_adminService(adminService)
+UnblockUserCommand::UnblockUserCommand(UserService* userService, AdminService* adminService, ClientHandler* clientHandler)
+    : m_userService(userService), m_adminService(adminService), m_clientHandler(clientHandler)
 {
 }
 
 Response UnblockUserCommand::execute(const QVariantMap& params)
 {
-    int userId = params["userId"].toInt();
+    int userId = params.value("userId", 0).toInt();
 
-    if (m_adminService->unblockUser(userId)) {
-        return Response::success(CommandType::UnblockUser , "User unblocked");
+    if (userId <= 0) {
+        return Response::error(CommandType::UnblockUser, "Invalid user ID");
     }
-    return Response::error(CommandType::UnblockUser , "Failed to unblock user");
+
+    User* targetUser = m_userService->getProfile(userId);
+    if (!targetUser) {
+        return Response::error(CommandType::UnblockUser, "User not found");
+    }
+
+    QString adminName = "Admin";
+    if (m_clientHandler) {
+        int adminId = m_clientHandler->getSessionUserId();
+        if (adminId > 0) {
+            User* adminUser = m_userService->getProfile(adminId);
+            if (adminUser) adminName = adminUser->getUsername();
+        }
+    }
+
+    bool success = m_adminService->unblockUser(userId);
+
+    AccessLogEntry entry(
+        QDateTime::currentDateTime(),
+        adminName,
+        "Unblock User",
+        targetUser->getUsername(),
+        m_clientHandler ? m_clientHandler->peerAddress() : QString(),
+        success ? "success" : "failed"
+        );
+    m_adminService->appendAccessLog(entry);
+
+    if (success) {
+        QVariantMap data;
+        data["userId"] = userId;
+        return Response::success(CommandType::UnblockUser, "User unblocked", data);
+    }
+    return Response::error(CommandType::UnblockUser, "Failed to unblock user");
 }
 
 // ----- DeleteUserCommand -----
-DeleteUserCommand::DeleteUserCommand(UserService* adminService)
-    : m_adminService(adminService)
+DeleteUserCommand::DeleteUserCommand(UserService* userService, AdminService* adminService, ClientHandler* clientHandler)
+    : m_userService(userService), m_adminService(adminService), m_clientHandler(clientHandler)
 {
 }
 
 
 Response DeleteUserCommand::execute(const QVariantMap& params)
 {
-    int userId = params["userId"].toInt();
+    int userId = params.value("userId", 0).toInt();
 
-    if (m_adminService->deleteUser(userId)) {
-        return Response::success(CommandType::DeleteUser , "User deleted");
+    if (userId <= 0) {
+        return Response::error(CommandType::DeleteUser, "Invalid user ID");
     }
-    return Response::error(CommandType::DeleteUser , "Failed to delete user");
+
+    User* targetUser = m_userService->getProfile(userId);
+    if (!targetUser) {
+        return Response::error(CommandType::DeleteUser, "User not found");
+    }
+
+    QString adminName = "Admin";
+    if (m_clientHandler) {
+        int adminId = m_clientHandler->getSessionUserId();
+        if (adminId > 0) {
+            User* adminUser = m_userService->getProfile(adminId);
+            if (adminUser) adminName = adminUser->getUsername();
+        }
+    }
+
+    bool success = m_adminService->deleteUser(userId);
+
+    AccessLogEntry entry(
+        QDateTime::currentDateTime(),
+        adminName,
+        "Delete User",
+        targetUser->getUsername(),
+        m_clientHandler ? m_clientHandler->peerAddress() : QString(),
+        success ? "success" : "failed"
+        );
+    m_adminService->appendAccessLog(entry);
+
+    if (success) {
+        QVariantMap data;
+        data["userId"] = userId;
+        return Response::success(CommandType::DeleteUser, "User deleted", data);
+    }
+    return Response::error(CommandType::DeleteUser, "Failed to delete user");
 }
 
 // ----- GetAllUsersCommand -----
@@ -1430,17 +1545,41 @@ GetAllUsersCommand::GetAllUsersCommand(UserService* adminService)
 
 Response GetAllUsersCommand::execute(const QVariantMap& params)
 {
+    QString filter = params.value("filter").toString().toLower();
+    QString search = params.value("search").toString().toLower();
+
     QVector<User*> users = m_adminService->getAllUsers();
 
     QVariantList userList;
     for (User* user : users) {
+        // Apply filter
+        if (filter == "regular" && user->isPublisher()) continue;
+        if (filter == "publisher" && !user->isPublisher()) continue;
+        if (filter == "blocked" && !user->isBlocked()) continue;
+        if (filter == "admin" && !user->isAdmin()) continue;
+
+        // Apply search
+        if (!search.isEmpty()) {
+            if (!user->getUsername().toLower().contains(search) &&
+                !user->getEmail().toLower().contains(search) &&
+                !user->getFullname().toLower().contains(search))
+                continue;
+        }
+
         QVariantMap userData;
         userData["id"] = user->getId();
         userData["username"] = user->getUsername();
         userData["email"] = user->getEmail();
         userData["fullName"] = user->getFullname();
         userData["role"] = user->getRoleString();
-        userData["status"] = static_cast<int>(user->getStatus());
+        userData["status"] =
+            m_adminService->getStringStatus(user->getStatus());
+
+        userData["registered_at"] =
+            user->getCreatedAt().toString(Qt::ISODate);
+
+        userData["last_login_at"] =
+            user->getLastLogin().toString(Qt::ISODate);
         userList.append(userData);
     }
 
@@ -1463,11 +1602,14 @@ Response GetBlockedUsersCommand::execute(const QVariantMap& params)
     QVariantList userList;
     for (User* user : users) {
         QVariantMap userData;
-        userData["id"] = user->getId();
+        userData["userId"] = user->getId();
         userData["username"] = user->getUsername();
         userData["email"] = user->getEmail();
         userData["fullName"] = user->getFullname();
         userData["role"] = user->getRoleString();
+        userData["blockedBy"] = QString("Admin");  // Default; populated from access log if available
+        userData["reason"] = QString("Blocked by administrator");
+        userData["blockedAt"] = user->getUpdatedAt().toString(Qt::ISODate);
         userList.append(userData);
     }
 
@@ -1542,27 +1684,36 @@ GetRecentActivitiesCommand::GetRecentActivitiesCommand(AdminService* adminServic
 {
 }
 
-Response GetRecentActivitiesCommand::execute(const QVariantMap& params)
-{
-    int limit = params.value("limit", 10).toInt();
-
-    QStringList activities = m_adminService->getRecentActivities(limit);
-
-    QVariantList list;
-    for (const QString& a : activities) {
-        list.append(a);
-    }
-
-    QVariantMap data;
-    data["activities"] = list;
-    data["count"] = list.size();
-
-    return Response::success(CommandType::GetRecentActivities, "Recent activities loaded", data);
-}
 
 GetSystemAlertsCommand::GetSystemAlertsCommand(AdminService* adminService)
     : m_adminService(adminService)
 {
+}
+
+Response GetRecentActivitiesCommand::execute(const QVariantMap& params)
+{
+    int limit = params.value("limit", 10).toInt();
+
+    QVector<QVariantMap> activities =
+        m_adminService->getRecentActivities(limit);
+
+    QVariantList list;
+
+    for (const auto& a : activities)
+    {
+        list.append(a);
+    }
+
+    QVariantMap data;
+
+    data["activities"] = list;
+    data["count"] = list.size();
+
+    return Response::success(
+        CommandType::GetRecentActivities,
+        "Recent activities loaded",
+        data
+        );
 }
 
 Response GetSystemAlertsCommand::execute(const QVariantMap& params)
@@ -3299,6 +3450,514 @@ Response CheckBookOwnershipCommand::execute(const QVariantMap& params)
     data["isOwned"] = owned;
     return Response::success(CommandType::CheckBookOwnership, data);
 }
+
+
+
+//admin section
+
+
+ToggleUserActiveCommand::ToggleUserActiveCommand(UserService* userService)
+    : m_userService(userService)
+{
+}
+
+Response ToggleUserActiveCommand::execute(const QVariantMap& params)
+{
+    int userId = params.value("userId").toInt();
+    if (userId <= 0) {
+        return Response::error(CommandType::ToggleUserActiveStatus, "Invalid user ID");
+    }
+
+    User* user = m_userService->getProfile(userId);
+    if (!user) {
+        return Response::error(CommandType::ToggleUserActiveStatus, "User not found");
+    }
+
+    bool nowActive;
+    if (user->getStatus() == AccountStatus::Active) {
+        nowActive = m_userService->deactivateUser(userId);   // add if missing
+    } else {
+        nowActive = m_userService->activateUser(userId);     // add if missing
+    }
+
+    if (!nowActive) {
+        return Response::error(CommandType::ToggleUserActiveStatus, "Failed to update user status");
+    }
+
+    QVariantMap data;
+    data["userId"] = userId;
+    data["status"] = m_userService->getStringStatus(m_userService->getProfile(userId)->getStatus());
+    return Response::success(CommandType::ToggleUserActiveStatus, "User status updated", data);
+}
+
+GetAdminAccessLogCommand::GetAdminAccessLogCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response GetAdminAccessLogCommand::execute(const QVariantMap& params)
+{
+    int limit = params.value("limit", 50).toInt();
+
+    QVector<AccessLogEntry> records = m_adminService->getAccessLogs();
+
+    QVariantList list;
+    int count = 0;
+    for (const auto& r : records) {
+        QVariantMap m;
+        m["timestamp"]  = r.timestamp.toString(Qt::ISODate);
+        m["adminName"]  = r.adminName;
+        m["action"]     = r.action;
+        m["targetUser"] = r.targetUser;
+        m["ipAddress"]  = r.ipAddress;
+        m["status"]     = r.status;
+        list.append(m);
+        if (++count >= limit) break;
+    }
+
+    QVariantMap data;
+    data["log"] = list;
+    data["count"] = list.size();
+    return Response::success(CommandType::GetAdminAccessLog, data);
+}
+
+// Commands.cpp
+GetAdminBooksCommand::GetAdminBooksCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response GetAdminBooksCommand::execute(const QVariantMap& params)
+{
+    QString search   = params.value("search").toString();
+    int publisherId  = params.value("publisherId", -1).toInt();
+    QString status   = params.value("status").toString(); // "", "active", "inactive", "flagged"
+
+    QVector<QSharedPointer<Book>> books = search.isEmpty()
+                                              ? m_bookService->getBookRepo()->getAllBooks()             // add if missing — trivial repo passthrough
+                                              : m_bookService->searchBooks(search);
+
+    QVariantList bookList;
+    for (const auto& book : books) {
+        if (publisherId > 0 && book->getPublisherId() != publisherId) continue;
+        if (status == "active" && !book->getIsActive()) continue;
+        if (status == "inactive" && book->getIsActive()) continue;
+        if (status == "flagged" && !book->getIsFlagged()) continue;
+
+        QVariantMap bookData;
+        bookData["bookId"]        = book->getBookId();
+        bookData["title"]         = book->getTitle();
+        bookData["author"]        = book->getAuthor();
+        bookData["publisherId"]   = book->getPublisherId();
+        bookData["price"]         = book->getFinalPrice();
+        bookData["status"]        = book->getIsFlagged() ? "flagged"
+                                                  : (book->getIsActive() ? "active" : "inactive");
+        bookData["salesCount"]    = book->getSalesCount();
+        bookData["averageRating"] = book->getAverageRating();
+        bookList.append(bookData);
+    }
+
+    QVariantMap data;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+    return Response::success(CommandType::GetAdminBooks, data);
+}
+
+
+
+// Commands.cpp
+FlagBookCommand::FlagBookCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response FlagBookCommand::execute(const QVariantMap& params)
+{
+    int bookId = params.value("bookId").toInt();
+    if (bookId <= 0) {
+        return Response::error(CommandType::FlagBook, "Invalid book ID");
+    }
+
+    QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+    if (!book) {
+        return Response::error(CommandType::FlagBook, "Book not found");
+    }
+
+    book->setIsFlagged(true);   // new setter mirroring applyDiscount()/removeDiscount() style
+    if (!m_bookService->updateBook(book)) {
+        return Response::error(CommandType::FlagBook, "Failed to flag book");
+    }
+
+    QVariantMap data;
+    data["bookId"] = bookId;
+    return Response::success(CommandType::FlagBook, "Book flagged for review", data);
+}
+
+
+UnflagBookCommand::UnflagBookCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response UnflagBookCommand::execute(const QVariantMap& params)
+{
+    // 1. دریافت پارامترها
+    int bookId = params.value("bookId", 0).toInt();
+
+    // 2. اعتبارسنجی
+    if (bookId <= 0) {
+        return Response::error(CommandType::UnflagBook, "Invalid book ID");
+    }
+
+    // 3. دریافت کتاب
+    QSharedPointer<Book> book = m_bookService->getBookById(bookId);
+    if (!book) {
+        return Response::error(CommandType::UnflagBook, "Book not found");
+    }
+
+    // 4. بررسی اینکه کتاب فلگ شده باشد
+    if (!book->getIsFlagged()) {
+        return Response::error(CommandType::UnflagBook, "Book is not flagged");
+    }
+
+    // 5. حذف فلگ
+    book->setIsFlagged(false);
+    book->setUpdatedAt(QDateTime::currentDateTime());
+
+    // 6. ذخیره در دیتابیس
+    if (!m_bookService->updateBook(book)) {
+        return Response::error(CommandType::UnflagBook, "Failed to unflag book");
+    }
+
+    // 7. ساخت پاسخ
+    QVariantMap data;
+    data["bookId"] = bookId;
+    data["title"] = book->getTitle();
+    data["flagged"] = false;
+
+    return Response::success(CommandType::UnflagBook, "Flag removed from book", data);
+}
+
+
+
+
+// Commands.cpp
+GetAdminReviewsCommand::GetAdminReviewsCommand(ReviewService* reviewService)
+    : m_reviewService(reviewService)
+{
+}
+
+Response GetAdminReviewsCommand::execute(const QVariantMap& params)
+{
+    QString status  = params.value("status").toString();     // "", pending, approved, rejected, flagged
+    int rating      = params.value("rating", 0).toInt();      // 0 = all
+    QString search  = params.value("search").toString();
+    int limit       = params.value("limit", -1).toInt();
+    int bookIdFilter = params.value("bookId", -1).toInt();
+
+    QVector<QSharedPointer<Review>> reviews = m_reviewService->getAllReviews(); // new passthrough
+
+    QVariantList reviewList;
+    for (const auto& review : reviews) {
+        if (!status.isEmpty() && review->getStatus() != status) continue;
+        if (rating > 0 && review->getRating() != rating) continue;
+        if (!search.isEmpty() &&
+            !review->getText().contains(search, Qt::CaseInsensitive)) continue;
+        if (bookIdFilter > 0 && review->getBookId() != bookIdFilter) { continue; }
+
+        QVariantMap r;
+        r["reviewId"]   = review->getReviewId();
+        r["bookId"]     = review->getBookId();
+        r["userId"]     = review->getUserId();
+        r["rating"]     = review->getRating();
+        r["text"]       = review->getText();
+        r["status"]     = review->getStatus();
+        r["isFlagged"]  = review->getIsFlagged();
+        r["createdAt"]  = review->getCreatedAt().toString(Qt::ISODate);
+        reviewList.append(r);
+
+        if (limit > 0 && reviewList.size() >= limit) break;
+    }
+
+    QVariantMap data;
+    data["reviews"] = reviewList;
+    data["count"] = reviewList.size();
+    return Response::success(CommandType::GetAdminReviews, data);
+}
+
+// --- Approve / Reject / Flag follow the exact same shape ---
+
+ApproveReviewCommand::ApproveReviewCommand(ReviewService* reviewService)
+    : m_reviewService(reviewService)
+{
+}
+
+Response ApproveReviewCommand::execute(const QVariantMap& params)
+{
+    int reviewId = params.value("reviewId").toInt();
+    if (!m_reviewService->setReviewStatus(reviewId, "approved")) {  // new
+        return Response::error(CommandType::ApproveReview, "Failed to approve review");
+    }
+    return Response::success(CommandType::ApproveReview, "Review approved");
+}
+
+RejectReviewCommand::RejectReviewCommand(ReviewService* reviewService)
+    : m_reviewService(reviewService)
+{
+}
+
+Response RejectReviewCommand::execute(const QVariantMap& params)
+{
+    int reviewId = params.value("reviewId").toInt();
+    QString reason = params.value("reason").toString();
+    if (!m_reviewService->setReviewStatus(reviewId, "rejected")) {
+        return Response::error(CommandType::RejectReview, "Failed to reject review");
+    }
+    return Response::success(CommandType::RejectReview, "Review rejected");
+}
+
+FlagReviewCommand::FlagReviewCommand(ReviewService* reviewService)
+    : m_reviewService(reviewService)
+{
+}
+
+Response FlagReviewCommand::execute(const QVariantMap& params)
+{
+    int reviewId = params.value("reviewId").toInt();
+    if (!m_reviewService->setReviewFlagged(reviewId, true)) {
+        return Response::error(CommandType::FlagReview, "Failed to flag review");
+    }
+    return Response::success(CommandType::FlagReview, "Review flagged");
+}
+
+
+GetServerRuntimeStatusCommand::GetServerRuntimeStatusCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response GetServerRuntimeStatusCommand::execute(const QVariantMap& params)
+{
+    // AdminService should ask ClientHandler's connection registry for
+    // this rather than owning it — see caveat below.
+    QVariantMap data;
+    data["online"]       = true;
+    data["onlineUsers"]  = m_adminService->getOnlineUserCount();      // new
+    data["dbConnected"]  = m_adminService->isDatabaseConnected();     // new
+    data["uptime"]       = m_adminService->getServerUptimeString();    // new
+    return Response::success(CommandType::GetServerRuntimeStatus, data);
+}
+
+// Commands.cpp
+BroadcastMessageCommand::BroadcastMessageCommand(ClientHandler* clientHandler)
+    : m_clientHandler(clientHandler)
+{
+}
+
+Response BroadcastMessageCommand::execute(const QVariantMap& params)
+{
+    QString message = params.value("message").toString();
+    if (message.trimmed().isEmpty()) {
+        return Response::error(CommandType::BroadcastMessage, "Message is empty");
+    }
+
+    // Requires the ClientHandler/Server layer to expose a way to push
+    // an unsolicited Response to every connected socket — this is the
+    // one feature that needs new server "push" plumbing (see caveat).
+    m_clientHandler->broadcastToAllClients(
+        Response::success(CommandType::BroadcastMessage, message));
+
+    return Response::success(CommandType::BroadcastMessage, "Message broadcasted");
+}
+
+BackupDatabaseCommand::BackupDatabaseCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response BackupDatabaseCommand::execute(const QVariantMap& params)
+{
+    QString path = m_adminService->backupDatabase();
+    if (path.isEmpty()) {
+        return Response::error(CommandType::BackupDatabase, "Backup failed");
+    }
+    QVariantMap data; data["path"] = path;
+    return Response::success(CommandType::BackupDatabase, "Backup completed", data);
+}
+
+ClearServerCacheCommand::ClearServerCacheCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response ClearServerCacheCommand::execute(const QVariantMap& params)
+{
+    m_adminService->clearCaches(); // new — e.g. clears any repository write-through cache
+    return Response::success(CommandType::ClearServerCache, "Cache cleared");
+}
+
+RestartServerCommand::RestartServerCommand(AdminService* adminService)
+    : m_adminService(adminService)
+{
+}
+
+Response RestartServerCommand::execute(const QVariantMap& params)
+{
+    // Returning success and scheduling the restart async is safer than
+    // restarting inline, so the response actually reaches the admin
+    // before the socket drops.
+    m_adminService->scheduleRestart(); // new
+    return Response::success(CommandType::RestartServer, "Restart scheduled");
+}
+
+
+GetServerResourceUsageCommand::GetServerResourceUsageCommand(ClientHandler* clientHandler)
+    : m_clientHandler(clientHandler) {}
+
+Response GetServerResourceUsageCommand::execute(const QVariantMap& params) {
+    Q_UNUSED(params);
+    if (!m_clientHandler) return Response::error(CommandType::GetServerResourceUsage, "Server unavailable");
+    return Response::success(CommandType::GetServerResourceUsage, m_clientHandler->getServerResourceUsage());
+}
+
+GetConnectedClientsCommand::GetConnectedClientsCommand(ClientHandler* clientHandler)
+    : m_clientHandler(clientHandler) {}
+
+Response GetConnectedClientsCommand::execute(const QVariantMap& params) {
+    Q_UNUSED(params);
+    if (!m_clientHandler) return Response::error(CommandType::GetConnectedClients, "Server unavailable");
+    QVariantList clients = m_clientHandler->getConnectedClientsInfo();
+    QVariantMap data;
+    data["clients"] = clients;
+    data["count"] = clients.size();
+    return Response::success(CommandType::GetConnectedClients, data);
+}
+
+GetTrafficStatsCommand::GetTrafficStatsCommand(ClientHandler* clientHandler)
+    : m_clientHandler(clientHandler) {}
+
+Response GetTrafficStatsCommand::execute(const QVariantMap& params) {
+    Q_UNUSED(params);
+    if (!m_clientHandler) return Response::error(CommandType::GetTrafficStats, "Server unavailable");
+    return Response::success(CommandType::GetTrafficStats, m_clientHandler->getTrafficStats());
+}
+
+
+// Commands.cpp
+
+// =============================================
+// ===== GetAllBooksCommand =====
+// =============================================
+
+GetAllBooksCommand::GetAllBooksCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response GetAllBooksCommand::execute(const QVariantMap& params)
+{
+    QString search = params.value("search").toString();
+    int publisherId = params.value("publisherId", -1).toInt();
+    QString status = params.value("status").toString();
+    int limit = params.value("limit", 0).toInt();
+    int offset = params.value("offset", 0).toInt();
+
+    // 2. دریافت همه کتاب‌ها (فعال و غیرفعال)
+    // برای ادمین همه کتاب‌ها را نشان می‌دهیم
+    QVector<QSharedPointer<Book>> allBooks;
+
+    if (!search.isEmpty()) {
+        // جستجو با کلمه کلیدی
+        allBooks = m_bookService->searchBooks(search);
+    } else {
+        // دریافت همه کتاب‌ها از Repository (نه فقط فعال)
+        BookRepository* repo = m_bookService->getBookRepo();
+        if (repo) {
+            allBooks = repo->getAllBooks();
+        } else {
+            return Response::error(CommandType::GetAllBooks, "Failed to access book repository");
+        }
+    }
+
+    // 3. اعمال فیلترها
+    QVector<QSharedPointer<Book>> filteredBooks;
+
+    for (const auto& book : allBooks) {
+        // فیلتر بر اساس ناشر
+        if (publisherId > 0 && book->getPublisherId() != publisherId) {
+            continue;
+        }
+
+        // فیلتر بر اساس وضعیت
+        if (status == "active" && !book->getIsActive()) {
+            continue;
+        }
+        if (status == "inactive" && book->getIsActive()) {
+            continue;
+        }
+        if (status == "flagged" && !book->getIsFlagged()) {
+            continue;
+        }
+
+        filteredBooks.append(book);
+    }
+
+    // 4. مرتب‌سازی بر اساس ID (جدیدترین اول) - اختیاری
+    std::sort(filteredBooks.begin(), filteredBooks.end(),
+              [](const QSharedPointer<Book>& a, const QSharedPointer<Book>& b) {
+                  return a->getBookId() > b->getBookId();
+              });
+
+    // 5. اعمال Pagination (اختیاری)
+    int totalCount = filteredBooks.size();
+    if (limit > 0) {
+        int start = qMin(offset, totalCount);
+        int end = qMin(start + limit, totalCount);
+        filteredBooks = filteredBooks.mid(start, end - start);
+    }
+
+    // 6. ساخت لیست کتاب‌ها برای پاسخ
+    QVariantList bookList;
+    for (const auto& book : filteredBooks) {
+        QVariantMap bookData;
+        bookData["bookId"] = book->getBookId();
+        bookData["title"] = book->getTitle();
+        bookData["author"] = book->getAuthor();
+        bookData["genre"] = GenreHelper::toString(book->getGenre());
+        bookData["description"] = book->getDescription();
+        bookData["price"] = book->getPrice();
+        bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["finalPrice"] = book->getFinalPrice();
+        bookData["averageRating"] = book->getAverageRating();
+        bookData["salesCount"] = book->getSalesCount();
+        bookData["coverPath"] = book->getCoverPath();
+        bookData["pdfPath"] = book->getPdfPath();
+        bookData["isActive"] = book->getIsActive();
+        bookData["isFlagged"] = book->getIsFlagged();
+        bookData["publisherId"] = book->getPublisherId();
+
+        // اضافه کردن نام ناشر (اگر UserRepository در دسترس است)
+        // Publisher* publisher = m_userService->getPublisherById(book->getPublisherId());
+        // if (publisher) {
+        //     bookData["publisherName"] = publisher->getPublisherName();
+        // }
+
+        bookList.append(bookData);
+    }
+
+    // 7. ساخت پاسخ
+    QVariantMap data;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+    data["totalCount"] = totalCount;
+
+    return Response::success(CommandType::GetAllBooks, "Books loaded successfully", data);
+}
+
+
+
+
+
 
 
 

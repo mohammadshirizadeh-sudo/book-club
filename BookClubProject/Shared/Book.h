@@ -28,6 +28,9 @@ private:
     QDateTime discountEndDate;
 
 
+    bool isFlagged = false;
+
+
 
 
     void expireDiscountIfNeeded() const;
@@ -112,6 +115,9 @@ public:
 
     void applyTimedDiscount(double percent, const QDateTime& startDate, const QDateTime& endDate);
 
+
+    bool getIsFlagged() const;
+    void setIsFlagged(bool newIsFlagged);
 };
 
 #endif // BOOK_H

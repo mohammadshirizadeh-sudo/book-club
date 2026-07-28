@@ -17,6 +17,8 @@ private:
     mutable QMutex m_mutex;
     void addToCache(QSharedPointer<Library> library);
     void removeFromCache(int userId);
+public:
+
     void clearCache();
 
 public:

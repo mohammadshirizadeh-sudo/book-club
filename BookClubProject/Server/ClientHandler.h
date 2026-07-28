@@ -63,6 +63,10 @@ public:
 
 
     void setSession(int userId, UserRole role);
+    QVariantMap  getServerResourceUsage() const;
+    QVariantList getConnectedClientsInfo() const;
+    QVariantMap  getTrafficStats() const;
+    QString      getSessionUsername() const;
     void disconnectFromClient();
 
 
@@ -80,6 +84,11 @@ public:
 
 
     qintptr m_socketDescriptor;
+    bool isSessionAuthenticated() const;
+    UserRole getSessionRole() const;
+    int getSessionUserId() const;
+    void broadcastToAllClients(const Response& response);
+
 signals:
     void disconnected();
     void responseReady(const Response& response);
@@ -94,7 +103,7 @@ private slots:
     void onReadyRead();
     void onDisconnected();
     void onSocketError(QAbstractSocket::SocketError socketError);
-     void onResponseReady(const Response& response);
+    void onResponseReady(const Response& response);
 
 private:
     QTcpSocket* m_socket = nullptr;
@@ -119,10 +128,10 @@ private:
 
     RequestParser* m_parser = nullptr;
 
-    void sendResponse(const QString& response);
+
 
     QByteArray m_recvBuffer;
-private slots:
+public slots:
 
     void sendResponse(const Response& response);
 private:
@@ -139,6 +148,14 @@ private:
     UserRole m_sessionRole = UserRole::User;
     bool m_isAuthenticated = false;
 
+    QString m_sessionUsername;
+
+
+
+public:
+    void sendResponse(const QString& response);
+
+    void setSession(int userId, UserRole role, const QString& username);
 
 
 

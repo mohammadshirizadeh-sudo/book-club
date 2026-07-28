@@ -1,3 +1,6 @@
+
+
+/*
 #include "serverdashboardwindow.h"
 #include "Server/ui_serverdashboardwindow.h"
 
@@ -128,8 +131,8 @@ void ServerDashboardWindow::refreshAdminStats()
 
     // ---- System stats ----
     QMap<QString, QVariant> stats = admin->getSystemStats();
-    ui->totalUsersValueLabel->setText(stats.value("totalUsers").toString());
-    ui->totalBooksValueLabel->setText(stats.value("totalBooks").toString());
+    ui->totalUsersValueLabel->setText(stats.value("total_users").toString());
+    ui->totalBooksValueLabel->setText(stats.value("total_books").toString());
     ui->blockedUsersValueLabel->setText(stats.value("blockedUsers").toString());
     ui->totalRevenueValueLabel->setText(
         QString("$%1").arg(stats.value("totalRevenue").toDouble(), 0, 'f', 2));
@@ -395,3 +398,4 @@ void ServerDashboardWindow::onSystemEvent(const QString &eventMessage)
 {
     logEvent(eventMessage, "INFO");
 }
+*/

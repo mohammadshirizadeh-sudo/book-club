@@ -20,6 +20,8 @@ private:
 
     void addToCache(QSharedPointer<Book> book);
     void removeFromCache(int bookId);
+public:
+
     void clearCache();
 
 public:

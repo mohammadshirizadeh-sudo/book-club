@@ -78,7 +78,7 @@ enum class CommandType {
     GetDatabaseStatus,
     GetServerStatus,
 
-     MarkNotificationRead,
+    MarkNotificationRead,
     MarkAllNotificationsRead,
     ClearAllNotifications,
     GetUserShelves,
@@ -105,7 +105,29 @@ enum class CommandType {
     GetBottomSellingBooks,
     GetSalesOverview,
     CheckBookOwnership,
-    SearchAuthors
+    SearchAuthors,
+
+
+    //admin section
+    ToggleUserActiveStatus,
+    GetAdminAccessLog,
+    GetAdminBooks,
+    FlagBook,
+    UnflagBook,
+    GetAdminReviews,
+    ApproveReview,
+    RejectReview,
+    FlagReview,
+    GetServerRuntimeStatus,
+    BroadcastMessage,
+    BackupDatabase,
+    ClearServerCache,
+    RestartServer,
+    GetServerResourceUsage,
+    GetConnectedClients,
+    GetTrafficStats,
+    GetAllBooks,
+
 };
 
 
@@ -145,12 +167,16 @@ public:
     static Request fromJsonString(const QString& jsonString);
     static CommandType stringToCommandType(const QString& str);
     static QString CommandTypeToString(CommandType cmd);
+    qint64 getRequestId() const { return m_requestId; }
+    void setRequestId(qint64 id) { m_requestId = id; }
+
 
 
 private:
     CommandType m_CommandType;
     QVariantMap m_params;
     bool m_valid;
+    qint64 m_requestId = 0;
 };
 
 #endif // REQUEST_H

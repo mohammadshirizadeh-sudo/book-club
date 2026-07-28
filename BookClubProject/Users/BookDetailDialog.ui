@@ -437,27 +437,6 @@ background: transparent;</string>
      <string>❤️</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="addFavoritePushButton_2">
-    <property name="geometry">
-     <rect>
-      <x>520</x>
-      <y>20</y>
-      <width>231</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border: 3px solid black;
-border-radius: 12px;
-color: rgb(0, 0, 0);
-font: 700 9pt &quot;Script MT&quot;;
-font-size: 30px;
-background: transparent;</string>
-    </property>
-    <property name="text">
-     <string>📔 Start Reading</string>
-    </property>
-   </widget>
   </widget>
  </widget>
  <resources/>

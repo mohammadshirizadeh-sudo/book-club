@@ -22,6 +22,9 @@ BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVarian
 
     displayBookInfo(bookData);
     checkBookOwnership();
+
+
+
 }
 
 BookDetailDialog::~BookDetailDialog()
@@ -86,7 +89,7 @@ void BookDetailDialog::checkBookOwnership()
 
 void BookDetailDialog::updateCartButtonAppearance()
 {
-    if (m_isOwned) {
+    if (m_isOwned || SessionManager::instance()->getRole() == "Admin") {
         ui->addCartPushButton->setText("📖 Open PDF");
         ui->addCartPushButton->setStyleSheet(
             "border: 3px solid black;"
@@ -249,7 +252,10 @@ void BookDetailDialog::on_addCartPushButton_clicked()
         return;
     }
 
-    // 1. دریافت userId از SessionManager
+    if(SessionManager::instance()->getRole() == "Admin"){
+        openBookPdf();
+        return;
+    }
     int userId = SessionManager::instance()->getUserId();
 
     // 2. دریافت bookId از اطلاعات کتاب

@@ -58,18 +58,26 @@ bool NetworkManager::isConnected() const
 }
 
 
-void NetworkManager::sendRequest(const Request& request)
+qint64 NetworkManager::sendRequest(Request request)
 {
 
 
     qDebug() << "[1] sendRequest called";
     qDebug() << "[1] Command =" << request.getCommandTypeString();
     qDebug() << "[1] Connected =" << m_socket->state();
+    if (request.getRequestId() == 0)
+    {
+        request.setRequestId(
+            m_nextRequestId++
+            );
+    }
+
+    qint64 id = request.getRequestId();
     if (!isConnected()) {
         qWarning() << "❌ Not connected to server!";
         // emit errorReceived("Not connected to server");
         m_pendingRequests.enqueue(request);
-        return;
+        return id;
     }
 
     // QByteArray data = request.toUtf8();
@@ -78,17 +86,19 @@ void NetworkManager::sendRequest(const Request& request)
     qDebug() << "[2] Bytes written =" << bytes;
     bool ok = m_socket->flush();
     qDebug() << "[3] Flush =" << ok;
+    return id;
 
 
 }
 
-void NetworkManager::sendRequest(const QString& command, const QVariantMap& params)
+qint64 NetworkManager::sendRequest(const QString& command, const QVariantMap& params)
 {
     Request request;
     request.setCommandType(Request::stringToCommandType(command));
     request.setParams(params);
     request.setValid(request.getCommandType() != CommandType::Unknown);
-    sendRequest(request);
+
+    return sendRequest(request);
 }
 
 void NetworkManager::flushPendingRequests()

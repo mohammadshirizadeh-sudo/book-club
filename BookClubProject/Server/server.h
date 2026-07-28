@@ -4,6 +4,19 @@
 
 #include <QTcpServer>
 #include <QMap>
+#include <QDateTime>
+#include "../Server/Response.h"
+#include <QTimer>
+#include "ServerResourceMonitor.h"
+#include <QAtomicInteger>
+
+
+struct ClientInfo {
+    qintptr socketDescriptor = 0;
+    QString ipAddress;
+    QString username;
+    QDateTime connectedAt;
+};
 
 class ClientHandler;
 class UserRepository;
@@ -34,17 +47,17 @@ public:
     bool start(quint16 port);
     void stop();
 
-     bool isRunning() const { return isListening(); }
+    bool isRunning() const { return isListening(); }
 
-      void stopServer();
+    void stopServer();
 
 
-     QList<ClientHandler*> getClients() const {
-         return m_clients.values();
-     }
+    QList<ClientHandler*> getClients() const {
+        return m_clients.values();
+    }
 
     void connectToClientSignals(ClientHandler* handler);
-      bool startServer(quint16 port);
+    bool startServer(quint16 port);
 
 
     AdminService* getAdminService() const
@@ -53,14 +66,35 @@ public:
     }
 
 
- signals:
+    int getOnlineUserCount() const;
+
+    QString getUptimeString() const;
+    void broadcastToAll(const Response& response);
+
+
+    void scheduleRestart(int delayMs = 1000);
+    void cancelRestart();
+    bool isRestartPending() const { return m_restartPending; }
+
+
+    QVariantMap  getResourceUsage() const;
+    QVariantList getConnectedClientsInfo() const;
+    QVariantMap  getTrafficStats() const;
+    void updateClientUsername(qintptr socketDescriptor, const QString& username);
+
+
+
+private slots:
+    void performRestart();
+
+signals:
     void clientConnected(qintptr socketDescriptor, const QString& ipAddress);
 
-     void clientDisconnected(qintptr socketDescriptor);
-     void requestReceived(const QString& request);
-     void responseSent(const QString& response);
-     void errorOccurred(const QString& error);
-     void systemEvent(const QString& event);
+    void clientDisconnected(qintptr socketDescriptor);
+    void requestReceived(const QString& request);
+    void responseSent(const QString& response);
+    void errorOccurred(const QString& error);
+    void systemEvent(const QString& event);
 
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
@@ -86,9 +120,21 @@ private:
     AdminService* m_adminService;
     NotificationService* m_notifService;
     LibraryService* m_libraryService;
+    QDateTime m_startTime;
 
     void initServices();
     void cleanupServices();
+
+
+    QTimer* m_restartTimer = nullptr;
+    bool m_restartPending = false;
+    quint16 m_currentPort = 0;
+
+
+    QMap<qintptr, ClientInfo> m_clientInfo;
+    mutable ServerResourceMonitor* m_resourceMonitor = nullptr;
+    QAtomicInteger<qint64> m_totalRequests{0};
+    QAtomicInteger<qint64> m_totalResponses{0};
 };
 
 #endif // SERVER_H

@@ -103,6 +103,8 @@ qt_add_executable(BookClubProject
     Users/bookreviewdialog.h Users/bookreviewdialog.cpp Users/bookreviewdialog.ui
     Publishers/publishedbookswindow.h Publishers/publishedbookswindow.cpp Publishers/publishedbookswindow.ui
 
+    Services/AccessLog.h
+    Server/ServerResourceMonitor.h Server/ServerResourceMonitor.cpp
 
 
 

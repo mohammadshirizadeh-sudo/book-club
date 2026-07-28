@@ -313,6 +313,17 @@ void ClientHandler::processRequest(const QString& requestData)
         emit responseReady(Response::error(request.getCommandType(),"Unknown command"));
         return;
     }
+    if (command->requiresAdmin() &&
+        getSessionRole() != UserRole::Admin)
+    {
+        emit responseReady(
+            Response::error(
+                request.getCommandType(),
+                "Admin privileges required"
+                )
+            );
+        return;
+    }
 
 
     try {
@@ -352,6 +363,54 @@ void ClientHandler::disconnectFromClient()
     }
 
     deleteLater();
+}
+
+
+
+bool ClientHandler::isSessionAuthenticated() const
+{
+    QMutexLocker locker(&m_sessionMutex);
+    return m_isAuthenticated;
+}
+
+UserRole ClientHandler::getSessionRole() const
+{
+    QMutexLocker locker(&m_sessionMutex);
+    return m_sessionRole;
+}
+
+int ClientHandler::getSessionUserId() const
+{
+    QMutexLocker locker(&m_sessionMutex);
+    return m_sessionUserId;
+}
+
+void ClientHandler::broadcastToAllClients(const Response& response)
+{
+    Server* server = qobject_cast<Server*>(parent());
+    if (!server) {
+        qWarning() << "ClientHandler has no Server parent! Cannot broadcast.";
+        return;
+    }
+
+    server->broadcastToAll(response);
+}
+
+
+void ClientHandler::setSession(int userId, UserRole role, const QString& username) {
+    {
+        QMutexLocker locker(&m_sessionMutex);
+        m_sessionUserId = userId;
+        m_sessionRole = role;
+        m_sessionUsername = username;
+        m_isAuthenticated = true;
+    }
+
+    if (!username.isEmpty()) {
+        if (Server* server = qobject_cast<Server*>(parent())) {
+            server->updateClientUsername(m_socketDescriptor, username);
+        }
+    }
 }
 
 
