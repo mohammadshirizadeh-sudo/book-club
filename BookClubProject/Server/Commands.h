@@ -1337,6 +1337,54 @@ private:
 };
 
 
+class GetServerResourceUsageCommand : public Command {
+public:
+    explicit GetServerResourceUsageCommand(ClientHandler* clientHandler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetServerResourceUsage; }
+    QString getName() const override { return "GetServerResourceUsage"; }
+    bool requiresAdmin() const override { return true; }
+private:
+    ClientHandler* m_clientHandler;
+};
+
+class GetConnectedClientsCommand : public Command {
+public:
+    explicit GetConnectedClientsCommand(ClientHandler* clientHandler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetConnectedClients; }
+    QString getName() const override { return "GetConnectedClients"; }
+    bool requiresAdmin() const override { return true; }
+private:
+    ClientHandler* m_clientHandler;
+};
+
+class GetTrafficStatsCommand : public Command {
+public:
+    explicit GetTrafficStatsCommand(ClientHandler* clientHandler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetTrafficStats; }
+    QString getName() const override { return "GetTrafficStats"; }
+    bool requiresAdmin() const override { return true; }
+private:
+    ClientHandler* m_clientHandler;
+};
+
+
+class GetAllBooksCommand : public Command
+{
+public:
+    explicit GetAllBooksCommand(BookService* bookService);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::GetAllBooks; }
+    QString getName() const override { return "GetAllBooks"; }
+    bool requiresAdmin() const override { return true; }
+
+private:
+    BookService* m_bookService;
+};
+
+
 
 
 

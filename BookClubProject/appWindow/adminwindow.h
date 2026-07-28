@@ -4,15 +4,17 @@
 #include <QWidget>
 #include <QVariantMap>
 #include <QTableWidget>
+#include <QTimer>
+#include <QString>
+#include <QDateTime>
 #include <functional>
+
 #include "../Network-Manger/NetworkManager.h"
 #include "../Server/Response.h"
 #include "../Services/AccessLog.h"
 #include "../Server/Request.h"
 #include "../Users/BookDetailDialog.h"
 #include "../Users/UserDetailDialog.h"
-#include <QString>
-#include <QDateTime>
 
 struct ActivityLogEntry {
     QDateTime timestamp;
@@ -23,7 +25,6 @@ struct ActivityLogEntry {
 
 namespace Ui { class AdminWindow; }
 
-// DTO structs for UI data binding
 struct UserData {
     int id = 0;
     QString fullName;
@@ -63,8 +64,6 @@ struct DashboardStats {
     double totalRevenue = 0.0;
 };
 
-
-
 struct BlockedUserInfo {
     int userId = 0;
     QString name;
@@ -90,10 +89,10 @@ signals:
     void navigateToBookDetails(int bookId);
     void showUserDetailsRequested(int userId);
 
-    void editBookRequested(int selectedBookId);
+    void editWindow();
     void viewBookReviewsRequested(int selectedBookId);
+
 private slots:
-    // Renamed slots to prevent Qt's connectSlotsByName auto-connection collision
     void handleDashboardButtonClicked();
     void handleUserManageButtonClicked();
     void handleAccessControlButtonClicked();
@@ -145,12 +144,15 @@ private slots:
     void handleFlagReviewClicked();
     void handleDeleteReviewClicked();
 
-    // Response dispatcher
+    void updateServerStatusClock();
+    void handleRefreshStatsClicked();
+    void handleClearLogsClicked();
+
     void onResponseReceived(const Response &response);
 
 private:
     Ui::AdminWindow *ui;
-    NetworkManager *m_networkManager; // Injected pointer
+    NetworkManager *m_networkManager;
 
     int m_adminId = 0;
     QString m_adminName;
@@ -172,26 +174,39 @@ private:
     QString m_reviewSearchText;
     int m_reviewsBookIdFilter = -1;
 
+    bool m_connectionsSetup = false;
+    qint64 m_pendingBookDetailsRequestId = -1;
+
+    QTimer* m_serverStatusRefreshTimer = nullptr;
+    QTimer* m_serverStatusClockTimer = nullptr;
+
     void setupConnections();
     void setupUIInitialState();
     void switchToPage(int pageIndex);
 
-    // Request senders
     void requestDashboardStats();
     void requestRecentActivity();
     void requestSystemAlerts();
     void requestServerStatus();
+    void requestDatabaseStatus();
+    void requestServerResourceUsage();
+    void requestConnectedClients();
+    void requestTrafficStats();
+    void refreshServerStatusPage();
     void requestUsersList();
     void requestBlockedUsers();
     void requestAccessLog();
     void requestBooksList();
     void requestReviewsList(int limit = -1);
 
-    // Response handlers
     void handleDashboardStats(const Response &r);
     void handleRecentActivity(const Response &r);
     void handleSystemAlerts(const Response &r);
     void handleServerStatus(const Response &r);
+    void handleDatabaseStatus(const Response &r);
+    void handleResourceUsage(const Response &r);
+    void handleConnectedClients(const Response &r);
+    void handleTrafficStats(const Response &r);
     void handleUsersList(const Response &r);
     void handleBlockedUsers(const Response &r);
     void handleAccessLog(const Response &r);
@@ -201,9 +216,8 @@ private:
 
     void handleEditBookClicked();
     void handleViewReviewsClicked();
+    void logServerEvent(const QString &message, const QString &level = "INFO");
 
-
-    // Helpers
     void populateDashboardStats(const DashboardStats &stats);
     void populateActivityLog(const QList<ActivityLogEntry> &logs);
     void populateSystemAlerts(const QStringList &alerts);

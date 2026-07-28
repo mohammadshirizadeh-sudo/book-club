@@ -7,6 +7,16 @@
 #include <QDateTime>
 #include "../Server/Response.h"
 #include <QTimer>
+#include "ServerResourceMonitor.h"
+#include <QAtomicInteger>
+
+
+struct ClientInfo {
+    qintptr socketDescriptor = 0;
+    QString ipAddress;
+    QString username;
+    QDateTime connectedAt;
+};
 
 class ClientHandler;
 class UserRepository;
@@ -67,6 +77,12 @@ public:
     bool isRestartPending() const { return m_restartPending; }
 
 
+    QVariantMap  getResourceUsage() const;
+    QVariantList getConnectedClientsInfo() const;
+    QVariantMap  getTrafficStats() const;
+    void updateClientUsername(qintptr socketDescriptor, const QString& username);
+
+
 
 private slots:
     void performRestart();
@@ -113,6 +129,12 @@ private:
     QTimer* m_restartTimer = nullptr;
     bool m_restartPending = false;
     quint16 m_currentPort = 0;
+
+
+    QMap<qintptr, ClientInfo> m_clientInfo;
+    mutable ServerResourceMonitor* m_resourceMonitor = nullptr;
+    QAtomicInteger<qint64> m_totalRequests{0};
+    QAtomicInteger<qint64> m_totalResponses{0};
 };
 
 #endif // SERVER_H

@@ -25,8 +25,8 @@ public:
     quint16 getPort() const { return m_port; }
 
     // ===== Send Request =====
-    void sendRequest(const Request& request);
-    void sendRequest(const QString& command, const QVariantMap& params = QVariantMap());
+    qint64 sendRequest( Request request);
+    qint64 sendRequest(const QString& command, const QVariantMap& params = QVariantMap());
 
     void requestBookCover(int bookId);
 
@@ -60,6 +60,9 @@ private:
 
     QQueue<Request> m_pendingRequests;
     void flushPendingRequests();
+
+
+    qint64 m_nextRequestId = 1;
 };
 
 #endif

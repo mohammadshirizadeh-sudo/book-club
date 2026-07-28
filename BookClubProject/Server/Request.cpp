@@ -211,6 +211,13 @@ CommandType Request::stringToCommandType(const QString& str)
          {"GetAdminReviews", CommandType::GetAdminReviews},
 
         {"UnflagBook", CommandType::UnflagBook},
+        {"GetServerResourceUsage", CommandType::GetServerResourceUsage},
+        {"GetConnectedClients",    CommandType::GetConnectedClients},
+        {"GetTrafficStats",        CommandType::GetTrafficStats},
+        {"GetAllBooks", CommandType::GetAllBooks},
+
+
+
 
 
 
@@ -347,6 +354,13 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::ClearServerCache: return "ClearServerCache";
     case CommandType::RestartServer: return "RestartServer";     
     case CommandType::UnflagBook: return "UnflagBook";
+    case CommandType::GetServerResourceUsage: return "GetServerResourceUsage";
+    case CommandType::GetConnectedClients:    return "GetConnectedClients";
+    case CommandType::GetTrafficStats:        return "GetTrafficStats";
+    case CommandType::GetAllBooks: return "GetAllBooks";
+
+
+
 
 
 
@@ -361,6 +375,7 @@ QJsonObject Request::toJson() const
 {
     QJsonObject obj;
     obj["command"] = getCommandTypeString();
+    obj["requestId"] = m_requestId;
 
     if (!m_params.isEmpty()) {
         QJsonObject paramsObj;
@@ -391,6 +406,9 @@ Request Request::fromJson(const QJsonObject& json)
 
     QString commandstr = json["command"].toString();
     request.setCommandType(stringToCommandType(commandstr));
+    request.setRequestId(
+        json.value("requestId").toVariant().toLongLong()
+        );
 
     if (json.contains("params") && json["params"].isObject()) {
         QJsonObject paramsObj = json["params"].toObject();

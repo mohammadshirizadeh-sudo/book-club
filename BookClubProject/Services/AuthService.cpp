@@ -171,7 +171,9 @@ ValidationResult AuthService::login(const QString& usernameOrEmail, const QStrin
     currentUserId = user->getId();
     user->setLastLogin(QDateTime::currentDateTime());
     userRepo->updateUser(user, user->getUsername(), user->getEmail());
+    qDebug()<<"we areeeeeee beforeeeee if adminnnnn";
     if(user->getRole()== UserRole::Admin){
+        qDebug()<<"we commmmmmmm toooooo if adminnnnn authserviicceeeeee";
         SessionManager::instance()->setCurrentUser(user->getId() , "ali" , "Admin");
     }
 

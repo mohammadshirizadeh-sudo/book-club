@@ -60,6 +60,7 @@ QJsonObject Response::toJson() const
     obj["message"] = m_message;
     obj["errorCode"] = m_errorCode;
     obj["command"] = Request::CommandTypeToString(m_commandType);
+    obj["requestId"] = m_requestId;
 
     // Convert QVariantMap to QJsonObject
     if (!m_data.isEmpty()) {
@@ -92,6 +93,11 @@ Response Response::fromJson(const QJsonObject& json)
     resp.setMessage(json["message"].toString(""));
     resp.setErrorCode(json["errorCode"].toInt(0));
     resp.setCommandType(Request::stringToCommandType(json["command"].toString()));
+    resp.setRequestId(
+        json.value("requestId")
+            .toVariant()
+            .toLongLong()
+        );
 
     if (json.contains("data") && json["data"].isObject()) {
         QJsonObject dataObj = json["data"].toObject();

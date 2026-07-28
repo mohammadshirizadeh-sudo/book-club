@@ -397,3 +397,20 @@ void ClientHandler::broadcastToAllClients(const Response& response)
 }
 
 
+void ClientHandler::setSession(int userId, UserRole role, const QString& username) {
+    {
+        QMutexLocker locker(&m_sessionMutex);
+        m_sessionUserId = userId;
+        m_sessionRole = role;
+        m_sessionUsername = username;
+        m_isAuthenticated = true;
+    }
+
+    if (!username.isEmpty()) {
+        if (Server* server = qobject_cast<Server*>(parent())) {
+            server->updateClientUsername(m_socketDescriptor, username);
+        }
+    }
+}
+
+

@@ -37,6 +37,9 @@ Response LoginCommand::execute(const QVariantMap& params)
     QString password = params["password"].toString();
 
 
+
+
+
     ValidationResult result = m_authService->login(username, password);
 
 
@@ -58,6 +61,8 @@ Response LoginCommand::execute(const QVariantMap& params)
     QString role = user->getRoleString();
     data["role"] = role;
     m_clientHandler->setSession(userId, UserRepository::stringToRole(role));
+
+    m_clientHandler->setSession(userId, UserRepository::stringToRole(role), user->getUsername());
 
     return Response::success(CommandType::Login,"Login successful", data);
 
@@ -3803,6 +3808,150 @@ Response RestartServerCommand::execute(const QVariantMap& params)
     // before the socket drops.
     m_adminService->scheduleRestart(); // new
     return Response::success(CommandType::RestartServer, "Restart scheduled");
+}
+
+
+GetServerResourceUsageCommand::GetServerResourceUsageCommand(ClientHandler* clientHandler)
+    : m_clientHandler(clientHandler) {}
+
+Response GetServerResourceUsageCommand::execute(const QVariantMap& params) {
+    Q_UNUSED(params);
+    if (!m_clientHandler) return Response::error(CommandType::GetServerResourceUsage, "Server unavailable");
+    return Response::success(CommandType::GetServerResourceUsage, m_clientHandler->getServerResourceUsage());
+}
+
+GetConnectedClientsCommand::GetConnectedClientsCommand(ClientHandler* clientHandler)
+    : m_clientHandler(clientHandler) {}
+
+Response GetConnectedClientsCommand::execute(const QVariantMap& params) {
+    Q_UNUSED(params);
+    if (!m_clientHandler) return Response::error(CommandType::GetConnectedClients, "Server unavailable");
+    QVariantList clients = m_clientHandler->getConnectedClientsInfo();
+    QVariantMap data;
+    data["clients"] = clients;
+    data["count"] = clients.size();
+    return Response::success(CommandType::GetConnectedClients, data);
+}
+
+GetTrafficStatsCommand::GetTrafficStatsCommand(ClientHandler* clientHandler)
+    : m_clientHandler(clientHandler) {}
+
+Response GetTrafficStatsCommand::execute(const QVariantMap& params) {
+    Q_UNUSED(params);
+    if (!m_clientHandler) return Response::error(CommandType::GetTrafficStats, "Server unavailable");
+    return Response::success(CommandType::GetTrafficStats, m_clientHandler->getTrafficStats());
+}
+
+
+// Commands.cpp
+
+// =============================================
+// ===== GetAllBooksCommand =====
+// =============================================
+
+GetAllBooksCommand::GetAllBooksCommand(BookService* bookService)
+    : m_bookService(bookService)
+{
+}
+
+Response GetAllBooksCommand::execute(const QVariantMap& params)
+{
+    QString search = params.value("search").toString();
+    int publisherId = params.value("publisherId", -1).toInt();
+    QString status = params.value("status").toString();
+    int limit = params.value("limit", 0).toInt();
+    int offset = params.value("offset", 0).toInt();
+
+    // 2. دریافت همه کتاب‌ها (فعال و غیرفعال)
+    // برای ادمین همه کتاب‌ها را نشان می‌دهیم
+    QVector<QSharedPointer<Book>> allBooks;
+
+    if (!search.isEmpty()) {
+        // جستجو با کلمه کلیدی
+        allBooks = m_bookService->searchBooks(search);
+    } else {
+        // دریافت همه کتاب‌ها از Repository (نه فقط فعال)
+        BookRepository* repo = m_bookService->getBookRepo();
+        if (repo) {
+            allBooks = repo->getAllBooks();
+        } else {
+            return Response::error(CommandType::GetAllBooks, "Failed to access book repository");
+        }
+    }
+
+    // 3. اعمال فیلترها
+    QVector<QSharedPointer<Book>> filteredBooks;
+
+    for (const auto& book : allBooks) {
+        // فیلتر بر اساس ناشر
+        if (publisherId > 0 && book->getPublisherId() != publisherId) {
+            continue;
+        }
+
+        // فیلتر بر اساس وضعیت
+        if (status == "active" && !book->getIsActive()) {
+            continue;
+        }
+        if (status == "inactive" && book->getIsActive()) {
+            continue;
+        }
+        if (status == "flagged" && !book->getIsFlagged()) {
+            continue;
+        }
+
+        filteredBooks.append(book);
+    }
+
+    // 4. مرتب‌سازی بر اساس ID (جدیدترین اول) - اختیاری
+    std::sort(filteredBooks.begin(), filteredBooks.end(),
+              [](const QSharedPointer<Book>& a, const QSharedPointer<Book>& b) {
+                  return a->getBookId() > b->getBookId();
+              });
+
+    // 5. اعمال Pagination (اختیاری)
+    int totalCount = filteredBooks.size();
+    if (limit > 0) {
+        int start = qMin(offset, totalCount);
+        int end = qMin(start + limit, totalCount);
+        filteredBooks = filteredBooks.mid(start, end - start);
+    }
+
+    // 6. ساخت لیست کتاب‌ها برای پاسخ
+    QVariantList bookList;
+    for (const auto& book : filteredBooks) {
+        QVariantMap bookData;
+        bookData["bookId"] = book->getBookId();
+        bookData["title"] = book->getTitle();
+        bookData["author"] = book->getAuthor();
+        bookData["genre"] = GenreHelper::toString(book->getGenre());
+        bookData["description"] = book->getDescription();
+        bookData["price"] = book->getPrice();
+        bookData["discountPercent"] = book->getDiscountPercent();
+        bookData["finalPrice"] = book->getFinalPrice();
+        bookData["averageRating"] = book->getAverageRating();
+        bookData["salesCount"] = book->getSalesCount();
+        bookData["coverPath"] = book->getCoverPath();
+        bookData["pdfPath"] = book->getPdfPath();
+        bookData["isActive"] = book->getIsActive();
+        bookData["isFlagged"] = book->getIsFlagged();
+        bookData["publisherId"] = book->getPublisherId();
+
+        // اضافه کردن نام ناشر (اگر UserRepository در دسترس است)
+        // Publisher* publisher = m_userService->getPublisherById(book->getPublisherId());
+        // if (publisher) {
+        //     bookData["publisherName"] = publisher->getPublisherName();
+        // }
+
+        bookList.append(bookData);
+    }
+
+    // 7. ساخت پاسخ
+    QVariantMap data;
+    data["books"] = bookList;
+    data["count"] = bookList.size();
+    data["totalCount"] = totalCount;
+
+    return Response::success(CommandType::GetAllBooks, "Books loaded successfully", data);
 }
 
 
