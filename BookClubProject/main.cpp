@@ -73,10 +73,23 @@ int main(int argc, char *argv[])
     NetworkManager* networkManager = new NetworkManager();
     networkManager->connectToServer("127.0.0.1", 8099);
 
-    // پنجره اصلی. میخوام دقیقا وسط قرار بگیره همه صفهات
+    // پنجره اصلی - قرارگیری در وسط صفحه با سایز مناسب
     QStackedWidget stackedWidget;
     stackedWidget.setWindowTitle("Book Club");
-    stackedWidget.resize(1500, 800);
+    stackedWidget.setWindowIcon(QIcon(":/resources/icon.jpg"));
+
+    // دریافت اطلاعات صفحه نمایش
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+
+    int width = screenGeometry.width();
+    int height = screenGeometry.height();
+    stackedWidget.resize(width, height);
+
+    // محاسبه موقعیت برای قرارگیری در مرکز صفحه
+    int x = (screenGeometry.width() - width) / 2;
+    int y = (screenGeometry.height() - height) / 2;
+    stackedWidget.move(x, y);
 
     LoginWindow* loginWindow = new LoginWindow(networkManager);
     ForgotPasswordWindow* forgotWindow = new ForgotPasswordWindow(networkManager);
