@@ -96,6 +96,6 @@ void PublisherProfileWindow::on_editPubInfoPushButton_clicked()
 
 void PublisherProfileWindow::on_backPushButton_clicked()
 {
-    emit publisherWindow();
+    emit backPushButton();
 }
 

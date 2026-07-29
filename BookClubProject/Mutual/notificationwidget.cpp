@@ -119,6 +119,39 @@ void NotificationWidget::updateBadgeAndStatus(int totalCount, int unreadCount)
     ui->unreadBadgeLabel->setText(QString::number(unreadCount));
     ui->statusLabel->setText(QString("Total: %1   |   Unread: %2").arg(totalCount).arg(unreadCount));
 }
+
+
+
+void NotificationWidget::markNotificationAsRead(int notificationId)
+{
+    int userId = SessionManager::instance()->getUserId();
+    if (userId <= 0 || notificationId <= 0) return;
+
+    QVariantMap params;
+    params["notificationId"] = notificationId;
+    params["userId"] = userId;
+
+    Request request(CommandType::MarkNotificationRead, params);
+    m_networkManager->sendRequest(request);
+}
+
+
+void NotificationWidget::on_markAllReadButton_clicked()
+{
+    int userId = SessionManager::instance()->getUserId();
+    if (userId <= 0) return;
+
+    QVariantMap params;
+    params["userId"] = userId;
+
+    Request request(CommandType::MarkAllNotificationsRead, params);
+    m_networkManager->sendRequest(request);
+
+    // بستن پنجره نوتیفیکیشن پس از انجام عملیات
+    this->close();
+}
+
+
 void NotificationWidget::on_markReadButton_clicked()
 {
     QListWidgetItem *currentItem = ui->notificationList->currentItem();
@@ -136,29 +169,8 @@ void NotificationWidget::on_markReadButton_clicked()
 
     markNotificationAsRead(notificationId);
 }
-void NotificationWidget::markNotificationAsRead(int notificationId)
-{
-    int userId = SessionManager::instance()->getUserId();
-    if (userId <= 0 || notificationId <= 0) return;
 
-    QVariantMap params;
-    params["notificationId"] = notificationId;
-    params["userId"] = userId;
 
-    Request request(CommandType::MarkNotificationRead, params);
-    m_networkManager->sendRequest(request);
-}
-void NotificationWidget::on_markAllReadButton_clicked()
-{
-    int userId = SessionManager::instance()->getUserId();
-    if (userId <= 0) return;
-
-    QVariantMap params;
-    params["userId"] = userId;
-
-    Request request(CommandType::MarkAllNotificationsRead, params);
-    m_networkManager->sendRequest(request);
-}
 void NotificationWidget::on_clearAllButton_clicked()
 {
     if (ui->notificationList->count() == 0) return;

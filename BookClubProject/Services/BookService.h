@@ -89,6 +89,7 @@ public:
 
 
      bool updateBook(QSharedPointer<Book> book);
+     QString getPublisherNamebyid(int id);
 
 
 };

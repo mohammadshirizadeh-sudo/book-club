@@ -40,6 +40,7 @@ struct AdminBookData {
     QString title;
     QString author;
     int publisherId = -1;
+    QString publisherName = "unknown";
     double price = 0.0;
     QString status;
     int salesCount = 0;

@@ -23,6 +23,7 @@ signals:
 
     void openPublisherInfoDialog();
     void publisherWindow();
+    void backPushButton();
 
 
 

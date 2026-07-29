@@ -3545,6 +3545,7 @@ Response GetAdminBooksCommand::execute(const QVariantMap& params)
         if (status == "flagged" && !book->getIsFlagged()) continue;
 
         QVariantMap bookData;
+
         bookData["bookId"]        = book->getBookId();
         bookData["title"]         = book->getTitle();
         bookData["author"]        = book->getAuthor();
@@ -3554,6 +3555,7 @@ Response GetAdminBooksCommand::execute(const QVariantMap& params)
                                                   : (book->getIsActive() ? "active" : "inactive");
         bookData["salesCount"]    = book->getSalesCount();
         bookData["averageRating"] = book->getAverageRating();
+        bookData["publisherName"] = m_bookService->getPublisherNamebyid(publisherId);
         bookList.append(bookData);
     }
 

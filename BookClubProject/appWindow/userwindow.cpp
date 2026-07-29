@@ -6,6 +6,7 @@
 #include <QIcon>
 #include <QMessageBox>
 #include <QPointer>
+#include "../Mutual/notificationwidget.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -760,9 +761,18 @@ void UserWindow::on_pushButton_8_clicked()
 
 void UserWindow::on_notificationPushButton_clicked()
 {
-    emit notificationWindow();
-}
+    // ساخت پنجره نوتیفیکیشن به صورت Pop-up روی همین صفحه
+    NotificationWidget *notifWidget = new NotificationWidget(m_networkManager, this);
 
+    // تنظیم خصوصیات پنجره (داشتن دکمه ضربدر و حالت Dialog)
+    notifWidget->setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+
+    // حذف خودکار از حافظه هنگام بسته شدن پنجره با ضربدر
+    notifWidget->setAttribute(Qt::WA_DeleteOnClose);
+
+    // نمایش پنجره روی صفحه اصلی
+    notifWidget->show();
+}
 
 void UserWindow::on_pushButton_6_clicked()
 {

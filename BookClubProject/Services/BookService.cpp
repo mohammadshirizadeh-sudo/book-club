@@ -789,6 +789,11 @@ bool BookService::updateBook(QSharedPointer<Book> book)
     return true;
 }
 
+QString BookService::getPublisherNamebyid(int id){
+    User* publisher = userRepo.findById(id);
+    return publisher->getUsername();
+}
+
 
 
 

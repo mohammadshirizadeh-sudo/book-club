@@ -12,6 +12,8 @@
 #include <QtCharts/QBarSeries>
 #include <QtCharts/QBarSet>
 #include <QtCharts/QBarCategoryAxis>
+#include "../Mutual/notificationwidget.h"
+
 #include <QtCharts/QValueAxis>
 #include <QHeaderView>
 
@@ -77,9 +79,18 @@ void PublisherWindow::on_deactivatePushButton_clicked()
 
 void PublisherWindow::on_notifPushButton_clicked()
 {
-    emit notificationWindow();
-}
+    // ساخت پنجره نوتیفیکیشن به صورت Pop-up روی همین صفحه
+    NotificationWidget *notifWidget = new NotificationWidget(m_networkManager, this);
 
+    // تنظیم خصوصیات پنجره (حالت Dialog همراه با دکمه بستن/ضربدر)
+    notifWidget->setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+
+    // حذف خودکار از حافظه پس از بسته شدن پنجره
+    notifWidget->setAttribute(Qt::WA_DeleteOnClose);
+
+    // نمایش پنجره
+    notifWidget->show();
+}
 void PublisherWindow::showEvent(QShowEvent *event)
 {
     QWidget::showEvent(event);

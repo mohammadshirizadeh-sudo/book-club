@@ -42,7 +42,8 @@ private slots:
 
 
 signals:
-    void publisherWindow();
+
+    void backPushButton();
 
 private:
     Ui::EditBooksWindow *ui;

@@ -315,5 +315,5 @@ void EditBooksWindow::clearForm()
 
 void EditBooksWindow::on_quitPushButton_clicked()
 {
-    emit publisherWindow();
+    emit backPushButton();
 }

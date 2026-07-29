@@ -44,6 +44,7 @@ private slots:
 
 signals:
     void publisherWindow();
+    void backPushButton();
 
 private:
     Ui::DeactivateBookWindow *ui;

@@ -145,6 +145,9 @@ int main(int argc, char *argv[])
                      [&]()
                      {
                          stackedWidget.setCurrentIndex(adminWindowIndex);
+                         adminWindow->setAdminInfo();
+
+                         adminWindow->initializeFromServer();
                      });
 
     QObject::connect(userWindow,
@@ -450,6 +453,31 @@ int main(int argc, char *argv[])
     QObject::connect(genreBrowsWindow, &GenreBrowserWindow::userWindow,
                      [&]() {
                          stackedWidget.setCurrentIndex(userIndex);
+
+                     });
+    QObject::connect(publisherProfileWindow, &PublisherProfileWindow::backPushButton,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(publisherIndex);
+
+                     });
+    QObject::connect(publishedWindow, &PublishedBooksWindow::backRequested,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(publisherIndex);
+
+                     });
+    QObject::connect(editWindow, &EditBooksWindow::backPushButton,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(publisherIndex);
+
+                     });
+    QObject::connect(applydiscountWindow, &ApplyDiscountWindow::backPushButton,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(publisherIndex);
+
+                     });
+    QObject::connect(deactivateBook, &DeactivateBookWindow::backPushButton,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(publisherIndex);
 
                      });
     // The old with-arg connection from UserWindow::groubReadingWindow to

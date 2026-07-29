@@ -39,7 +39,7 @@ private slots:
 
 
 signals:
-    void publisherWindow();
+    void backPushButton();
 private:
     Ui::ApplyDiscountWindow *ui;
     NetworkManager *m_networkManager;

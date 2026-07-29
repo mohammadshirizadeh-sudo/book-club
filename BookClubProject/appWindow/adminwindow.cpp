@@ -33,7 +33,6 @@ AdminWindow::AdminWindow(NetworkManager* networkManager, QWidget *parent)
     }
 
     setupUIInitialState();
-    ui->mainStackedWidget->setCurrentIndex(0);
 }
 
 AdminWindow::~AdminWindow()
@@ -913,6 +912,7 @@ void AdminWindow::handleBooksList(const Response &r)
         b.id = m["bookId"].toInt();
         b.title = m["title"].toString();
         b.author = m["author"].toString();
+        b.publisherName = m["publisherName"].toString();
         b.publisherId = m["publisherId"].toInt();
         b.price = m["price"].toDouble();
         b.status = m["status"].toString();
@@ -922,6 +922,7 @@ void AdminWindow::handleBooksList(const Response &r)
     }
     populateBooksTable(books);
 }
+
 
 void AdminWindow::handleReviewStatusFilterChanged(int)
 {
@@ -933,7 +934,6 @@ void AdminWindow::handleReviewStatusFilterChanged(int)
     else if (s.contains("Flagged")) m_reviewStatusFilter = "flagged";
     requestReviewsList();
 }
-
 void AdminWindow::handleReviewRatingFilterChanged(int index) { m_reviewRatingFilter = index; requestReviewsList(); }
 void AdminWindow::handleReviewSearchTextChanged(const QString &text) { m_reviewSearchText = text; requestReviewsList(); }
 void AdminWindow::handleRefreshReviewsClicked() { requestReviewsList(); }
@@ -1101,10 +1101,11 @@ void AdminWindow::populateBooksTable(const QList<AdminBookData> &books)
         ui->adminBooksTable->setItem(i, 0, new QTableWidgetItem(QString::number(books[i].id)));
         ui->adminBooksTable->setItem(i, 1, new QTableWidgetItem(books[i].title));
         ui->adminBooksTable->setItem(i, 2, new QTableWidgetItem(books[i].author));
-        ui->adminBooksTable->setItem(i, 3, new QTableWidgetItem(QString::number(books[i].price, 'f', 2)));
-        ui->adminBooksTable->setItem(i, 4, new QTableWidgetItem(books[i].status));
-        ui->adminBooksTable->setItem(i, 5, new QTableWidgetItem(QString::number(books[i].salesCount)));
-        ui->adminBooksTable->setItem(i, 6, new QTableWidgetItem(getStarString(std::round(books[i].averageRating))));
+        ui->adminBooksTable->setItem(i, 3, new QTableWidgetItem(books[i].publisherName));
+        ui->adminBooksTable->setItem(i, 4, new QTableWidgetItem(QString::number(books[i].price, 'f', 2)));
+        ui->adminBooksTable->setItem(i, 5, new QTableWidgetItem(books[i].status));
+        ui->adminBooksTable->setItem(i, 6, new QTableWidgetItem(QString::number(books[i].salesCount)));
+        ui->adminBooksTable->setItem(i, 7, new QTableWidgetItem(getStarString(std::round(books[i].averageRating))));
     }
     m_selectedBookId = -1;
     updateBookActionButtons();
@@ -1160,7 +1161,7 @@ void AdminWindow::updateBookSelectionState(int row)
     } else {
         m_selectedBookId = ui->adminBooksTable->item(row, 0)->text().toInt();
         m_selectedBookData.title = ui->adminBooksTable->item(row, 1)->text();
-        m_selectedBookData.status = ui->adminBooksTable->item(row, 4)->text();
+        m_selectedBookData.status = ui->adminBooksTable->item(row, 5)->text();
         ui->selectedBookLabel->setText("Selected: " + m_selectedBookData.title);
     }
     updateBookActionButtons();

@@ -7,6 +7,7 @@
 #include <QPixmap>
 #include "pdfreaderwindow.h"
 #include "groupreadingwindow.h"
+#include "bookreviewdialog.h"
 #include <QFile>
 
 BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVariantMap& bookData, QWidget *parent) :
@@ -17,15 +18,19 @@ BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVarian
 {
     ui->setupUi(this);
 
+    // --- اضافه کردن این بخش برای بررسی نقش ---
+    QString role = SessionManager::instance()->getRole().toLower();
+    if (role != "user") {
+        ui->groupReadingPushButton->hide();
+        ui->addFavoritePushButton_2->hide(); // دکمه Rate Book
+    }
+    // ----------------------------------------
+
     connect(m_networkManager, &NetworkManager::responseReceived,
             this, &BookDetailDialog::onResponseReceived);
 
-
     displayBookInfo(bookData);
     checkBookOwnership();
-
-
-
 }
 
 BookDetailDialog::~BookDetailDialog()
@@ -90,7 +95,10 @@ void BookDetailDialog::checkBookOwnership()
 
 void BookDetailDialog::updateCartButtonAppearance()
 {
-    if (m_isOwned || SessionManager::instance()->getRole() == "Admin") {
+    QString role = SessionManager::instance()->getRole().toLower();
+
+    // اگر کاربر مالک کتاب بود یا نقشش چیزی غیر از user بود (مثلا Admin)
+    if (m_isOwned || role != "user") {
         ui->addCartPushButton->setText("📖 Open PDF");
         ui->addCartPushButton->setStyleSheet(
             "border: 3px solid black;"
@@ -248,15 +256,14 @@ void BookDetailDialog::on_addFavoritePushButton_clicked()
 
 void BookDetailDialog::on_addCartPushButton_clicked()
 {
-    if (m_isOwned) {
+    QString role = SessionManager::instance()->getRole().toLower();
+
+    // اگر کاربر کتاب را خریده است یا نقشش کاربر عادی نیست، PDF باز شود
+    if (m_isOwned || role != "user") {
         openBookPdf();
         return;
     }
 
-    if(SessionManager::instance()->getRole() == "Admin"){
-        openBookPdf();
-        return;
-    }
     int userId = SessionManager::instance()->getUserId();
 
     // 2. دریافت bookId از اطلاعات کتاب
@@ -282,7 +289,6 @@ void BookDetailDialog::on_addCartPushButton_clicked()
     Request request(CommandType::AddToCart, params);
     m_networkManager->sendRequest(request);
 }
-
 void BookDetailDialog::openBookPdf()
 {
     int bookId = m_bookData["bookId"].toInt();
@@ -420,3 +426,11 @@ void BookDetailDialog::openGroupReading()
     groupWindow->raise();
     groupWindow->activateWindow();
 }
+
+void BookDetailDialog::on_addFavoritePushButton_2_clicked()
+{
+    BookReviewDialog dialog(m_networkManager ,m_bookData , this);
+    dialog.exec();
+
+}
+

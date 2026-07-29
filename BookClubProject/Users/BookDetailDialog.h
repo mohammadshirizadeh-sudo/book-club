@@ -32,6 +32,8 @@ private slots:
 
     void on_groupReadingPushButton_clicked();
 
+    void on_addFavoritePushButton_2_clicked();
+
 private:
     Ui::BookDetailDialog *ui;
     void displayBookInfo(const QVariantMap& bookData);
