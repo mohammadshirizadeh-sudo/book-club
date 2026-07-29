@@ -796,4 +796,25 @@ QString BookService::getPublisherNamebyid(int id){
 
 
 
+QString BookService::getPublisherNameById(int publisherId) const
+{
+
+    User* user = userRepo.findById(publisherId);
+    if (!user) {
+        qWarning() << "Publisher not found with ID:" << publisherId;
+        return "Unknown Publisher";
+    }
+
+    if (!user->isPublisher()) {
+        qWarning() << "User" << publisherId << "is not a publisher!";
+        return "Unknown Publisher";
+    }
+    qDebug()<<"beforeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    Publisher* publisher = static_cast<Publisher*>(user);
+    qDebug()<< "afterrrrrrrrrrrrrrrrrrrr";
+    return publisher->getPublisherName();
+
+}
+
+
 
