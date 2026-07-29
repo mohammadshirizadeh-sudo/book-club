@@ -42,12 +42,18 @@ public:
     // ===== Static helpers =====
     static Response fromJson(const QJsonObject& json);
 
+
+    qint64 getRequestId() const { return m_requestId; }
+    void setRequestId(qint64 id) { m_requestId = id; }
+
 private:
     bool m_success;
     QString m_message;
     QVariantMap m_data;
     int m_errorCode;
     CommandType m_commandType = CommandType::Unknown;
+
+    qint64 m_requestId = 0;
 };
 Q_DECLARE_METATYPE(Response)
 

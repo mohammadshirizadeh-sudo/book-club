@@ -40,7 +40,9 @@ Cart::Cart(int userId)
     : userId(userId)
     , totalPrice(0.0)
     , totalDiscount(0.0)
-    , finalPrice(0.0) {
+    , finalPrice(0.0)
+    , createdAt(QDateTime::currentDateTime())
+    , updatedAt(QDateTime::currentDateTime()){
 }
 
 // ===== Getters =====
@@ -80,7 +82,16 @@ bool Cart::addItem(const CartItem& item) {
 bool Cart::removeItem(int bookId) {
     for (int i = 0; i < items.size(); ++i) {
         if (items[i].getBookId() == bookId) {
-            items.remove(i);
+
+            // 🟢 اگر تعداد بیشتر از ۱ بود، یکی کم کن
+            if (items[i].getQuantity() > 1) {
+                items[i].setQuantity(items[i].getQuantity() - 1);
+            }
+            // 🟢 اگر فقط ۱ عدد مانده بود، کلاً از لیست حذفش کن
+            else {
+                items.remove(i); // یا items.removeAt(i);
+            }
+
             calculateTotals();
             return true;
         }

@@ -87,6 +87,13 @@ public:
 
      QMap<QString, QVector<QSharedPointer<Book>>> searchAuthorsWithBooks(const QString& keyword) const;
 
+
+     bool updateBook(QSharedPointer<Book> book);
+     QString getPublisherNamebyid(int id);
+
+     QString getPublisherNameById(int publisherId) const;
+
+
 };
 
 #endif // BOOKSERVICE_H

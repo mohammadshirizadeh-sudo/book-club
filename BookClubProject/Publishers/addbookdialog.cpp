@@ -395,3 +395,10 @@ void AddBookDialog::onResponseReceived(const Response& response)
         break;
     }
 }
+
+
+void AddBookDialog::on_cancelButton_clicked()
+{
+    this->close();
+}
+

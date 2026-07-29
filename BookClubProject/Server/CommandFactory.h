@@ -14,6 +14,7 @@ class CartService;
 class PublisherService;
 class AdminService;
 class NotificationService;
+class ReadingSessionService;
 
 /**
  * @brief Factory class for creating Command objects
@@ -34,9 +35,12 @@ public:
         ReviewService* reviewService,
         CartService* cartService,
         PublisherService* publisherService,
-        AdminService* adminService,NotificationService* notificationService, LibraryService* libraryService , ClientHandler* clientHandler
+        AdminService* adminService,NotificationService* notificationService,
+        LibraryService* libraryService , ClientHandler* clientHandler,
+        ReadingSessionService* readingSessionService
 
         );
+
 
 private:
     // Private constructor to prevent instantiation (all methods are static)

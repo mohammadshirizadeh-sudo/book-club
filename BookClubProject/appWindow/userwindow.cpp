@@ -6,6 +6,7 @@
 #include <QIcon>
 #include <QMessageBox>
 #include <QPointer>
+#include "../Mutual/notificationwidget.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -68,7 +69,11 @@ void UserWindow::loadFreeBooks()
     // درخواست کتاب‌های رایگان
 
     qDebug() << "📚 [Client] Sending GetFreeBooks request to server...";
-    Request request(CommandType::GetFreeBooks, {});
+    QVariantMap data;
+    data["userId"] = SessionManager::instance()->getUserId();
+    Request request(CommandType::GetFreeBooks, data);
+
+
     m_networkManager->sendRequest(request);
 }
 
@@ -132,6 +137,28 @@ void UserWindow::handleResponse(const Response& response)
 void UserWindow::handleResponse(const Response& response)
 {
     // ۱. مدیریت پاسخ کتاب‌های رایگان
+
+
+    if (response.getCommandType() == CommandType::Logout)
+    {
+        if (response.getRequestId() != m_pendingLogoutRequestId)
+            return;
+
+        m_pendingLogoutRequestId = -1;
+
+        if (!response.isSuccess())
+        {
+            QMessageBox::warning(
+                this,
+                "Sign Out",
+                "Sign out failed: " + response.getMessage());
+
+            return;
+        }
+
+        emit signOutRequested();
+        return;
+    }
     if (response.getCommandType() == CommandType::GetFreeBooks) {
         m_allFreeBooks = response.getData()["books"].toList();
         m_currentPage = 0;
@@ -391,6 +418,7 @@ void UserWindow::loadNewBooks()
 
     QVariantMap params;
     params["limit"] = 20; // تعداد کل کتاب‌های جدیدی که سرور بازمی‌گرداند
+    params["userId"] = SessionManager::instance()->getUserId();
 
     Request request(CommandType::GetNewBooks, params);
     m_networkManager->sendRequest(request);
@@ -560,6 +588,8 @@ void UserWindow::onFreeBookClicked()
 {
     if (m_currentPage >= 0 && m_currentPage < m_allFreeBooks.size()) {
         QVariantMap book = m_allFreeBooks[m_currentPage].toMap();
+        // BookDetailDialog now opens the Group Reading window itself, so there
+        // is no `groupReadingRequested` signal to forward anymore.
         BookDetailDialog dialog(m_networkManager , book, this);
         dialog.exec();
     }
@@ -572,6 +602,8 @@ void UserWindow::onRecommendedBookClicked(int offset)
 
     if (targetIndex >= 0 && targetIndex < m_allRecBooks.size()) {
         QVariantMap book = m_allRecBooks[targetIndex].toMap();
+        // BookDetailDialog now opens the Group Reading window itself, so there
+        // is no `groupReadingRequested` signal to forward anymore.
         BookDetailDialog dialog(m_networkManager ,book, this);
         dialog.exec();
     }
@@ -606,6 +638,7 @@ void UserWindow::loadBestSellers()
 
     QVariantMap params;
     params["limit"] = 20; // تعداد کتاب‌های پرفروشی که سرور بازمی‌گرداند
+    params["userId"] = SessionManager::instance()->getUserId();
 
     Request request(CommandType::GetBestSellers, params);
     m_networkManager->sendRequest(request);
@@ -720,4 +753,77 @@ void UserWindow::loadCoverInto(
 
     m_networkManager->requestBookCover(bookId);
 }
+
+
+void UserWindow::on_pushButton_7_clicked()
+{
+    emit genrebrowsWindow();
+
+}
+
+
+void UserWindow::on_pushButton_4_clicked()
+{
+    emit cartWindow();
+
+}
+
+
+void UserWindow::on_pushButton_3_clicked()
+{
+    emit libraryWindow();
+}
+
+
+void UserWindow::on_pushButton_8_clicked()
+{
+    emit shelfWindow();
+}
+
+
+void UserWindow::on_notificationPushButton_clicked()
+{
+    // ساخت پنجره نوتیفیکیشن به صورت Pop-up روی همین صفحه
+    NotificationWidget *notifWidget = new NotificationWidget(m_networkManager, this);
+
+    // تنظیم خصوصیات پنجره (داشتن دکمه ضربدر و حالت Dialog)
+    notifWidget->setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
+
+    // حذف خودکار از حافظه هنگام بسته شدن پنجره با ضربدر
+    notifWidget->setAttribute(Qt::WA_DeleteOnClose);
+
+    // نمایش پنجره روی صفحه اصلی
+    notifWidget->show();
+}
+
+void UserWindow::on_pushButton_6_clicked()
+{
+    if (QMessageBox::question(
+            this,
+            "Sign Out",
+            "Sign out of your account?")
+        != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    if (!m_networkManager)
+    {
+        emit signOutRequested();
+        return;
+    }
+
+    Request request(CommandType::Logout);
+
+    m_pendingLogoutRequestId = request.getRequestId();
+
+    m_networkManager->sendRequest(request);
+}
+
+/*
+void UserWindow::on_groupPushButton_clicked()
+{
+    emit groubReadingWindow();
+}
+*/
 

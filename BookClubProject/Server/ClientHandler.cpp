@@ -20,6 +20,9 @@ ClientHandler::ClientHandler(qintptr socketDescriptor,
                              CartService* cartService,
                              PublisherService* publisherService,
                              AdminService* adminService,
+                             LibraryService*libraryService,
+                             NotificationService* notificationService,
+                             ReadingSessionService* readingSessionService,
                              QObject *parent)
     : QObject(parent)
     , m_socketDescriptor(socketDescriptor)
@@ -31,6 +34,9 @@ ClientHandler::ClientHandler(qintptr socketDescriptor,
     , m_cartService(cartService)
     , m_publisherService(publisherService)
     , m_adminService(adminService)
+    ,m_libraryService(libraryService)
+    ,m_notificationService(notificationService)
+    ,m_readingSessionService(readingSessionService)
 {
 
     qDebug() << "[5] ClientHandler created";
@@ -77,26 +83,6 @@ void ClientHandler::onSocketError(QAbstractSocket::SocketError socketError)
     m_socket->close();
     onDisconnected();
 }
-
-/*
-void ClientHandler::onReadyRead() {
-    QByteArray data = m_socket->readAll();
-    qDebug() << "📥 Server received:" << data;
-    QString requestData = QString::fromUtf8(data).trimmed();
-    if (requestData.isEmpty()) return;
-
-    m_pendingTasks.fetchAndAddOrdered(1);
-
-    QFuture<void> future  = QtConcurrent::run([this, requestData]() {
-        if (!m_isDestroying.loadAcquire()) {
-            processRequest(requestData);
-        }
-        m_pendingTasks.fetchAndSubOrdered(1);
-    });
-}
-*/
-
-
 
 void ClientHandler::onReadyRead()
 {
@@ -175,7 +161,7 @@ void ClientHandler::handleRequest(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,m_notificationService,m_libraryService,this
+        m_adminService,m_notificationService,m_libraryService,this,m_readingSessionService
 
         ));
 
@@ -221,7 +207,7 @@ void ClientHandler::handleRequestSync(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,m_notificationService ,m_libraryService,  this
+        m_adminService,m_notificationService ,m_libraryService, this, m_readingSessionService
         ));
     if (!command) {
         sendResponseSync(Response::error(request.getCommandType(),"Unknown command"));
@@ -270,10 +256,21 @@ void ClientHandler::sendResponse(const Response& response)
 
 void ClientHandler::setSession(int userId, UserRole role)
 {
-    QMutexLocker locker(&m_sessionMutex);
-    m_sessionUserId = userId;
-    m_sessionRole = role;
-    m_isAuthenticated = true;
+    {
+        QMutexLocker locker(&m_sessionMutex);
+        m_sessionUserId = userId;
+        m_sessionRole = role;
+        m_isAuthenticated = true;
+    }
+
+    // Register with the Server's userId -> ClientHandler map so
+    // ClientHandler::sendToUser() / Server::sendToUser() can reach this
+    // connection for targeted pushes (GroupReading page-sync/chat/etc).
+    if (userId > 0) {
+        if (Server* server = qobject_cast<Server*>(parent())) {
+            server->registerUserHandler(userId, this);
+        }
+    }
 }
 
 
@@ -302,11 +299,22 @@ void ClientHandler::processRequest(const QString& requestData)
         m_reviewService,
         m_cartService,
         m_publisherService,
-        m_adminService,m_notificationService,m_libraryService, this
+        m_adminService,m_notificationService,m_libraryService, this,m_readingSessionService
 
         ));
     if (!command) {
         emit responseReady(Response::error(request.getCommandType(),"Unknown command"));
+        return;
+    }
+    if (command->requiresAdmin() &&
+        getSessionRole() != UserRole::Admin)
+    {
+        emit responseReady(
+            Response::error(
+                request.getCommandType(),
+                "Admin privileges required"
+                )
+            );
         return;
     }
 
@@ -348,6 +356,75 @@ void ClientHandler::disconnectFromClient()
     }
 
     deleteLater();
+}
+
+
+
+bool ClientHandler::isSessionAuthenticated() const
+{
+    QMutexLocker locker(&m_sessionMutex);
+    return m_isAuthenticated;
+}
+
+UserRole ClientHandler::getSessionRole() const
+{
+    QMutexLocker locker(&m_sessionMutex);
+    return m_sessionRole;
+}
+
+int ClientHandler::getSessionUserId() const
+{
+    QMutexLocker locker(&m_sessionMutex);
+    return m_sessionUserId;
+}
+
+void ClientHandler::broadcastToAllClients(const Response& response)
+{
+    Server* server = qobject_cast<Server*>(parent());
+    if (!server) {
+        qWarning() << "ClientHandler has no Server parent! Cannot broadcast.";
+        return;
+    }
+
+    server->broadcastToAll(response);
+}
+
+void ClientHandler::sendToUser(int userId, const Response& response)
+{
+    // Targeted push, mirroring broadcastToAllClients() but scoped to a
+    // single userId. Requires Server to maintain a userId -> ClientHandler
+    // registry (see Server::sendToUser / Server::updateClientUsername for
+    // the existing analogous registry-by-socketDescriptor pattern). If the
+    // user isn't currently connected, this is a silent no-op - the
+    // requesting client's periodic ReadingSessionFullSync poll is the
+    // fallback that will eventually pick up the change.
+    Server* server = qobject_cast<Server*>(parent());
+    if (!server) {
+        qWarning() << "ClientHandler has no Server parent! Cannot send to user" << userId;
+        return;
+    }
+
+    server->sendToUser(userId, response);
+}
+
+
+void ClientHandler::setSession(int userId, UserRole role, const QString& username) {
+    {
+        QMutexLocker locker(&m_sessionMutex);
+        m_sessionUserId = userId;
+        m_sessionRole = role;
+        m_sessionUsername = username;
+        m_isAuthenticated = true;
+    }
+
+    if (Server* server = qobject_cast<Server*>(parent())) {
+        if (!username.isEmpty()) {
+            server->updateClientUsername(m_socketDescriptor, username);
+        }
+        if (userId > 0) {
+            server->registerUserHandler(userId, this);
+        }
+    }
 }
 
 

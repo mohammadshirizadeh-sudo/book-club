@@ -17,6 +17,8 @@ private:
 
     void addToCache(QSharedPointer<Purchase> purchase);
     void removeFromCache(int purchaseId);
+public:
+
     void clearCache();
 
 public:
@@ -49,6 +51,7 @@ public:
     static PurchaseStatus stringToStatus(const QString& statusStr);
 
     static QString statusToString(PurchaseStatus status);
+    int getMaxPurchaseId() const;
 };
 
 #endif // PURCHASEREPOSITORY_H

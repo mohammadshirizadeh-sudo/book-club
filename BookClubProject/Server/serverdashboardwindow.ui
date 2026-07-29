@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>1500</width>
-    <height>800</height>
+    <height>1010</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>1200</width>
-    <height>700</height>
+    <height>900</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -24,15 +24,15 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/main.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
-     <x>0</x>
+     <x>5</x>
      <y>0</y>
      <width>1500</width>
-     <height>800</height>
+     <height>1010</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -401,10 +401,10 @@ QGroupBox::title {
     <widget class="QTableWidget" name="clientsTableWidget">
      <property name="geometry">
       <rect>
-       <x>15</x>
-       <y>75</y>
-       <width>420</width>
-       <height>260</height>
+       <x>35</x>
+       <y>80</y>
+       <width>381</width>
+       <height>241</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -423,7 +423,7 @@ QTableWidget::item {
 QHeaderView::section {
     font: 700 12pt &quot;Script MT Bold&quot;;
     font-size: 16px;
-    background-color: rgb(70, 130, 180);
+    background-color: rgb(171, 191, 138);
     color: white;
     border: 2px solid black;
     padding: 6px;
@@ -1001,6 +1001,272 @@ QGroupBox::title {
      </property>
      <property name="placeholderText">
       <string>System events will appear here...</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="businessStatsGroup">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>800</y>
+      <width>1460</width>
+      <height>195</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    font: 700 13pt &quot;Script MT Bold&quot;;
+    font-size: 25px;
+    color: rgb(0, 0, 0);
+    border: 3px solid black;
+    border-radius: 12px;
+    margin-top: 15px;
+    padding-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 20px;
+    padding: 0 10px;
+}</string>
+    </property>
+    <property name="title">
+     <string>📈 Business Overview</string>
+    </property>
+    <widget class="QLabel" name="totalUsersTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>140</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font-size: 18px; color: black; }</string>
+     </property>
+     <property name="text">
+      <string>Total Users:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="totalUsersValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>38</y>
+       <width>80</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font: 700; font-size: 20px; color: rgb(0,100,0); }</string>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="totalBooksTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>78</y>
+       <width>140</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font-size: 18px; color: black; }</string>
+     </property>
+     <property name="text">
+      <string>Total Books:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="totalBooksValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>76</y>
+       <width>80</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font: 700; font-size: 20px; color: rgb(0,100,0); }</string>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="blockedUsersTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>116</y>
+       <width>140</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font-size: 18px; color: black; }</string>
+     </property>
+     <property name="text">
+      <string>Blocked Users:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="blockedUsersValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>114</y>
+       <width>80</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font: 700; font-size: 20px; color: rgb(180,0,0); }</string>
+     </property>
+     <property name="text">
+      <string>0</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="totalRevenueTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>154</y>
+       <width>140</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font-size: 18px; color: black; }</string>
+     </property>
+     <property name="text">
+      <string>Total Revenue:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="totalRevenueValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>152</y>
+       <width>140</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font: 700; font-size: 20px; color: rgb(0,100,0); }</string>
+     </property>
+     <property name="text">
+      <string>$0.00</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="dbStatusTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>40</y>
+       <width>140</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font-size: 18px; color: black; }</string>
+     </property>
+     <property name="text">
+      <string>Database:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="dbStatusValueLabel">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>35</y>
+       <width>160</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel {
+    background-color: rgb(200,255,200);
+    border: 2px solid black;
+    border-radius: 8px;
+    font: 700; font-size: 18px; color: black; padding: 3px;
+}</string>
+     </property>
+     <property name="text">
+      <string>Connected</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="alertsTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>85</y>
+       <width>200</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font-size: 18px; color: black; }</string>
+     </property>
+     <property name="text">
+      <string>⚠️ Alerts:</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="alertsListWidget">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>118</y>
+       <width>530</width>
+       <height>65</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListWidget {
+    font-size: 14px;
+    border: 2px solid black;
+    border-radius: 8px;
+    background-color: white;
+}</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="activityTitleLabel">
+     <property name="geometry">
+      <rect>
+       <x>900</x>
+       <y>40</y>
+       <width>200</width>
+       <height>28</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel { background: transparent; font-size: 18px; color: black; }</string>
+     </property>
+     <property name="text">
+      <string>🕒 Recent Activity:</string>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="recentActivityListWidget">
+     <property name="geometry">
+      <rect>
+       <x>900</x>
+       <y>73</y>
+       <width>540</width>
+       <height>110</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QListWidget {
+    font-size: 14px;
+    border: 2px solid black;
+    border-radius: 8px;
+    background-color: white;
+}</string>
      </property>
     </widget>
    </widget>

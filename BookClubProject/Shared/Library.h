@@ -5,20 +5,22 @@
 #include <QString>
 #include <QVector>
 #include "Shelf.h"
+#include <QDateTime>
 
 class Library {
 private:
     int userId;
-    QVector<int> ownedBooks;     // Books purchased by user
-    QVector<int> savedBooks;     // Books saved for later
-    QVector<Shelf> shelves;      // Custom shelves created by user
-
+    QVector<int> ownedBooks;
+    QVector<int> savedBooks;
+    QVector<Shelf> shelves;
+    QDateTime createdAt;
+    QDateTime updatedAt;
+    \
 public:
-    // ===== Constructors =====
     Library();
     explicit Library(int userId);
     Library(int userId, const QVector<int>& ownedBooks, const QVector<int>& savedBooks,
-            const QVector<Shelf>& shelves);
+            const QVector<Shelf>& shelves ,QDateTime createdAt,QDateTime updatedAt );
 
     // ===== Getters =====
     int getUserId() const { return userId; }
@@ -58,6 +60,7 @@ public:
     QVector<int> getBooksInShelf(int shelfId) const;
     QVector<int> getAllBooksInShelves() const;
     QVector<int> getUnshelvedBooks() const;
+
 
 };
 

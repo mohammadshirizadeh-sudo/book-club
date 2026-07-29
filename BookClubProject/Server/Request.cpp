@@ -80,7 +80,7 @@ QString Request::getCommandTypeString() const
 CommandType Request::stringToCommandType(const QString& str)
 {
     static QMap<QString, CommandType> CommandTypeMap = {
-        // Auth
+                                                        // Auth
         {"Login", CommandType::Login},
         {"Register", CommandType::Register},
         {"Logout", CommandType::Logout},
@@ -140,6 +140,11 @@ CommandType Request::stringToCommandType(const QString& str)
         {"DeleteReview", CommandType::DeleteReview},
         {"GetSystemStats", CommandType::GetSystemStats},
 
+        {"GetRecentActivities", CommandType::GetRecentActivities},
+        {"GetSystemAlerts", CommandType::GetSystemAlerts},
+        {"GetDatabaseStatus", CommandType::GetDatabaseStatus},
+        {"GetServerStatus", CommandType::GetServerStatus},
+
 
 
         {"RequestPasswordReset", CommandType::RequestPasswordReset},
@@ -149,6 +154,11 @@ CommandType Request::stringToCommandType(const QString& str)
         {"SearchUsers", CommandType::SearchUsers},
         {"GetNotifications" , CommandType ::GetNotifications},
         {"MarkNotificationRead" , CommandType ::MarkNotificationRead},
+        {"ClearAllNotifications" , CommandType ::ClearAllNotifications},
+        {"MarkAllNotificationsRead" , CommandType ::MarkAllNotificationsRead},
+
+
+
         {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
 
         {"GetUserShelves" , CommandType ::GetUserShelves},
@@ -162,21 +172,57 @@ CommandType Request::stringToCommandType(const QString& str)
 
         {"MoveBookBetweenShelves" , CommandType ::MoveBookBetweenShelves},
 
-         {"GetBestSellers" , CommandType ::GetBestSellers},
+        {"GetBestSellers" , CommandType ::GetBestSellers},
 
         {"GetBookCover" , CommandType ::GetBookCover},
 
-         {"AddFavoriteBook" , CommandType ::AddFavoriteBook},
+
+        {"AddFavoriteBook" , CommandType ::AddFavoriteBook},
 
 
+        {"GetFavoriteBooks" , CommandType ::GetFavoriteBooks},
+        {"RemoveFavoriteBook" , CommandType ::RemoveFavoriteBook},
+        {"GetAllGenres" , CommandType ::GetAllGenres},
+        {"GetUserLibrary" , CommandType ::GetUserLibrary},
+        {"AddBookToShelf" , CommandType ::AddBookToShelf},
+        {"GetBooksInShelf" , CommandType ::GetBooksInShelf},
+        {"RemoveDiscount" , CommandType ::RemoveDiscount},
+        {"ApplyDiscount" , CommandType ::ApplyDiscount},
 
+        {"GetSalesTrend" , CommandType ::GetSalesTrend},
+        {"GetBookRatingsChart" , CommandType ::GetBookRatingsChart},
+        {"GetTopSellingBooks" , CommandType ::GetTopSellingBooks},
 
+        {"GetBottomSellingBooks" , CommandType ::GetBottomSellingBooks},
+        {"GetSalesOverview" , CommandType ::GetSalesOverview},
+        {"CheckBookOwnership" , CommandType ::CheckBookOwnership},
+        {"ToggleUserActiveStatus" , CommandType ::ToggleUserActiveStatus},
+        {"GetAdminAccessLog" , CommandType ::GetAdminAccessLog},
+        {"GetAdminBooks" , CommandType ::GetAdminBooks},
+        {"FlagBook" , CommandType ::FlagBook},
+        {"ApproveReview" , CommandType ::ApproveReview},
+        {"RejectReview" , CommandType ::RejectReview},
+        {"FlagReview" , CommandType ::FlagReview},
+        {"GetServerRuntimeStatus" , CommandType ::GetServerRuntimeStatus},
+        {"BroadcastMessage" , CommandType ::BroadcastMessage},
+        {"BackupDatabase" , CommandType ::BackupDatabase},
+        {"ClearServerCache" , CommandType ::ClearServerCache},
+        {"RestartServer" , CommandType ::RestartServer},
+         {"GetAdminReviews", CommandType::GetAdminReviews},
 
+        {"UnflagBook", CommandType::UnflagBook},
+        {"GetServerResourceUsage", CommandType::GetServerResourceUsage},
+        {"GetConnectedClients",    CommandType::GetConnectedClients},
+        {"GetTrafficStats",        CommandType::GetTrafficStats},
+        {"GetAllBooks", CommandType::GetAllBooks},
 
-
-
-
-
+        {"JoinReadingSession", CommandType::JoinReadingSession},
+        {"CreateReadingSession", CommandType::CreateReadingSession},
+        {"LeaveReadingSession", CommandType::LeaveReadingSession},
+        {"ReadingSessionPageSync", CommandType::ReadingSessionPageSync},
+        {"ReadingSessionParticipantUpdate", CommandType::ReadingSessionParticipantUpdate},
+        {"ReadingSessionChat", CommandType::ReadingSessionChat},
+        {"ReadingSessionFullSync", CommandType::ReadingSessionFullSync},
 
 
 
@@ -254,31 +300,24 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetBlockedUsers: return "GetBlockedUsers";
     case CommandType::DeleteBook: return "DeleteBook";
     case CommandType::GetSystemStats: return "GetSystemStats";
-
-
-
     case CommandType::RequestPasswordReset: return "RequestPasswordReset";
     case CommandType::ResetPasswordWithToken: return "ResetPasswordWithToken";
-
     case CommandType::DeleteOwnReview: return "DeleteOwnReview";
-
-
     case CommandType::SearchUsers: return "SearchUsers";
     case CommandType::SearchAuthors : return "SearchAuthors";
     case CommandType::GetNotifications: return "GetNotifications";
+    case CommandType::MarkNotificationRead: return "MarkNotificationRead";
     case CommandType::MarkAllNotificationsRead: return "MarkAllNotificationsRead";
 
     case CommandType::ClearAllNotifications: return "ClearAllNotifications";
     case CommandType::GetUserShelves: return "GetUserShelves";
     case CommandType::DeleteShelf: return "DeleteShelf";
-
-
     case CommandType::RenameShelf: return "RenameShelf";
-
     case CommandType::RemoveBookFromShelf: return "RemoveBookFromShelf";
-
-
+    case CommandType::CreateShelf : return "CreateShelf";
     case CommandType::MoveBookBetweenShelves: return "MoveBookBetweenShelves";
+    case CommandType::GetBooksInShelf: return "GetBooksInShelf";
+
 
 
 
@@ -288,6 +327,59 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetBookCover: return "GetBookCover";
 
     case CommandType::AddFavoriteBook: return "AddFavoriteBook";
+    case CommandType::GetFavoriteBooks: return "GetFavoriteBooks";
+    case CommandType::RemoveFavoriteBook: return "RemoveFavoriteBook";
+
+    case CommandType::GetAllGenres: return "GetAllGenres";
+    case CommandType::GetUserLibrary: return "GetUserLibrary";
+    case CommandType::AddBookToShelf: return "AddBookToShelf";
+    case CommandType::RemoveDiscount: return "RemoveDiscount";
+    case CommandType::ApplyDiscount: return "ApplyDiscount";
+    case CommandType::GetSalesTrend: return "GetSalesTrend";
+    case CommandType::GetBookRatingsChart: return "GetBookRatingsChart";
+    case CommandType::GetTopSellingBooks: return "GetTopSellingBooks";
+    case CommandType::GetBottomSellingBooks: return "GetBottomSellingBooks";
+    case CommandType::GetSalesOverview: return "GetSalesOverview";
+
+    case CommandType::GetRecentActivities: return "GetRecentActivities";
+    case CommandType::GetSystemAlerts: return "GetSystemAlerts";
+    case CommandType::GetDatabaseStatus: return "GetDatabaseStatus";
+    case CommandType::GetServerStatus: return "GetServerStatus";
+
+    case CommandType::CheckBookOwnership: return "CheckBookOwnership";
+    case CommandType::ToggleUserActiveStatus: return "ToggleUserActiveStatus";
+    case CommandType::GetAdminAccessLog: return "GetAdminAccessLog";
+
+    case CommandType::GetAdminBooks: return "GetAdminBooks";
+    case CommandType::FlagBook: return "FlagBook";
+    case CommandType::GetAdminReviews: return "GetAdminReviews";
+    case CommandType::ApproveReview: return "ApproveReview";
+    case CommandType::RejectReview: return "RejectReview";
+    case CommandType::FlagReview: return "FlagReview";
+    case CommandType::GetServerRuntimeStatus: return "GetServerRuntimeStatus";
+    case CommandType::BroadcastMessage: return "BroadcastMessage";
+    case CommandType::BackupDatabase: return "BackupDatabase";
+    case CommandType::ClearServerCache: return "ClearServerCache";
+    case CommandType::RestartServer: return "RestartServer";     
+    case CommandType::UnflagBook: return "UnflagBook";
+    case CommandType::GetServerResourceUsage: return "GetServerResourceUsage";
+    case CommandType::GetConnectedClients:    return "GetConnectedClients";
+    case CommandType::GetTrafficStats:        return "GetTrafficStats";
+    case CommandType::GetAllBooks: return "GetAllBooks";
+    case CommandType::JoinReadingSession: return "JoinReadingSession";
+    case CommandType::CreateReadingSession: return "CreateReadingSession";
+    case CommandType::LeaveReadingSession: return "LeaveReadingSession";
+    case CommandType::ReadingSessionPageSync: return "ReadingSessionPageSync";
+    case CommandType::ReadingSessionParticipantUpdate: return "ReadingSessionParticipantUpdate";
+    case CommandType::ReadingSessionChat: return "ReadingSessionChat";
+    case CommandType::ReadingSessionFullSync: return "ReadingSessionFullSync";
+
+
+
+
+
+
+
 
 
 
@@ -302,6 +394,7 @@ QJsonObject Request::toJson() const
 {
     QJsonObject obj;
     obj["command"] = getCommandTypeString();
+    obj["requestId"] = m_requestId;
 
     if (!m_params.isEmpty()) {
         QJsonObject paramsObj;
@@ -332,6 +425,9 @@ Request Request::fromJson(const QJsonObject& json)
 
     QString commandstr = json["command"].toString();
     request.setCommandType(stringToCommandType(commandstr));
+    request.setRequestId(
+        json.value("requestId").toVariant().toLongLong()
+        );
 
     if (json.contains("params") && json["params"].isObject()) {
         QJsonObject paramsObj = json["params"].toObject();

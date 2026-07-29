@@ -24,7 +24,7 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/notif.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -56,8 +56,8 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">QFrame#headerFrame {
-    background-color: rgba(100, 150, 255, 220);
+     <string notr="true">QFrame#headerFrame {    
+background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }</string>
@@ -127,7 +127,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">QFrame#toolbarFrame {
-    background-color: rgba(255, 255, 255, 200);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }</string>
@@ -276,7 +276,7 @@ QPushButton:hover {
     </property>
     <property name="styleSheet">
      <string notr="true">QListWidget#notificationList {
-    background-color: black;
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
     outline: none;
@@ -353,7 +353,7 @@ QListWidget#notificationList::item:alternate {
     </property>
     <property name="styleSheet">
      <string notr="true">QFrame#statusFrame {
-    background-color: rgba(240, 240, 240, 230);
+    background: transparent;
     border: 3px solid black;
     border-radius: 12px;
 }</string>

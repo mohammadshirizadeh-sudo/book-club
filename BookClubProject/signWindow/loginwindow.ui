@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1600</width>
     <height>800</height>
    </rect>
   </property>
@@ -21,14 +21,15 @@
     <normaloff>:/resources/icon.jpg</normaloff>:/resources/icon.jpg</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/blue.png);</string>
+   <string notr="true">background-image: url(:/resources/dia.jpg);
+</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1600</width>
      <height>800</height>
     </rect>
    </property>
@@ -46,10 +47,10 @@
    <widget class="QLabel" name="bookclubLabel">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>60</y>
-      <width>361</width>
-      <height>61</height>
+      <x>460</x>
+      <y>30</y>
+      <width>581</width>
+      <height>101</height>
      </rect>
     </property>
     <property name="whatsThis">
@@ -57,7 +58,7 @@
     </property>
     <property name="styleSheet">
      <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
-	font-size:45px;
+	font-size:70px;
 	color: rgb(0, 0, 0);
 	background: transparent;</string>
     </property>
@@ -68,8 +69,8 @@
    <widget class="QLabel" name="UsernameLabel">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>210</y>
+      <x>520</x>
+      <y>180</y>
       <width>171</width>
       <height>51</height>
      </rect>
@@ -87,8 +88,8 @@
    <widget class="QLabel" name="passwordLabel">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>330</y>
+      <x>520</x>
+      <y>300</y>
       <width>171</width>
       <height>51</height>
      </rect>
@@ -109,14 +110,15 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>210</y>
+      <x>760</x>
+      <y>180</y>
       <width>421</width>
       <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -129,14 +131,15 @@
    <widget class="QLineEdit" name="PasswprdLineEdit">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>320</y>
+      <x>760</x>
+      <y>290</y>
       <width>421</width>
       <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">	font: 700 9pt &quot;Script MT Bold&quot;;
+     <string notr="true">	background: transparent;
+	font: 700 9pt &quot;Script MT Bold&quot;;
 	font-size:40px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
@@ -152,8 +155,8 @@
    <widget class="QPushButton" name="forgotpassPushButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>390</y>
+      <x>840</x>
+      <y>360</y>
       <width>281</width>
       <height>51</height>
      </rect>
@@ -163,7 +166,8 @@
 	font-size:30px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>🗝️ Forgot Password?</string>
@@ -172,8 +176,8 @@
    <widget class="QPushButton" name="registerPushButton">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>660</y>
+      <x>450</x>
+      <y>620</y>
       <width>601</width>
       <height>81</height>
      </rect>
@@ -183,7 +187,8 @@
 	font-size:45px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>Don't have an account? Sign up!</string>
@@ -192,8 +197,8 @@
    <widget class="QPushButton" name="signinPushButton">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>550</y>
+      <x>670</x>
+      <y>510</y>
       <width>161</width>
       <height>81</height>
      </rect>
@@ -203,7 +208,8 @@
 	font-size:45px;
 	color: rgb(0, 0, 0);
 	border: 3px solid black;
-	border-radius: 12px;</string>
+	border-radius: 12px;
+	background: transparent;</string>
     </property>
     <property name="text">
      <string>Sign in</string>

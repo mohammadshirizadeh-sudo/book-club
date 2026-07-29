@@ -17,10 +17,9 @@ Command* CommandFactory::create(
     AdminService* adminService,
     NotificationService* notificationService,
     LibraryService* libraryService,
-    ClientHandler* clientHandler
+    ClientHandler* clientHandler,
+    ReadingSessionService* readingSessionService
     )
-
-
 
 {
     switch (type) {
@@ -58,22 +57,22 @@ Command* CommandFactory::create(
     // ===== Book Commands =====
     // =============================================
     case CommandType::SearchBooks:
-        return new SearchBooksCommand(bookService);
+        return new SearchBooksCommand(bookService, userService);
 
     case CommandType::GetBookById:
-        return new GetBookByIdCommand(bookService);
+        return new GetBookByIdCommand(bookService ,userService);
 
     case CommandType::GetBooksByGenre:
-        return new GetBooksByGenreCommand(bookService);
+        return new GetBooksByGenreCommand(bookService , userService);
 
     case CommandType::GetPopularBooks:
-        return new GetPopularBooksCommand(bookService);
+        return new GetPopularBooksCommand(bookService , userService);
 
     case CommandType::GetNewBooks:
-        return new GetNewBooksCommand(bookService);
+        return new GetNewBooksCommand(bookService, userService);
 
     case CommandType::GetFreeBooks:
-        return new GetFreeBooksCommand(bookService);
+        return new GetFreeBooksCommand(bookService, userService);
 
     case CommandType::GetRecommendedBooks:
         return new GetRecommendedBooksCommand(bookService ,userService);
@@ -106,7 +105,7 @@ Command* CommandFactory::create(
         return new GetPurchaseHistoryCommand(purchaseService);
 
     case CommandType::GetPurchaseById:
-        return new GetPurchaseByIdCommand(purchaseService);
+        return new GetPurchaseByIdCommand(purchaseService , bookService);
 
     // =============================================
     // ===== Review Commands =====
@@ -150,13 +149,13 @@ Command* CommandFactory::create(
     // =============================================
     case CommandType::BlockUser:
 
-        return new BlockUserCommand(userService );
+        return new BlockUserCommand(userService, adminService, clientHandler);
 
     case CommandType::UnblockUser:
-        return new UnblockUserCommand(userService);
+        return new UnblockUserCommand(userService, adminService, clientHandler);
 
     case CommandType::DeleteUser:
-        return new DeleteUserCommand(userService);
+        return new DeleteUserCommand(userService, adminService, clientHandler);
 
     case CommandType::GetAllUsers:
         return new GetAllUsersCommand(userService);
@@ -176,6 +175,15 @@ Command* CommandFactory::create(
 
     case CommandType::GetSystemStats:
         return new GetSystemStatsCommand(adminService);
+
+    case CommandType::GetRecentActivities:
+        return new GetRecentActivitiesCommand(adminService);
+
+    case CommandType::GetSystemAlerts:
+        return new GetSystemAlertsCommand(adminService);
+
+    case CommandType::GetDatabaseStatus:
+        return new GetDatabaseStatusCommand(adminService);
 
     case CommandType::RequestPasswordReset:
         return new RequestPasswordResetCommand(authService);
@@ -232,11 +240,14 @@ Command* CommandFactory::create(
         return new RemoveBookFromShelfCommand(libraryService);
 
 
+
+
+
     case CommandType::MoveBookBetweenShelves:
         return new MoveBookBetweenShelvesCommand(libraryService);
 
     case CommandType::GetBestSellers:
-        return new GetBestSellersCommand(bookService);
+        return new GetBestSellersCommand(bookService, userService);
 
 
     case CommandType::GetBookCover:
@@ -244,6 +255,120 @@ Command* CommandFactory::create(
 
     case CommandType::AddFavoriteBook:
         return new AddFavoriteBookCommand(userService);
+
+    case CommandType::GetFavoriteBooks:
+        return new GetFavoriteBooksCommand(userService ,bookService);
+    case CommandType::RemoveFavoriteBook:
+        return new RemoveFavoriteBookCommand(userService);
+    case CommandType::GetAllGenres:
+        return new GetAllGenresCommand();
+
+    case CommandType::GetUserLibrary:
+        return new GetUserLibraryCommand(libraryService , bookService);
+
+    case CommandType::AddBookToShelf:
+        return new AddBookToShelfCommand(libraryService);
+
+
+    case CommandType::RemoveDiscount:
+        return new RemoveDiscountCommand(bookService);
+    case CommandType::ApplyDiscount:
+        return new ApplyDiscountCommand(bookService);
+
+    case CommandType::GetSalesTrend:
+        return new GetSalesTrendCommand(bookService ,purchaseService);
+
+    case CommandType::GetBookRatingsChart:
+        return new GetBookRatingsChartCommand(bookService);
+    case CommandType::GetTopSellingBooks:
+        return new GetTopSellingBooksCommand(bookService);
+
+    case CommandType::GetSalesOverview:
+        return new GetSalesOverviewCommand(bookService , purchaseService);
+    case CommandType::GetBottomSellingBooks:
+        return new GetBottomSellingBooksCommand(bookService);
+    case CommandType::CheckBookOwnership:
+        return new CheckBookOwnershipCommand(libraryService);
+
+
+    case CommandType::ToggleUserActiveStatus:
+        return new ToggleUserActiveCommand(userService);
+    case CommandType::GetAdminAccessLog:
+        return new GetAdminAccessLogCommand(adminService);
+    case CommandType::GetAdminBooks:
+        return new GetAdminBooksCommand(bookService);
+    case CommandType::FlagBook:
+        return new FlagBookCommand(bookService);
+    case CommandType::GetAdminReviews:
+        return new GetAdminReviewsCommand(reviewService);
+    case CommandType::ApproveReview:
+        return new ApproveReviewCommand(reviewService);
+    case CommandType::RejectReview:
+        return new RejectReviewCommand(reviewService);
+    case CommandType::FlagReview:
+        return new FlagReviewCommand(reviewService);
+    case CommandType::GetServerRuntimeStatus:
+        return new GetServerRuntimeStatusCommand(adminService);
+    case CommandType::BroadcastMessage:
+        return new BroadcastMessageCommand(clientHandler);
+    case CommandType::BackupDatabase:
+        return new BackupDatabaseCommand(adminService);
+    case CommandType::ClearServerCache:
+        return new ClearServerCacheCommand(adminService);
+    case CommandType::RestartServer:
+        return new RestartServerCommand(adminService);
+    case CommandType::UnflagBook:
+        return new UnflagBookCommand(bookService);
+
+    case CommandType::GetServerResourceUsage:
+        return new GetServerResourceUsageCommand(clientHandler);
+    case CommandType::GetConnectedClients:
+        return new GetConnectedClientsCommand(clientHandler);
+    case CommandType::GetTrafficStats:
+        return new GetTrafficStatsCommand(clientHandler);
+    case CommandType::GetAllBooks:
+        return new GetAllBooksCommand(bookService);
+    case CommandType::JoinReadingSession:
+        return new JoinReadingSessionCommand(readingSessionService ,clientHandler);
+    case CommandType::CreateReadingSession:
+        return new CreateReadingSessionCommand(readingSessionService ,clientHandler);
+    case CommandType::LeaveReadingSession:
+        return new LeaveReadingSessionCommand(readingSessionService ,clientHandler);
+    case CommandType::ReadingSessionPageSync:
+        return new ReadingSessionPageSyncCommand(readingSessionService ,clientHandler);
+    case CommandType::ReadingSessionParticipantUpdate:
+        return new ReadingSessionParticipantUpdateCommand(clientHandler);
+
+    case CommandType::ReadingSessionChat:
+        return new ReadingSessionChatCommand(readingSessionService ,clientHandler);
+    case CommandType::ReadingSessionFullSync:
+        return new ReadingSessionFullSyncCommand(readingSessionService ,clientHandler);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // =============================================

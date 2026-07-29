@@ -18,6 +18,7 @@
 #include "../Services/CartService.h"
 #include "../Services/PublisherService.h"
 #include "../Services/AdminService.h"
+#include "../Services/ReadingSessionService.h"
 
 #include "../Shared/Book.h"
 #include "../Shared/User.h"
@@ -39,7 +40,10 @@ class ReviewService;
 class CartService;
 class PublisherService;
 class AdminService;
+class NotificationService;
+class ReadingSessionService;
 class Book;
+class Server;
 
 class ClientHandler : public QObject
 {
@@ -55,11 +59,18 @@ public:
                            CartService* cartService,
                            PublisherService* publisherService,
                            AdminService* adminService,
+                           LibraryService* libraryService,
+                           NotificationService* notificationService,
+                           ReadingSessionService* readingSessionService,
                            QObject *parent = nullptr);
     ~ClientHandler();
 
 
     void setSession(int userId, UserRole role);
+    QVariantMap  getServerResourceUsage() const;
+    QVariantList getConnectedClientsInfo() const;
+    QVariantMap  getTrafficStats() const;
+    QString      getSessionUsername() const;
     void disconnectFromClient();
 
 
@@ -77,6 +88,19 @@ public:
 
 
     qintptr m_socketDescriptor;
+    bool isSessionAuthenticated() const;
+    UserRole getSessionRole() const;
+    int getSessionUserId() const;
+    void broadcastToAllClients(const Response& response);
+
+    // Targeted push: send a Response to exactly one other connected user
+    // (identified by userId, not this handler's own connection). Used by
+    // ReadingSession* commands so page turns / chat / join-leave events
+    // reach other session participants without waiting on their poll timer.
+    // Silently no-ops if that user isn't currently connected - the periodic
+    // ReadingSessionFullSync poll is the fallback for that case.
+    void sendToUser(int userId, const Response& response);
+
 signals:
     void disconnected();
     void responseReady(const Response& response);
@@ -91,7 +115,7 @@ private slots:
     void onReadyRead();
     void onDisconnected();
     void onSocketError(QAbstractSocket::SocketError socketError);
-     void onResponseReady(const Response& response);
+    void onResponseReady(const Response& response);
 
 private:
     QTcpSocket* m_socket = nullptr;
@@ -113,13 +137,14 @@ private:
     AdminService* m_adminService;
     NotificationService* m_notificationService;
     LibraryService* m_libraryService;
+    ReadingSessionService* m_readingSessionService;
 
     RequestParser* m_parser = nullptr;
 
-    void sendResponse(const QString& response);
+
 
     QByteArray m_recvBuffer;
-private slots:
+public slots:
 
     void sendResponse(const Response& response);
 private:
@@ -136,6 +161,14 @@ private:
     UserRole m_sessionRole = UserRole::User;
     bool m_isAuthenticated = false;
 
+    QString m_sessionUsername;
+
+
+
+public:
+    void sendResponse(const QString& response);
+
+    void setSession(int userId, UserRole role, const QString& username);
 
 
 

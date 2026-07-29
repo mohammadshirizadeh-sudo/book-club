@@ -1,20 +1,17 @@
-
-
-/*
 #include "pdfreaderwindow.h"
 #include "Users/ui_pdfreaderwindow.h"
 
-
-// #include <QPdfDocument>
-// #include <QPdfView>
-
 #include <QPdfDocument>
+#include <QPdfPageNavigator>
 #include <QtPdfWidgets/QPdfView>
->>>>>>> develop
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QKeyEvent>
 #include <QScrollBar>
+#include <QFile>
+#include <QFileInfo>
+#include <QVBoxLayout>
+
 
 PdfReaderWindow::PdfReaderWindow(int bookId, QWidget *parent)
     : QWidget(parent)
@@ -42,32 +39,35 @@ PdfReaderWindow::~PdfReaderWindow()
 
 void PdfReaderWindow::setupPdfView()
 {
-    // Create PDF view widget inside container
     m_pdfView = new QPdfView(ui->pdfViewContainer);
     m_pdfView->setDocument(m_pdfDocument);
-    m_pdfView->setGeometry(ui->pdfViewContainer->contentsRect());
-    m_pdfView->setPageMode(QPdfView::PageMode::SinglePage);
+    m_pdfView->setPageMode(QPdfView::PageMode::MultiPage);
     m_pdfView->setZoomMode(QPdfView::ZoomMode::Custom);
     m_pdfView->setZoomFactor(1.0);
 
-    // Hide placeholder label when PDF is loaded
+    QVBoxLayout *layout = new QVBoxLayout(ui->pdfViewContainer);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->addWidget(m_pdfView);
+
+    // Update info once the document has fully loaded.
     connect(m_pdfDocument, &QPdfDocument::statusChanged, this, [this](QPdfDocument::Status status) {
-        if (status == QPdfDocument::Ready) {
+        if (status == QPdfDocument::Status::Ready) {
             ui->placeholderLabel->hide();
             m_totalPages = m_pdfDocument->pageCount();
             updatePageInfo();
         }
     });
 
-    // Connect page navigation signal
-    connect(m_pdfView->verticalScrollBar(), &QScrollBar::valueChanged, this, [this]() {
-        int newPage = m_pdfView->currentPage();
-        if (newPage != m_currentPage) {
-            m_currentPage = newPage;
-            updatePageInfo();
-            emit pageChanged(m_currentPage + 1);
-        }
-    });
+    // Update the page number when the user scrolls the view manually.
+    // (goToPage() also drives the navigator, but this keeps m_currentPage
+    // correct when the user scrolls without touching the toolbar.)
+    connect(m_pdfView->pageNavigator(), &QPdfPageNavigator::currentPageChanged,
+            this, [this](int page) {
+                if (m_currentPage != page) {
+                    m_currentPage = page;
+                    updatePageInfo();
+                }
+            });
 }
 
 bool PdfReaderWindow::loadPdf(const QString &filePath)
@@ -83,7 +83,8 @@ bool PdfReaderWindow::loadPdf(const QString &filePath)
         return false;
     }
 
-    bool success = m_pdfDocument->load(filePath);
+    QPdfDocument::Error err = m_pdfDocument->load(filePath);
+    bool success = (err == QPdfDocument::Error::None);
 
     if (success) {
         m_totalPages = m_pdfDocument->pageCount();
@@ -148,10 +149,14 @@ void PdfReaderWindow::updateZoomControls()
 
 void PdfReaderWindow::goToPage(int page)
 {
-    if (page < 0 || page >= m_totalPages) return;
+    if (page < 0 || page >= m_totalPages || page == m_currentPage) return;
 
     m_currentPage = page;
-    m_pdfView->setCurrentPage(page);
+    // Bug fix: this used to call pageNavigator()->currentPageChanged(page),
+    // which is the *signal* - invoking it directly just emits it without
+    // ever moving the view. jump() is the actual navigation call.
+    // Passing 0.0 for zoom keeps the current zoom level unchanged.
+    m_pdfView->pageNavigator()->jump(page, QPointF(), 0.0);
     updatePageInfo();
     emit pageChanged(page + 1);
 }
@@ -301,4 +306,3 @@ void PdfReaderWindow::keyPressEvent(QKeyEvent *event)
         break;
     }
 }
-*/

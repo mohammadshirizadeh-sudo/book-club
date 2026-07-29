@@ -22,6 +22,9 @@ public:
 signals:
 
     void openPublisherInfoDialog();
+    void publisherWindow();
+    void backPushButton();
+
 
 
 private slots:
@@ -31,6 +34,8 @@ private slots:
     void on_publisherInfoPushButton_clicked();
 
     void on_editPubInfoPushButton_clicked();
+
+    void on_backPushButton_clicked();
 
 private:
     Ui::PublisherProfileWindow *ui;

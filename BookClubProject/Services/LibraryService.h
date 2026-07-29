@@ -45,6 +45,13 @@ public:
     bool moveBookBetweenShelves(int userId, int fromShelfId, int toShelfId, int bookId);
 
 
+    bool isBookOwned(int userId, int bookId) const;
+
+    LibraryRepository* getLibraryRepo();
+
+
+
+
 private:
     LibraryRepository* m_libraryRepo;
 };

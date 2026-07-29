@@ -760,3 +760,61 @@ QMap<QString, QVector<QSharedPointer<Book>>> BookService::searchAuthorsWithBooks
 
     return result;
 }
+
+
+
+// BookService.cpp
+bool BookService::updateBook(QSharedPointer<Book> book)
+{
+    if (!book) {
+        qWarning() << "Book is null!";
+        return false;
+    }
+
+    int bookId = book->getBookId();
+
+    // 1. به‌روزرسانی در حافظه (Cache)
+    if (!bookRepo->updateBook(book)) {
+        qWarning() << "Failed to update book in cache:" << bookId;
+        return false;
+    }
+
+    // 2. ذخیره در دیتابیس
+    if (!bookRepo->saveToDatabase(book)) {
+        qWarning() << "Failed to save book to database:" << bookId;
+        return false;
+    }
+
+    qDebug() << "✅ Book updated successfully:" << book->getTitle() << "(ID:" << bookId << ")";
+    return true;
+}
+
+QString BookService::getPublisherNamebyid(int id){
+    User* publisher = userRepo.findById(id);
+    return publisher->getUsername();
+}
+
+
+
+QString BookService::getPublisherNameById(int publisherId) const
+{
+
+    User* user = userRepo.findById(publisherId);
+    if (!user) {
+        qWarning() << "Publisher not found with ID:" << publisherId;
+        return "Unknown Publisher";
+    }
+
+    if (!user->isPublisher()) {
+        qWarning() << "User" << publisherId << "is not a publisher!";
+        return "Unknown Publisher";
+    }
+    qDebug()<<"beforeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+    Publisher* publisher = static_cast<Publisher*>(user);
+    qDebug()<< "afterrrrrrrrrrrrrrrrrrrr";
+    return publisher->getPublisherName();
+
+}
+
+
+

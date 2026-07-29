@@ -29,6 +29,8 @@ signals:
     void openChangeUserPassDialog();
     void openShoppingHistoryDialog();
     void openFavBooksWindow();
+    void userWindow();
+     void backButtonClicked();
 
 private slots:
     void on_favGenresPushButton_clicked();
@@ -40,6 +42,8 @@ private slots:
 
 
     void handleResponse(const Response& response);
+
+    void on_backPushButton_clicked();
 
 private:
     Ui::UserProfileWindow *ui;

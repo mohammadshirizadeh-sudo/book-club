@@ -174,7 +174,8 @@ bool ReviewRepository::loadAllFromDatabase() {
     }
 
     QString query = R"(
-        SELECT id, user_id, book_id, text, rating, created_at, updated_at
+        SELECT id, user_id, book_id, text, rating,status,
+       is_flagged, created_at, updated_at
         FROM review
     )";
 
@@ -192,8 +193,18 @@ bool ReviewRepository::loadAllFromDatabase() {
             sqlQuery.value("book_id").toInt(),
             sqlQuery.value("text").toString(),
             sqlQuery.value("rating").toInt(),
+            sqlQuery.value("status").toString(),
+            sqlQuery.value("is_flagged").toBool(),
             QDateTime::fromString(sqlQuery.value("created_at").toString(), Qt::ISODate),
             QDateTime::fromString(sqlQuery.value("updated_at").toString(), Qt::ISODate));
+
+        review->setStatus(
+            sqlQuery.value("status").toString().isEmpty()
+                ? "approved"
+                : sqlQuery.value("status").toString());
+
+        review->setIsFlagged(
+            sqlQuery.value("is_flagged").toBool());
 
 
 
@@ -232,6 +243,8 @@ bool ReviewRepository::saveToDatabase(QSharedPointer<Review> review) {
     params["book_id"] = review->getBookId();
     params["text"] = review->getText();
     params["rating"] = review->getRating();
+    params["status"] = review->getStatus();
+    params["is_flagged"] = review->getIsFlagged() ? 1 : 0;
     params["created_at"] = review->getCreatedAt().toString(Qt::ISODate);
     params["updated_at"] = review->getUpdatedAt().toString(Qt::ISODate);
 

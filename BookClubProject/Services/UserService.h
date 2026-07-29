@@ -27,8 +27,8 @@ public:
     //                    const QVector<Genre>& newGenres);
 
     ValidationResult updateProfile(int userId, const QString& newEmail,
-                                    const QString& newFullName,
-                       const QString& newUserName);
+                                   const QString& newFullName,
+                                   const QString& newUserName);
 
     bool updateFavoriteGenres(int userId, const QVector<Genre>& newGenres);
 
@@ -51,6 +51,10 @@ public:
     bool isFavoriteBook(int userId, int bookId) const;
 
     QVector<int> getFavoriteBooks(int userId) const;
+
+
+    bool deactivateUser(int userId);
+    bool activateUser(int userId);
 };
 
 #endif // USERSERVICE_H

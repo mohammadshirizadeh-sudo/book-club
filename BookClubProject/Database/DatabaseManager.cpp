@@ -8,9 +8,10 @@ DatabaseManager* DatabaseManager::m_instance = nullptr;
 
 DatabaseManager* DatabaseManager::instance()
 {
-    static DatabaseManager* inst = new DatabaseManager();
-    m_instance = inst;
-    return inst;
+    if (!m_instance) {
+        m_instance = new DatabaseManager();
+    }
+    return m_instance;
 }
 
 DatabaseManager::DatabaseManager(QObject *parent)
@@ -127,6 +128,7 @@ QSqlQuery DatabaseManager::executeSelect(const QString& query)
         qCritical() << "❌ Select failed:" << sqlQuery.lastError().text();
         qCritical() << "   Query:" << query;
     }
+    qDebug()<<"i'm in excute select";
     return sqlQuery;
 }
 
@@ -154,7 +156,8 @@ QSqlQuery DatabaseManager::executeSelect(const QString& query, const QVariantMap
 
 
 //remember you must use it in the main!!!!!
-void DatabaseManager::shutdown() {
+void DatabaseManager::shutdown()
+{
     if (m_instance) {
         m_instance->closeDatabase();
         delete m_instance;
@@ -220,4 +223,26 @@ QSqlDatabase DatabaseManager::connectionForCurrentThread()
 
     qDebug() << "✅ Database connection created for thread:" << connName;
     return db;
+}
+
+
+
+qint64 DatabaseManager::lastInsertId() const
+{
+    if (!isOpen()) {
+        qWarning() << "Database is not open!";
+        return -1;
+    }
+
+    QSqlQuery query(m_database);
+    if (!query.exec("SELECT last_insert_rowid()")) {
+        qWarning() << "Failed to get last insert ID:" << query.lastError().text();
+        return -1;
+    }
+
+    if (query.next()) {
+        return query.value(0).toLongLong();
+    }
+
+    return -1;
 }

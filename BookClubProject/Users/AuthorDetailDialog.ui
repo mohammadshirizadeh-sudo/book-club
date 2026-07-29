@@ -14,7 +14,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/blue.png);</string>
+   <string notr="true">background-image: url(:/resources/sui.png);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -64,7 +64,7 @@ color: rgb(0, 0, 0);
       <x>90</x>
       <y>330</y>
       <width>251</width>
-      <height>51</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">

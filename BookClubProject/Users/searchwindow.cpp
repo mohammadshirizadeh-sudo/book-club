@@ -107,8 +107,6 @@ void SearchWindow::handleResponse(const Response& response)
             item->setTextAlignment(Qt::AlignCenter);
 
             ui->searchResultsListWidget->addItem(item);
-
-            // 🟢 تغییر دوم: حذف متد لود مستقیم فایل از هارد دیسک و ارسال درخواست آنلاین کاور به سرور بر اساس آیدی کتاب
             if (!coverPath.isEmpty() && bookId > 0) {
                 m_networkManager->requestBookCover(bookId);
             } else {
@@ -162,3 +160,9 @@ void SearchWindow::on_searchResultsListWidget_itemClicked(QListWidgetItem *item)
         dialog.exec();
     }
 }
+void SearchWindow::on_backPushButton_clicked()
+{
+    emit backButtonClicked();
+
+}
+

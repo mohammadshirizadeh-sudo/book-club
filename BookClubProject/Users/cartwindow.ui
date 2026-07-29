@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1500</width>
+    <width>1600</width>
     <height>800</height>
    </rect>
   </property>
@@ -14,7 +14,7 @@
    <string>Shopping Cart - Book Club</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/white.png);</string>
+   <string notr="true">background-image: url(:/resources/main.jpg);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QFrame" name="mainFrame">
@@ -22,12 +22,15 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1500</width>
+      <width>1600</width>
       <height>800</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true"/>
+     <string notr="true">QFrame {
+	background-color: rgba(255,255,255,10);
+}
+</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::StyledPanel</enum>
@@ -66,7 +69,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>🛒 My Cart</string>
+      <string>My Cart</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -93,7 +96,7 @@
 }</string>
      </property>
      <property name="title">
-      <string>Cart Items (0)</string>
+      <string>🛒 Cart Items (0)</string>
      </property>
      <widget class="QScrollArea" name="cartScrollArea">
       <property name="geometry">

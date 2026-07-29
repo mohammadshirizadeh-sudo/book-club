@@ -68,9 +68,32 @@ private slots:
     void on_nextBestSellerPushButton_clicked();
     void on_prevBestSellerPushButton_clicked();
 
+    void on_pushButton_7_clicked();
+
+    void on_pushButton_4_clicked();
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_8_clicked();
+
+    void on_notificationPushButton_clicked();
+
+    void on_pushButton_6_clicked();
+
+    // void on_groupPushButton_clicked();
+
 signals:
     void userProfileWindow();
     void searchWindow();
+    void genrebrowsWindow();
+    void cartWindow();
+    void libraryWindow();
+    void shelfWindow();
+    void notificationWindow();
+    void openLoginWindow();
+
+    void groubReadingWindow(const QVariantMap& bookData);
+    void signOutRequested();
 
 private:
     Ui::UserWindow *ui;
@@ -120,6 +143,7 @@ private:
     QMap<int, QPixmap> m_coverCache;
 
     QMultiMap<int, QPointer<QLabel>> m_pendingCoverLabels;
+     qint64 m_pendingLogoutRequestId = -1;
 };
 
 #endif // USERWINDOW_H

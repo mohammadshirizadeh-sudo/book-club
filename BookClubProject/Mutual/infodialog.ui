@@ -14,7 +14,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-image: url(:/resources/blue.png);</string>
+   <string notr="true">background-image: url(:/resources/dia.jpg);</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -39,7 +39,7 @@
    <widget class="QDialogButtonBox" name="buttonBox">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>640</x>
       <y>540</y>
       <width>161</width>
       <height>51</height>
@@ -178,7 +178,7 @@ color: rgb(0, 0, 0);</string>
      <rect>
       <x>300</x>
       <y>80</y>
-      <width>541</width>
+      <width>561</width>
       <height>41</height>
      </rect>
     </property>
@@ -235,7 +235,7 @@ color: rgb(0, 0, 0);</string>
      <rect>
       <x>300</x>
       <y>270</y>
-      <width>371</width>
+      <width>161</width>
       <height>41</height>
      </rect>
     </property>
@@ -322,10 +322,10 @@ font-size: 40px;
 color: rgb(0, 0, 0);</string>
     </property>
     <property name="text">
-     <string>Joining Time:</string>
+     <string>UpdatedAt:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="joinTimeLabel">
+   <widget class="QLabel" name="updatedAtLabel">
     <property name="geometry">
      <rect>
       <x>300</x>

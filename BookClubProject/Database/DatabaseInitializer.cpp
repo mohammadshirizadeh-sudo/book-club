@@ -2,6 +2,10 @@
 #include "DatabaseInitializer.h"
 #include "DatabaseManager.h"
 #include <QDebug>
+#include <QCryptographicHash>
+#include <QUuid>
+#include "../Shared/PasswordHelper.h"
+#include <QDateTime>
 
 DatabaseInitializer::DatabaseInitializer(QObject *parent)
     : QObject(parent)
@@ -25,6 +29,11 @@ bool DatabaseInitializer::initialize(const QString& databasePath)
     // Create tables
     if (!createTables()) {
         qCritical() << "❌ Failed to create tables";
+        return false;
+    }
+
+    if (!insertDefaultAdmin()) {
+        qCritical() << "❌ Failed to insert default admin!";
         return false;
     }
 
@@ -55,7 +64,11 @@ bool DatabaseInitializer::createTables()
            createShelfTable() &&
            createShelfBookTable()&&
            createPublisherInfoTable() &&
-           createAdminInfoTable();
+           createAdminInfoTable()&&
+           createLibraryOwnedBookTable() &&
+
+           createLibrarySavedBookTable()&&
+           createAccessLogTable();
 }
 
 bool DatabaseInitializer::dropTables()
@@ -172,10 +185,14 @@ bool DatabaseInitializer::createBookTable()
             description TEXT,
             price REAL NOT NULL,
             discount_percent REAL DEFAULT 0,
+            is_timed_discount INTEGER DEFAULT 0,
+            discount_start_date TEXT,
+            discount_end_date TEXT,
             cover_path TEXT,
             pdf_path TEXT,
             is_active INTEGER DEFAULT 1,
             average_rating REAL DEFAULT 0,
+            is_flagged INTEGER DEFAULT 0,
             sales_count INTEGER DEFAULT 0,
             publisher_id INTEGER NOT NULL,
             created_at TEXT NOT NULL,
@@ -195,6 +212,8 @@ bool DatabaseInitializer::createReviewTable()
             book_id INTEGER NOT NULL,
             text TEXT,
             rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+            status TEXT NOT NULL DEFAULT 'pending',
+            is_flagged INTEGER DEFAULT 0,
             created_at TEXT NOT NULL,
             updated_at TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES user(id),
@@ -597,4 +616,127 @@ bool DatabaseInitializer::insertDefaultBooks()
 
     qDebug() << "✅ Default books inserted successfully!";
     return true;
+}
+
+
+bool DatabaseInitializer::createLibraryOwnedBookTable()
+{
+    QString query = R"(
+        CREATE TABLE IF NOT EXISTS library_owned_book (
+            library_id INTEGER NOT NULL,
+            book_id INTEGER NOT NULL,
+            added_at TEXT NOT NULL,
+            PRIMARY KEY (library_id, book_id),
+            FOREIGN KEY (library_id) REFERENCES library(id) ON DELETE CASCADE
+        )
+    )";
+    return DatabaseManager::instance()->executeQuery(query);
+}
+
+bool DatabaseInitializer::createLibrarySavedBookTable()
+{
+    QString query = R"(
+        CREATE TABLE IF NOT EXISTS library_saved_book (
+            library_id INTEGER NOT NULL,
+            book_id INTEGER NOT NULL,
+            saved_at TEXT NOT NULL,
+            PRIMARY KEY (library_id, book_id),
+            FOREIGN KEY (library_id) REFERENCES library(id) ON DELETE CASCADE
+        )
+    )";
+    return DatabaseManager::instance()->executeQuery(query);
+}
+
+
+
+bool DatabaseInitializer::insertDefaultAdmin()
+{
+    // 1. بررسی اینکه ادمین قبلاً وجود دارد یا نه
+    QString checkQuery = "SELECT id FROM user WHERE role = 'Admin' LIMIT 1";
+    QSqlQuery check = DatabaseManager::instance()->executeSelect(checkQuery);
+
+    if (check.next()) {
+        qDebug() << "✅ Admin already exists. Skipping default admin creation.";
+        return true;
+    }
+
+    // 2. تولید Salt و هش کردن رمز عبور
+    QString salt = PasswordHelper::generateSalt();
+    QString plainPassword = "ali@878787";  // رمز پیش‌فرض (حتماً تغییر دهید)
+    QString passwordHash = PasswordHelper::hashPassword(plainPassword, salt);
+
+    // 3. درج کاربر ادمین در جدول user
+    QString insertUser = R"(
+        INSERT INTO user (
+            username, email, password_hash, salt, full_name,
+            role, status, created_at, updated_at
+        ) VALUES (
+            :username, :email, :password_hash, :salt, :full_name,
+            'Admin', 'Active', datetime('now'), datetime('now')
+        )
+    )";
+
+    QVariantMap userParams;
+    userParams["username"] = "ali";
+    userParams["email"] = "ali@gmail.com";
+    userParams["password_hash"] = passwordHash;
+    userParams["salt"] = salt;
+    userParams["full_name"] = "ali karimi";
+
+    if (!DatabaseManager::instance()->executeQuery(insertUser, userParams)) {
+        qCritical() << "❌ Failed to insert default admin user!";
+        return false;
+    }
+
+    // 4. دریافت ID کاربر ایجاد شده
+    int adminId = DatabaseManager::instance()->lastInsertId();
+    if (adminId <= 0) {
+        qCritical() << "❌ Failed to get admin ID!";
+        return false;
+    }
+
+    // 5. درج اطلاعات ادمین در جدول admin_info
+    QString insertAdminInfo = R"(
+        INSERT INTO admin_info (
+            user_id, admin_level, last_action
+        ) VALUES (
+            :user_id, :admin_level, :last_action
+        )
+    )";
+
+    QVariantMap adminParams;
+    adminParams["user_id"] = adminId;
+    adminParams["admin_level"] = "SuperAdmin";
+    adminParams["last_action"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    if (!DatabaseManager::instance()->executeQuery(insertAdminInfo, adminParams)) {
+        qCritical() << "❌ Failed to insert admin_info for admin!";
+        return false;
+    }
+
+    qDebug() << "✅ Default admin created successfully!";
+    qDebug() << "   Username: admin";
+    qDebug() << "   Password: Admin@123";
+    qDebug() << "   (Please change the password after first login!)";
+
+    return true;
+}
+
+
+
+bool DatabaseInitializer::createAccessLogTable()
+{
+    QString query = R"(
+        CREATE TABLE IF NOT EXISTS access_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT NOT NULL,
+            admin_name TEXT NOT NULL,
+            action TEXT NOT NULL,
+            target_user TEXT,
+            ip_address TEXT,
+            status TEXT NOT NULL
+        )
+    )";
+
+    return DatabaseManager::instance()->executeQuery(query);
 }

@@ -8,6 +8,7 @@
 #include "../Repositories/PurchaseRepository.h"
 #include "../Repositories/BookRepository.h"
 #include "../Repositories/LibraryRepository.h"
+#include "../Services/BookService.h"
 #include "CartService.h"
 #include "NotificationService.h"
 
@@ -20,6 +21,7 @@ private:
     LibraryRepository* libraryRepo;
     CartService* cartService;
     NotificationService* notifService;
+    BookService* m_bookService;
     int nextPurchaseId = 5000;
 
 public:
@@ -28,7 +30,7 @@ public:
                     BookRepository* bookRepo,
                     LibraryRepository* libraryRepo,
                     CartService* cartService,
-                    NotificationService* notifService , QObject* parent = nullptr);
+                    NotificationService* notifService ,BookService* bookService, QObject* parent = nullptr);
 
     // ===== Purchase Operations =====
 
@@ -57,12 +59,18 @@ public:
 
     int getPurchaseCount(int userId) const;
 
+    QVariantList getPeriodSummaries(int publisherId, int months = 6) const;
+
+
+    PurchaseRepository* getPurchaseRepo();
+
 private:
 
     bool processPayment(double amount);
     void updateBookSales(const QVector<CartItem>& purchaseItems);
 
     void sendPurchaseConfirmation(int userId, QSharedPointer<Purchase> purchase);
+
 };
 
 #endif // PURCHASESERVICE_H
