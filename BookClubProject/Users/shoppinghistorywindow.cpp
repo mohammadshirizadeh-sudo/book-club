@@ -110,7 +110,7 @@ void ShoppingHistoryWindow::displayHistory(const QVariantList& purchases)
         emptyLabel->setAlignment(Qt::AlignCenter);
         emptyLabel->setStyleSheet("font-size: 20px; color: gray; font-weight: bold; margin-top: 50px;");
         ui->ordersLayout->addWidget(emptyLabel);
-        ui->totalSpentValueLabel->setText("0 T");
+        ui->totalSpentValueLabel->setText("$ 0");
         return;
     }
 
@@ -187,7 +187,7 @@ void ShoppingHistoryWindow::displayHistory(const QVariantList& purchases)
     ui->ordersLayout->addStretch();
 
     // 🟢 به‌روزرسانی کل مبلغ خرج‌شده در بالای صفحه
-    ui->totalSpentValueLabel->setText(QString("%1 T").arg(totalSpentSum));
+    ui->totalSpentValueLabel->setText(QString("$ %1").arg(totalSpentSum));
 }
 
 // 🟢 کلیک روی دکمه جزئیات سفارش

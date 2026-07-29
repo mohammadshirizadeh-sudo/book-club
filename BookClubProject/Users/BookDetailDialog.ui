@@ -462,18 +462,18 @@ background: transparent;</string>
     <property name="geometry">
      <rect>
       <x>70</x>
-      <y>550</y>
+      <y>545</y>
       <width>391</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: 3px solid #2980b9;
+     <string notr="true">border: 3px solid black;
 border-radius: 12px;
-color: white;
-background-color: #2980b9;
+color: rgb(0, 0, 0);
 font: 700 9pt &quot;Script MT&quot;;
-font-size: 30px;</string>
+font-size: 35px;
+background: transparent;</string>
     </property>
     <property name="text">
      <string>📚 Group Reading</string>
