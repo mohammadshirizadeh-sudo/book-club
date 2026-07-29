@@ -5,6 +5,7 @@
 #include <QTcpServer>
 #include <QMap>
 #include <QDateTime>
+#include <QMutex>
 #include "../Server/Response.h"
 #include <QTimer>
 #include "ServerResourceMonitor.h"
@@ -35,6 +36,7 @@ class PublisherService;
 class AdminService;
 class NotificationService;
 class LibraryService;
+class ReadingSessionService;
 
 class Server : public QTcpServer
 {
@@ -65,11 +67,27 @@ public:
         return m_adminService;
     }
 
+    ReadingSessionService* getReadingSessionService() const
+    {
+        return m_readingSessionService;
+    }
+
 
     int getOnlineUserCount() const;
 
     QString getUptimeString() const;
     void broadcastToAll(const Response& response);
+
+    // Targeted push: send a Response to the ClientHandler currently
+    // registered for this userId, if any. Silent no-op if that user isn't
+    // connected right now (e.g. offline session participant) - callers
+    // should treat their own periodic sync/poll as the fallback for that.
+    void sendToUser(int userId, const Response& response);
+
+    // Registry maintained by ClientHandler::setSession(...) once a
+    // connection is authenticated/identified, and cleared on disconnect.
+    void registerUserHandler(int userId, ClientHandler* handler);
+    void unregisterUserHandler(int userId);
 
 
     void scheduleRestart(int delayMs = 1000);
@@ -120,6 +138,7 @@ private:
     AdminService* m_adminService;
     NotificationService* m_notifService;
     LibraryService* m_libraryService;
+    ReadingSessionService* m_readingSessionService = nullptr;
     QDateTime m_startTime;
 
     void initServices();
@@ -135,6 +154,13 @@ private:
     mutable ServerResourceMonitor* m_resourceMonitor = nullptr;
     QAtomicInteger<qint64> m_totalRequests{0};
     QAtomicInteger<qint64> m_totalResponses{0};
+
+    // userId -> currently-connected ClientHandler, for targeted push
+    // (GroupReading page-sync/chat/participant events). Guarded separately
+    // from m_clients/m_clientInfo since it's written from ClientHandler's
+    // request-handling threads (via setSession), not just the accept thread.
+    QMap<int, ClientHandler*> m_userIdToHandler;
+    mutable QMutex m_userRegistryMutex;
 };
 
 #endif // SERVER_H

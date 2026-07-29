@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include "pdfreaderwindow.h"
+#include "groupreadingwindow.h"
 #include <QFile>
 
 BookDetailDialog::BookDetailDialog(NetworkManager*networkManager , const QVariantMap& bookData, QWidget *parent) :
@@ -326,4 +327,96 @@ void BookDetailDialog::openBookPdf()
 void BookDetailDialog::on_pushButton_clicked()
 {
     openBookPdf();
+}
+
+// ─── Group Reading Button Handler ──────────────────────────────────────────────
+// The button opens the Group Reading page directly from this dialog, so the
+// action works no matter where the dialog was launched from. Previously this
+// emitted `groupReadingRequested` and relied on each caller (UserWindow's
+// free/recommended/new/best-seller click handlers) to re-emit it, which was
+// only wired up for some of them and silently did nothing for the rest.
+void BookDetailDialog::on_groupReadingPushButton_clicked()
+{
+    openGroupReading();
+}
+
+// Opens a dedicated GroupReadingWindow for the book currently shown in this
+// dialog. Mirrors the openBookPdf() pattern: the window is heap-allocated,
+// deletes itself on close, and is shown as a top-level window. The dialog is
+// only hidden so that all of its loaded state (favorite flag, ownership flag,
+// cover image, network subscriptions) is preserved when the user comes back.
+void BookDetailDialog::openGroupReading()
+{
+    // 1. Validate the book before doing anything network-related.
+    int bookId = m_bookData.value("bookId").toInt();
+    if (bookId <= 0) {
+        QMessageBox::warning(this,
+                             tr("Group Reading"),
+                             tr("Invalid book data. Cannot start a Group Reading session."));
+        return;
+    }
+
+    // 2. Group Reading needs a PDF to render — GroupReadingWindow::loadBookPdf()
+    //    will fall back to a placeholder message if pdfPath is empty, but it's
+    //    a better UX to fail fast here with an actionable message instead of
+    //    opening a window that immediately says "no readable file attached".
+    QString pdfPath = m_bookData.value("pdfPath").toString();
+    if (pdfPath.isEmpty()) {
+        QMessageBox::warning(this,
+                             tr("Group Reading"),
+                             tr("This book does not have a PDF available for Group Reading."));
+        return;
+    }
+
+    // 3. Don't open a second Group Reading window if one is already on screen
+    //    for this dialog (e.g. user alt-tabbed back to the dialog and clicked
+    //    the button again). Just raise the existing one.
+    if (m_groupReadingWindow) {
+        m_groupReadingWindow->showMaximized();
+        m_groupReadingWindow->raise();
+        m_groupReadingWindow->activateWindow();
+        return;
+    }
+
+    // 4. Create the window. WA_DeleteOnClose ensures the heap object is freed
+    //    when the user closes it (via the back button or the OS close button).
+    GroupReadingWindow *groupWindow = new GroupReadingWindow(m_networkManager);
+    m_groupReadingWindow = groupWindow;
+    groupWindow->setAttribute(Qt::WA_DeleteOnClose);
+    groupWindow->setWindowFlags(Qt::Window);
+
+    // 5. When the window is destroyed (either by WA_DeleteOnClose firing or
+    //    by the parent dialog being torn down), clear our bookkeeping pointer.
+    //    Using destroyed() rather than backRequested() means this also covers
+    //    the case where the user closes the window via the title bar / Alt+F4.
+    connect(groupWindow, &QObject::destroyed, this, [this](QObject*) {
+        m_groupReadingWindow = nullptr;
+    });
+
+    // 6. Back button inside the Group Reading window: close it and bring the
+    //    dialog back to the foreground. The dialog was only hidden, not
+    //    closed, so all its state is intact.
+    connect(groupWindow, &GroupReadingWindow::backRequested,
+            this, [this]() {
+                if (m_groupReadingWindow) {
+                    m_groupReadingWindow->close();  // triggers WA_DeleteOnClose
+                    m_groupReadingWindow = nullptr;
+                }
+                this->show();
+                this->raise();
+                this->activateWindow();
+            });
+
+    // 7. setBookData loads the cover, loads the PDF, and updates the title
+    //    label. Passing sessionId=-1 means the user lands in the "create or
+    //    join a session" state rather than auto-joining a non-existent
+    //    session.
+    groupWindow->setBookData(m_bookData, /*sessionId=*/-1);
+
+    // 8. Hide the dialog and show the Group Reading window maximized, the
+    //    same way openBookPdf() presents the PdfReaderWindow.
+    this->hide();
+    groupWindow->showMaximized();
+    groupWindow->raise();
+    groupWindow->activateWindow();
 }

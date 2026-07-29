@@ -127,6 +127,13 @@ enum class CommandType {
     GetConnectedClients,
     GetTrafficStats,
     GetAllBooks,
+    JoinReadingSession,
+    CreateReadingSession,
+    LeaveReadingSession,
+    ReadingSessionPageSync,
+    ReadingSessionParticipantUpdate,
+    ReadingSessionChat,
+    ReadingSessionFullSync,
 
 };
 

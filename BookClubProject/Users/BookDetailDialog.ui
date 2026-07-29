@@ -27,7 +27,7 @@
    </property>
    <property name="styleSheet">
     <string notr="true">QFrame {
-	background-color: rgba(255,255,255,10);
+        background-color: rgba(255,255,255,10);
 }</string>
    </property>
    <property name="frameShape">
@@ -456,6 +456,27 @@ background: transparent;</string>
     </property>
     <property name="text">
      <string>📑 Rate Book</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="groupReadingPushButton">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>550</y>
+      <width>391</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 3px solid #2980b9;
+border-radius: 12px;
+color: white;
+background-color: #2980b9;
+font: 700 9pt &quot;Script MT&quot;;
+font-size: 30px;</string>
+    </property>
+    <property name="text">
+     <string>📚 Group Reading</string>
     </property>
    </widget>
   </widget>

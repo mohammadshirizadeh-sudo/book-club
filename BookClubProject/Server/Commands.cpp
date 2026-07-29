@@ -3954,6 +3954,296 @@ Response GetAllBooksCommand::execute(const QVariantMap& params)
     return Response::success(CommandType::GetAllBooks, "Books loaded successfully", data);
 }
 
+static QVariantMap participantToMap(const SessionParticipant& p)
+{
+    QVariantMap pm;
+    pm["userId"]      = p.userId;
+    pm["username"]    = p.username;
+    pm["role"]        = p.role;
+    pm["currentPage"] = p.currentPage;
+    pm["online"]      = p.online;
+    // totalPages intentionally omitted: the client already knows it from
+    // the bookData the window was opened with, and overrides this locally.
+    return pm;
+}
+
+static QVariantList participantsToList(const ReadingSession& session)
+{
+    QVariantList list;
+    for (const auto& p : session.participants) {
+        list.append(participantToMap(p));
+    }
+    return list;
+}
+
+
+
+CreateReadingSessionCommand::CreateReadingSessionCommand(ReadingSessionService* sessionService, ClientHandler* handler)
+    : m_sessionService(sessionService), m_handler(handler) {}
+
+Response CreateReadingSessionCommand::execute(const QVariantMap& params)
+{
+    int bookId = params.value("bookId").toInt();
+    int userId = params.value("userId").toInt();
+    QString username = params.value("username").toString();
+
+    if (bookId <= 0 || userId <= 0 || username.isEmpty()) {
+        return Response::error(CommandType::CreateReadingSession, "Missing required fields");
+    }
+
+    ReadingSession session = m_sessionService->createSession(bookId, userId, username);
+
+    QVariantMap data;
+    data["sessionId"]   = session.sessionId;
+    data["sessionCode"] = session.sessionCode;
+    return Response::success(CommandType::CreateReadingSession, "Session created", data);
+}
+
+
+
+
+JoinReadingSessionCommand::JoinReadingSessionCommand(ReadingSessionService* sessionService, ClientHandler* handler)
+    : m_sessionService(sessionService), m_handler(handler) {}
+
+Response JoinReadingSessionCommand::execute(const QVariantMap& params)
+{
+    int userId = params.value("userId").toInt();
+    QString username = params.value("username").toString();
+    int sessionId = params.value("sessionId", -1).toInt();
+    QString code = params.value("sessionCode").toString();
+
+    if (userId <= 0 || username.isEmpty()) {
+        return Response::error(CommandType::JoinReadingSession, "Missing user info");
+    }
+    if (sessionId <= 0 && !code.isEmpty()) {
+        sessionId = m_sessionService->findSessionIdByCode(code);
+    }
+    if (sessionId <= 0) {
+        return Response::error(CommandType::JoinReadingSession, "Session not found");
+    }
+
+    ReadingSession session;
+    bool isNewParticipant = false;
+    if (!m_sessionService->joinSession(sessionId, userId, username, session, isNewParticipant)) {
+        return Response::error(CommandType::JoinReadingSession, "Failed to join session");
+    }
+
+    QVariantMap data;
+    data["sessionId"]    = session.sessionId;
+    data["sessionCode"]  = session.sessionCode;
+    // Needed by clients who joined purely via invite code and never opened
+    // this book locally - without it GroupReadingWindow has no way to know
+    // which book's title/cover/PDF to load.
+    data["bookId"]       = session.bookId;
+    data["currentPage"]  = session.participants.value(session.hostUserId).currentPage;
+    data["participants"] = participantsToList(session);
+
+    QVariantList chatList;
+    for (const auto& m : session.chatHistory) {
+        QVariantMap cm;
+        cm["senderId"]   = m.senderId;
+        cm["senderName"] = m.senderName;
+        cm["text"]       = m.text;
+        cm["timestamp"]  = m.timestamp;
+        cm["colorIndex"] = m.colorIndex;
+        chatList.append(cm);
+    }
+    data["chatHistory"] = chatList;
+
+    // Targeted push: tell every OTHER participant that this user joined, so
+    // their participant list updates without waiting on the next poll tick.
+    //
+    // Fix: also push when the user is *rejoining* a session they were
+    // already in (isNewParticipant == false). Previously this branch was
+    // gated on isNewParticipant, so a reconnecting user's online flag just
+    // flipped silently on the server and nobody else found out until the
+    // next 3s sync. We send the same ParticipantUpdate push, but with a
+    // "reconnected" flag set so the client can render a "X reconnected"
+    // system message instead of (not in addition to) "X joined".
+    if (m_handler) {
+        QVariantMap notify;
+        notify["userId"]      = userId;
+        notify["username"]    = username;
+        notify["role"]        = "Member";
+        notify["currentPage"] = session.participants.value(userId).currentPage;
+        notify["joined"]      = isNewParticipant;
+        notify["reconnected"] = !isNewParticipant;
+
+        const char* msg = isNewParticipant ? "Participant joined" : "Participant reconnected";
+        Response push = Response::success(CommandType::ReadingSessionParticipantUpdate,
+                                          msg, notify);
+        for (int otherId : m_sessionService->otherParticipantIds(sessionId, userId)) {
+            m_handler->sendToUser(otherId, push);
+        }
+    }
+
+    return Response::success(CommandType::JoinReadingSession, "Joined session", data);
+}
+
+// ---------- LeaveReadingSessionCommand ----------
+
+LeaveReadingSessionCommand::LeaveReadingSessionCommand(ReadingSessionService* sessionService, ClientHandler* handler)
+    : m_sessionService(sessionService), m_handler(handler) {}
+
+Response LeaveReadingSessionCommand::execute(const QVariantMap& params)
+{
+    int sessionId = params.value("sessionId").toInt();
+    int userId    = params.value("userId").toInt();
+
+    if (sessionId <= 0 || userId <= 0) {
+        return Response::error(CommandType::LeaveReadingSession, "Invalid session or user ID");
+    }
+
+    // Grab remaining participants BEFORE removal so we know who to notify.
+    QVector<int> remaining = m_sessionService->otherParticipantIds(sessionId, userId);
+
+    bool sessionEnded = false;
+    int newHostUserId = -1;
+    if (!m_sessionService->leaveSession(sessionId, userId, sessionEnded, newHostUserId)) {
+        return Response::error(CommandType::LeaveReadingSession, "Session not found");
+    }
+
+    if (!sessionEnded && m_handler) {
+        QVariantMap notify;
+        notify["userId"] = userId;
+        notify["joined"] = false;
+        // Present only when the departing user was the host and someone
+        // else was promoted - see ReadingSessionService::leaveSession().
+        if (newHostUserId > 0) {
+            notify["newHostId"] = newHostUserId;
+        }
+        Response push = Response::success(CommandType::ReadingSessionParticipantUpdate,
+                                          "Participant left", notify);
+        for (int otherId : remaining) {
+            m_handler->sendToUser(otherId, push);
+        }
+    }
+
+    QVariantMap data;
+    data["sessionId"] = sessionId;
+    return Response::success(CommandType::LeaveReadingSession, "Left session", data);
+}
+
+// ---------- ReadingSessionPageSyncCommand ----------
+
+ReadingSessionPageSyncCommand::ReadingSessionPageSyncCommand(ReadingSessionService* sessionService, ClientHandler* handler)
+    : m_sessionService(sessionService), m_handler(handler) {}
+
+Response ReadingSessionPageSyncCommand::execute(const QVariantMap& params)
+{
+    int sessionId = params.value("sessionId").toInt();
+    int senderId  = params.value("senderId").toInt();
+    int page      = params.value("page").toInt();
+
+    if (!m_sessionService->updatePage(sessionId, senderId, page)) {
+        return Response::error(CommandType::ReadingSessionPageSync, "Failed to sync page");
+    }
+
+    QVariantMap data;
+    data["sessionId"] = sessionId;
+    data["senderId"]  = senderId;
+    data["page"]      = page;
+
+    // Broadcast to every OTHER participant so their handleResponse() case
+    // fires in near-real-time instead of waiting up to SYNC_INTERVAL_MS.
+    if (m_handler) {
+        Response push = Response::success(CommandType::ReadingSessionPageSync, "Page synced", data);
+        for (int otherId : m_sessionService->otherParticipantIds(sessionId, senderId)) {
+            m_handler->sendToUser(otherId, push);
+        }
+    }
+
+    return Response::success(CommandType::ReadingSessionPageSync, "Page synced", data);
+}
+
+// ---------- ReadingSessionFullSyncCommand ----------
+
+ReadingSessionFullSyncCommand::ReadingSessionFullSyncCommand(ReadingSessionService* sessionService, ClientHandler* handler)
+    : m_sessionService(sessionService), m_handler(handler) {}
+
+Response ReadingSessionFullSyncCommand::execute(const QVariantMap& params)
+{
+    int sessionId = params.value("sessionId").toInt();
+    int userId    = params.value("userId").toInt();
+    int currentPage = params.value("currentPage", -1).toInt();
+
+    ReadingSession session;
+    if (!m_sessionService->getSession(sessionId, session)) {
+        return Response::error(CommandType::ReadingSessionFullSync, "Session not found");
+    }
+
+    // Fix: the client sends its current page on every periodic sync (every
+    // 3s) as a safety net in case a ReadingSessionPageSync broadcast was
+    // ever dropped. Previously this param was silently ignored, so a
+    // dropped page-sync broadcast would leave the server's view of this
+    // user's page stale forever. Apply it here, then re-fetch the session
+    // so the response we return reflects the just-updated page.
+    if (userId > 0 && currentPage > 0) {
+        m_sessionService->updatePage(sessionId, userId, currentPage);
+        m_sessionService->getSession(sessionId, session);
+    }
+
+    QVariantMap data;
+    data["participants"] = participantsToList(session);
+    // chatHistory intentionally omitted from periodic sync - the client
+    // only wants it once, from the initial Join/CreateReadingSession
+    // response, so it doesn't wipe/replay the chat pane every tick.
+    return Response::success(CommandType::ReadingSessionFullSync, "Synced", data);
+}
+
+// ---------- ReadingSessionChatCommand ----------
+
+ReadingSessionChatCommand::ReadingSessionChatCommand(ReadingSessionService* sessionService, ClientHandler* handler)
+    : m_sessionService(sessionService), m_handler(handler) {}
+
+Response ReadingSessionChatCommand::execute(const QVariantMap& params)
+{
+    int sessionId = params.value("sessionId").toInt();
+
+    SessionChatMessage msg;
+    msg.senderId   = params.value("senderId").toInt();
+    msg.senderName = params.value("senderName").toString();
+    msg.text       = params.value("text").toString();
+    msg.colorIndex = params.value("colorIndex").toInt();
+    msg.timestamp  = QDateTime::currentDateTime().toString(Qt::ISODate);
+
+    if (!m_sessionService->appendChat(sessionId, msg)) {
+        return Response::error(CommandType::ReadingSessionChat, "Session not found");
+    }
+
+    QVariantMap data;
+    data["senderId"]   = msg.senderId;
+    data["senderName"] = msg.senderName;
+    data["text"]       = msg.text;
+    data["colorIndex"] = msg.colorIndex;
+
+    // Broadcast to every OTHER participant. The sender already added their
+    // own message locally on send, and their handleResponse() drops any
+    // echo of their own senderId, so no double-send back to them needed.
+    if (m_handler) {
+        Response push = Response::success(CommandType::ReadingSessionChat, "Message sent", data);
+        for (int otherId : m_sessionService->otherParticipantIds(sessionId, msg.senderId)) {
+            m_handler->sendToUser(otherId, push);
+        }
+    }
+
+    return Response::success(CommandType::ReadingSessionChat, "Message sent", data);
+}
+
+// ---------- ReadingSessionParticipantUpdateCommand ----------
+// Not directly client-invokable - it only ever originates server-side from
+// Join/LeaveReadingSessionCommand via ClientHandler::sendToUser(). Present
+// so CommandFactory has a well-defined (harmless) case if a client ever
+// sends this type directly.
+
+ReadingSessionParticipantUpdateCommand::ReadingSessionParticipantUpdateCommand(ClientHandler* handler)
+    : m_handler(handler) {}
+
+Response ReadingSessionParticipantUpdateCommand::execute(const QVariantMap& /*params*/)
+{
+    return Response::error(CommandType::ReadingSessionParticipantUpdate,
+                           "This event is server-pushed only and cannot be invoked directly");
+}
 
 
 

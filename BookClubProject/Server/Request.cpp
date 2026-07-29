@@ -216,6 +216,14 @@ CommandType Request::stringToCommandType(const QString& str)
         {"GetTrafficStats",        CommandType::GetTrafficStats},
         {"GetAllBooks", CommandType::GetAllBooks},
 
+        {"JoinReadingSession", CommandType::JoinReadingSession},
+        {"CreateReadingSession", CommandType::CreateReadingSession},
+        {"LeaveReadingSession", CommandType::LeaveReadingSession},
+        {"ReadingSessionPageSync", CommandType::ReadingSessionPageSync},
+        {"ReadingSessionParticipantUpdate", CommandType::ReadingSessionParticipantUpdate},
+        {"ReadingSessionChat", CommandType::ReadingSessionChat},
+        {"ReadingSessionFullSync", CommandType::ReadingSessionFullSync},
+
 
 
 
@@ -358,6 +366,17 @@ QString Request::CommandTypeToString(CommandType cmd)
     case CommandType::GetConnectedClients:    return "GetConnectedClients";
     case CommandType::GetTrafficStats:        return "GetTrafficStats";
     case CommandType::GetAllBooks: return "GetAllBooks";
+    case CommandType::JoinReadingSession: return "JoinReadingSession";
+    case CommandType::CreateReadingSession: return "CreateReadingSession";
+    case CommandType::LeaveReadingSession: return "LeaveReadingSession";
+    case CommandType::ReadingSessionPageSync: return "ReadingSessionPageSync";
+    case CommandType::ReadingSessionParticipantUpdate: return "ReadingSessionParticipantUpdate";
+    case CommandType::ReadingSessionChat: return "ReadingSessionChat";
+    case CommandType::ReadingSessionFullSync: return "ReadingSessionFullSync";
+
+
+
+
 
 
 

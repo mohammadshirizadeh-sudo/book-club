@@ -1,4 +1,3 @@
-
 #include "SignWindow/loginwindow.h"
 #include "SignWindow/registerwindow.h"
 #include "SignWindow/forgotpasswordwindow.h"
@@ -36,6 +35,7 @@
 #include "Mutual/notificationwidget.h"
 #include "appWindow/adminwindow.h"
 #include "Publishers/publishedbookswindow.h"
+#include "Users/groupreadingwindow.h"
 
 #include "Server/server.h"
 
@@ -103,6 +103,7 @@ int main(int argc, char *argv[])
     NotificationWidget* notificatoinWindow = new NotificationWidget(networkManager);
     AdminWindow* adminWindow = new AdminWindow(networkManager);
     PublishedBooksWindow* publishedWindow = new PublishedBooksWindow(networkManager);
+    GroupReadingWindow* groupreadingWindow = new GroupReadingWindow(networkManager);
 
 
 
@@ -132,6 +133,9 @@ int main(int argc, char *argv[])
     int notificationIndex = stackedWidget.addWidget(notificatoinWindow);
     int adminWindowIndex = stackedWidget.addWidget(adminWindow);
     int publishedBookIndex = stackedWidget.addWidget(publishedWindow);
+    // Bug fix: GroupReadingWindow was constructed but never added to the
+    // stack, so it had no index and could never actually be navigated to.
+    int groupReadingIndex = stackedWidget.addWidget(groupreadingWindow);
 
 
 
@@ -149,6 +153,14 @@ int main(int argc, char *argv[])
                      {
                          stackedWidget.setCurrentIndex(genreBrowsWindowIndex);
                      });
+    // The old no-arg connection from UserWindow::groubReadingWindow to a
+    // stack-index switch was removed: BookDetailDialog now opens its own
+    // dedicated GroupReadingWindow directly from its "Group Reading" button
+    // (see BookDetailDialog::openGroupReading), so the signal-chain through
+    // UserWindow is no longer used. The QStackedWidget-owned
+    // `groupreadingWindow` instance and its index below are kept as a
+    // landing page in case a future entry point (e.g. a sidebar button)
+    // wants to navigate to it directly.
     QObject::connect(userWindow,
                      &UserWindow::cartWindow,
                      [&]()
@@ -308,12 +320,12 @@ int main(int argc, char *argv[])
 
                      });
     QObject::connect(publisherWindow,
-                    &PublisherWindow::deactivateBook,
-                    [&]()
-                    {
-                        stackedWidget.setCurrentIndex(deactivateWindowIndex);
+                     &PublisherWindow::deactivateBook,
+                     [&]()
+                     {
+                         stackedWidget.setCurrentIndex(deactivateWindowIndex);
 
-                    });
+                     });
 
 
 
@@ -425,6 +437,27 @@ int main(int argc, char *argv[])
                          stackedWidget.setCurrentIndex(profileIndex);
 
                      });
+    QObject::connect(favoriteBooks, &FavoriteBooksWindow::backButtonClicked,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(profileIndex);
+
+                     });
+    QObject::connect(genreBrowsWindow, &GenreBrowserWindow::userWindow,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(userIndex);
+
+                     });
+    QObject::connect(genreBrowsWindow, &GenreBrowserWindow::userWindow,
+                     [&]() {
+                         stackedWidget.setCurrentIndex(userIndex);
+
+                     });
+    // The old with-arg connection from UserWindow::groubReadingWindow to
+    // `groupreadingWindow->setBookData(...)` was removed for the same reason
+    // as the no-arg one above: BookDetailDialog now owns the Group Reading
+    // window lifecycle itself. Keeping the `groupreadingWindow` singleton
+    // registered on the stack so it remains reachable for any future direct
+    // navigation, but no signal is wired to it anymore.
 
 
     //-------------------------------------------------

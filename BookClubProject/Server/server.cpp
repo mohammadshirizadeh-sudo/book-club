@@ -8,6 +8,7 @@
 #include "../Services/PurchaseService.h"
 #include "../Services/ReviewService.h"
 #include "../Services/PublisherService.h"
+#include "../Services/ReadingSessionService.h"
 #include "../Services/AdminService.h"
 #include "../Services/NotificationService.h"
 #include "../Repositories/UserRepository.h"
@@ -68,6 +69,7 @@ void Server::initServices()
     m_publisherService = new PublisherService(m_bookService,m_bookRepo, m_userRepo, this);
     m_libraryService = new LibraryService(m_libraryRepo , this);
     m_adminService = new AdminService( m_userService, m_bookService, m_reviewService, m_purchaseService, m_notifService, m_libraryService, this);
+    m_readingSessionService = new ReadingSessionService(this);
 }
 
 
@@ -100,45 +102,13 @@ void Server::stop()
     }
     m_clients.clear();
 
+    {
+        QMutexLocker locker(&m_userRegistryMutex);
+        m_userIdToHandler.clear();
+    }
+
     qDebug() << "🛑 Server stopped";
 }
-
-/*
-void Server::incomingConnection(qintptr socketDescriptor)
-{
-
-    qDebug() << "[4] incomingConnection";
-    qDebug() << "[4] descriptor =" << socketDescriptor;
-
-
-    QString ipAddress = peerAddress(socketDescriptor).toString();
-
-
-    emit clientConnected(socketDescriptor, ipAddress);
-
-
-
-
-    ClientHandler* handler = new ClientHandler(
-        socketDescriptor,
-        m_authService,
-        m_bookService,
-        m_userService,
-        m_purchaseService,
-        m_reviewService,
-        m_cartService,
-        m_publisherService,
-        m_adminService,
-        this
-        );
-
-    connectToClientSignals(handler);
-
-    m_clients[socketDescriptor] = handler;
-}
-
-*/
-
 
 void Server::incomingConnection(qintptr socketDescriptor)
 {
@@ -146,7 +116,7 @@ void Server::incomingConnection(qintptr socketDescriptor)
         socketDescriptor,
         m_authService, m_bookService, m_userService, m_purchaseService,
         m_reviewService, m_cartService, m_publisherService, m_adminService,
-        m_libraryService,m_notifService,
+        m_libraryService,m_notifService, m_readingSessionService,
         this
         );
 
@@ -188,6 +158,19 @@ void Server::connectToClientSignals(ClientHandler* handler) {
     connect(handler, &ClientHandler::disconnected,
             this, [this, handler]() {
                 qintptr descriptor = handler->m_socketDescriptor;
+
+                // Clear the userId registry entry too, but only if it still
+                // points at this handler (avoids racing a reconnect that
+                // already re-registered the same userId to a newer handler).
+                int userId = handler->getSessionUserId();
+                if (userId > 0) {
+                    QMutexLocker locker(&m_userRegistryMutex);
+                    auto it = m_userIdToHandler.find(userId);
+                    if (it != m_userIdToHandler.end() && it.value() == handler) {
+                        m_userIdToHandler.erase(it);
+                    }
+                }
+
                 m_clients.remove(descriptor);
                 m_clientInfo.remove(descriptor);
                 emit clientDisconnected(descriptor);
@@ -225,6 +208,38 @@ void Server::updateClientUsername(qintptr socketDescriptor, const QString& usern
     if (it != m_clientInfo.end()) {
         it.value().username = username;
     }
+}
+
+void Server::registerUserHandler(int userId, ClientHandler* handler)
+{
+    if (userId <= 0 || !handler) return;
+    QMutexLocker locker(&m_userRegistryMutex);
+    m_userIdToHandler[userId] = handler;
+}
+
+void Server::unregisterUserHandler(int userId)
+{
+    if (userId <= 0) return;
+    QMutexLocker locker(&m_userRegistryMutex);
+    m_userIdToHandler.remove(userId);
+}
+
+void Server::sendToUser(int userId, const Response& response)
+{
+    ClientHandler* handler = nullptr;
+    {
+        QMutexLocker locker(&m_userRegistryMutex);
+        handler = m_userIdToHandler.value(userId, nullptr);
+    }
+
+    if (!handler) {
+        // Not currently connected - this is expected (e.g. an offline
+        // session participant); the requesting flow's periodic sync is the
+        // fallback that will pick this up once they reconnect/poll.
+        return;
+    }
+
+    handler->sendResponse(response);
 }
 
 
@@ -415,6 +430,5 @@ QVariantMap ClientHandler::getTrafficStats() const {
         return server->getTrafficStats();
     return QVariantMap();
 }
-
 
 

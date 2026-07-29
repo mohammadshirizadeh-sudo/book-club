@@ -565,6 +565,8 @@ void UserWindow::onFreeBookClicked()
 {
     if (m_currentPage >= 0 && m_currentPage < m_allFreeBooks.size()) {
         QVariantMap book = m_allFreeBooks[m_currentPage].toMap();
+        // BookDetailDialog now opens the Group Reading window itself, so there
+        // is no `groupReadingRequested` signal to forward anymore.
         BookDetailDialog dialog(m_networkManager , book, this);
         dialog.exec();
     }
@@ -577,6 +579,8 @@ void UserWindow::onRecommendedBookClicked(int offset)
 
     if (targetIndex >= 0 && targetIndex < m_allRecBooks.size()) {
         QVariantMap book = m_allRecBooks[targetIndex].toMap();
+        // BookDetailDialog now opens the Group Reading window itself, so there
+        // is no `groupReadingRequested` signal to forward anymore.
         BookDetailDialog dialog(m_networkManager ,book, this);
         dialog.exec();
     }
@@ -764,4 +768,11 @@ void UserWindow::on_pushButton_6_clicked()
 {
     emit openLoginWindow();
 }
+
+/*
+void UserWindow::on_groupPushButton_clicked()
+{
+    emit groubReadingWindow();
+}
+*/
 

@@ -21,6 +21,7 @@ signals:
     void backButtonClicked();
     void userWindow();
 
+
 protected:
     void showEvent(QShowEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;

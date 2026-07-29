@@ -18,6 +18,7 @@
 #include "../Services/CartService.h"
 #include "../Services/PublisherService.h"
 #include "../Services/AdminService.h"
+#include "../Services/ReadingSessionService.h"
 
 #include "../Shared/Book.h"
 #include "../Shared/User.h"
@@ -40,7 +41,9 @@ class CartService;
 class PublisherService;
 class AdminService;
 class NotificationService;
+class ReadingSessionService;
 class Book;
+class Server;
 
 class ClientHandler : public QObject
 {
@@ -58,6 +61,7 @@ public:
                            AdminService* adminService,
                            LibraryService* libraryService,
                            NotificationService* notificationService,
+                           ReadingSessionService* readingSessionService,
                            QObject *parent = nullptr);
     ~ClientHandler();
 
@@ -88,6 +92,14 @@ public:
     UserRole getSessionRole() const;
     int getSessionUserId() const;
     void broadcastToAllClients(const Response& response);
+
+    // Targeted push: send a Response to exactly one other connected user
+    // (identified by userId, not this handler's own connection). Used by
+    // ReadingSession* commands so page turns / chat / join-leave events
+    // reach other session participants without waiting on their poll timer.
+    // Silently no-ops if that user isn't currently connected - the periodic
+    // ReadingSessionFullSync poll is the fallback for that case.
+    void sendToUser(int userId, const Response& response);
 
 signals:
     void disconnected();
@@ -125,6 +137,7 @@ private:
     AdminService* m_adminService;
     NotificationService* m_notificationService;
     LibraryService* m_libraryService;
+    ReadingSessionService* m_readingSessionService;
 
     RequestParser* m_parser = nullptr;
 

@@ -17,7 +17,8 @@ Command* CommandFactory::create(
     AdminService* adminService,
     NotificationService* notificationService,
     LibraryService* libraryService,
-    ClientHandler* clientHandler
+    ClientHandler* clientHandler,
+    ReadingSessionService* readingSessionService
     )
 
 {
@@ -327,6 +328,39 @@ Command* CommandFactory::create(
         return new GetTrafficStatsCommand(clientHandler);
     case CommandType::GetAllBooks:
         return new GetAllBooksCommand(bookService);
+    case CommandType::JoinReadingSession:
+        return new JoinReadingSessionCommand(readingSessionService ,clientHandler);
+    case CommandType::CreateReadingSession:
+        return new CreateReadingSessionCommand(readingSessionService ,clientHandler);
+    case CommandType::LeaveReadingSession:
+        return new LeaveReadingSessionCommand(readingSessionService ,clientHandler);
+    case CommandType::ReadingSessionPageSync:
+        return new ReadingSessionPageSyncCommand(readingSessionService ,clientHandler);
+    case CommandType::ReadingSessionParticipantUpdate:
+        return new ReadingSessionParticipantUpdateCommand(clientHandler);
+
+    case CommandType::ReadingSessionChat:
+        return new ReadingSessionChatCommand(readingSessionService ,clientHandler);
+    case CommandType::ReadingSessionFullSync:
+        return new ReadingSessionFullSyncCommand(readingSessionService ,clientHandler);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

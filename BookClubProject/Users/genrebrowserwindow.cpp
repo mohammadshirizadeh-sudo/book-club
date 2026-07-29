@@ -232,10 +232,7 @@ bool GenreBrowserWindow::eventFilter(QObject *watched, QEvent *event)
     }
     return QMainWindow::eventFilter(watched, event);
 }
-void GenreBrowserWindow::on_backButton_clicked()
-{
-    emit userWindow();
-}
+
 
 void GenreBrowserWindow::clearGrid()
 {
@@ -245,5 +242,31 @@ void GenreBrowserWindow::clearGrid()
             item->widget()->deleteLater();
         }
         delete item;
+    }
+}
+
+
+void GenreBrowserWindow::on_backButton_clicked()
+{
+    // اگر در وضعیت نمایش کتاب‌های یک ژانر هستیم (صفحه دوم)
+    if (m_currentMode == BooksMode) {
+        // تغییر حالت به لیست ژانرها
+        m_currentMode = GenresMode;
+
+        // بازگرداندن عنوان‌ها و جستجوگر به حالت اولیه
+        ui->titleLabel->setText("📚 Browse by Genre");
+        ui->searchInput->setPlaceholderText("Search genres...");
+        ui->searchInput->clear();
+
+        // اگر لیست ژانرها قبلاً دانلود شده، همان را نشان بده وگرنه از سرور بگیر
+        if (!m_allGenres.isEmpty()) {
+            displayGenres(m_allGenres);
+        } else {
+            requestAllGenres();
+        }
+    }
+    // اگر در صفحه اول (لیست کامل ژانرها) هستیم
+    else {
+        emit userWindow(); // ارسال سیگنال برای بازگشت به UserWindow
     }
 }

@@ -80,6 +80,8 @@ private slots:
 
     void on_pushButton_6_clicked();
 
+    // void on_groupPushButton_clicked();
+
 signals:
     void userProfileWindow();
     void searchWindow();
@@ -89,6 +91,8 @@ signals:
     void shelfWindow();
     void notificationWindow();
     void openLoginWindow();
+
+    void groubReadingWindow(const QVariantMap& bookData);
 
 private:
     Ui::UserWindow *ui;

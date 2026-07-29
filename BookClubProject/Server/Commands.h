@@ -1385,6 +1385,120 @@ private:
 };
 
 
+class JoinReadingSessionCommand : public Command
+{
+public:
+    explicit JoinReadingSessionCommand(ReadingSessionService* sessionService, ClientHandler* handler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::JoinReadingSession; }
+    QString getName() const override { return "JoinReadingSession"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    ReadingSessionService* m_sessionService;
+    ClientHandler* m_handler;
+};
+
+// =============================================
+// ===== LeaveReadingSessionCommand =====
+// =============================================
+class LeaveReadingSessionCommand : public Command
+{
+public:
+    explicit LeaveReadingSessionCommand(ReadingSessionService* sessionService, ClientHandler* handler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::LeaveReadingSession; }
+    QString getName() const override { return "LeaveReadingSession"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    ReadingSessionService* m_sessionService;
+    ClientHandler* m_handler;
+};
+
+// =============================================
+// ===== ReadingSessionPageSyncCommand =====
+// =============================================
+class ReadingSessionPageSyncCommand : public Command
+{
+public:
+    explicit ReadingSessionPageSyncCommand(ReadingSessionService* sessionService, ClientHandler* handler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::ReadingSessionPageSync; }
+    QString getName() const override { return "ReadingSessionPageSync"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    ReadingSessionService* m_sessionService;
+    ClientHandler* m_handler;
+};
+
+// =============================================
+// ===== ReadingSessionFullSyncCommand =====
+// =============================================
+class ReadingSessionFullSyncCommand : public Command
+{
+public:
+    explicit ReadingSessionFullSyncCommand(ReadingSessionService* sessionService, ClientHandler* handler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::ReadingSessionFullSync; }
+    QString getName() const override { return "ReadingSessionFullSync"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    ReadingSessionService* m_sessionService;
+    ClientHandler* m_handler;
+};
+
+// =============================================
+// ===== ReadingSessionChatCommand =====
+// =============================================
+class ReadingSessionChatCommand : public Command
+{
+public:
+    explicit ReadingSessionChatCommand(ReadingSessionService* sessionService, ClientHandler* handler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::ReadingSessionChat; }
+    QString getName() const override { return "ReadingSessionChat"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    ReadingSessionService* m_sessionService;
+    ClientHandler* m_handler;
+};
+
+// =============================================
+// ===== ReadingSessionParticipantUpdateCommand =====
+// =============================================
+class ReadingSessionParticipantUpdateCommand : public Command
+{
+public:
+    explicit ReadingSessionParticipantUpdateCommand(ClientHandler* handler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::ReadingSessionParticipantUpdate; }
+    QString getName() const override { return "ReadingSessionParticipantUpdate"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    ClientHandler* m_handler;
+};
+
+
+class CreateReadingSessionCommand : public Command
+{
+public:
+    explicit CreateReadingSessionCommand(ReadingSessionService* sessionService, ClientHandler* handler);
+    Response execute(const QVariantMap& params) override;
+    CommandType getType() const override { return CommandType::CreateReadingSession; }
+    QString getName() const override { return "CreateReadingSession"; }
+    bool requiresAuth() const override { return true; }
+
+private:
+    ReadingSessionService* m_sessionService;
+    ClientHandler* m_handler;
+};
+
+
 
 
 
