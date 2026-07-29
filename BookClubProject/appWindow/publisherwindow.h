@@ -56,6 +56,7 @@ signals:
     void notificationWindow();
     void openLoginWindow();
     void publishedBookWindow();
+    void signOutRequested();
 
 private:
     Ui::PublisherWindow *ui;
@@ -85,6 +86,11 @@ private:
     void updateSalesTrendChartUI(const QVariantMap& data);
     void updateRatingsChartUI(const QVariantMap& data);
     void updateTableUI(class QTableWidget *table, const QVariantList &books);
+    qint64 m_pendingLogoutRequestId = -1;
+
 };
+
+
+
 
 #endif // PUBLISHERWINDOW_H

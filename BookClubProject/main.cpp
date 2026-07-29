@@ -493,14 +493,36 @@ int main(int argc, char *argv[])
                          stackedWidget.setCurrentIndex(publisherIndex);
 
                      });
-    // The old with-arg connection from UserWindow::groubReadingWindow to
-    // `groupreadingWindow->setBookData(...)` was removed for the same reason
-    // as the no-arg one above: BookDetailDialog now owns the Group Reading
-    // window lifecycle itself. Keeping the `groupreadingWindow` singleton
-    // registered on the stack so it remains reachable for any future direct
-    // navigation, but no signal is wired to it anymore.
 
 
+
+    QObject::connect(adminWindow, &AdminWindow::signOutRequested,
+                     [&]() {
+                         SessionManager::instance()->clear();
+                         stackedWidget.setCurrentIndex(loginIndex);
+                     });
+
+
+
+    QObject::connect(
+        publisherWindow,
+        &PublisherWindow::signOutRequested,
+        [&]()
+        {
+            SessionManager::instance()->clear();
+
+            stackedWidget.setCurrentIndex(loginIndex);
+        });
+
+    QObject::connect(
+        userWindow,
+        &UserWindow::signOutRequested,
+        [&]()
+        {
+            SessionManager::instance()->clear();
+
+            stackedWidget.setCurrentIndex(loginIndex);
+        });
     //-------------------------------------------------
 
     stackedWidget.show();

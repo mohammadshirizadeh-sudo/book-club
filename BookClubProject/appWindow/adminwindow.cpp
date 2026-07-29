@@ -130,6 +130,8 @@ void AdminWindow::setupConnections()
 
     connect(ui->clearLogsButton, &QPushButton::clicked,
             this, &AdminWindow::handleClearLogsClicked);
+    connect(ui->signOutButton, &QPushButton::clicked, this, &AdminWindow::handleSignOutButtonClicked);
+
 }
 
 void AdminWindow::setupUIInitialState()
@@ -191,6 +193,9 @@ void AdminWindow::handleServerStatusButtonClicked()   { switchToPage(6); }
 void AdminWindow::handleSignOutButtonClicked()
 {
     if (QMessageBox::question(this, "Sign Out", "Sign out of admin panel?") == QMessageBox::Yes) {
+        if (m_networkManager) {
+            m_networkManager->sendRequest(CommandType::Logout);
+        }
         emit signOutRequested();
     }
 }
@@ -1244,3 +1249,8 @@ QString AdminWindow::getStarString(int rating) const
     rating = std::max(0, std::min(5, rating));
     return QString("★").repeated(rating) + QString("☆").repeated(5 - rating);
 }
+void AdminWindow::on_signOutButton_clicked()
+{
+
+}
+
