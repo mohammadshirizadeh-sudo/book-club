@@ -151,6 +151,8 @@ private slots:
 
     void onResponseReceived(const Response &response);
 
+    void on_signOutButton_clicked();
+
 private:
     Ui::AdminWindow *ui;
     NetworkManager *m_networkManager;

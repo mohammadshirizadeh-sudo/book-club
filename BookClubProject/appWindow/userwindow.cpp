@@ -137,6 +137,28 @@ void UserWindow::handleResponse(const Response& response)
 void UserWindow::handleResponse(const Response& response)
 {
     // ۱. مدیریت پاسخ کتاب‌های رایگان
+
+
+    if (response.getCommandType() == CommandType::Logout)
+    {
+        if (response.getRequestId() != m_pendingLogoutRequestId)
+            return;
+
+        m_pendingLogoutRequestId = -1;
+
+        if (!response.isSuccess())
+        {
+            QMessageBox::warning(
+                this,
+                "Sign Out",
+                "Sign out failed: " + response.getMessage());
+
+            return;
+        }
+
+        emit signOutRequested();
+        return;
+    }
     if (response.getCommandType() == CommandType::GetFreeBooks) {
         m_allFreeBooks = response.getData()["books"].toList();
         m_currentPage = 0;
@@ -776,7 +798,26 @@ void UserWindow::on_notificationPushButton_clicked()
 
 void UserWindow::on_pushButton_6_clicked()
 {
-    //emit openLoginWindow();
+    if (QMessageBox::question(
+            this,
+            "Sign Out",
+            "Sign out of your account?")
+        != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    if (!m_networkManager)
+    {
+        emit signOutRequested();
+        return;
+    }
+
+    Request request(CommandType::Logout);
+
+    m_pendingLogoutRequestId = request.getRequestId();
+
+    m_networkManager->sendRequest(request);
 }
 
 /*

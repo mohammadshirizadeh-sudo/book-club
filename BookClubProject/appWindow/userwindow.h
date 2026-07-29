@@ -93,6 +93,7 @@ signals:
     void openLoginWindow();
 
     void groubReadingWindow(const QVariantMap& bookData);
+    void signOutRequested();
 
 private:
     Ui::UserWindow *ui;
@@ -142,6 +143,7 @@ private:
     QMap<int, QPixmap> m_coverCache;
 
     QMultiMap<int, QPointer<QLabel>> m_pendingCoverLabels;
+     qint64 m_pendingLogoutRequestId = -1;
 };
 
 #endif // USERWINDOW_H

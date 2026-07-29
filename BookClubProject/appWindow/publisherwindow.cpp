@@ -217,6 +217,28 @@ void PublisherWindow::handleResponse(const Response& response)
 {
     CommandType type = response.getCommandType();
 
+
+    if (type == CommandType::Logout)
+    {
+        if (response.getRequestId() != m_pendingLogoutRequestId)
+            return;
+
+        m_pendingLogoutRequestId = -1;
+
+        if (!response.isSuccess())
+        {
+            QMessageBox::warning(
+                this,
+                "Sign Out",
+                "Sign out failed: " + response.getMessage());
+
+            return;
+        }
+
+        emit signOutRequested();
+        return;
+    }
+
     // فیلتر کردن دستورات مرتبط با این صفحه
     if (type != CommandType::GetSalesOverview &&
         type != CommandType::GetSalesTrend &&
@@ -406,7 +428,27 @@ void PublisherWindow::on_chartPeriodCombo_currentIndexChanged(const QString &per
 }
 void PublisherWindow::on_quitPushButton_clicked()
 {
-    emit openLoginWindow();
+    if (QMessageBox::question(this,
+                              "Sign Out",
+                              "Sign out of your publisher account?")
+        != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    if (!m_networkManager)
+    {
+        // اگر ارتباط با سرور وجود ندارد،
+        // فقط به صورت محلی خارج شو.
+        emit openLoginWindow();
+        return;
+    }
+
+    Request request(CommandType::Logout);
+
+    m_pendingLogoutRequestId = request.getRequestId();
+
+    m_networkManager->sendRequest(request);
 }
 
 
